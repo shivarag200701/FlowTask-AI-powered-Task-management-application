@@ -188,6 +188,7 @@ import { getBorderColorClass } from "@/lib/utils";
         };
         const [isEditing, setIsEditing] = useState(false);
 
+
         const handlePrioritySelect = (todo: Todo) => {
           // Optimistic update - update UI first
           onTaskUpdated(todo);
@@ -219,7 +220,6 @@ import { getBorderColorClass } from "@/lib/utils";
             hour12: true
           })
         }
-        console.log("todo colour",todo.color);
         
         return (
           <>
@@ -652,9 +652,9 @@ import { getBorderColorClass } from "@/lib/utils";
     const [openDropdownId, setOpenDropdownId] = useState<number | string | null>(null);
     const [hoveredTodoId, setHoveredTodoId] = useState<number | string | null>(null);
     const [activeTodo, setActiveTodo] = useState<Todo | null>(null);
-      const [originalCompleteAt, setOriginalCompleteAt] = useState<string | null>(null);
-      const [openFormDate, setOpenFormDate] = useState<string | null>(null);
-      const [hoveredView, setHoveredView] = useState<string | null>(null)
+    const [originalCompleteAt, setOriginalCompleteAt] = useState<string | null>(null);
+    const [openFormDate, setOpenFormDate] = useState<string | null>(null);
+    const [hoveredView, setHoveredView] = useState<string | null>(null)
 
 
     const { theme } = useAppTheme()

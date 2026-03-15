@@ -433,3 +433,18 @@ export const changeEmailSchema = z.object({
 export const ChangeUsernameSchema = z.object({
   username: z.string().min(3,"Atleast 3 characters")
 })
+
+export const changePreferencesSchema = z.object({
+  emailEnabled: z.boolean().optional(),
+  smsEnabled: z.boolean().optional(),
+  pushEnabled: z.boolean().optional(),
+  inAppEnabled: z.boolean().optional(),
+
+  automaticRemainder: z.boolean().optional(),
+  reminderBefore: z.int().optional(),
+  dailyDigest: z.boolean().optional(),
+  digestTime: z.string().optional(),
+
+  phoneNumber: z.string().optional()
+
+})

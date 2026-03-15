@@ -29,6 +29,7 @@ const AccountSettings = ({
       const res = await api.get("/v1/user/profile");
       return res.data.user;
     },
+    staleTime: 1000 * 60 * 5
   });
 
   useEffect(() => {
@@ -38,7 +39,7 @@ const AccountSettings = ({
   }, [user]);
 
   const computedHasChanged = useMemo(() => {
-    if (!user?.username || name === null) return false;
+    if (!user.username || name === null) return false;
     return name !== user.username;
   }, [name, user?.username]);
 
@@ -56,8 +57,8 @@ const AccountSettings = ({
 
   const handleNameUpdate = async() => {
     try{
-    const res = await api.put("/v1/user/username",{username:name})
-    console.log(res);
+    await api.put("/v1/user/username",{username:name})
+    setHasChanged(false)
     }
     catch(error){
         console.error("error updating username",error);

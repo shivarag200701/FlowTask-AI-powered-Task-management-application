@@ -4,8 +4,17 @@ import {
   type ReactNode,
   useState,
   useEffect,
+  useRef
 } from "react";
 import api from "../utils/api";
+import { useLocalStorage } from "@/hooks/use-local-storage";
+
+export const authMethods = [
+  "google",
+  "email"
+] as const
+
+export type AuthMethod = (typeof authMethods)[number]
 
 interface AuthProps {
   children: ReactNode;
@@ -14,17 +23,26 @@ interface ContextProps {
   isAuthenticated: boolean;
   isLoading: boolean;
   refreshAuth: () => Promise<void>;
+  setLastUsedAuthMethod: (value: AuthMethod | undefined) => void ;
+  lastUsedAuthMethod: AuthMethod | undefined
+
 }
 const AuthContext = createContext<ContextProps>({
   isAuthenticated: false,
   isLoading: true,
   refreshAuth: async () => {},
-
+  setLastUsedAuthMethod: () => {},
+  lastUsedAuthMethod: undefined
 });
 
 export function AuthProvider({ children }: AuthProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [lastUsedAuthMethodLive,setLastUsedAuthMethod] = useLocalStorage<AuthMethod | undefined>("last-used-auth-method",undefined)
+
+  const {current: lastUsedAuthMethod} = useRef<AuthMethod | undefined>(lastUsedAuthMethodLive)
+
 
 
 
@@ -54,7 +72,7 @@ export function AuthProvider({ children }: AuthProps) {
     };
     
 
-  const value = { isAuthenticated, isLoading, refreshAuth };
+  const value = { isAuthenticated, isLoading, refreshAuth, setLastUsedAuthMethod, lastUsedAuthMethod };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

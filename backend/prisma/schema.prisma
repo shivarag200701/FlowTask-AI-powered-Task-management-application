@@ -18,7 +18,7 @@ model User {
   id              Int             @id @default(autoincrement())
   username        String          @unique
   email           String          @unique
-  hashedPassword      String?
+  hashedPassword  String?
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   todos           Todo[]
@@ -27,6 +27,7 @@ model User {
   oauthAccounts   OAuthAccount[]
   preference      UserPrefrence?
   notfications    Notifications[]
+  
 }
 
 

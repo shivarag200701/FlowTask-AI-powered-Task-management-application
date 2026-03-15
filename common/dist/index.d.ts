@@ -126,4 +126,15 @@ export declare const changeEmailSchema: z.ZodObject<{
 export declare const ChangeUsernameSchema: z.ZodObject<{
     username: z.ZodString;
 }, z.core.$strip>;
+export declare const changePreferencesSchema: z.ZodObject<{
+    emailEnabled: z.ZodOptional<z.ZodBoolean>;
+    smsEnabled: z.ZodOptional<z.ZodBoolean>;
+    pushEnabled: z.ZodOptional<z.ZodBoolean>;
+    inAppEnabled: z.ZodOptional<z.ZodBoolean>;
+    automaticRemainder: z.ZodOptional<z.ZodBoolean>;
+    reminderBefore: z.ZodOptional<z.ZodInt>;
+    dailyDigest: z.ZodOptional<z.ZodBoolean>;
+    digestTime: z.ZodOptional<z.ZodString>;
+    phoneNumber: z.ZodOptional<z.ZodString>;
+}, z.core.$strip>;
 //# sourceMappingURL=index.d.ts.map

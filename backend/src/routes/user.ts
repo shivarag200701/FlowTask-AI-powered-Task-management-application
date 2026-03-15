@@ -3,7 +3,7 @@ import { z } from "zod";
 const userRouter = express();
 import prisma from "../db/index.js";
 import dotenv from "dotenv";
-import { signUpSchema, signInSchema, changePasswordSchema, ChangeUsernameSchema} from "@shiva200701/todotypes";
+import { signUpSchema, signInSchema, changePasswordSchema, ChangeUsernameSchema, changePreferencesSchema} from "@shiva200701/todotypes";
 import crypto from "crypto";
 import { hashPassword, verifyPassword } from "../utils/passwordHasher.js";
 import { requireLogin } from "../middleware.js";
@@ -276,7 +276,76 @@ userRouter.put("/username", async (req,res) =>{
     }
 })
 
-    
+userRouter.get("/user-preferences", requireLogin, async (req,res) => {
+
+  const userId = req.session.userId;
+  if (!userId){
+    return res.status(401).json({
+      msg: "Not authorized",
+    });
+  }
+
+  try{
+    const preferences = await prisma.userPrefrence.findUnique({
+      where: {userId: userId},
+    })
+
+    if(!preferences){
+      return res.status(401).json({
+        msg:"preferences for the user not found"
+      })
+    }
+
+    return res.status(200).json(preferences)
+  }
+  catch(error){
+    console.error("Error fetching user preferences", error);
+    return res.status(500).json({
+      msg: "Failed to fetch user preferences",
+    });
+  }
+
+})
+
+userRouter.put("/user-preferences",requireLogin,async(req,res) => {
+  const userId = req.session.userId;
+  if (!userId){
+    return res.status(401).json({
+      msg: "Not authorized",
+    });
+  }
+  const {data,success,error} = changePreferencesSchema.safeParse(req.body)
+      if (!success) {
+        return res.status(400).json({
+          msg: "send valid data",
+          error,
+        });
+      }
+  
+  const updateData = Object.fromEntries(
+    Object.entries(data).filter(([key,value]) => value !== undefined)
+  )
+
+  if(Object.keys(updateData).length === 0){
+    return res.status(400).json({ msg: "Send at least one preference to update" });
+  }
+  
+  try{
+    await prisma.userPrefrence.update({
+      where:{userId},
+      data: updateData
+    })
+
+    return res.status(200).json({
+      msg:"successfully updated the user preferences"
+    })
+  }catch(error){
+    console.error("failed to updated user preference",error);
+    return res.status(500).json({
+      msg:"Failed to update user preference"
+    })
+  }
+})
 
 
 

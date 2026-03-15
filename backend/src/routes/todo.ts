@@ -97,6 +97,7 @@ todoRouter.post("/", requireLogin, async (req, res) => {
         color: todo.color ?? null,
         isAllDay: todo.isAllDay,
         order: todo.order ?? null,
+        reminder: reminder
       },
     })
   } catch (error) {
@@ -162,7 +163,7 @@ todoRouter.get("/", requireLogin, async (req, res) => {
   }
 });
 
-todoRouter.post("/:id/completed", async (req, res) => {
+todoRouter.post("/:id/completed", requireLogin, async (req, res) => {
   const userId = req.session.userId;
   if (!userId) {
     return res.status(401).json({

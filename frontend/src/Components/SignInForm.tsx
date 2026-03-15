@@ -1,5 +1,5 @@
 import { isAxiosError } from "axios";
-import { useState, useEffect} from "react";
+import { useState, useEffect, useRef} from "react";
 import InputBox from "./InputBox";
 import { User, Lock, ArrowLeft } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -7,8 +7,9 @@ import type { SubmitHandler } from "react-hook-form";
 import Button from "./Button";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../utils/api";
-import { Auth } from "@/Context/AuthContext";
+import { Auth, type AuthMethod } from "@/Context/AuthContext";
 import { GoogleSignInButton } from "./GoogleSignInButton";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 
 type Inputs = {
   username: string;
@@ -26,7 +27,13 @@ const SignInForm = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { refreshAuth } = Auth();
+  const { refreshAuth, setLastUsedAuthMethod } = Auth();
+
+  const [lastUsedAuthMethodLive] = useLocalStorage<AuthMethod | undefined>("last-used-auth-method",undefined)
+
+  const {current: lastUsedAuthMethod} = useRef<AuthMethod | undefined>(lastUsedAuthMethodLive)
+
+
 
   // Handle OAuth errors from URL params
   useEffect(() => {
@@ -84,10 +91,18 @@ const SignInForm = () => {
           <div className="relative z-10">
             <div className="text-3xl font-semibold text-center text-slate-900 mb-10">Welcome Back</div>
             {/* Google Sign-In Button */}
-            <div className="mb-6">
-              <GoogleSignInButton />
+            <div className="mb-3">
+              <GoogleSignInButton  />
             </div>
-
+            {lastUsedAuthMethod && (<div className="text-center text-xs">
+              <p className="text-neutral-500">
+                  You signed in with{" "}
+                  <span className="font-semibold">{lastUsedAuthMethod.charAt(0).toUpperCase() +
+                  lastUsedAuthMethod.slice(1)}{" "}
+                  </span>
+                  last time
+              </p>
+            </div>)}
             {/* Divider */}
             <div className="flex items-center my-6">
               <div className="flex-1 border-t border-border"></div>
@@ -126,6 +141,10 @@ const SignInForm = () => {
                 isSubmitting={isSubmitting}
                 Loading="Signing in..."
                 Initial="Sign in"
+                onClick={() => {
+                  console.log("clicked the sign in button");
+                  setLastUsedAuthMethod("email")
+                }}
               />
             </form>
             <div className="text-center text-red-400 mt-2 min-h-[20px] mb-4">

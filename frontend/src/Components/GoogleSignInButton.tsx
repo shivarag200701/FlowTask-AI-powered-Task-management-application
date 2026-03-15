@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import api from '../utils/api';
+import { Auth } from '@/Context/AuthContext';
 
 interface GoogleSignInButtonProps {
   className?: string;
@@ -20,9 +21,14 @@ export function GoogleSignInButton({ className = '' }: GoogleSignInButtonProps) 
     }
   };
 
+  const {setLastUsedAuthMethod} = Auth()
+
   return (
     <button
-      onClick={handleGoogleSignIn}
+      onClick={() => {
+        handleGoogleSignIn()
+        setLastUsedAuthMethod("google")
+      }}
       disabled={loading}
       className={`flex cursor-pointer items-center justify-center gap-3 w-full px-4 py-3 bg-white backdrop-blur-sm text-gray-900 rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-md ease-in-out shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium ${className}`}
       type="button"

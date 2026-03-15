@@ -1,10 +1,10 @@
-interface ButtonProps {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isSubmitting?: boolean;
   Initial?: string;
   Loading?: string;
 }
 
-const Button = ({ isSubmitting, Initial, Loading }: ButtonProps) => {
+const Button = ({ isSubmitting, Initial, Loading, onClick }: ButtonProps) => {
   return (
     <button
       type="submit"
@@ -13,6 +13,7 @@ const Button = ({ isSubmitting, Initial, Loading }: ButtonProps) => {
                  bg-accent hover:shadow-lg shadow-sm
                  hover:opacity-90 transition-opacity cursor-pointer
                  disabled:opacity-50 disabled:cursor-not-allowed"
+      onClick={onClick}
     >
       {isSubmitting ? Loading : Initial}
     </button>

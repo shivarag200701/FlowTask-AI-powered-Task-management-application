@@ -1,6 +1,6 @@
 import { X } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Settings,Bell,CircleUserRound } from 'lucide-react';
+import { Settings,CircleUserRound, AlarmClock } from 'lucide-react';
 import AccountSettings from './AccountSettings';
 import GeneralSettings from './GeneralSettings';
 import NotificationsSettings  from './NotificationsSettings';
@@ -9,6 +9,7 @@ import {useQuery} from '@tanstack/react-query'
 import api from '@/utils/api';
 import { useState } from 'react';
 import type { Dispatch,SetStateAction } from 'react';
+import ReminderSettings from './ReminderSettings';
 
 
 
@@ -47,9 +48,9 @@ export const SettingsModal = ({setShowSettingsModal}: SettingModalProps) => {
             icon: <Settings className='w-5 h-5' />,
         },
         {
-            id: "notifications",
-            label: "Notifications",
-            icon: <Bell className='w-5 h-5' />,
+            id: "reminders",
+            label: "Reminders",
+            icon: <AlarmClock className='w-5 h-5' />,
         },
     ]
     
@@ -73,6 +74,14 @@ export const SettingsModal = ({setShowSettingsModal}: SettingModalProps) => {
             const res = await api.get("/v1/user/profile");
             return res.data.user
         }
+    })
+    useQuery({
+        queryKey: ["userPreferences"],
+        queryFn: async () =>{
+            const res = await api.get("/v1/user/user-preferences")
+            return res.data
+        },
+        staleTime: 1000*5*60    //5 mins
     })
   return (
     <>
@@ -120,6 +129,10 @@ export const SettingsModal = ({setShowSettingsModal}: SettingModalProps) => {
              />}
             {currentTab === "general" && <GeneralSettings />}
             {currentTab === "notifications" && <NotificationsSettings />}
+            {currentTab === "reminders" && <ReminderSettings 
+            hasChanged={hasChanged}
+            setHasChanged={setHasChanged}
+            />}
             {currentTab === "account" && currentSubTab === "password" && !user.isPasswordSet && <AddPassword handleBack={handleSubTabChange} />}
             {currentTab === "account" && currentSubTab === "password" && user.isPasswordSet && <ChangePassword  handleBack={handleSubTabChange}/>}
 

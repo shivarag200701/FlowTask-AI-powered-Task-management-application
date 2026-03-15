@@ -83,6 +83,8 @@ const InlineTaskForm = ({ todo, preselectedDate, onCancel, onSuccess, onUpdate ,
 
     return dateObj.toISOString();
   }
+
+  
   if(!isAllDay){
     selectedDate = combineDateAndTime(selectedDate,selectedTime);
   }
@@ -228,7 +230,6 @@ const InlineTaskForm = ({ todo, preselectedDate, onCancel, onSuccess, onUpdate ,
           color: 'bg-purple-500',
           reminder:reminder
         });
-
         // Update the todo with the ID from backend
         if (res.data.todo) {
           
@@ -548,6 +549,7 @@ const InlineTaskForm = ({ todo, preselectedDate, onCancel, onSuccess, onUpdate ,
             buttonRef={reminderButtonRef}
             onClose={() => setShowReminderPicker(false)}
             setReminder={setReminder}
+            isAllDay={isAllDay}
           />
         )}
 
