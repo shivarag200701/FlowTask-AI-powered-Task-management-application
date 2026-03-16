@@ -4,14 +4,13 @@ import { requireLogin } from "../middleware.js";
 import prisma from "../db/index.js";
 import { todoSchema, convertCompleteAtToDate, type RecurrencePattern } from "@shiva200701/todotypes";
 import { calculateNextOccurence } from "../utils/recurringTasks.js";
-import NotificationService from "../services/notification/NotificationService.js"
+import notificationService from "../services/notification/NotificationService.js";
 import { flags } from "../flags.js";
 
 const todoRouter = express();
 
 todoRouter.post("/", requireLogin, async (req, res) => {
   const { data, success, error } = todoSchema.safeParse(req.body);
-  const notificationService = new NotificationService()
   
   if (!success) {
     return res.status(400).json({
@@ -287,11 +286,35 @@ todoRouter.delete("/:id", requireLogin, async (req, res) => {
     });
   }
   try {
+
+    const notifications = await prisma.notifications.findMany({
+      where: {
+        todoId: parseInt(idParam)
+      },
+      select: {
+        id: true,
+        channels: true
+      }
+    })
+
+    //delete notification from the database- best effort clean-up
+    try{
+      await Promise.all(notifications.map((notification) =>
+        notificationService.deleteNotification(notification)
+      ))
+    }catch(queueError){
+      console.error("Failed to remove jobs from queue, continuing with DB delete:", queueError)
+      //tell monitoring software
+    }
+
     await prisma.todo.delete({
       where: {
         id: parseInt(idParam),
+        userId
       },
     });
+
+
     return res.status(200).json({
       msg: "Todo deleted",
     });

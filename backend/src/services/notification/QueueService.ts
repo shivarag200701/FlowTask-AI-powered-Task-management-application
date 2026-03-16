@@ -30,15 +30,28 @@ class QueueService{
         if (!queue) {
             throw new Error(`Queue for channel ${channel} not found`);
           }
-      
+          const id = `${channel}-${data.notificationId}`
           await queue.add(`send-${channel.toLowerCase()}`, data, {
             attempts: 3,
             delay: Math.max(delayMs,0),
+            jobId: id,
             backoff: {
               type: "exponential",
               delay: 1000,
             },
           });
+    }
+
+    async deleteJob(channel:string,id:number){
+      const queue = this.queues.get(channel)
+      if (!queue) {
+        throw new Error(`Queue for channel ${channel} not found`);
+      }
+          const jobId = `${channel}-${id}`
+          const job = await queue.getJob(jobId)
+          if(job){
+              await job.remove()
+          }
     }
     
 }

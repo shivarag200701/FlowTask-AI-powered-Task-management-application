@@ -3,7 +3,7 @@ import prisma from "../../db/index.js";
 import { number } from "zod";
 
 
-interface NotificationPayload{
+interface CreateNotificationPayload{
     userId: number;
     type: string;
     title: string,
@@ -12,8 +12,13 @@ interface NotificationPayload{
     scheduledFor?: string
 }
 
+interface DeleteNotificatioPayload{
+    id:number
+    channels:string[]
+}
+
 class NotificationService {
-    async createNotification(payload:NotificationPayload){
+    async createNotification(payload:CreateNotificationPayload){
 
     const {userId,type,title,message,todoId,scheduledFor} = payload
     let delayMs:number;
@@ -108,7 +113,17 @@ class NotificationService {
             
         }
     }
+
+    async deleteNotification({id,channels}:DeleteNotificatioPayload){
+
+        await Promise.all(channels.map(channel => 
+            queueService.deleteJob(channel,id)
+        ))
+
+    }
     
 }
 
-export default NotificationService
+const notificationService = new NotificationService()
+
+export default notificationService;
