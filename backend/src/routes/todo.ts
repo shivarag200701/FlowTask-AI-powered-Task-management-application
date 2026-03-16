@@ -169,7 +169,7 @@ todoRouter.post("/:id/completed", requireLogin, async (req, res) => {
       msg: "Not authorized",
     });
   }
-  const todoId = req.params.id;
+  const todoId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   const body = req.body;
   if (!todoId) {
     console.error("No path param ID");
