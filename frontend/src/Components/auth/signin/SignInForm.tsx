@@ -1,14 +1,14 @@
 import { isAxiosError } from "axios";
 import { useState, useEffect, useRef} from "react";
-import InputBox from "./InputBox";
+import InputBox from "../../InputBox";
 import { User, Lock, ArrowLeft } from "lucide-react";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
-import Button from "./Button";
+import Button from "../../Button";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import api from "../utils/api";
+import api from "../../../utils/api";
 import { Auth, type AuthMethod } from "@/Context/AuthContext";
-import { GoogleSignInButton } from "./GoogleSignInButton";
+import { GoogleSignInButton } from "../../GoogleSignInButton";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 
 type Inputs = {

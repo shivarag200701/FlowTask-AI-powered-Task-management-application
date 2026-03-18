@@ -94,6 +94,7 @@ class NotificationService {
 
         await Promise.all(channels.map((channel) => 
             queueService.addToQueue(channel,{
+                template: "notification",
                 notificationId:notification?.id,
                 userId: userId,
                 type:type,

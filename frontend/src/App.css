@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+
 /* --- Custom Variants & Theme Configuration --- */
 @custom-variant dark (&:is([data-theme="dark"] *));
 
@@ -52,6 +53,9 @@
   --color-scrollbar-thumb: var(--scrollbar-thumb);
   --color-scrollbar-thumb-hover: var(--scrollbar-thumb-hover);
   --animate-aurora: aurora 8s ease-in-out infinite alternate;
+  --animate-scale-in: scale-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+
   @keyframes aurora {
   0% {
     background-position: 0% 50%;
@@ -75,6 +79,11 @@
     }
   }
 }
+
+  @keyframes scale-in {
+    0%   { transform: scale(var(--from-scale, 0.95)); }
+    100% { transform: scale(var(--to-scale, 1)); }
+  }
 
 /* --- Global Base Styles --- */
 :root {

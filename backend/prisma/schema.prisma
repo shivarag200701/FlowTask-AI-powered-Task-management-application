@@ -16,18 +16,28 @@ datasource db {
 
 model User {
   id              Int             @id @default(autoincrement())
-  username        String          @unique
-  email           String          @unique
+  username        String?          @unique
+  email           String?          @unique
   hashedPassword  String?
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   todos           Todo[]
   isPasswordSet   Boolean         @default(false)
+  emailVerified   DateTime?        
 
   oauthAccounts   OAuthAccount[]
   preference      UserPrefrence?
   notfications    Notifications[]
   
+}
+
+//OTP for email verification
+model EmailVerificationToken {
+  identifier      String
+  token           String  @unique
+  expires         DateTime
+
+  @@unique([identifier,token])
 }
 
 

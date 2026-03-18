@@ -1,5 +1,5 @@
 import { Worker, Job } from "bullmq";
-import { sendEmail } from "./SendEmail.js";
+import { sendEmail } from "../../email/EmailService.js";
 import dotenv from "dotenv";
 
 dotenv.config()
@@ -17,15 +17,12 @@ const emailWorker = new Worker('notification-email', async (job:Job)=>{
 },{connection: connectionOptions})
 
 const smsWorker = new Worker('notification-sms', async (job:Job)=>{
-    console.log(job);    
 },{connection: connectionOptions})
 
-const pushWorker = new Worker('notification-push', async (job:Job)=>{
-    console.log(job);    
+const pushWorker = new Worker('notification-push', async (job:Job)=>{  
 },{connection: connectionOptions})
 
-const inAppWorker = new Worker('notification-inApp', async (job:Job)=>{
-    console.log(job);    
+const inAppWorker = new Worker('notification-inApp', async (job:Job)=>{ 
 },{connection: connectionOptions})
 
 emailWorker.on('error', (err) => {

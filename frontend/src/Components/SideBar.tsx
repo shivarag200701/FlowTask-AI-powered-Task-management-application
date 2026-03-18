@@ -99,7 +99,7 @@ const SideBar = ({ children ,expanded, setExpanded}: { children: React.ReactNode
                 alt="@profile"
                 className='grayscale'
               />
-              <AvatarFallback>{user?.username.slice(0,2)}</AvatarFallback>
+              <AvatarFallback>{user?.username ? user?.username.slice(0,2) : "JD"}</AvatarFallback>
             </Avatar>
             <div className='absolute flex items-center justify-center -bottom-1 -right-1 h-3.5 w-3.5 rounded-full bg-white '>
               <div className='bg-emerald-500 h-2.5 w-2.5 rounded-full '/>

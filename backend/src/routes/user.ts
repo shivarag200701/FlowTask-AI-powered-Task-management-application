@@ -3,75 +3,215 @@ import { z } from "zod";
 const userRouter = express();
 import prisma from "../db/index.js";
 import dotenv from "dotenv";
-import { signUpSchema, signInSchema, changePasswordSchema, ChangeUsernameSchema, changePreferencesSchema} from "@shiva200701/todotypes";
+import { signUpSchema, signInSchema, changePasswordSchema, ChangeUsernameSchema, changePreferencesSchema, emailSchema, passwordSchema} from "@shiva200701/todotypes";
 import crypto from "crypto";
-import { hashPassword, verifyPassword } from "../utils/passwordHasher.js";
+import { hashPassword, verifyPassword } from "../utils/auth/passwordHasher.js";
 import { requireLogin } from "../middleware.js";
+import generateOTP from "../utils/auth/otpGenerator.js";
+import { EMAIL_OTP_EXPIRY_IN } from "../utils/auth/constants.js";
+import { sendEmail } from "../services/email/EmailService.js";
 
 
 dotenv.config();
 
 userRouter.use(express.json());
 
-userRouter.post("/signup", async (req, res) => {
-  const { data, success, error } = signUpSchema.safeParse(req.body);
+userRouter.post("/signup/send-otp", async (req, res) => {
 
-  if (!success) {
+  const schema = z.object({
+    email: emailSchema,
+    password: passwordSchema.optional()
+  })
+  const { data, success, error } = schema.safeParse(req.body);
+
+  if (!success ) {
     return res.status(400).json({
-      msg: "send valid data",
-      error,
+      msg: error.issues[0]?.message,
+      errors: error.issues,
     });
   }
 
-  const { username, password, email } = data;
-  const { hashedPassword } = await hashPassword(password);
-  try {
-    const user = await prisma.user.findFirst({
+  const {email} = data;
+  try{
+    const isExistingUser = await prisma.user.findUnique({
       where: {
-        OR: [{ username }, { email }],
-      },
-    });
-    if (user) {
-      if (username == user.username) {
-        return res.status(400).json({
-          msg: "username already taken",
-        });
+        email
       }
-      if (email == user.email) {
-        return res.status(400).json({
-          msg: "email already taken",
-        });
-      }
+    })
+
+    if(isExistingUser){
+      return res.status(400).json({
+        msg:"User already exists. Please login instead of requesting a new OTP."
+      })
     }
 
-    const newUser = await prisma.user.create({
+    const code = generateOTP()
+
+    // delete token if already exists for user
+    await prisma.emailVerificationToken.deleteMany({
+      where: {
+        identifier: email
+      }
+    })
+
+    //insert into db and send email
+    await prisma.emailVerificationToken.create({
       data: {
-        username,
-        hashedPassword,
-        email,
-        isPasswordSet: true,
-      },
-    });
-    //create session for user
-    req.session.userId = newUser.id;
-    return res.status(201).json({
-      msg: "user created sucessfully",
-    });
-  } catch (error) {
-    console.error("error inserting user", error);
+        identifier: email,
+        token: code,
+        expires: new Date(Date.now() + EMAIL_OTP_EXPIRY_IN * 1000)
+      }
+    }),
+
+    res.status(200).json({
+      msg:"OTP sent successfully"
+      })
+
+    sendEmail({email,code, template: "verify"}).catch(err => {
+      console.error("Backgorund email send failed:",err);
+    })
+  }
+
+  catch (error) {
+    console.error("error while creating OTP", error);
     return res.status(400).json({
       msg: error,
     });
   }
 });
 
+userRouter.post("/signup/verify", async (req,res) => {
+
+  const schema = z.object({
+    email: emailSchema,
+    password: passwordSchema,
+    code: z.string().min(6,"code is 6 characters long")
+  })
+
+  const {data, success, error} = schema.safeParse(req.body)
+
+  if (!success) {
+    return res.status(400).json({
+      msg: error.issues[0]?.message,
+      errors: error.issues,
+    });
+  }
+
+  const {email,password,code} = data
+
+  try{
+      const validToken = await prisma.emailVerificationToken.findUnique({
+        where: {
+          identifier: email,
+          token: code
+        }
+      })
+
+      if(!validToken){
+        return res.status(400).json({
+          msg: "Invalid verification token entered"
+        })
+      }
+
+      if(validToken.expires && validToken.expires < new Date()){
+        await prisma.emailVerificationToken.deleteMany({
+          where:{
+            identifier: email,
+            token: code
+          }
+        })
+        return res.status(400).json({
+          msg: "Verification code has expired. Please request a new one."
+        })
+      }
+
+      const { hashedPassword } = await hashPassword(password);
+
+      const existingUser = await prisma.user.findUnique({
+        where: {
+          email
+        }
+      })
+
+      if(existingUser){
+        return res.status(400).json({
+          msg:"User already exists, Try to signin"
+        })
+      }
+
+      const user =  await prisma.user.create({
+          data: {
+            email,
+            hashedPassword,
+            isPasswordSet: true,
+            emailVerified: new Date(),
+            preference:{
+              create:{},
+            }
+          }
+        })
+
+      // Normal flow - just set userId and save
+     req.session.userId = user.id;
+    
+     req.session.save((err) => {
+        if (err) {
+          console.error("Session save error:", err);
+          return res.status(500).json({ msg: "Session error" });
+        }
+        
+        // Manually set cookie since express-session isn't doing it
+        const secret = process.env.SESSION_SECRET || '';
+        
+        // Sign the session ID (express-session format)
+        const signature = crypto
+          .createHmac('sha256', secret)
+          .update(req.sessionID)
+          .digest('base64')
+          .replace(/=+$/, '');
+        
+        const signedId = `s:${req.sessionID}.${signature}`;
+        
+        // Build cookie string
+        const cookieParts = [
+          `connect.sid=${encodeURIComponent(signedId)}`,
+          `Path=/`,
+          `HttpOnly`,
+          `Max-Age=86400`, // 24 hours
+        ];
+        
+        // Add production-specific attributes
+        if (process.env.NODE_ENV === "production") {
+          cookieParts.push(`Secure`);
+          cookieParts.push(`Domain=.shiva-raghav.com`);
+        }
+        
+        cookieParts.push(`SameSite=Lax`);
+        
+        res.setHeader('Set-Cookie', cookieParts.join('; '));
+
+        return res.status(200).json({
+          msg:"accout created sucessfully"
+        })
+      })
+    }
+    catch(error){
+      console.error("error while verifying code or creating user:",error);
+      res.status(500).json({
+        msg:error
+      })
+      
+    }
+
+})
+
 userRouter.post("/signin", async (req, res) => {
   const { data, success, error } = signInSchema.safeParse(req.body);
 
   if (!success) {
     return res.status(400).json({
-      msg: "send valid data",
-      error,
+      msg: error.issues[0]?.message,
+      error: error.issues,
     });
   }
 
@@ -173,8 +313,8 @@ userRouter.put("/password", async (req,res) => {
     const {data,success,error} = changePasswordSchema.safeParse(req.body)
       if (!success) {
         return res.status(400).json({
-          msg: "send valid data",
-          error,
+          msg: error.issues[0]?.message,
+          error: error.issues,
         });
       }
     const {currentPassword,newPassword,confirmNewPassword} = data
@@ -250,8 +390,8 @@ userRouter.put("/username", async (req,res) =>{
     const {data,success,error} = ChangeUsernameSchema.safeParse(req.body)
       if (!success) {
         return res.status(400).json({
-          msg: "send valid data",
-          error,
+          msg: error.issues[0]?.message,
+          error: error.issues,
         });
       }
       const {username:newUsername} = data
@@ -317,8 +457,8 @@ userRouter.put("/user-preferences",requireLogin,async(req,res) => {
   const {data,success,error} = changePreferencesSchema.safeParse(req.body)
       if (!success) {
         return res.status(400).json({
-          msg: "send valid data",
-          error,
+          msg: error.issues[0]?.message,
+          error: error.issues,
         });
       }
   

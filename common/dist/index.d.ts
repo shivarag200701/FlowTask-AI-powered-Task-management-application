@@ -1,8 +1,9 @@
 import { z } from "zod";
+export declare const emailSchema: z.ZodPipe<z.ZodEmail, z.ZodTransform<string, string>>;
+export declare const passwordSchema: z.ZodString;
 export declare const signUpSchema: z.ZodObject<{
-    username: z.ZodString;
     password: z.ZodString;
-    email: z.ZodEmail;
+    email: z.ZodString;
 }, z.core.$strip>;
 export declare const signInSchema: z.ZodObject<{
     username: z.ZodString;
