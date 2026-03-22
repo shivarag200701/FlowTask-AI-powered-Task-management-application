@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-
 /* --- Custom Variants & Theme Configuration --- */
 @custom-variant dark (&:is([data-theme="dark"] *));
 
@@ -55,42 +54,46 @@
   --animate-aurora: aurora 8s ease-in-out infinite alternate;
   --animate-scale-in: scale-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
-
   @keyframes aurora {
-  0% {
-    background-position: 0% 50%;
-    transform: rotate(-5deg) scale(0.9);
+    0% {
+      background-position: 0% 50%;
+      transform: rotate(-5deg) scale(0.9);
     }
-  25% {
-    background-position: 50% 100%;
-    transform: rotate(5deg) scale(1.1);
+    25% {
+      background-position: 50% 100%;
+      transform: rotate(5deg) scale(1.1);
     }
-  50% {
-    background-position: 100% 50%;
-    transform: rotate(-3deg) scale(0.95);
+    50% {
+      background-position: 100% 50%;
+      transform: rotate(-3deg) scale(0.95);
     }
-  75% {
-    background-position: 50% 0%;
-    transform: rotate(3deg) scale(1.05);
+    75% {
+      background-position: 50% 0%;
+      transform: rotate(3deg) scale(1.05);
     }
-  100% {
-    background-position: 0% 50%;
-    transform: rotate(-5deg) scale(0.9);
+    100% {
+      background-position: 0% 50%;
+      transform: rotate(-5deg) scale(0.9);
     }
   }
 }
 
-  @keyframes scale-in {
-    0%   { transform: scale(var(--from-scale, 0.95)); }
-    100% { transform: scale(var(--to-scale, 1)); }
+@keyframes scale-in {
+  0% {
+    transform: scale(var(--from-scale, 0.95));
   }
+  100% {
+    transform: scale(var(--to-scale, 1));
+  }
+}
 
 /* --- Global Base Styles --- */
 :root {
   --radius: 0.625rem;
 }
 
-body, html {
+body,
+html {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -133,11 +136,11 @@ body, html {
   --card-foreground: oklch(0.985 0 0);
   --primary: oklch(0.922 0 0);
   --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.310 0 0);
+  --secondary: oklch(0.31 0 0);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.250 0 0);
-  --muted-foreground: oklch(0.700 0 0);
-  --tool-tip: oklch(0.50 0 0);
+  --muted: oklch(0.25 0 0);
+  --muted-foreground: oklch(0.7 0 0);
+  --tool-tip: oklch(0.5 0 0);
   --accent: oklch(0.45 0.15 264);
   --accent-foreground: oklch(0.985 0 0);
   --border: oklch(1 0 0 / 10%);
@@ -166,7 +169,7 @@ body, html {
   --card-foreground: oklch(0.15 0 0);
   --primary: oklch(0.45 0.15 264);
   --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.90 0 0);
+  --secondary: oklch(0.9 0 0);
   --tool-tip: oklch(0.3 0 0);
   --secondary-foreground: oklch(0.25 0 0);
   --muted: oklch(0.9 0 0);
@@ -174,7 +177,7 @@ body, html {
   --accent: oklch(0.45 0.15 264);
   --accent-foreground: oklch(0.99 0 0);
   --border: oklch(0.9 0 0);
-  --border-hover: oklch(0.8 0 0 );
+  --border-hover: oklch(0.8 0 0);
   --input: oklch(0.95 0 0);
   --ring: oklch(0.45 0 0);
   --sidebar: oklch(0.98 0.005 241.67);
@@ -188,9 +191,8 @@ body, html {
   --scrollbar-thumb: oklch(0.7 0 0);
   --scrollbar-thumb-hover: oklch(0.55 0 0);
   --task: oklch(0.99 0 0);
-  --toast: oklch(0.20 0 0);
+  --toast: oklch(0.2 0 0);
   --drag-task: oklch(0.99 0 0);
-
 }
 
 body {
@@ -245,7 +247,30 @@ body {
 [data-sonner-toast] [data-button]:hover {
   background: oklch(0.45 0.15 264 / 0.3) !important;
 }
-::view-transition-old(root), ::view-transition-new(root) {
-    animation: none;
-    mix-blend-mode: normal;
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+.progressBar {
+  appearance: none;
+  height: 5px;
+  border-radius: 100px;
+
+  /* Chrome and Safari */
+  &::-webkit-progress-bar {
+    background: #eeedec;
+  }
+
+  &::-webkit-progress-value {
+    background: var(--accent);
+    border-radius: 100px;
+  }
+
+  /* Firefox */
+  &::-moz-progress-bar {
+    background: var(--accent);
+    border-radius: 100px;
+  }
 }

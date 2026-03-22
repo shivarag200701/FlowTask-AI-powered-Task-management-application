@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils"
 type SpinnerProps = React.SVGProps<SVGSVGElement>
 
 export function Spinner({ className, ...props }: SpinnerProps) {
-  const size = 25        // px
+  const size = 20        // px
   const strokeWidth = 2
   const radius = (size - strokeWidth) / 2
   const circumference = 2 * Math.PI * radius
@@ -29,7 +29,7 @@ export function Spinner({ className, ...props }: SpinnerProps) {
         fill="none"
         stroke="currentColor"
         strokeWidth={strokeWidth}
-        className="text-accent/20"      // light track
+        className={cn("text-accent/20",className)}      // light track
       />
 
       {/* Thumb (arc) */}
@@ -43,7 +43,7 @@ export function Spinner({ className, ...props }: SpinnerProps) {
         strokeLinecap="round"
         strokeDasharray={circumference}
         strokeDashoffset={circumference * (1 - thumbFraction)}
-        className="text-accent"
+        className="text-black"
       >
         {/* Start arc at top instead of right */}
         <animateTransform

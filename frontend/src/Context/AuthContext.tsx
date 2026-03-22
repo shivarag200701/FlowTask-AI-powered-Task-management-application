@@ -7,7 +7,7 @@ import {
   useRef
 } from "react";
 import api from "../utils/api";
-import { useLocalStorage } from "@/hooks/use-local-storage";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 export const authMethods = [
   "google",
@@ -25,6 +25,7 @@ interface ContextProps {
   refreshAuth: () => Promise<void>;
   setLastUsedAuthMethod: (value: AuthMethod | undefined) => void ;
   lastUsedAuthMethod: AuthMethod | undefined
+  email: string | undefined
 
 }
 const AuthContext = createContext<ContextProps>({
@@ -32,11 +33,13 @@ const AuthContext = createContext<ContextProps>({
   isLoading: true,
   refreshAuth: async () => {},
   setLastUsedAuthMethod: () => {},
-  lastUsedAuthMethod: undefined
+  lastUsedAuthMethod: undefined,
+  email: undefined
 });
 
 export function AuthProvider({ children }: AuthProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [email,setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(true);
 
   const [lastUsedAuthMethodLive,setLastUsedAuthMethod] = useLocalStorage<AuthMethod | undefined>("last-used-auth-method",undefined)
@@ -51,9 +54,11 @@ export function AuthProvider({ children }: AuthProps) {
         const user = await api.get("/v1/auth-check")
         if (user.data.isAuthenticated == "true") {
           setIsAuthenticated(true);
+          setEmail(user.data.email)
         }
         if (user.data.isAuthenticated == "false") {
           setIsAuthenticated(false);
+          setEmail(user.data.email)
         }
         setIsLoading(false);
       } catch (error) {
@@ -72,7 +77,7 @@ export function AuthProvider({ children }: AuthProps) {
     };
     
 
-  const value = { isAuthenticated, isLoading, refreshAuth, setLastUsedAuthMethod, lastUsedAuthMethod };
+  const value = { isAuthenticated, isLoading, refreshAuth, setLastUsedAuthMethod, lastUsedAuthMethod, email };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

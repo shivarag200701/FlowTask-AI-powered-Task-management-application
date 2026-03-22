@@ -1,10 +1,9 @@
 import { useLocation, Navigate } from "react-router-dom";
 import { Auth } from "../Context/AuthContext";
 import type { ReactNode } from "react";
-import { Spinner } from '../Components/ui/spinner';
+import { Spinner } from "../Components/ui/spinner";
 import { useQuery } from "@tanstack/react-query";
 import api from "../utils/api";
-
 
 const RequireAuth = ({ children }: { children: ReactNode }) => {
   const { isAuthenticated, isLoading: authLoading } = Auth();
@@ -28,6 +27,7 @@ const RequireAuth = ({ children }: { children: ReactNode }) => {
       return res.data.todos;
     },
     enabled: isAuthenticated, // Only fetch if authenticated
+    staleTime: 60000,
   });
 
   // Show loading until auth check, user query, AND todos query are complete

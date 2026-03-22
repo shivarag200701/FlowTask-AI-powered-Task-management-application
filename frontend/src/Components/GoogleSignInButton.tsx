@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import api from '../utils/api';
 import { Auth } from '@/Context/AuthContext';
+import { Google } from './ui/google';
+import Button from './Button';
 
-interface GoogleSignInButtonProps {
-  className?: string;
-}
 
-export function GoogleSignInButton({ className = '' }: GoogleSignInButtonProps) {
+export function GoogleSignInButton() {
   const [loading, setLoading] = useState(false);
 
   const handleGoogleSignIn = async () => {
@@ -24,18 +23,18 @@ export function GoogleSignInButton({ className = '' }: GoogleSignInButtonProps) 
   const {setLastUsedAuthMethod} = Auth()
 
   return (
-    <button
-      onClick={() => {
-        handleGoogleSignIn()
-        setLastUsedAuthMethod("google")
-      }}
-      disabled={loading}
-      className={`flex cursor-pointer items-center justify-center gap-3 w-full px-4 py-3 bg-white backdrop-blur-sm text-gray-900 rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-md ease-in-out shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium ${className}`}
-      type="button"
-    >
-      <img src="/google-icon.svg" alt="Google" width={20} height={20} />
-      <span >{loading ? 'Connecting...' : 'Sign in with Google'}</span>
-    </button>
+      <Button
+        Initial='Continue with Google'
+        Loading='Continue with Google'
+        onClick={() => {
+          handleGoogleSignIn()
+          setLastUsedAuthMethod("google")
+        }}
+        className='bg-white text-gray-900 border border-slate-200 hover:border-slate-300 hover:shadow-md ease-in-out shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium'
+        icon={<Google className='w-5 h-5'/>}
+        isSubmitting={loading}
+        variant="secondary"
+      />
   );
 }
 

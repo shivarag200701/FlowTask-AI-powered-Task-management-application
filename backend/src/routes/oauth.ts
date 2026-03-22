@@ -9,9 +9,11 @@ const oauthRouter = express();
 
 const FRONTEND_URL = (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "");
 
-function setSessionCookie(req: express.Request, res: express.Response, userId: number): Promise<void> {
+function setSessionCookie(req: express.Request, res: express.Response, userId: number, email: string|null): Promise<void> {
     return new Promise((resolve, reject) => {
     req.session.userId = userId;
+    req.session.email = email
+
 
     req.session.save((err) => {
         if (err) {
@@ -136,7 +138,7 @@ oauthRouter.get("/google/callback", async (req,res) => {
                         pictureUrl: userInfo.pictureUrl
                     },
                 });
-                await setSessionCookie(req, res, user.id);
+                await setSessionCookie(req, res, user.id, user.email);
                 return res.redirect(`${FRONTEND_URL}/dashboard`);
             }
 
@@ -188,7 +190,7 @@ oauthRouter.get("/google/callback", async (req,res) => {
                             pictureUrl: userInfo.pictureUrl
                         },
                     });
-                    await setSessionCookie(req, res, user.id);
+                    await setSessionCookie(req, res, user.id, user.email);
                     return res.redirect(`${FRONTEND_URL}/dashboard`);
                 }
             }

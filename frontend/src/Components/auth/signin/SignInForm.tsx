@@ -1,7 +1,7 @@
 import { isAxiosError } from "axios";
 import { useState, useEffect, useRef} from "react";
 import InputBox from "../../InputBox";
-import { User, Lock, ArrowLeft } from "lucide-react";
+import { Lock, ArrowLeft, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import Button from "../../Button";
@@ -9,7 +9,13 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../../../utils/api";
 import { Auth, type AuthMethod } from "@/Context/AuthContext";
 import { GoogleSignInButton } from "../../GoogleSignInButton";
-import { useLocalStorage } from "@/hooks/use-local-storage";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { cn } from "@/lib/utils";
+import { Grid } from "@/Components/ui/grid";
+import LogoCard from "@/Components/LogoCard";
+import {motion} from "motion/react"
+import { toast } from "sonner";
+import { Gradient } from "../../../Pages/onboarding/pages/Welcome";
 
 type Inputs = {
   username: string;
@@ -47,7 +53,7 @@ const SignInForm = () => {
         'oauth_failed': 'Sign-in failed. Please try again.',
       };
       setError(errorMessages[oauthError] || 'Sign-in failed. Please try again.');
-      // Clear the error from URL
+      toast.error(error)
       navigate('/signin', { replace: true });
     }
   }, [searchParams, navigate]);
@@ -58,36 +64,47 @@ const SignInForm = () => {
       await refreshAuth();
       navigate("/dashboard");
     } catch (error) {
-      // console.error("error signing in", error);
+      console.log(error);
       if (isAxiosError(error)) {
-        console.log(error.response?.data.msg);
-
-        setError(error.response?.data.msg);
-      } else {
-        setError(String(error));
+        const data = error.response?.data
+        toast.error(data.msg)
       }
     }
   };
+  
+
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-white text-white flex items-center justify-center px-4">
+    <div className="relative min-h-screen overflow-x-hidden bg-white text-white flex flex-col items-center justify-center px-4">
+      <div
+          className={cn(
+          "absolute inset-y-0 left-1/2 w-full -translate-x-1/2",
+          "mask-intersect mask-[linear-gradient(black,transparent_1000px),linear-gradient(90deg,transparent,black_5%,black_100%,transparent)]",
+          )}
+      >
+        <Grid
+          cellSize={60}
+          patternOffset={[0.75, 0]}
+          className="text-neutral-200"
+        />
+      </div>
       <button onClick={() => {navigate('/')}} className="text-slate-600 hover:text-slate-900 absolute top-10 left-10 flex gap-2 px-4 py-3 rounded-xl border border-slate-200/50 hover:border-slate-300/50 shadow-sm backdrop-blur-2xl cursor-pointer bg-white/10 hover:bg-white hover:shadow-md">
         <div className="flex items-center justify-center">
         <ArrowLeft className="w-4 h-4"/>
         </div>
         <p className="font-medium">Back to home</p>
       </button>
-      <div className="relative z-10 w-full max-w-xl">
-        <div className="relative rounded-[28px] border border-border bg-white/90 backdrop-blur-2xl p-8 sm:p-10 shadow-xl">
-          {/* Gradient overlay */}
-          <div
-            className="absolute inset-0 rounded-[28px] pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(circle at 65% 20%, rgba(255,255,255,0.08), transparent 55%)",
-              mixBlendMode: "screen",
-            }}
-          />
-          
+      <div className="grow max-h-75 pt-10 relative">
+        <Gradient className="opacity-5 mix-blend-overlay"/>
+          <LogoCard className="z-10"/>
+        <Gradient className="opacity-10 mix-blend-hard-light"/>
+      </div>
+      <div className="relative z-10 w-full max-w-xl grow">
+        <motion.div
+          initial={{opacity:0}}
+          animate={{opacity:1}}
+          transition={{duration:0.5}}
+          className="relative rounded-[28px] border border-border bg-white/90 backdrop-blur-2xl p-8 sm:p-10 shadow-xl">
+
           <div className="relative z-10">
             <div className="text-3xl font-semibold text-center text-slate-900 mb-10">Welcome Back</div>
             {/* Google Sign-In Button */}
@@ -111,45 +128,50 @@ const SignInForm = () => {
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)}>
-              <InputBox
-                label="Name"
-                placeholder="Your name"
-                Type="text"
-                register={register("username", {
-                  required: "username is required",
-                })}
-              >
-                <User className="absolute left-3 top-6 -translate-y-1/2 w-4.5 h-4.5 text-[#9EA0BB] z-10" />
-              </InputBox>
-              {errors.username && (
-                <p className="text-red-400 text-sm mt-1">{errors.username.message}</p>
-              )}
-              <InputBox
-                label="Password"
-                placeholder="Password"
-                Type="password"
-                register={register("password", {
-                  required: "password is required",
-                })}
-              >
-                <Lock className="absolute left-3 top-6 -translate-y-1/2 w-4.5 h-4.5 text-[#9EA0BB] z-10" />
-              </InputBox>
-              {errors.password && (
-                <p className="text-red-400 text-sm mt-1">{errors.password.message}</p>
-              )}
-              <Button
-                isSubmitting={isSubmitting}
-                Loading="Signing in..."
-                Initial="Sign in"
-                onClick={() => {
-                  console.log("clicked the sign in button");
-                  setLastUsedAuthMethod("email")
-                }}
-              />
+              <div className="flex flex-col gap-y-6">
+                <label>
+                  <span className="text-black mb-2 block text-sm font-medium leading-nones">
+                    Email
+                  </span>
+                  <InputBox
+                    label="Email"
+                    placeholder="You@example.com"
+                    Type="email"
+                    required
+                    register={register("email", { required: "email is required" })}
+                    autoComplete="email"
+                    error={errors.email ? true : false}
+                  >
+                    <Mail className="absolute left-3 top-6 -translate-y-1/2 w-4.5 h-4.5 text-[#9EA0BB] z-10" />
+                  </InputBox>
+                </label>
+
+                <label>
+                  <span className="text-black mb-2 block text-sm font-medium leading-none">
+                    Password
+                  </span>
+                  <InputBox
+                    label="Password"
+                    placeholder="Password"
+                    Type="password"
+                    register={register("password", {
+                      required: "password is required",
+                    })}
+                    error={errors.password ? true : false}
+                  >
+                    <Lock className="absolute left-3 top-6 -translate-y-1/2 w-4.5 h-4.5 text-[#9EA0BB] z-10" />
+                  </InputBox>
+                </label>
+                <Button
+                  isSubmitting={isSubmitting}
+                  Loading="Signing in..."
+                  Initial="Sign in"
+                  onClick={() => {
+                    setLastUsedAuthMethod("email")
+                  }}
+                />
+              </div>
             </form>
-            <div className="text-center text-red-400 mt-2 min-h-[20px] mb-4">
-              {error ? error : ""}
-            </div>
             <div className="text-center text-muted-foreground mt-8 font-light">
               Don't have an account?{" "}
               <button onClick={() => {navigate('/signup')}} className="text-purple-400 hover:text-purple-300 transition-colors underline cursor-pointer">
@@ -157,7 +179,7 @@ const SignInForm = () => {
               </button>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

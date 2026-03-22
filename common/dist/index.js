@@ -30,7 +30,7 @@ export const todoSchema = z.object({
     nextOccurrence: z.string().nullish(),
     color: z.string().nullish(),
     order: z.number().int().nullish(),
-    reminder: z.boolean().default(false)
+    reminder: z.boolean().default(false),
 });
 /**
  * Converts "Today"/"Tomorrow"/"This Week" to actual Date object (end of period)
@@ -241,7 +241,7 @@ export function isThisWeek(dateString) {
     const daysUntilSunday = 7 - dayOfWeek;
     endOfWeek.setDate(endOfWeek.getDate() + daysUntilSunday);
     endOfWeek.setHours(23, 59, 59, 999);
-    return !isToday(dateString) && !isTomorrow(dateString) && taskDate <= endOfWeek;
+    return (!isToday(dateString) && !isTomorrow(dateString) && taskDate <= endOfWeek);
 }
 /**
  * Formats a date string for display
@@ -273,11 +273,15 @@ export function formatCompleteAt(dateString) {
     }
     else if (date <= endOfWeek) {
         // Show day name if within this week
-        return date.toLocaleDateString('en-US', { weekday: 'long' });
+        return date.toLocaleDateString("en-US", { weekday: "long" });
     }
     else {
         // Show full date for future dates
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        return date.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+        });
     }
 }
 /**
@@ -307,7 +311,10 @@ export function formatUpcomingDateHeader(date) {
     endToday.setHours(23, 59, 59, 999);
     const endTomorrow = new Date(tomorrow);
     endTomorrow.setHours(23, 59, 59, 999);
-    const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const dateStr = date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+    });
     if (date >= today && date <= endToday) {
         return `${dateStr} • Today`;
     }
@@ -315,7 +322,7 @@ export function formatUpcomingDateHeader(date) {
         return `${dateStr} • Tomorrow`;
     }
     else {
-        const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+        const dayName = date.toLocaleDateString("en-US", { weekday: "long" });
         return `${dateStr} • ${dayName}`;
     }
 }
@@ -337,17 +344,17 @@ export function isTaskOnDate(taskDateString, targetDate) {
 export const changePasswordSchema = z.object({
     currentPassword: z.string(),
     newPassword: z.string().min(8, "Password must be 8 characters long"),
-    confirmNewPassword: z.string().min(8, "Password must be 8 characters long")
+    confirmNewPassword: z.string().min(8, "Password must be 8 characters long"),
 });
 export const addPasswordSchema = z.object({
     newPassword: z.string().min(8, "Password must be 8 characters long"),
-    confirmNewPassword: z.string().min(8, "Password must be 8 characters long")
+    confirmNewPassword: z.string().min(8, "Password must be 8 characters long"),
 });
 export const changeEmailSchema = z.object({
-    email: z.email("Invalid email")
+    email: z.email("Invalid email"),
 });
 export const ChangeUsernameSchema = z.object({
-    username: z.string().min(3, "Atleast 3 characters")
+    username: z.string().min(3, "Atleast 3 characters"),
 });
 export const changePreferencesSchema = z.object({
     emailEnabled: z.boolean().optional(),
@@ -358,6 +365,15 @@ export const changePreferencesSchema = z.object({
     reminderBefore: z.int().optional(),
     dailyDigest: z.boolean().optional(),
     digestTime: z.string().optional(),
-    phoneNumber: z.string().optional()
+    phoneNumber: z.string().optional(),
+});
+export const OnboardingStepSchema = z.enum([
+    "welcome",
+    "user-profile",
+    "user-preferences",
+    "completed",
+]);
+export const setOnboardingProgressSchema = z.object({
+    step: OnboardingStepSchema,
 });
 //# sourceMappingURL=index.js.map

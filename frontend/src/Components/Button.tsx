@@ -1,13 +1,35 @@
 import { cn } from "@/utils/cn";
+import { Spinner } from "./ui/spinner";
+import type { ReactNode } from "react";
+import {cva, type VariantProps } from "class-variance-authority"
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+
+export const ButtonVariants = cva("transition-all text-white hover:shadow-lg shadow-sm hover:opacity-90",{
+  variants: {
+    variant: {
+      primary: "bg-accent text-white border-transparent",
+      secondary: "bg-white text-gray-800 border border-gray-200 hover:border-gray-400",
+    },
+    size: {
+      small: "text-xs py-1.5 px-3",
+      medium: "text-base py-2 px-4",
+    },
+  },
+  defaultVariants: {
+    variant: "primary",
+    size: "medium",
+  },
+})
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof ButtonVariants> {
   isSubmitting?: boolean;
   Initial?: string;
   Loading?: string;
+  icon?: ReactNode
 }
 
 
-const Button = ({ isSubmitting, Initial, Loading, onClick ,className,...props}: ButtonProps) => {
+const Button = ({ isSubmitting, Initial, Loading, onClick, icon, variant, size ,className,...props}: ButtonProps) => {
   return (
     <button
       type="submit"
@@ -15,11 +37,24 @@ const Button = ({ isSubmitting, Initial, Loading, onClick ,className,...props}: 
       className={cn('w-full py-3 text-white font-medium rounded-xl',
                  'bg-accent hover:shadow-lg shadow-sm',
                  'hover:opacity-90 transition-opacity cursor-pointer',
-                 'disabled:opacity-50 disabled:cursor-not-allowed',className)}
+                 'disabled:opacity-50 disabled:cursor-not-allowed',className,ButtonVariants({variant,size}))}
       onClick={onClick}
       {...props}
     >
-      {isSubmitting ? Loading : Initial}
+      {
+        isSubmitting ? 
+          <div className="flex gap-2 justify-center">
+            <Spinner className="text-gray-300" />
+          <span>
+            {Loading}
+          </span> 
+        </div>
+        : 
+        <div className="flex gap-2 justify-center">
+          {icon}
+          {Initial}
+        </div>
+        }
     </button>
   );
 };

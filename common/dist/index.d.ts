@@ -138,4 +138,19 @@ export declare const changePreferencesSchema: z.ZodObject<{
     digestTime: z.ZodOptional<z.ZodString>;
     phoneNumber: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
+export declare const OnboardingStepSchema: z.ZodEnum<{
+    welcome: "welcome";
+    "user-profile": "user-profile";
+    "user-preferences": "user-preferences";
+    completed: "completed";
+}>;
+export type OnboardingStep = z.infer<typeof OnboardingStepSchema>;
+export declare const setOnboardingProgressSchema: z.ZodObject<{
+    step: z.ZodEnum<{
+        welcome: "welcome";
+        "user-profile": "user-profile";
+        "user-preferences": "user-preferences";
+        completed: "completed";
+    }>;
+}, z.core.$strip>;
 //# sourceMappingURL=index.d.ts.map

@@ -1,4 +1,5 @@
 import Button from '@/Components/Button'
+import AnimatedSizeContainer from '@/Components/ui/animated-size-container'
 import { Auth } from '@/Context/AuthContext'
 import { useSignupContext } from '@/Context/SingupContext'
 import api from '@/utils/api'
@@ -8,6 +9,8 @@ import { OTPInput, REGEXP_ONLY_DIGITS } from "input-otp"
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
+import { Spinner } from '../../ui/spinner'
+import { Grid } from '@/Components/ui/grid'
 
 
 const VerfiyForm = () => {
@@ -17,9 +20,10 @@ const VerfiyForm = () => {
     const [pending,setPending] = useState(false)
     const {email, password} = useSignupContext()
     const navigate = useNavigate();
-  const { refreshAuth} = Auth();
+    const { refreshAuth} = Auth();
 
-
+    console.log("email",email);
+    
 
 
     const handleSubmit = async() => {
@@ -35,7 +39,7 @@ const VerfiyForm = () => {
             })
             setPending(false)
             await refreshAuth()
-            navigate("/dashboard")
+            navigate('/onboarding/welcome')
         }
         catch(error){
             setPending(false)
@@ -59,11 +63,13 @@ const VerfiyForm = () => {
                     maxLength={6}
                     pattern={REGEXP_ONLY_DIGITS}
                     value={code}
-                    onChange={(code) =>
-                        setCode(code)
+                    onChange={(code) => {
+                            setCode(code)
+                            setIsInvalidCode(false)
+                        }
                     }
                     render={({slots}) => (
-                        <div className='flex w-full gap-4 items-center justify-between'>
+                        <div className='flex gap-4 items-center justify-between'>
                             {slots.map(({char, isActive, hasFakeCaret }, idx) => (
                                 <div
                                     key={idx}
@@ -89,8 +95,13 @@ const VerfiyForm = () => {
                         handleSubmit()
                     }}
                 />
-
-
+                <AnimatedSizeContainer height>
+                    {isInvalidCode && (
+                    <p className="pt-3 text-center text-xs font-medium text-red-500">
+                        Invalid code. Please try again.
+                    </p>
+                    )}
+                </AnimatedSizeContainer>
                 <Button
                     className='mt-8 rounded-md'
                     Initial='Continue'

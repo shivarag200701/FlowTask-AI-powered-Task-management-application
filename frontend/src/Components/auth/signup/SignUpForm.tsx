@@ -1,9 +1,8 @@
 import { isAxiosError } from "axios";
 import { useCallback, useEffect, useState} from "react";
 import InputBox from "../../InputBox";
-import LogoCard from "../../LogoCard";
 import { Mail } from "lucide-react";
-import { Lock, ArrowLeft } from "lucide-react";
+import { Lock} from "lucide-react";
 import { useForm, FormProvider } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import Button from "../../Button";
@@ -14,6 +13,7 @@ import { GoogleSignInButton } from "../../GoogleSignInButton";
 import { PasswordRequirements } from "./PasswordRequirements";
 import {toast} from "sonner"
 import { useSignupContext } from "@/Context/SingupContext";
+import {motion} from "motion/react"
 
 type Inputs = {
   email: string;
@@ -32,7 +32,7 @@ const SignUpForm = () => {
 
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate();
-  const { isAuthenticated, refreshAuth } = Auth();
+  const { isAuthenticated} = Auth();
 
   const {setStep, setEmail, setPassword} = useSignupContext()
 
@@ -64,9 +64,14 @@ const SignUpForm = () => {
   },[getValues, showPassword, handleSubmit]);
 
   return (
-    <div className="relative w-full grow overflow-x-hidden bg-white text-white flex items-start justify-center">
-      <div className="relative w-full max-w-xl">
-        <div className="relative sm:rounded-[28px] sm:border sm:border-border bg-card/80 backdrop-blur-2xl p-8 sm:p-10 sm:shadow-xl">
+    
+    <div className="relative w-full grow overflow-x-hidden text-white flex items-start justify-center">
+      <motion.div 
+        initial={{opacity:0}}
+        animate={{opacity:1}}
+        transition={{duration:0.5}}
+        className="relative w-full max-w-xl z-10">
+        <div className="relative sm:rounded-[28px] sm:border sm:border-border bg-card/80 backdrop-blur-2xl p-8 sm:p-10 sm:shadow-lg">
           <div className="relative ">
             <h2 className="text-3xl text-center tracking-tight leading-tight font-medium text-gray-800 mb-10">Get productive</h2>
             {/* Google Sign-In Button */}
@@ -135,7 +140,7 @@ const SignUpForm = () => {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
