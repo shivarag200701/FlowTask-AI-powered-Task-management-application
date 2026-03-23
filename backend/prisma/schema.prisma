@@ -16,7 +16,7 @@ datasource db {
 
 model User {
   id              Int             @id @default(autoincrement())
-  username        String?          @unique
+  name            String?          
   email           String?          @unique
   hashedPassword  String?
   createdAt       DateTime        @default(now())
@@ -24,6 +24,7 @@ model User {
   todos           Todo[]
   isPasswordSet   Boolean         @default(false)
   emailVerified   DateTime?        
+  image           String?
 
   oauthAccounts   OAuthAccount[]
   preference      UserPrefrence?

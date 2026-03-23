@@ -2,13 +2,25 @@ import Button from "@/Components/Button";
 import type { OnboardingStep } from "@shiva200701/todotypes";
 import UseOnboardingProgess from "./UseOnboardingProgess";
 
-const NextButton = ({ step, text }: { step: OnboardingStep; text: string }) => {
+const NextButton = ({
+  step,
+  text,
+  loadingText,
+  isSubmitting,
+}: {
+  step: OnboardingStep;
+  text: string;
+  loadingText?: string;
+  isSubmitting?: boolean;
+}) => {
   const { continueTo } = UseOnboardingProgess();
   return (
     <Button
       Initial={text}
+      Loading={loadingText}
       className="rounded-md mt-5"
       onClick={() => continueTo(step)}
+      isSubmitting={isSubmitting}
     />
   );
 };

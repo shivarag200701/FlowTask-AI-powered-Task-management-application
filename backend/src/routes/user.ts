@@ -7,7 +7,7 @@ import {
   signUpSchema,
   signInSchema,
   changePasswordSchema,
-  ChangeUsernameSchema,
+  ChangeNameSchema,
   changePreferencesSchema,
   emailSchema,
   passwordSchema,
@@ -24,8 +24,24 @@ import {
   getOnboardingProgress,
   setOnboardingProgress,
 } from "../utils/onboarding-step-cache.js";
+import multer from "multer";
+import { nanoid } from "nanoid";
+import { S3 } from "../services/s3/index.js";
 
 dotenv.config();
+
+const CDN_URL = process.env.CDN_URL;
+console.log(CDN_URL);
+
+const upload = multer({
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter(req, file, callback) {
+    const fileTypes = ["image/jpeg", "image/png"];
+    console.log("fie type", file.mimetype);
+
+    callback(null, fileTypes.includes(file.mimetype));
+  },
+});
 
 userRouter.use(express.json());
 
@@ -405,7 +421,8 @@ userRouter.put("/password", requireLogin, async (req, res) => {
   }
 });
 
-userRouter.put("/username", requireLogin, async (req, res) => {
+//todo- Have a put endpoint in user to change specific user data , instead of one for all user fields
+userRouter.put("/name", requireLogin, async (req, res) => {
   const userId = req.session.userId;
 
   if (!userId) {
@@ -413,26 +430,26 @@ userRouter.put("/username", requireLogin, async (req, res) => {
       msg: "Unauthorized",
     });
   }
-  const { data, success, error } = ChangeUsernameSchema.safeParse(req.body);
+  const { data, success, error } = ChangeNameSchema.safeParse(req.body);
   if (!success) {
     return res.status(400).json({
       msg: error.issues[0]?.message,
       error: error.issues,
     });
   }
-  const { username: newUsername } = data;
+  const { name: newName } = data;
   try {
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
-        username: newUsername,
+        name: newName,
       },
     });
     return res.status(200).json({
-      msg: `Username updated sucessfully to ${updatedUser.username}`,
+      msg: `Name updated sucessfully to ${updatedUser.name}`,
     });
   } catch (error) {
-    console.error("error updating username", error);
+    console.error("error updating name", error);
     return res.status(400).json({
       msg: error,
     });
@@ -486,6 +503,7 @@ userRouter.get("/onboarding/progess", requireLogin, async (req, res) => {
   });
 });
 
+//todo- change name to preferences
 userRouter.get("/user-preferences", requireLogin, async (req, res) => {
   const userId = req.session.userId;
   if (!userId) {
@@ -513,6 +531,8 @@ userRouter.get("/user-preferences", requireLogin, async (req, res) => {
     });
   }
 });
+
+//todo- change name to preferences
 
 userRouter.put("/user-preferences", requireLogin, async (req, res) => {
   const userId = req.session.userId;
@@ -556,6 +576,74 @@ userRouter.put("/user-preferences", requireLogin, async (req, res) => {
   }
 });
 
+userRouter.post(
+  "/profile",
+  requireLogin,
+  upload.single("image"),
+  async (req, res) => {
+    const userId = req.session.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        msg: "Not authorized",
+      });
+    }
+    const schema = z.object({
+      name: z.string(),
+    });
+
+    const { data, success, error } = schema.safeParse(req.body);
+
+    if (!success) {
+      return res.status(400).json({
+        msg: error.issues[0]?.message,
+        error: error.issues,
+      });
+    }
+
+    const { name } = data;
+
+    const file = req.file;
+    try {
+      let imageURL: string | undefined;
+      if (file) {
+        const key = `avatars/${userId}_${nanoid(7)}`;
+
+        await S3.upload({
+          key: key,
+          body: file.buffer,
+          contentType: file.mimetype,
+        });
+
+        //todo add cdn url infront after setting up cloud front
+        imageURL = `${CDN_URL}${key}`;
+      }
+
+      // store the db first - think about whether we can use update here
+      const user = await prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          name,
+          ...(imageURL && { image: imageURL }),
+        },
+      });
+
+      console.log("user after updating", user);
+
+      return res.status(201).json({
+        msg: "user profile updated successfully",
+      });
+    } catch (error) {
+      console.error(`error while updaing user profile`, error);
+      res.status(502).json({
+        msg: "error while updating user profile",
+      });
+    }
+  },
+);
+
 userRouter.get("/profile", requireLogin, async (req, res) => {
   const userId = req.session.userId;
   if (!userId) {
@@ -569,7 +657,7 @@ userRouter.get("/profile", requireLogin, async (req, res) => {
       where: { id: userId },
       select: {
         id: true,
-        username: true,
+        name: true,
         email: true,
         isPasswordSet: true,
         oauthAccounts: {
@@ -592,7 +680,7 @@ userRouter.get("/profile", requireLogin, async (req, res) => {
     return res.status(200).json({
       user: {
         id: user.id,
-        username: user.username,
+        username: user.name,
         email: user.email,
         isPasswordSet: user.isPasswordSet,
         pictureUrl: user.oauthAccounts?.[0]?.pictureUrl || null,

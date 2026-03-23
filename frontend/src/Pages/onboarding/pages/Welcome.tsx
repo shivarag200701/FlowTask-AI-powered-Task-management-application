@@ -9,7 +9,7 @@ export const container = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.3,
+      staggerChildren: 0.6,
       type: "spring" as const,
       stiffness: 25,
     },

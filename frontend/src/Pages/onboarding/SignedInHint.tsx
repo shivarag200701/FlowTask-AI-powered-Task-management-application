@@ -15,6 +15,7 @@ const SignedInHint = () => {
   const { mutate } = useMutation({
     mutationFn: () => logout(),
     onSuccess: () => {
+      setLoading(false);
       navigate("/signin");
     },
     onError: (error) => {
@@ -24,6 +25,7 @@ const SignedInHint = () => {
   });
 
   const logout = async () => {
+    setLoading(true);
     await api.post("/v1/user/logout");
   };
 

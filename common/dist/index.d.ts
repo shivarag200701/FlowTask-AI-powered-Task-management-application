@@ -124,8 +124,8 @@ export declare const addPasswordSchema: z.ZodObject<{
 export declare const changeEmailSchema: z.ZodObject<{
     email: z.ZodEmail;
 }, z.core.$strip>;
-export declare const ChangeUsernameSchema: z.ZodObject<{
-    username: z.ZodString;
+export declare const ChangeNameSchema: z.ZodObject<{
+    name: z.ZodString;
 }, z.core.$strip>;
 export declare const changePreferencesSchema: z.ZodObject<{
     emailEnabled: z.ZodOptional<z.ZodBoolean>;

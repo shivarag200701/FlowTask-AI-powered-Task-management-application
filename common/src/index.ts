@@ -479,8 +479,8 @@ export const changeEmailSchema = z.object({
   email: z.email("Invalid email"),
 });
 
-export const ChangeUsernameSchema = z.object({
-  username: z.string().min(3, "Atleast 3 characters"),
+export const ChangeNameSchema = z.object({
+  name: z.string(),
 });
 
 export const changePreferencesSchema = z.object({

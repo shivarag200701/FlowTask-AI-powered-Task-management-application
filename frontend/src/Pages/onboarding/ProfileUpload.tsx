@@ -8,49 +8,30 @@ import {
 import { useState } from "react";
 import { CloudUpload } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-// type UploadOptions = {
-//   onProgress: (file: File, progress: number) => void;
-//   onSuccess: (file: File) => void;
-//   onError: (file: File, error: Error) => void;
-// };
+import { toast } from "sonner";
 
 interface ProfileUploadProps {
   className?: string;
   onChange?: (file: File | undefined) => void;
-  value?: File | string;
 }
 
-const ProfileUpload = ({ className, onChange, value }: ProfileUploadProps) => {
+const ProfileUpload = ({ className, onChange }: ProfileUploadProps) => {
   const [files, setFiles] = useState<File[]>([]);
-
-  // const handleFileUpload = async (
-  //   files: File[],
-  //   { onProgress, onSuccess, onError }: UploadOptions,
-  // ) => {
-  //   for (const file of files) {
-  //     try {
-  //       onProgress(file);
-  //       console.log("here");
-  //       onSuccess(file);
-  //     } catch (err) {
-  //       onError(file, err instanceof Error ? err : new Error(String(err)));
-  //       console.log(err);
-  //     }
-  //   }
-  // };
 
   return (
     <div className={cn("relative flex items-center justify-center", className)}>
       <FileUpload
         value={files}
-        maxSize={4 * 1024 * 1024}
+        maxSize={5 * 1024 * 1024}
         onValueChange={(newFiles) => {
           const latest = newFiles.slice(-1);
           setFiles(latest);
           onChange?.(latest[0]);
         }}
-        accept=".png,.jpeg"
+        onFileReject={(file, message) => {
+          console.error(file.name, "is too large");
+          toast.error(message);
+        }}
       >
         <FileUploadDropzone className="h-30 w-30 rounded-full hover:border-accent cursor-pointer">
           {files.length === 0 && (
