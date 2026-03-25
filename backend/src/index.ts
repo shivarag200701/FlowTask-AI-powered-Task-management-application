@@ -83,6 +83,8 @@ app.use(
   }),
 );
 
+app.set("trust proxy", 1);
+
 //session middleware
 app.use(
   session({

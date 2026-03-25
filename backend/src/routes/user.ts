@@ -80,16 +80,17 @@ userRouter.post("/signup/send-otp", async (req, res) => {
     });
 
     //insert into db and send email
-    (await prisma.emailVerificationToken.create({
+    await prisma.emailVerificationToken.create({
       data: {
         identifier: email,
         token: code,
         expires: new Date(Date.now() + EMAIL_OTP_EXPIRY_IN * 1000),
       },
-    }),
-      res.status(200).json({
-        msg: "OTP sent successfully",
-      }));
+    });
+
+    res.status(200).json({
+      msg: "OTP sent successfully",
+    });
 
     sendEmail({ email, code, template: "verify" }).catch((err) => {
       console.error("Backgorund email send failed:", err);
