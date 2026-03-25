@@ -37,7 +37,7 @@ const InputBox = ({
         type={isPasswordVisible ? "text" : Type}
         autoComplete={Type === "password" ? "new-password" : "off"}
         className={cn(
-          "pl-10 pr-4 py-3  h-12 bg-slate-100 backdrop-blur-sm text-slate-900 placeholder:text-[#9EA0BB] border hover:border-2  hover:border-gray-300 rounded-xl focus:border-accent focus:outline-none focus:ring-2 focus:ring-purple-500/20 transition-all relative",
+          "py-2 px-3  bg-slate-100 backdrop-blur-sm text-slate-900 placeholder:text-[#9EA0BB] border  rounded-lg focus:border-accent focus:outline-none focus:ring-2 focus:ring-purple-500/20 transition-all relative sm:text-sm",
           className,
         )}
       />

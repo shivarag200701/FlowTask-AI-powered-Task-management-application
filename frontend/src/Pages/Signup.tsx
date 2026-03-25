@@ -51,7 +51,7 @@ const SignupFlow = () => {
   const { step } = useSignupContext();
   return (
     <>
-      <div className="min-h-screen flex flex-col items-center justify-center ">
+      <div className="relative min-h-screen overflow-x-hidden bg-white text-white flex flex-col items-center justify-center px-4">
         <div
           className={cn(
             "absolute inset-y-0 left-1/2 w-full -translate-x-1/2",
@@ -75,7 +75,7 @@ const SignupFlow = () => {
             <p className="font-medium">Back to home</p>
           </div>
         </button>
-        <div className="grow max-h-75 pt-10 relative">
+        <div className="grow max-h-50 sm:max-h-75 pt-10 relative">
           <Gradient className="opacity-5 mix-blend-overlay" />
           <LogoCard className="z-10" />
           <Gradient className="opacity-10 mix-blend-hard-light" />

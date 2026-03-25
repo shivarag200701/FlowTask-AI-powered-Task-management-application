@@ -1,8 +1,6 @@
 import { isAxiosError } from "axios";
 import { useCallback, useState } from "react";
 import InputBox from "../../InputBox";
-import { Mail } from "lucide-react";
-import { Lock } from "lucide-react";
 import { useForm, FormProvider } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import Button from "../../Button";
@@ -63,11 +61,11 @@ const SignUpForm = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="relative w-full max-w-xl z-10"
+        className="relative w-full max-w-lg z-10"
       >
         <div className="relative sm:rounded-[28px] sm:border sm:border-border sm:bg-card/80 backdrop-blur-2xl p-8 sm:p-10 sm:shadow-lg">
           <div className="relative ">
-            <h2 className="text-3xl text-center tracking-tight leading-tight font-medium text-gray-800 mb-10">
+            <h2 className="text-2xl sm:text-3xl text-center tracking-tight leading-tight font-semibold text-gray-800 mb-10">
               Get productive
             </h2>
             {/* Google Sign-In Button */}
@@ -98,9 +96,7 @@ const SignUpForm = () => {
                       required: "email is required",
                     })}
                     autoComplete="email"
-                  >
-                    <Mail className="absolute left-3 top-6 -translate-y-1/2 w-4.5 h-4.5 text-[#9EA0BB] z-10" />
-                  </InputBox>
+                  ></InputBox>
                 </label>
                 {showPassword && (
                   <label>
@@ -117,9 +113,7 @@ const SignUpForm = () => {
                       register={register("password", {
                         required: "password is required",
                       })}
-                    >
-                      <Lock className="absolute left-3 top-6 -translate-y-1/2 w-4.5 h-4.5 text-[#9EA0BB] z-10" />
-                    </InputBox>
+                    ></InputBox>
                     <FormProvider {...form}>
                       <PasswordRequirements />
                     </FormProvider>
@@ -129,6 +123,7 @@ const SignUpForm = () => {
                   isSubmitting={isSubmitting}
                   Initial="Create Account"
                   Loading="Creating Account..."
+                  size="small"
                 />
               </div>
             </form>

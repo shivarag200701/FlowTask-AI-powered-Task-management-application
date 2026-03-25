@@ -1,7 +1,7 @@
 import { isAxiosError } from "axios";
 import { useEffect, useRef } from "react";
 import InputBox from "../../InputBox";
-import { Lock, ArrowLeft, Mail } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import Button from "../../Button";
@@ -100,20 +100,20 @@ const SignInForm = () => {
           <p className="font-medium">Back to home</p>
         </div>
       </button>
-      <div className="grow max-h-75 pt-10 relative">
+      <div className="grow max-h-50 sm:max-h-75  pt-6 sm:pt-10 relative">
         <Gradient className="opacity-5 mix-blend-overlay" />
         <LogoCard className="z-10" />
         <Gradient className="opacity-10 mix-blend-hard-light" />
       </div>
-      <div className="relative z-10 w-full max-w-xl grow">
+      <div className="relative z-10 w-full max-w-lg grow">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="relative sm:rounded-[28px] sm:border border-border  sm:bg-white/90 backdrop-blur-2xl p-8 sm:p-10 sm:shadow-xl"
+          className="relative sm:rounded-[28px] sm:border border-border  sm:bg-white/90 backdrop-blur-2xl p-4 sm:p-10 sm:shadow-xl"
         >
           <div className="relative z-10">
-            <div className="text-3xl font-semibold text-center text-slate-900 mb-10">
+            <div className="text-2xl sm:text-3xl font-semibold text-center text-slate-900 mb-10">
               Welcome Back
             </div>
             {/* Google Sign-In Button */}
@@ -157,9 +157,7 @@ const SignInForm = () => {
                     })}
                     autoComplete="email"
                     error={errors.email ? true : false}
-                  >
-                    <Mail className="absolute left-3 top-6 -translate-y-1/2 w-4.5 h-4.5 text-[#9EA0BB] z-10" />
-                  </InputBox>
+                  ></InputBox>
                 </label>
 
                 <label>
@@ -174,9 +172,7 @@ const SignInForm = () => {
                       required: "password is required",
                     })}
                     error={errors.password ? true : false}
-                  >
-                    <Lock className="absolute left-3 top-6 -translate-y-1/2 w-4.5 h-4.5 text-[#9EA0BB] z-10" />
-                  </InputBox>
+                  ></InputBox>
                 </label>
                 <Button
                   isSubmitting={isSubmitting}
@@ -185,10 +181,11 @@ const SignInForm = () => {
                   onClick={() => {
                     setLastUsedAuthMethod("email");
                   }}
+                  size="small"
                 />
               </div>
             </form>
-            <div className="text-center text-muted-foreground mt-8 font-light">
+            <div className="text-center text-muted-foreground mt-8 font-light text-sm">
               Don't have an account?{" "}
               <button
                 onClick={() => {
