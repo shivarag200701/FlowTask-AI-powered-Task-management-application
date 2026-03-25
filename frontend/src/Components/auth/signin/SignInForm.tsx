@@ -67,7 +67,7 @@ const SignInForm = () => {
       await refreshAuth();
       navigate("/dashboard");
     } catch (error) {
-      console.log(error);
+      console.error(error);
       if (isAxiosError(error)) {
         const data = error.response?.data;
         toast.error(data.msg);
@@ -93,12 +93,12 @@ const SignInForm = () => {
         onClick={() => {
           navigate("/");
         }}
-        className="text-slate-600 hover:text-slate-900 absolute top-10 left-10 flex gap-2 px-4 py-3 rounded-xl border border-slate-200/50 hover:border-slate-300/50 shadow-sm backdrop-blur-2xl cursor-pointer bg-white/10 hover:bg-white hover:shadow-md"
+        className="text-slate-600 hidden lg:block hover:text-slate-900 absolute top-10 left-10 gap-2 px-4 py-3 rounded-xl border border-slate-200/50 hover:border-slate-300/50 shadow-sm backdrop-blur-2xl cursor-pointer bg-white/10 hover:bg-white hover:shadow-md"
       >
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center gap-2">
           <ArrowLeft className="w-4 h-4" />
+          <p className="font-medium">Back to home</p>
         </div>
-        <p className="font-medium">Back to home</p>
       </button>
       <div className="grow max-h-75 pt-10 relative">
         <Gradient className="opacity-5 mix-blend-overlay" />
@@ -110,7 +110,7 @@ const SignInForm = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="relative rounded-[28px] border border-border bg-white/90 backdrop-blur-2xl p-8 sm:p-10 shadow-xl"
+          className="relative sm:rounded-[28px] sm:border border-border  sm:bg-white/90 backdrop-blur-2xl p-8 sm:p-10 sm:shadow-xl"
         >
           <div className="relative z-10">
             <div className="text-3xl font-semibold text-center text-slate-900 mb-10">

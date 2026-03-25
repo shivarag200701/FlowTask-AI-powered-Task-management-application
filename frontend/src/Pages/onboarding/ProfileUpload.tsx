@@ -28,6 +28,7 @@ const ProfileUpload = ({ className, onChange }: ProfileUploadProps) => {
           setFiles(latest);
           onChange?.(latest[0]);
         }}
+        accept=".jpg,.jpeg,.png"
         onFileReject={(file, message) => {
           console.error(file.name, "is too large");
           toast.error(message);

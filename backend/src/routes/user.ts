@@ -31,13 +31,10 @@ import { S3 } from "../services/s3/index.js";
 dotenv.config();
 
 const CDN_URL = process.env.CDN_URL;
-console.log(CDN_URL);
-
 const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter(req, file, callback) {
     const fileTypes = ["image/jpeg", "image/png"];
-    console.log("fie type", file.mimetype);
 
     callback(null, fileTypes.includes(file.mimetype));
   },
@@ -558,8 +555,6 @@ userRouter.post(
           ...(imageURL && { image: imageURL }),
         },
       });
-
-      console.log("user after updating", user);
 
       return res.status(201).json({
         msg: "user profile updated successfully",

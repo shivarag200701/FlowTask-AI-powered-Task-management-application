@@ -83,35 +83,50 @@ oauthRouter.get("/google/callback", async (req, res) => {
         },
       });
       if (user) {
-        await prisma.oAuthAccount.upsert({
-          where: {
-            userId_provider: {
-              userId: user.id,
-              provider: "google",
+        const currentUser = user;
+
+        //atmomic transaction for updating user and OAuth account
+        await prisma.$transaction(async (tx) => {
+          await tx.user.update({
+            where: {
+              email: userInfo.email,
             },
-          },
-          update: {
-            accessToken,
-            refreshToken,
-            tokenExpiresAt: expiresAt,
-            providerAccountId: userInfo.id,
-            updatedAt: new Date(),
-            pictureUrl: userInfo.pictureUrl,
-          },
-          create: {
-            userId: user.id,
-            provider: "google",
-            providerAccountId: userInfo.id,
-            accessToken,
-            refreshToken,
-            tokenExpiresAt: expiresAt,
-            scope: "email profile",
-            pictureUrl: userInfo.pictureUrl,
-          },
+            data: {
+              image: userInfo.pictureUrl,
+              emailVerified: new Date(),
+            },
+          });
+
+          await tx.oAuthAccount.upsert({
+            where: {
+              userId_provider: {
+                userId: currentUser.id,
+                provider: "google",
+              },
+            },
+            update: {
+              accessToken,
+              refreshToken,
+              tokenExpiresAt: expiresAt,
+              providerAccountId: userInfo.id,
+              updatedAt: new Date(),
+              pictureUrl: userInfo.pictureUrl,
+            },
+            create: {
+              userId: currentUser.id,
+              provider: "google",
+              providerAccountId: userInfo.id,
+              accessToken,
+              refreshToken,
+              tokenExpiresAt: expiresAt,
+              scope: "email profile",
+              pictureUrl: userInfo.pictureUrl,
+            },
+          });
         });
 
-        req.session.userId = user.id;
-        req.session.email = user.email;
+        req.session.userId = currentUser.id;
+        req.session.email = currentUser.email;
 
         req.session.save((err) => {
           if (err) {
@@ -119,49 +134,58 @@ oauthRouter.get("/google/callback", async (req, res) => {
             return res.status(500).json({ msg: "Session error" });
           }
 
-          return res.redirect(`${FRONTEND_URL}/dashboard`);
+          return res.redirect(`${FRONTEND_URL}/onboarding/welcome`);
         });
       }
 
       if (!user) {
         // create new user from google info
 
-        user = await prisma.user.create({
-          data: {
-            email: userInfo.email,
-            name: userInfo.name,
-            hashedPassword: null,
-          },
-        });
-
-        await prisma.oAuthAccount.upsert({
-          where: {
-            userId_provider: {
-              userId: user.id,
-              provider: "google",
+        //transaction for adding user and OAuth account
+        const newUser = await prisma.$transaction(async (tx) => {
+          const created = await tx.user.create({
+            data: {
+              email: userInfo.email,
+              name: userInfo.name,
+              hashedPassword: null,
+              image: userInfo.pictureUrl,
+              emailVerified: new Date(),
+              preference: {
+                create: {},
+              },
             },
-          },
-          update: {
-            accessToken,
-            refreshToken,
-            tokenExpiresAt: expiresAt,
-            providerAccountId: userInfo.id,
-            updatedAt: new Date(),
-          },
-          create: {
-            userId: user.id,
-            provider: "google",
-            providerAccountId: userInfo.id,
-            accessToken,
-            refreshToken,
-            tokenExpiresAt: expiresAt,
-            scope: "email profile",
-            pictureUrl: userInfo.pictureUrl,
-          },
+          });
+
+          await tx.oAuthAccount.upsert({
+            where: {
+              userId_provider: {
+                userId: created.id,
+                provider: "google",
+              },
+            },
+            update: {
+              accessToken,
+              refreshToken,
+              tokenExpiresAt: expiresAt,
+              providerAccountId: userInfo.id,
+              updatedAt: new Date(),
+            },
+            create: {
+              userId: created.id,
+              provider: "google",
+              providerAccountId: userInfo.id,
+              accessToken,
+              refreshToken,
+              tokenExpiresAt: expiresAt,
+              scope: "email profile",
+              pictureUrl: userInfo.pictureUrl,
+            },
+          });
+          return created;
         });
 
-        req.session.userId = user.id;
-        req.session.email = user.email;
+        req.session.userId = newUser.id;
+        req.session.email = newUser.email;
 
         req.session.save((err) => {
           if (err) {
@@ -169,7 +193,7 @@ oauthRouter.get("/google/callback", async (req, res) => {
             return res.status(500).json({ msg: "Session error" });
           }
 
-          return res.redirect(`${FRONTEND_URL}/dashboard`);
+          return res.redirect(`${FRONTEND_URL}/onboarding/welcome`);
         });
       }
     } else if (stateData.type === "connect" && stateData.userId) {

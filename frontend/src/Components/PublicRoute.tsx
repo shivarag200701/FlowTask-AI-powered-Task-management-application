@@ -15,8 +15,6 @@ const PublicRoute = () => {
   }
 
   if (isAuthenticated) {
-    console.log("here in public route");
-
     return <Navigate to="/dashboard" replace />;
   }
 

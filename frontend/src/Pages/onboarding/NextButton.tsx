@@ -14,7 +14,6 @@ const NextButton = ({
   isSubmitting?: boolean;
 }) => {
   const { continueTo } = UseOnboardingProgess();
-  console.log("is submitting", isSubmitting);
 
   return (
     <Button

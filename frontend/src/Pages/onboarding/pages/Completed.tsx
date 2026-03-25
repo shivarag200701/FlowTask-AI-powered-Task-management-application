@@ -25,7 +25,7 @@ export const Completed = () => {
           initial={{ y: 10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="flex flex-col gap-15 items-center justify-center max-w-lg"
+          className="flex flex-col gap-15 items-center justify-center max-w-sm sm:max-w-lg"
         >
           <div className="h-40 w-40 bg-white rounded-full shadow-lg relative flex justify-center">
             <CircleCheckBig

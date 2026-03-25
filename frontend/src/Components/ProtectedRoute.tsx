@@ -59,7 +59,9 @@ const ProtectedRoute = () => {
   if (!isAuthenticated) {
     // Redirect unauthenticated users to the login page
     return <Navigate to="/signin" state={{ from: location }} replace />;
-  } else if (
+  }
+  // user is authenticated and redis entry is present and they havent completed the onboarding
+  else if (
     isAuthenticated &&
     new Date(user?.createdAt ?? "").getTime() >
       Date.now() - ONBOARDING_WINDOW_SECONDS * 1000 &&
@@ -77,6 +79,26 @@ const ProtectedRoute = () => {
         replace
       />
     );
+  }
+  //user authenticated and they have completed the onboarding
+  else if (
+    isAuthenticated &&
+    onboardingStep === "completed" &&
+    location.pathname.startsWith("/onboarding") &&
+    location.pathname !== "/onboarding/completed"
+  ) {
+    return <Navigate to="/dashboard" state={{ from: location }} replace />;
+  }
+  // user is authenticated and they try to go to onboarding given that either the onboarding is completed or the key is expried, then redirect to dashboard
+  else if (
+    isAuthenticated &&
+    location.pathname.startsWith("/onboarding") &&
+    (onboardingStep === "completed" ||
+      new Date(user?.createdAt ?? "").getTime() <=
+        Date.now() - ONBOARDING_WINDOW_SECONDS * 1000) &&
+    location.pathname !== "/onboarding/completed"
+  ) {
+    return <Navigate to="/dashboard" state={{ from: location }} replace />;
   }
   return <Outlet />;
 };

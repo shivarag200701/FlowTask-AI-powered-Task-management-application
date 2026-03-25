@@ -51,7 +51,7 @@ const UserProfile = () => {
       queryClient.setQueryData(["users"], res.data.user);
       continueTo("completed");
     } catch (error) {
-      console.log(error);
+      console.error(error);
       if (isAxiosError(error)) {
         const data = error.response?.data;
         toast.error(data.msg);

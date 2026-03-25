@@ -2,7 +2,6 @@ import { type PropsWithChildren } from "react";
 import SignedInHint from "./SignedInHint";
 import { Grid } from "@/Components/ui/grid";
 import { cn } from "@/lib/utils";
-import ProgressBar from "./ProgressBar";
 
 const Onboarding = ({
   className,
@@ -11,7 +10,6 @@ const Onboarding = ({
 }: { className?: string; cellSize?: number } & PropsWithChildren) => {
   return (
     <div className="">
-      <ProgressBar />
       <div
         className={cn(
           "absolute inset-y-0 -z-30 left-1/2 w-full -translate-x-1/2",

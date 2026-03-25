@@ -41,7 +41,6 @@ const VerfiyForm = () => {
         toast.error(data.msg);
       }
       setCode("");
-      setPassword("");
       setIsInvalidCode(true);
     }
   };

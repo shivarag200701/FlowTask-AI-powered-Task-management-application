@@ -8,7 +8,6 @@ const ProgressBar = () => {
   const onboardingStep = pathname.split("/").at(-1) ?? "";
 
   const currentIndex = ONBOARDING_STEPS.indexOf(onboardingStep);
-  console.log(currentIndex + 1);
 
   const progress =
     currentIndex >= 0
