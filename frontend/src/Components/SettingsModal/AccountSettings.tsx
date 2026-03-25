@@ -3,6 +3,7 @@ import { useEffect, useState, useMemo } from "react";
 import { Spinner } from "../ui/spinner";
 import { useQuery } from "@tanstack/react-query";
 import { UnsavedModal } from "./SettingsModal";
+import type { User } from "@/types";
 
 interface AccountSettingsProps {
   handleChange: (subTabtabId: string) => void;
@@ -19,29 +20,29 @@ const AccountSettings = ({
 }: AccountSettingsProps) => {
   const [name, setName] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [pendingAction, setPendingAction] = useState<"email" | "password" | null>(
-    null
-  );
+  const [pendingAction, setPendingAction] = useState<
+    "email" | "password" | null
+  >(null);
 
   const { data: user, isPending } = useQuery({
     queryKey: ["users"],
-    queryFn: async () => {
+    queryFn: async (): Promise<User> => {
       const res = await api.get("/v1/user/profile");
       return res.data.user;
     },
-    staleTime: 1000 * 60 * 5
+    staleTime: 1000 * 60 * 5,
   });
 
   useEffect(() => {
-    if (user?.username) {
-      setName(user.username);
+    if (user?.name) {
+      setName(user.name);
     }
   }, [user]);
 
   const computedHasChanged = useMemo(() => {
-    if (!user.username || name === null) return false;
-    return name !== user.username;
-  }, [name, user?.username]);
+    if (!user?.name || name === null) return false;
+    return name !== user.name;
+  }, [name, user?.name]);
 
   useEffect(() => {
     setHasChanged(computedHasChanged);
@@ -49,23 +50,21 @@ const AccountSettings = ({
 
   // Reset from parent (e.g. when switching sidebar tabs)
   useEffect(() => {
-    if (user?.username) {
-      setName(user.username);
+    if (user?.name) {
+      setName(user.name);
       setHasChanged(false);
     }
-  }, [resetToken, user?.username, setHasChanged]);
+  }, [resetToken, user?.name, setHasChanged]);
 
-  const handleNameUpdate = async() => {
-    try{
-    await api.put("/v1/user/username",{username:name})
-    setHasChanged(false)
+  const handleNameUpdate = async () => {
+    try {
+      await api.put("/v1/user/name", { name });
+      setHasChanged(false);
+    } catch (error) {
+      console.error("error updating name", error);
+      setName(user?.name ?? "");
     }
-    catch(error){
-        console.error("error updating username",error);
-        setName(user?.username)
-    }
-    
-  }
+  };
 
   const handleNavigateWithUnsavedCheck = (action: "email" | "password") => {
     if (computedHasChanged) {
@@ -77,8 +76,8 @@ const AccountSettings = ({
   };
 
   const handleDiscardAndProceed = () => {
-    if (user?.username) {
-      setName(user.username);
+    if (user?.name) {
+      setName(user.name);
     }
     setHasChanged(false);
     setModalOpen(false);
@@ -122,7 +121,7 @@ const AccountSettings = ({
               <span className="text-[14px]">Photo</span>
               <div className="flex">
                 <img
-                  src={user.pictureUrl || ""}
+                  src={user?.image || ""}
                   alt="Profile"
                   className="w-20 h-20 rounded-full mt-2 mr-2"
                 />
@@ -161,7 +160,7 @@ const AccountSettings = ({
               <div className="flex flex-col gap-2">
                 <span className="text-[14px]">Email</span>
                 <span className="font-light text-[14px]">
-                  {user.email || ""}
+                  {user?.email || ""}
                 </span>
                 <button
                   className="p-2 cursor-pointer  bg-button-subtle text-button-text rounded-sm max-w-30 text-[14px] hover:bg-button-subtle-hover transition-all duration-300 "
@@ -174,7 +173,7 @@ const AccountSettings = ({
             <div className="p-4">
               <div className="flex flex-col gap-2">
                 <span className="text-[14px]">Password</span>
-                {!user.isPasswordSet ? (
+                {!user?.isPasswordSet ? (
                   <button
                     onClick={() => handleNavigateWithUnsavedCheck("password")}
                     className="p-2 cursor-pointer  bg-button-subtle text-button-text rounded-sm max-w-30 text-[14px] font-light hover:bg-button-subtle-hover transition-all duration-300 "
@@ -200,16 +199,16 @@ const AccountSettings = ({
                   account (Facebook & Apple coming soon).
                 </span>
                 <span className="font-light text-[14px] text-foreground">
-                  You can log in to FlowTask with your {user.provider} account{" "}
+                  You can log in to FlowTask with your {user?.provider} account{" "}
                   <span className="text-foreground font-medium">
-                    {user.email || ""}
+                    {user?.email || ""}
                   </span>
                   .
                 </span>
-                {!user.isPasswordSet ? (
+                {!user?.isPasswordSet ? (
                   <span className="font-light text-[14px] text-foreground">
                     Your password is not set, so we cannot disconnect you from
-                    your {user.provider} account. If you want to disconnect,
+                    your {user?.provider} account. If you want to disconnect,
                     please{" "}
                     <a href="/" className="underline text-red-500">
                       set up your password
@@ -274,16 +273,17 @@ const AccountSettings = ({
           <button
             className="px-3 py-2 bg-button-subtle text-button-text rounded-sm max-w-30 text-[14px] font-light hover:bg-button-subtle-hover cursor-pointer"
             onClick={() => {
-              if (user?.username) {
-                setName(user.username);
+              if (user?.name) {
+                setName(user.name);
                 setHasChanged(false);
               }
             }}
           >
             Cancel
           </button>
-          <button className=" text-[14px] px-3 py-1.5 bg-red-500 font-light rounded-sm text-white cursor-pointer hover:bg-red-400"
-          onClick={handleNameUpdate}
+          <button
+            className=" text-[14px] px-3 py-1.5 bg-red-500 font-light rounded-sm text-white cursor-pointer hover:bg-red-400"
+            onClick={handleNameUpdate}
           >
             Update
           </button>
@@ -298,6 +298,6 @@ const AccountSettings = ({
       )}
     </div>
   );
-}
+};
 
-export default AccountSettings
+export default AccountSettings;

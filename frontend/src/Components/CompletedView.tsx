@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { CheckCircle2 } from "lucide-react";
-import type { Todo } from "./Modal";
+import type { Todo } from "../types";
 import TaskCard from "./TaskCard";
 import Day from "./Day";
 import NoTodo from "./NoTodo";

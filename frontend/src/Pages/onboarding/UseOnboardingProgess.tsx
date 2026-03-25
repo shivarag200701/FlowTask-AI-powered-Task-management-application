@@ -1,16 +1,20 @@
 import { type OnboardingStep } from "@shiva200701/todotypes";
 import { useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "@/utils/api";
 
 const UseOnboardingProgess = () => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { mutate } = useMutation({
     mutationFn: (step: OnboardingStep) => saveStep(step),
+    onSuccess: (_, step) => {
+      queryClient.setQueryData(["onboardingProgress"], step);
+    },
   });
 
   const saveStep = async (step: OnboardingStep) => {
-    await axios.post("/v1/user/onboarding/progess", {
+    await api.post("/v1/user/onboarding/progess", {
       step,
     });
   };

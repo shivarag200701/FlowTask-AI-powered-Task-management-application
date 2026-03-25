@@ -1,14 +1,22 @@
-  import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { CheckCircle2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-const LogoCard = ({className}:{className:string}) => {
+const LogoCard = ({ className }: { className?: string }) => {
   const navigate = useNavigate();
   return (
-    <div className={cn("relative flex items-center justify-center gap-3 cursor-pointer hover-elevate rounded-2xl transition-all",className)} onClick={() => navigate("/")}>
+    <div
+      className={cn(
+        "relative flex items-center justify-center gap-3 cursor-pointer hover-elevate rounded-2xl transition-all",
+        className,
+      )}
+      onClick={() => navigate("/")}
+    >
       <div className="w-12 h-12 rounded-2xl bg-accent flex items-center justify-center text-white">
         <CheckCircle2 className="w-7 h-7 text-primary-foreground" />
       </div>
-      <h1 className="text-2xl font-bold tracking-tight text-accent">FlowTask</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-accent">
+        FlowTask
+      </h1>
     </div>
   );
 };

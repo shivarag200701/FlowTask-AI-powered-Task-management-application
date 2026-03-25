@@ -1,5 +1,5 @@
 import { isAxiosError } from "axios";
-import { useState, useEffect, useRef} from "react";
+import { useEffect, useRef } from "react";
 import InputBox from "../../InputBox";
 import { Lock, ArrowLeft, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -13,7 +13,7 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { cn } from "@/lib/utils";
 import { Grid } from "@/Components/ui/grid";
 import LogoCard from "@/Components/LogoCard";
-import {motion} from "motion/react"
+import { motion } from "motion/react";
 import { toast } from "sonner";
 import { Gradient } from "../../../Pages/onboarding/pages/Welcome";
 
@@ -30,31 +30,34 @@ const SignInForm = () => {
     formState: { errors, isSubmitting },
   } = useForm<Inputs>();
 
-  const [error, setError] = useState("");
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { refreshAuth, setLastUsedAuthMethod } = Auth();
 
-  const [lastUsedAuthMethodLive] = useLocalStorage<AuthMethod | undefined>("last-used-auth-method",undefined)
+  const [lastUsedAuthMethodLive] = useLocalStorage<AuthMethod | undefined>(
+    "last-used-auth-method",
+    undefined,
+  );
 
-  const {current: lastUsedAuthMethod} = useRef<AuthMethod | undefined>(lastUsedAuthMethodLive)
-
-
+  const { current: lastUsedAuthMethod } = useRef<AuthMethod | undefined>(
+    lastUsedAuthMethodLive,
+  );
 
   // Handle OAuth errors from URL params
   useEffect(() => {
-    const oauthError = searchParams.get('error');
+    const oauthError = searchParams.get("error");
     if (oauthError) {
       const errorMessages: Record<string, string> = {
-        'access_denied': 'You cancelled the sign-in process.',
-        'missing_code': 'Sign-in failed. Please try again.',
-        'invalid_state': 'Security verification failed. Please try again.',
-        'expired_state': 'Sign-in session expired. Please try again.',
-        'oauth_failed': 'Sign-in failed. Please try again.',
+        access_denied: "You cancelled the sign-in process.",
+        missing_code: "Sign-in failed. Please try again.",
+        invalid_state: "Security verification failed. Please try again.",
+        expired_state: "Sign-in session expired. Please try again.",
+        oauth_failed: "Sign-in failed. Please try again.",
       };
-      setError(errorMessages[oauthError] || 'Sign-in failed. Please try again.');
-      toast.error(error)
-      navigate('/signin', { replace: true });
+      toast.error(
+        errorMessages[oauthError] || "Sign-in failed. Please try again.",
+      );
+      navigate("/signin", { replace: true });
     }
   }, [searchParams, navigate]);
 
@@ -66,20 +69,19 @@ const SignInForm = () => {
     } catch (error) {
       console.log(error);
       if (isAxiosError(error)) {
-        const data = error.response?.data
-        toast.error(data.msg)
+        const data = error.response?.data;
+        toast.error(data.msg);
       }
     }
   };
-  
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-white text-white flex flex-col items-center justify-center px-4">
       <div
-          className={cn(
+        className={cn(
           "absolute inset-y-0 left-1/2 w-full -translate-x-1/2",
           "mask-intersect mask-[linear-gradient(black,transparent_1000px),linear-gradient(90deg,transparent,black_5%,black_100%,transparent)]",
-          )}
+        )}
       >
         <Grid
           cellSize={60}
@@ -87,43 +89,55 @@ const SignInForm = () => {
           className="text-neutral-200"
         />
       </div>
-      <button onClick={() => {navigate('/')}} className="text-slate-600 hover:text-slate-900 absolute top-10 left-10 flex gap-2 px-4 py-3 rounded-xl border border-slate-200/50 hover:border-slate-300/50 shadow-sm backdrop-blur-2xl cursor-pointer bg-white/10 hover:bg-white hover:shadow-md">
+      <button
+        onClick={() => {
+          navigate("/");
+        }}
+        className="text-slate-600 hover:text-slate-900 absolute top-10 left-10 flex gap-2 px-4 py-3 rounded-xl border border-slate-200/50 hover:border-slate-300/50 shadow-sm backdrop-blur-2xl cursor-pointer bg-white/10 hover:bg-white hover:shadow-md"
+      >
         <div className="flex items-center justify-center">
-        <ArrowLeft className="w-4 h-4"/>
+          <ArrowLeft className="w-4 h-4" />
         </div>
         <p className="font-medium">Back to home</p>
       </button>
       <div className="grow max-h-75 pt-10 relative">
-        <Gradient className="opacity-5 mix-blend-overlay"/>
-          <LogoCard className="z-10"/>
-        <Gradient className="opacity-10 mix-blend-hard-light"/>
+        <Gradient className="opacity-5 mix-blend-overlay" />
+        <LogoCard className="z-10" />
+        <Gradient className="opacity-10 mix-blend-hard-light" />
       </div>
       <div className="relative z-10 w-full max-w-xl grow">
         <motion.div
-          initial={{opacity:0}}
-          animate={{opacity:1}}
-          transition={{duration:0.5}}
-          className="relative rounded-[28px] border border-border bg-white/90 backdrop-blur-2xl p-8 sm:p-10 shadow-xl">
-
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="relative rounded-[28px] border border-border bg-white/90 backdrop-blur-2xl p-8 sm:p-10 shadow-xl"
+        >
           <div className="relative z-10">
-            <div className="text-3xl font-semibold text-center text-slate-900 mb-10">Welcome Back</div>
+            <div className="text-3xl font-semibold text-center text-slate-900 mb-10">
+              Welcome Back
+            </div>
             {/* Google Sign-In Button */}
             <div className="mb-3">
-              <GoogleSignInButton  />
+              <GoogleSignInButton />
             </div>
-            {lastUsedAuthMethod && (<div className="text-center text-xs">
-              <p className="text-neutral-500">
+            {lastUsedAuthMethod && (
+              <div className="text-center text-xs">
+                <p className="text-neutral-500">
                   You signed in with{" "}
-                  <span className="font-semibold">{lastUsedAuthMethod.charAt(0).toUpperCase() +
-                  lastUsedAuthMethod.slice(1)}{" "}
+                  <span className="font-semibold">
+                    {lastUsedAuthMethod.charAt(0).toUpperCase() +
+                      lastUsedAuthMethod.slice(1)}{" "}
                   </span>
                   last time
-              </p>
-            </div>)}
+                </p>
+              </div>
+            )}
             {/* Divider */}
             <div className="flex items-center my-6">
               <div className="flex-1 border-t border-border"></div>
-              <span className="px-4 text-[#9EA0BB] text-sm font-medium">Or continue with email</span>
+              <span className="px-4 text-[#9EA0BB] text-sm font-medium">
+                Or continue with email
+              </span>
               <div className="flex-1 border-t border-border"></div>
             </div>
 
@@ -138,7 +152,9 @@ const SignInForm = () => {
                     placeholder="You@example.com"
                     Type="email"
                     required
-                    register={register("email", { required: "email is required" })}
+                    register={register("email", {
+                      required: "email is required",
+                    })}
                     autoComplete="email"
                     error={errors.email ? true : false}
                   >
@@ -167,14 +183,19 @@ const SignInForm = () => {
                   Loading="Signing in..."
                   Initial="Sign in"
                   onClick={() => {
-                    setLastUsedAuthMethod("email")
+                    setLastUsedAuthMethod("email");
                   }}
                 />
               </div>
             </form>
             <div className="text-center text-muted-foreground mt-8 font-light">
               Don't have an account?{" "}
-              <button onClick={() => {navigate('/signup')}} className="text-purple-400 hover:text-purple-300 transition-colors underline cursor-pointer">
+              <button
+                onClick={() => {
+                  navigate("/signup");
+                }}
+                className="text-purple-400 hover:text-purple-300 transition-colors underline cursor-pointer"
+              >
                 Sign up
               </button>
             </div>

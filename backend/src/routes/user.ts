@@ -19,7 +19,7 @@ import { requireLogin } from "../middleware.js";
 import generateOTP from "../utils/auth/otpGenerator.js";
 import { EMAIL_OTP_EXPIRY_IN } from "../utils/auth/constants.js";
 import { sendEmail } from "../services/email/EmailService.js";
-import { redisClient } from "../index.js";
+import { NODE_ENV, redisClient } from "../index.js";
 import {
   getOnboardingProgress,
   setOnboardingProgress,
@@ -100,7 +100,7 @@ userRouter.post("/signup/send-otp", async (req, res) => {
   } catch (error) {
     console.error("error while creating OTP", error);
     return res.status(400).json({
-      msg: error,
+      msg: "OTP could not be generated",
     });
   }
 });
@@ -179,50 +179,13 @@ userRouter.post("/signup/verify", async (req, res) => {
     req.session.userId = user.id;
     req.session.email = user.email;
 
-    req.session.save((err) => {
-      if (err) {
-        console.error("Session save error:", err);
-        return res.status(500).json({ msg: "Session error" });
-      }
-
-      // Manually set cookie since express-session isn't doing it
-      const secret = process.env.SESSION_SECRET || "";
-
-      // Sign the session ID (express-session format)
-      const signature = crypto
-        .createHmac("sha256", secret)
-        .update(req.sessionID)
-        .digest("base64")
-        .replace(/=+$/, "");
-
-      const signedId = `s:${req.sessionID}.${signature}`;
-
-      // Build cookie string
-      const cookieParts = [
-        `connect.sid=${encodeURIComponent(signedId)}`,
-        `Path=/`,
-        `HttpOnly`,
-        `Max-Age=86400`, // 24 hours
-      ];
-
-      // Add production-specific attributes
-      if (process.env.NODE_ENV === "production") {
-        cookieParts.push(`Secure`);
-        cookieParts.push(`Domain=.shiva-raghav.com`);
-      }
-
-      cookieParts.push(`SameSite=Lax`);
-
-      res.setHeader("Set-Cookie", cookieParts.join("; "));
-
-      return res.status(200).json({
-        msg: "accout created sucessfully",
-      });
+    return res.status(200).json({
+      msg: "accout created sucessfully",
     });
   } catch (error) {
     console.error("error while verifying code or creating user:", error);
     res.status(500).json({
-      msg: error,
+      msg: "Could not verify the code or creating user",
     });
   }
 });
@@ -272,54 +235,17 @@ userRouter.post("/signin", async (req, res) => {
         msg: "Incorrect email or password.",
       });
     }
-    // Normal flow - just set userId and save
+    // set userId and email in session
     req.session.userId = user.id;
     req.session.email = user.email;
 
-    req.session.save((err) => {
-      if (err) {
-        console.error("Session save error:", err);
-        return res.status(500).json({ msg: "Session error" });
-      }
-
-      // Manually set cookie since express-session isn't doing it
-      const secret = process.env.SESSION_SECRET || "";
-
-      // Sign the session ID (express-session format)
-      const signature = crypto
-        .createHmac("sha256", secret)
-        .update(req.sessionID)
-        .digest("base64")
-        .replace(/=+$/, "");
-
-      const signedId = `s:${req.sessionID}.${signature}`;
-
-      // Build cookie string
-      const cookieParts = [
-        `connect.sid=${encodeURIComponent(signedId)}`,
-        `Path=/`,
-        `HttpOnly`,
-        `Max-Age=86400`, // 24 hours
-      ];
-
-      // Add production-specific attributes
-      if (process.env.NODE_ENV === "production") {
-        cookieParts.push(`Secure`);
-        cookieParts.push(`Domain=.shiva-raghav.com`);
-      }
-
-      cookieParts.push(`SameSite=Lax`);
-
-      res.setHeader("Set-Cookie", cookieParts.join("; "));
-
-      return res.status(200).json({
-        msg: "Logged in successfully",
-      });
+    return res.status(200).json({
+      msg: "Logged in successfully",
     });
   } catch (error) {
-    console.error("error inserting user", error);
+    console.error("error while signing in", error);
     return res.status(400).json({
-      msg: error,
+      msg: "error while sigining in",
     });
   }
 });
@@ -331,7 +257,10 @@ userRouter.post("/logout", requireLogin, async (req, res) => {
         return res.status(500).json({ msg: "Failed to logout" });
       }
 
-      res.clearCookie("connect.sid");
+      res.clearCookie("connect.sid", {
+        domain: NODE_ENV === "production" ? ".shiva-raghav.com" : undefined,
+        path: "/",
+      });
 
       return res.status(200).json({ msg: "Logged out successfully" });
     });
@@ -416,7 +345,7 @@ userRouter.put("/password", requireLogin, async (req, res) => {
   } catch (error) {
     console.error("error updating password", error);
     return res.status(400).json({
-      msg: error,
+      msg: "error updating password",
     });
   }
 });
@@ -451,13 +380,13 @@ userRouter.put("/name", requireLogin, async (req, res) => {
   } catch (error) {
     console.error("error updating name", error);
     return res.status(400).json({
-      msg: error,
+      msg: "error updating name",
     });
   }
 });
 
 userRouter.post("/onboarding/progess", requireLogin, async (req, res) => {
-  const userId = req.session.id;
+  const userId = req.session.userId;
   if (!userId) {
     return res.status(401).json({
       msg: "Unauthorized",
@@ -483,7 +412,7 @@ userRouter.post("/onboarding/progess", requireLogin, async (req, res) => {
 });
 
 userRouter.get("/onboarding/progess", requireLogin, async (req, res) => {
-  const userId = req.session.id;
+  const userId = req.session.userId;
   if (!userId) {
     return res.status(401).json({
       msg: "Unauthorized",
@@ -499,7 +428,7 @@ userRouter.get("/onboarding/progess", requireLogin, async (req, res) => {
   }
 
   return res.status(200).json({
-    msg: step,
+    step: step,
   });
 });
 
@@ -659,7 +588,9 @@ userRouter.get("/profile", requireLogin, async (req, res) => {
         id: true,
         name: true,
         email: true,
+        image: true,
         isPasswordSet: true,
+        createdAt: true,
         oauthAccounts: {
           where: { provider: "google" },
           select: {
@@ -680,12 +611,13 @@ userRouter.get("/profile", requireLogin, async (req, res) => {
     return res.status(200).json({
       user: {
         id: user.id,
-        username: user.name,
+        name: user.name,
         email: user.email,
         isPasswordSet: user.isPasswordSet,
-        pictureUrl: user.oauthAccounts?.[0]?.pictureUrl || null,
+        image: user.image,
         provider: user.oauthAccounts?.[0]?.provider || null,
         isOAuthLinked: user.oauthAccounts?.length > 0,
+        createdAt: user.createdAt,
       },
     });
   } catch (error) {

@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
-import type { Todo } from "@/Components/Modal";
+import type { Todo } from "../types";
 import TodayView from "../Components/TodayView";
 import UpcomingView from "../Components/UpcomingView";
 import CompletedView from "../Components/CompletedView";

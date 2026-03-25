@@ -3,7 +3,7 @@ import "./App.css";
 import SignIn from "./Pages/SignIn";
 import Signup from "./Pages/Signup";
 import { AuthProvider } from "./Context/AuthContext";
-import RequireAuth from "./Components/RequireAuth";
+import ProtectedRoute from "./Components/ProtectedRoute";
 import { SignupProvider } from "./Context/SingupContext";
 import Dashboard from "./Pages/Dashboard";
 import Landing from "./Pages/Landing";
@@ -14,10 +14,12 @@ import { useEffect } from "react";
 
 import Welcome from "./Pages/onboarding/pages/Welcome";
 import UserProfile from "./Pages/onboarding/pages/UserProfile";
+import { Completed } from "./Pages/onboarding/pages/Completed";
+import PublicRoute from "./Components/PublicRoute";
+
+const queryClient = new QueryClient();
 
 function App() {
-  const queryClient = new QueryClient();
-
   // Add scroll detection for custom scrollbars
   useEffect(() => {
     let scrollTimeout: number;
@@ -68,33 +70,23 @@ function App() {
             <AuthProvider>
               <SignupProvider>
                 <Routes>
-                  <Route path="/" element={<Landing />} />
-                  <Route path="/signin" element={<SignIn />} />
-                  <Route path="/signup" element={<Signup />} />
-                  <Route
-                    path="/onboarding/welcome"
-                    element={
-                      <RequireAuth>
-                        <Welcome />
-                      </RequireAuth>
-                    }
-                  />
-                  <Route
-                    path="/onboarding/user-profile"
-                    element={
-                      <RequireAuth>
-                        <UserProfile />
-                      </RequireAuth>
-                    }
-                  />
-                  <Route
-                    path="/dashboard"
-                    element={
-                      <RequireAuth>
-                        <Dashboard />
-                      </RequireAuth>
-                    }
-                  />
+                  <Route element={<PublicRoute />}>
+                    <Route path="/" element={<Landing />} />
+                    <Route path="/signin" element={<SignIn />} />
+                    <Route path="/signup" element={<Signup />} />
+                  </Route>
+                  <Route element={<ProtectedRoute />}>
+                    <Route path="/onboarding/welcome" element={<Welcome />} />
+                    <Route
+                      path="/onboarding/user-profile"
+                      element={<UserProfile />}
+                    />
+                    <Route
+                      path="/onboarding/completed"
+                      element={<Completed />}
+                    />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                  </Route>
                 </Routes>
               </SignupProvider>
             </AuthProvider>

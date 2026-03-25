@@ -9,24 +9,21 @@ const SignIn = () => {
   const { refreshAuth } = Auth();
 
   useEffect(() => {
-    const error = searchParams.get('error');
-    const success = searchParams.get('success');
+    const error = searchParams.get("error");
+    const success = searchParams.get("success");
 
     if (error) {
-      console.error('OAuth error:', error);
+      console.error("OAuth error:", error);
       // Error will be handled by showing a message or redirecting
     }
 
-    if (success === 'google_sign_in') {
+    if (success === "google_sign_in") {
       // User successfully signed in with Google
       refreshAuth().then(() => {
-        navigate('/dashboard');
+        navigate("/dashboard");
       });
     }
   }, [searchParams, navigate, refreshAuth]);
-  // useEffect(() => {
-  //   refreshAuth();
-  // }, []); 
 
   return <SignInForm />;
 };

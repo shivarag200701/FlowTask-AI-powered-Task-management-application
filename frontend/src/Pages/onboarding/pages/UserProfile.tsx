@@ -4,10 +4,14 @@ import Onboarding from "../Onboarding";
 import { motion } from "motion/react";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { User } from "lucide-react";
-import NextButton from "../NextButton";
 import api from "@/utils/api";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
+import { Gradient } from "./Welcome";
+import Button from "@/Components/Button";
+import UseOnboardingProgess from "../UseOnboardingProgess";
+import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 type FormData = {
   name: string;
@@ -22,6 +26,10 @@ const UserProfile = () => {
     formState: { isSubmitting },
   } = useForm<FormData>();
 
+  const { continueTo } = UseOnboardingProgess();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     const formData = new FormData();
 
@@ -33,6 +41,15 @@ const UserProfile = () => {
       await api.post("/v1/user/profile", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+
+      //confirm that the name correct and retirved from the db for safe side, may remove it alter
+      const res = await api.get("/v1/user/profile");
+      if (!res.data.user) {
+        navigate("/onboarding/welcome");
+      }
+
+      queryClient.setQueryData(["users"], res.data.user);
+      continueTo("completed");
     } catch (error) {
       console.log(error);
       if (isAxiosError(error)) {
@@ -44,13 +61,14 @@ const UserProfile = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <Onboarding>
-        <div className="relatice z-10 max-w-sm sm:max-w-xl">
+      <Onboarding className="">
+        <div className="relative z-10 max-w-sm sm:max-w-xl">
+          <Gradient className="opacity-30 size-[700px] mix-blend-overlay -translate-y-10" />
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ y: 10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8 }}
-            className="relative rounded-[28px] border border-border bg-white/90 backdrop-blur-2xl p-8 sm:p-10 shadow-xl grow flex flex-col item-center justify-center"
+            className="relative rounded-[28px] border border-border bg-white/90 backdrop-blur-2xl p-8 sm:p-10 shadow-xl grow flex flex-col item-center justify-center z-20"
           >
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-y-6">
@@ -91,15 +109,16 @@ const UserProfile = () => {
                     <User className="absolute left-3 top-6 -translate-y-1/2 w-4.5 h-4.5 text-[#9EA0BB] z-10" />
                   </InputBox>
                 </label>
-                <NextButton
-                  step="user-preferences"
-                  text="Create Profile"
-                  loadingText="Creating Profile..."
+                <Button
+                  Initial="Create Profile"
+                  Loading="Creating Profile..."
+                  className="rounded-md mt-5"
                   isSubmitting={isSubmitting}
                 />
               </div>
             </form>
           </motion.div>
+          <Gradient className="opacity-10 mix-blend-hard-light" />
         </div>
       </Onboarding>
     </div>

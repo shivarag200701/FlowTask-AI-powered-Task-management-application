@@ -1,19 +1,18 @@
 import { isAxiosError } from "axios";
-import { useCallback, useEffect, useState} from "react";
+import { useCallback, useState } from "react";
 import InputBox from "../../InputBox";
 import { Mail } from "lucide-react";
-import { Lock} from "lucide-react";
+import { Lock } from "lucide-react";
 import { useForm, FormProvider } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import Button from "../../Button";
 import { useNavigate } from "react-router-dom";
 import api from "../../../utils/api";
-import { Auth } from "@/Context/AuthContext";
 import { GoogleSignInButton } from "../../GoogleSignInButton";
 import { PasswordRequirements } from "./PasswordRequirements";
-import {toast} from "sonner"
+import { toast } from "sonner";
 import { useSignupContext } from "@/Context/SingupContext";
-import {motion} from "motion/react"
+import { motion } from "motion/react";
 
 type Inputs = {
   email: string;
@@ -21,59 +20,56 @@ type Inputs = {
 };
 
 const SignUpForm = () => {
-
-  const form = useForm<Inputs>()
+  const form = useForm<Inputs>();
   const {
     register,
     handleSubmit,
     formState: { isSubmitting },
     getValues,
-  } = form
+  } = form;
 
-  const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const { isAuthenticated} = Auth();
 
-  const {setStep, setEmail, setPassword} = useSignupContext()
+  const { setStep, setEmail, setPassword } = useSignupContext();
 
+  const onSubmit: SubmitHandler<Inputs> = useCallback(
+    async (data) => {
+      const { email, password } = getValues();
 
-  useEffect(() => {
-    if(isAuthenticated){
-      navigate("/dashboard");
-    }
-  }, [isAuthenticated]);
-  const onSubmit: SubmitHandler<Inputs> = useCallback(async (data) => {
-    const {email,password} = getValues()
-
-    if(email && !password && !showPassword){
-      setShowPassword(true)
-      return;
-    }
-    try {
-      await api.post("/v1/user/signup/send-otp", data);
-      setEmail(getValues("email"))
-      setPassword(getValues("password"))
-      setStep("verify")
-    } catch (error) {
-      console.log(error);
-      if (isAxiosError(error)) {
-        const data = error.response?.data
-        toast.error(data.msg)
+      if (email && !password && !showPassword) {
+        setShowPassword(true);
+        return;
       }
-    }
-  },[getValues, showPassword, handleSubmit]);
+      try {
+        await api.post("/v1/user/signup/send-otp", data);
+        setEmail(getValues("email"));
+        setPassword(getValues("password"));
+        setStep("verify");
+      } catch (error) {
+        console.log(error);
+        if (isAxiosError(error)) {
+          const data = error.response?.data;
+          toast.error(data.msg);
+        }
+      }
+    },
+    [getValues, showPassword, handleSubmit],
+  );
 
   return (
-    
     <div className="relative w-full grow overflow-x-hidden text-white flex items-start justify-center">
-      <motion.div 
-        initial={{opacity:0}}
-        animate={{opacity:1}}
-        transition={{duration:0.5}}
-        className="relative w-full max-w-xl z-10">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="relative w-full max-w-xl z-10"
+      >
         <div className="relative sm:rounded-[28px] sm:border sm:border-border bg-card/80 backdrop-blur-2xl p-8 sm:p-10 sm:shadow-lg">
           <div className="relative ">
-            <h2 className="text-3xl text-center tracking-tight leading-tight font-medium text-gray-800 mb-10">Get productive</h2>
+            <h2 className="text-3xl text-center tracking-tight leading-tight font-medium text-gray-800 mb-10">
+              Get productive
+            </h2>
             {/* Google Sign-In Button */}
             <div className="mb-6">
               <GoogleSignInButton />
@@ -82,7 +78,9 @@ const SignUpForm = () => {
             {/* Divider */}
             <div className="flex items-center my-6">
               <div className="flex-1 border-t border-border"></div>
-              <span className="px-4 text-[#9EA0BB] text-sm font-medium">Or Continue with email</span>
+              <span className="px-4 text-[#9EA0BB] text-sm font-medium">
+                Or Continue with email
+              </span>
               <div className="flex-1 border-t border-border"></div>
             </div>
             <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
@@ -96,7 +94,9 @@ const SignUpForm = () => {
                     placeholder="You@example.com"
                     Type="email"
                     required
-                    register={register("email", { required: "email is required" })}
+                    register={register("email", {
+                      required: "email is required",
+                    })}
                     autoComplete="email"
                   >
                     <Mail className="absolute left-3 top-6 -translate-y-1/2 w-4.5 h-4.5 text-[#9EA0BB] z-10" />
@@ -121,7 +121,7 @@ const SignUpForm = () => {
                       <Lock className="absolute left-3 top-6 -translate-y-1/2 w-4.5 h-4.5 text-[#9EA0BB] z-10" />
                     </InputBox>
                     <FormProvider {...form}>
-                      <PasswordRequirements/>
+                      <PasswordRequirements />
                     </FormProvider>
                   </label>
                 )}
@@ -134,7 +134,12 @@ const SignUpForm = () => {
             </form>
             <div className="text-center text-muted-foreground mt-4 font-light">
               Already have an account?{" "}
-              <button onClick={() => {navigate('/signin')}} className="text-purple-400 hover:text-purple-300 transition-colors underline cursor-pointer">
+              <button
+                onClick={() => {
+                  navigate("/signin");
+                }}
+                className="text-purple-400 hover:text-purple-300 transition-colors underline cursor-pointer"
+              >
                 Sign in
               </button>
             </div>

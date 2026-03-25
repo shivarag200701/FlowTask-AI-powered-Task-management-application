@@ -20,46 +20,6 @@ const FRONTEND_URL = (
   process.env.FRONTEND_URL || "http://localhost:5173"
 ).replace(/\/$/, "");
 
-function setSessionCookie(
-  req: express.Request,
-  res: express.Response,
-  userId: number,
-  email: string | null,
-): Promise<void> {
-  return new Promise((resolve, reject) => {
-    req.session.userId = userId;
-    req.session.email = email;
-
-    req.session.save((err) => {
-      if (err) {
-        console.error("Session save error:", err);
-        return res.status(500).json({ msg: "Session error" });
-      }
-
-      const secret = process.env.SESSION_SECRET || "";
-      const signature = crypto
-        .createHmac("sha256", secret)
-        .update(req.sessionID)
-        .digest("base64")
-        .replace(/=+$/, "");
-      const signedId = `s:${req.sessionID}.${signature}`;
-      const cookieParts = [
-        `connect.sid=${encodeURIComponent(signedId)}`,
-        `Path=/`,
-        `HttpOnly`,
-        `Max-Age=86400`, // 24 hours
-      ];
-      if (process.env.NODE_ENV === "production") {
-        cookieParts.push(`Secure`);
-        cookieParts.push(`Domain=.shiva-raghav.com`);
-      }
-      cookieParts.push(`SameSite=Lax`);
-      res.setHeader("Set-Cookie", cookieParts.join("; "));
-      resolve();
-    });
-  });
-}
-
 oauthRouter.get("/google/connect", async (req, res) => {
   try {
     const state = crypto.randomBytes(32).toString("hex");
@@ -149,8 +109,18 @@ oauthRouter.get("/google/callback", async (req, res) => {
             pictureUrl: userInfo.pictureUrl,
           },
         });
-        await setSessionCookie(req, res, user.id, user.email);
-        return res.redirect(`${FRONTEND_URL}/dashboard`);
+
+        req.session.userId = user.id;
+        req.session.email = user.email;
+
+        req.session.save((err) => {
+          if (err) {
+            console.error("Session save error:", err);
+            return res.status(500).json({ msg: "Session error" });
+          }
+
+          return res.redirect(`${FRONTEND_URL}/dashboard`);
+        });
       }
 
       if (!user) {
@@ -189,8 +159,18 @@ oauthRouter.get("/google/callback", async (req, res) => {
             pictureUrl: userInfo.pictureUrl,
           },
         });
-        await setSessionCookie(req, res, user.id, user.email);
-        return res.redirect(`${FRONTEND_URL}/dashboard`);
+
+        req.session.userId = user.id;
+        req.session.email = user.email;
+
+        req.session.save((err) => {
+          if (err) {
+            console.error("Session save error:", err);
+            return res.status(500).json({ msg: "Session error" });
+          }
+
+          return res.redirect(`${FRONTEND_URL}/dashboard`);
+        });
       }
     } else if (stateData.type === "connect" && stateData.userId) {
       //calender

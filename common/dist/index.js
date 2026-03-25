@@ -376,4 +376,5 @@ export const OnboardingStepSchema = z.enum([
 export const setOnboardingProgressSchema = z.object({
     step: OnboardingStepSchema,
 });
+export const ONBOARDING_WINDOW_SECONDS = 60 * 60 * 24;
 //# sourceMappingURL=index.js.map

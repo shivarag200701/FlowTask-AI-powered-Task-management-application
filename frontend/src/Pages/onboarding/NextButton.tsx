@@ -14,12 +14,16 @@ const NextButton = ({
   isSubmitting?: boolean;
 }) => {
   const { continueTo } = UseOnboardingProgess();
+  console.log("is submitting", isSubmitting);
+
   return (
     <Button
       Initial={text}
       Loading={loadingText}
       className="rounded-md mt-5"
-      onClick={() => continueTo(step)}
+      onClick={() => {
+        if (!isSubmitting) continueTo(step);
+      }}
       isSubmitting={isSubmitting}
     />
   );

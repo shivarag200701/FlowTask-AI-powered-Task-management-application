@@ -153,4 +153,5 @@ export declare const setOnboardingProgressSchema: z.ZodObject<{
         completed: "completed";
     }>;
 }, z.core.$strip>;
+export declare const ONBOARDING_WINDOW_SECONDS: number;
 //# sourceMappingURL=index.d.ts.map

@@ -509,3 +509,5 @@ export type OnboardingStep = z.infer<typeof OnboardingStepSchema>;
 export const setOnboardingProgressSchema = z.object({
   step: OnboardingStepSchema,
 });
+
+export const ONBOARDING_WINDOW_SECONDS = 60 * 60 * 24;

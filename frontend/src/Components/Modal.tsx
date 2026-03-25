@@ -1,30 +1,9 @@
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { AlertCircle, Tag, Calendar } from "lucide-react";
 import api from "../utils/api";
-import {Checkbox} from "./ui/checkbox";
-
-export interface Todo {
-  id?: number;
-  title: string;
-  description: string;
-  priority: "high" | "medium" | "low" | null;
-  completeAt: string | null;
-  isAllDay: boolean;
-  category: string;
-  completed: boolean;
-  completedAt: string | null;
-  isRecurring?: boolean;
-  recurrencePattern?: "daily" | "weekly" | "monthly" | "yearly" | null;
-  recurrenceInterval?: number | null;
-  recurrenceEndDate?: string | null;
-  parentRecurringId?: number | null;
-  nextOccurrence?: string | null;
-  color?: string | null;
-  order?: number | null;
-  createdAt: string | null
-  reminder?: boolean;
-}
+import { Checkbox } from "./ui/checkbox";
+import { type Todo } from "../types";
 
 interface ModalProps {
   isOpen: boolean;
@@ -35,15 +14,26 @@ interface ModalProps {
   preselectedDate?: string; // ISO date string
 }
 
-const Modal = ({ isOpen, onClose, addTodo, editTodo, todoToEdit, preselectedDate }: ModalProps) => {
+const Modal = ({
+  isOpen,
+  onClose,
+  addTodo,
+  editTodo,
+  todoToEdit,
+  preselectedDate,
+}: ModalProps) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedDate, setSelectedDate] = useState<string>("");
-  const [priority, setPriority] = useState<"high" | "medium" | "low" | null>(null);
+  const [priority, setPriority] = useState<"high" | "medium" | "low" | null>(
+    null,
+  );
   const [category, setCategory] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRecurring, setIsRecurring] = useState(false);
-  const [recurrencePattern, setRecurrencePattern] = useState<"daily" | "weekly" | "monthly" | "yearly">("daily");
+  const [recurrencePattern, setRecurrencePattern] = useState<
+    "daily" | "weekly" | "monthly" | "yearly"
+  >("daily");
   const [recurrenceInterval, setRecurrenceInterval] = useState(1);
   const [recurrenceEndDate, setRecurrenceEndDate] = useState<string>("");
 
@@ -52,18 +42,17 @@ const Modal = ({ isOpen, onClose, addTodo, editTodo, todoToEdit, preselectedDate
     if (!isoString) {
       const today = new Date();
       const year = today.getFullYear();
-      const month = String(today.getMonth() + 1).padStart(2, '0');
-      const day = String(today.getDate()).padStart(2, '0');
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const day = String(today.getDate()).padStart(2, "0");
       return `${year}-${month}-${day}`;
     }
     // Parse the ISO string and get local date components
     const date = new Date(isoString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
-
 
   useEffect(() => {
     if (todoToEdit) {
@@ -75,9 +64,11 @@ const Modal = ({ isOpen, onClose, addTodo, editTodo, todoToEdit, preselectedDate
       setIsRecurring(todoToEdit.isRecurring || false);
       setRecurrencePattern(todoToEdit.recurrencePattern || "daily");
       setRecurrenceInterval(todoToEdit.recurrenceInterval || 1);
-      setRecurrenceEndDate(todoToEdit.recurrenceEndDate 
-        ? new Date(todoToEdit.recurrenceEndDate).toISOString().split("T")[0]
-        : "");
+      setRecurrenceEndDate(
+        todoToEdit.recurrenceEndDate
+          ? new Date(todoToEdit.recurrenceEndDate).toISOString().split("T")[0]
+          : "",
+      );
     } else {
       // Reset form for new todo
       setTitle("");
@@ -99,9 +90,9 @@ const Modal = ({ isOpen, onClose, addTodo, editTodo, todoToEdit, preselectedDate
 
   useEffect(() => {
     if (isOpen) {
-      document.body.classList.add('overflow-hidden');
+      document.body.classList.add("overflow-hidden");
     } else {
-      document.body.classList.remove('overflow-hidden');
+      document.body.classList.remove("overflow-hidden");
     }
   }, [isOpen]);
 
@@ -116,7 +107,7 @@ const Modal = ({ isOpen, onClose, addTodo, editTodo, todoToEdit, preselectedDate
   const createTodo = async () => {
     setIsSubmitting(true);
     try {
-      const res =await api.post("/v1/todo/", {
+      const res = await api.post("/v1/todo/", {
         title,
         description,
         completeAt: selectedDate,
@@ -127,27 +118,28 @@ const Modal = ({ isOpen, onClose, addTodo, editTodo, todoToEdit, preselectedDate
         recurrenceInterval,
         recurrenceEndDate: recurrenceEndDate ?? null,
       });
-      if(res.data.todo){
+      if (res.data.todo) {
         addTodo(res.data.todo);
+      } else {
+        addTodo({
+          title,
+          description,
+          completeAt: selectedDate,
+          category,
+          priority: priority ?? null,
+          completed: false,
+          completedAt: null,
+          isRecurring,
+          recurrencePattern,
+          recurrenceInterval,
+          recurrenceEndDate: recurrenceEndDate
+            ? new Date(recurrenceEndDate).toISOString()
+            : null,
+          parentRecurringId: null,
+          isAllDay: false,
+          createdAt: null,
+        });
       }
-      else{
-      addTodo({
-        title,
-        description,
-        completeAt: selectedDate,
-        category,
-        priority: priority ?? null,
-        completed: false,
-        completedAt: null,
-        isRecurring,
-        recurrencePattern,
-        recurrenceInterval,
-        recurrenceEndDate: recurrenceEndDate ? new Date(recurrenceEndDate).toISOString() : null,
-        parentRecurringId: null,
-        isAllDay: false,
-        createdAt: null
-      });
-    }
       onClose();
       handleClick();
     } catch (error) {
@@ -159,7 +151,7 @@ const Modal = ({ isOpen, onClose, addTodo, editTodo, todoToEdit, preselectedDate
 
   const updateTodo = async () => {
     if (!todoToEdit?.id) return;
-    
+
     setIsSubmitting(true);
     try {
       await api.put(`/v1/todo/${todoToEdit.id}`, {
@@ -185,7 +177,9 @@ const Modal = ({ isOpen, onClose, addTodo, editTodo, todoToEdit, preselectedDate
           isRecurring,
           recurrencePattern,
           recurrenceInterval,
-          recurrenceEndDate: recurrenceEndDate ? new Date(recurrenceEndDate).toISOString() : null,
+          recurrenceEndDate: recurrenceEndDate
+            ? new Date(recurrenceEndDate).toISOString()
+            : null,
           parentRecurringId: null,
         });
       }
@@ -196,13 +190,13 @@ const Modal = ({ isOpen, onClose, addTodo, editTodo, todoToEdit, preselectedDate
       setIsSubmitting(false);
     }
   };
-  const handleSubmit = () =>{
-    if(todoToEdit) {
+  const handleSubmit = () => {
+    if (todoToEdit) {
       updateTodo();
     } else {
       createTodo();
     }
-  }
+  };
   if (!isOpen) return null;
 
   const isEditMode = !!todoToEdit;
@@ -222,7 +216,7 @@ const Modal = ({ isOpen, onClose, addTodo, editTodo, todoToEdit, preselectedDate
         </button>
         <div className="flex-col">
           <div className="text-white text-center md:text-left text-2xl mb-8">
-          {isEditMode ? "Edit Task" : "Add New Task"}
+            {isEditMode ? "Edit Task" : "Add New Task"}
           </div>
           <div className="text-white text-md font-extralight mb-3">
             Task Title
@@ -294,62 +288,75 @@ const Modal = ({ isOpen, onClose, addTodo, editTodo, todoToEdit, preselectedDate
             />
           </div>
           <div className="text-white text-md font-extralight mb-3">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <Checkbox
-              checked={isRecurring}
-              onCheckedChange={(checked) => setIsRecurring(checked === true ? true : false)}
-              className="w-4 h-4 cursor-pointer"
-            />
-            Make this task recurring
-          </label>
-        </div>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <Checkbox
+                checked={isRecurring}
+                onCheckedChange={(checked) =>
+                  setIsRecurring(checked === true ? true : false)
+                }
+                className="w-4 h-4 cursor-pointer"
+              />
+              Make this task recurring
+            </label>
+          </div>
 
-        {isRecurring && (
-  <>
-    <div className="text-white text-md font-extralight mb-3">
-      How often should this repeat?
-    </div>
-    <div className="flex items-center gap-2 mb-2">
-      <span className="text-[#A2A2A9] text-sm">Every</span>
-      <input
-        type="number"
-        min="1" 
-        value={recurrenceInterval}
-        onChange={(e) => setRecurrenceInterval(parseInt(e.target.value))}
-        className="bg-input rounded-sm p-2 w-24 text-white border-[0.1px] border-border text-center"
-      />
-      <select
-        value={recurrencePattern}
-        onChange={(e) => setRecurrencePattern(e.target.value as any)}
-        className="bg-input rounded-sm p-2 flex-1 text-white border-[0.1px] border-border"
-      >
-        <option value="daily">Day(s)</option>
-        <option value="weekly">Week(s)</option>
-        <option value="monthly">Month(s)</option>
-        <option value="yearly">Year(s)</option>
-      </select>
-    </div>
-    <div className="text-[#A2A2A9] text-sm mb-4 italic">
-      ✓ Repeats every {recurrenceInterval} {recurrencePattern === 'daily' ? 'day' : recurrencePattern === 'weekly' ? 'week' : recurrencePattern === 'monthly' ? 'month' : 'year'}{recurrenceInterval > 1 ? 's' : ''}
-    </div>
-    <div className="text-white text-md font-extralight mb-3">
-      End Date (Optional)
-    </div>
-    <div className="mb-6">
-      <input
-        type="date"
-        value={recurrenceEndDate}
-        onChange={(e) => setRecurrenceEndDate(e.target.value)}
-        className="bg-input rounded-sm p-2 w-full text-white border-[0.1px] border-border"
-      />
-      {recurrenceEndDate && (
-        <div className="text-[#A2A2A9] text-xs mt-1">
-          Recurrence will stop on {new Date(recurrenceEndDate).toISOString().split("T")[0]}
-        </div>
-      )}
-    </div>
-  </>
-)}
+          {isRecurring && (
+            <>
+              <div className="text-white text-md font-extralight mb-3">
+                How often should this repeat?
+              </div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-[#A2A2A9] text-sm">Every</span>
+                <input
+                  type="number"
+                  min="1"
+                  value={recurrenceInterval}
+                  onChange={(e) =>
+                    setRecurrenceInterval(parseInt(e.target.value))
+                  }
+                  className="bg-input rounded-sm p-2 w-24 text-white border-[0.1px] border-border text-center"
+                />
+                <select
+                  value={recurrencePattern}
+                  onChange={(e) => setRecurrencePattern(e.target.value as any)}
+                  className="bg-input rounded-sm p-2 flex-1 text-white border-[0.1px] border-border"
+                >
+                  <option value="daily">Day(s)</option>
+                  <option value="weekly">Week(s)</option>
+                  <option value="monthly">Month(s)</option>
+                  <option value="yearly">Year(s)</option>
+                </select>
+              </div>
+              <div className="text-[#A2A2A9] text-sm mb-4 italic">
+                ✓ Repeats every {recurrenceInterval}{" "}
+                {recurrencePattern === "daily"
+                  ? "day"
+                  : recurrencePattern === "weekly"
+                    ? "week"
+                    : recurrencePattern === "monthly"
+                      ? "month"
+                      : "year"}
+                {recurrenceInterval > 1 ? "s" : ""}
+              </div>
+              <div className="text-white text-md font-extralight mb-3">
+                End Date (Optional)
+              </div>
+              <div className="mb-6">
+                <input
+                  type="date"
+                  value={recurrenceEndDate}
+                  onChange={(e) => setRecurrenceEndDate(e.target.value)}
+                  className="bg-input rounded-sm p-2 w-full text-white border-[0.1px] border-border"
+                />
+                {recurrenceEndDate && (
+                  <div className="text-[#A2A2A9] text-xs mt-1">
+                    Recurrence will stop on{" "}
+                    {new Date(recurrenceEndDate).toISOString().split("T")[0]}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
           <div className="flex justify-end gap-2">
             <Button
               variant="outline"
@@ -364,12 +371,16 @@ const Modal = ({ isOpen, onClose, addTodo, editTodo, todoToEdit, preselectedDate
               className="cursor-pointer"
             >
               {isSubmitting
-              ? (isEditMode ? "Updating..." : "Adding...")
-              : (isEditMode ? "Update Task" : "Add Task")}
+                ? isEditMode
+                  ? "Updating..."
+                  : "Adding..."
+                : isEditMode
+                  ? "Update Task"
+                  : "Add Task"}
             </Button>
           </div>
         </div>
-        </div>
+      </div>
     </div>
   );
 };

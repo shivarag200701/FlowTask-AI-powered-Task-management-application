@@ -32,9 +32,9 @@ const Welcome = () => {
       >
         <div className="flex flex-col items-center px-4 py-16 max-w-sm">
           <div className="relative w-auto flex items-center justify-center">
-            <Gradient className="opacity-25" />
+            <Gradient className="opacity-25 size-[250px]" />
             <Wordmark className="relative z-20" variants={item} />
-            <Gradient className="opacity-10  mix-blend-hard-light" />
+            <Gradient className="opacity-10  mix-blend-hard-light size-[250px]" />
           </div>
           <motion.h1
             className="text-xl text-center font-semibold z-20 relative mt-20 text-black"
@@ -66,7 +66,7 @@ export function Gradient({ className }: { className?: string }) {
         className,
       )}
     >
-      <div className="size-[250px] -scale-x-[1.8] blur-2xl">
+      <div className="-scale-x-[1.8] blur-2xl size-full">
         <div
           className={cn(
             "size-full -rotate-90 saturate-[3]",

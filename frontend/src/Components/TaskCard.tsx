@@ -1,4 +1,4 @@
-import type { Todo } from "./Modal";
+import type { Todo } from "../types";
 import { Tag, Calendar, Trash, Pencil, Repeat } from "lucide-react";
 import { Checkbox } from "../Components/ui/checkbox";
 import { formatCompleteAt } from "@shiva200701/todotypes";
@@ -30,7 +30,13 @@ type TaskCardProps = {
   onViewDetails?: (todo: Todo) => void;
 };
 
-const TaskCard = ({ todos, onToggleComplete, onDelete, onEdit, onViewDetails }: TaskCardProps) => {
+const TaskCard = ({
+  todos,
+  onToggleComplete,
+  onDelete,
+  onEdit,
+  onViewDetails,
+}: TaskCardProps) => {
   const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
   const [todoToDelete, setTodoToDelete] = useState<Todo | null>(null);
   const handleDeleteConfirm = async () => {
@@ -40,7 +46,7 @@ const TaskCard = ({ todos, onToggleComplete, onDelete, onEdit, onViewDetails }: 
     onDelete(todoToDelete.id);
     setTodoToDelete(null);
     setIsWarningModalOpen(false);
-  }
+  };
 
   const handleDeleteClick = (todo: Todo) => {
     setTodoToDelete(todo);
@@ -53,128 +59,129 @@ const TaskCard = ({ todos, onToggleComplete, onDelete, onEdit, onViewDetails }: 
   };
   return (
     <>
-    <div className="w-full flex-col ">
-      {todos.map((todo, index) => {
-        const colors =
-          priorityColors[
-            todo.priority?.toString().toLowerCase() as PriorityKey
-          ] ?? priorityColors.low;
-          
-        const handleComplete = () => {
-          if (!todo.id) {
-            return;
-          }
-          onToggleComplete(todo.id);
-        };
-        const handleEdit = () =>{
-          if (onEdit){
-            onEdit(todo);
-          }
-        }
-        return (
-          <div
-            key={todo.id || `temp=${index}`}
-            className={`p-5 border border-border relative bg-card my-4 rounded-2xl transition transform hover:-translate-y-0.5 hover:border-purple-400/40 cursor-pointer ${
-              todo.completed ? "brightness-80" : ""
-            }`}
-            onClick={() => onViewDetails?.(todo)}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                onViewDetails?.(todo);
-              }
-            }}
-          >
-             <div className="absolute top-2 right-2 flex gap-2">
-              <button 
-                className="text-gray-500 hover:text-purple-400 text-xl cursor-pointer transition-colors" 
-                onClick={(event) => {
-                  event.stopPropagation();
-                  handleEdit();
-                }}
-                title="Edit task"
-              >
-                <Pencil className="w-5 h-5" />
-              </button>
-              {todo.id && (
-              <button 
-                className="text-gray-500 hover:text-gray-700 text-xl cursor-pointer hover:animate-jiggle" 
-                onClick={(event) => {
-                  event.stopPropagation();
-                  handleDeleteClick(todo);
-                }}
-                title="Delete task"
-              >
-                <Trash className="w-5 h-5" />
-              </button>)}
-            </div>
-            <div className="flex gap-5">
-              <div className="">
-                <Checkbox
-                  className="p-3 border-blue-600 flex items-center justify-center cursor-pointer transform transition-transform duration-100 hover:scale-[1.1]"
-                  defaultChecked={todo.completed}
+      <div className="w-full flex-col ">
+        {todos.map((todo, index) => {
+          const colors =
+            priorityColors[
+              todo.priority?.toString().toLowerCase() as PriorityKey
+            ] ?? priorityColors.low;
+
+          const handleComplete = () => {
+            if (!todo.id) {
+              return;
+            }
+            onToggleComplete(todo.id);
+          };
+          const handleEdit = () => {
+            if (onEdit) {
+              onEdit(todo);
+            }
+          };
+          return (
+            <div
+              key={todo.id || `temp=${index}`}
+              className={`p-5 border border-border relative bg-card my-4 rounded-2xl transition transform hover:-translate-y-0.5 hover:border-purple-400/40 cursor-pointer ${
+                todo.completed ? "brightness-80" : ""
+              }`}
+              onClick={() => onViewDetails?.(todo)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  onViewDetails?.(todo);
+                }
+              }}
+            >
+              <div className="absolute top-2 right-2 flex gap-2">
+                <button
+                  className="text-gray-500 hover:text-purple-400 text-xl cursor-pointer transition-colors"
                   onClick={(event) => {
                     event.stopPropagation();
-                    handleComplete();
+                    handleEdit();
                   }}
-                />
-              </div>
-              <div className="flex-col">
-                <div
-                  className={`text-white text-md font-medium ${
-                    todo.completed ? "line-through" : ""
-                  }`}
+                  title="Edit task"
                 >
-                  {todo.title}
-                </div>
-                <div className="mt-1 text-muted-foreground text-sm">
-                  {todo.description}
-                </div>
-                <div className="flex mt-3 gap-2">
-                  {todo.priority && (
-                  <div
-                    className={`py-1 px-2 ${colors.bg} ${colors.text} rounded-md text-xs`}
+                  <Pencil className="w-5 h-5" />
+                </button>
+                {todo.id && (
+                  <button
+                    className="text-gray-500 hover:text-gray-700 text-xl cursor-pointer hover:animate-jiggle"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleDeleteClick(todo);
+                    }}
+                    title="Delete task"
                   >
-                    {todo.priority}
-                  </div>)}
-                  <div className="py-1 px-2 text-white bg-muted rounded-md text-xs flex gap-1">
-                    <div className="flex justify-center items-center">
-                      <Tag className="w-3 h-3" />
-                    </div>
-                    <div>{todo.category}</div>
+                    <Trash className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
+              <div className="flex gap-5">
+                <div className="">
+                  <Checkbox
+                    className="p-3 border-blue-600 flex items-center justify-center cursor-pointer transform transition-transform duration-100 hover:scale-[1.1]"
+                    defaultChecked={todo.completed}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleComplete();
+                    }}
+                  />
+                </div>
+                <div className="flex-col">
+                  <div
+                    className={`text-white text-md font-medium ${
+                      todo.completed ? "line-through" : ""
+                    }`}
+                  >
+                    {todo.title}
                   </div>
-                  {todo.isRecurring && (
+                  <div className="mt-1 text-muted-foreground text-sm">
+                    {todo.description}
+                  </div>
+                  <div className="flex mt-3 gap-2">
+                    {todo.priority && (
+                      <div
+                        className={`py-1 px-2 ${colors.bg} ${colors.text} rounded-md text-xs`}
+                      >
+                        {todo.priority}
+                      </div>
+                    )}
                     <div className="py-1 px-2 text-white bg-muted rounded-md text-xs flex gap-1">
                       <div className="flex justify-center items-center">
-                        <Repeat className="w-3 h-3" />
+                        <Tag className="w-3 h-3" />
                       </div>
-                      <div>{todo.recurrencePattern}</div>
+                      <div>{todo.category}</div>
                     </div>
-                  )}
-                  <div className="py-1 px-2 text-white bg-muted rounded-md text-xs flex gap-1">
-                    <div className="flex justify-center items-center">
-                      <Calendar className="w-3 h-3" />
+                    {todo.isRecurring && (
+                      <div className="py-1 px-2 text-white bg-muted rounded-md text-xs flex gap-1">
+                        <div className="flex justify-center items-center">
+                          <Repeat className="w-3 h-3" />
+                        </div>
+                        <div>{todo.recurrencePattern}</div>
+                      </div>
+                    )}
+                    <div className="py-1 px-2 text-white bg-muted rounded-md text-xs flex gap-1">
+                      <div className="flex justify-center items-center">
+                        <Calendar className="w-3 h-3" />
+                      </div>
+                      <div>{formatCompleteAt(todo.completeAt)}</div>
                     </div>
-                    <div>{formatCompleteAt(todo.completeAt)}</div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        );
-      })}
-    </div>
-    <WarningModal 
-      isOpen={isWarningModalOpen}
-      onClose={handleCloseModal}
-      onDelete={handleDeleteConfirm}
-      title="Delete Task"
-      description="Are you sure you want to delete this task?"
-      buttonText="Delete"
-    />
-
+          );
+        })}
+      </div>
+      <WarningModal
+        isOpen={isWarningModalOpen}
+        onClose={handleCloseModal}
+        onDelete={handleDeleteConfirm}
+        title="Delete Task"
+        description="Are you sure you want to delete this task?"
+        buttonText="Delete"
+      />
     </>
   );
 };

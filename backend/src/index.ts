@@ -20,7 +20,7 @@ const redisConnectionString = process.env.REDIS_URL || "";
 const secretString = process.env.SESSION_SECRET || "";
 
 // Get environment variables
-const NODE_ENV = process.env.NODE_ENV || "development";
+export const NODE_ENV = process.env.NODE_ENV || "development";
 const FRONTEND_URL = (
   process.env.FRONTEND_URL || "http://localhost:5173"
 ).replace(/\/$/, "");
@@ -37,7 +37,7 @@ export const queueService = new QueueService();
 //creating store for client to talk with session
 const redisStore = new RedisStore({
   client: redisClient,
-  prefix: "Railway client",
+  prefix: "session:",
 });
 
 redisClient
@@ -51,6 +51,7 @@ redisClient.on("error", (error) =>
   console.error("Error connecting to redis client", error),
 );
 
+//cors
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -100,21 +101,16 @@ app.use(
   }),
 );
 
+//json parser
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  req.session.userId = 1;
-  res.status(200).json({
-    msg: "Session set",
-  });
-});
-
 //routes
-app.get("/v1/auth-check", requireLogin, (req, res) => {
-  res.status(200).json({
-    isAuthenticated: "true",
-    email: req.session.email,
-  });
+app.get("/v1/auth-check", (req, res) => {
+  if (req.session?.userId) {
+    res.status(200).json({ isAuthenticated: true, email: req.session.email });
+  } else {
+    res.status(200).json({ isAuthenticated: false });
+  }
 });
 
 app.use("/v1/user", userRouter);

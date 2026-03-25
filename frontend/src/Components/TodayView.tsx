@@ -1,6 +1,12 @@
 import { useMemo } from "react";
-import { CalendarDays, CheckCircle2, Flame, ListTodo, TrendingUp } from "lucide-react";
-import type { Todo } from "./Modal";
+import {
+  CalendarDays,
+  CheckCircle2,
+  Flame,
+  ListTodo,
+  TrendingUp,
+} from "lucide-react";
+import type { Todo } from "../types";
 import StatsCard from "./StatsCard";
 import TaskCard from "./TaskCard";
 import Day from "./Day";
@@ -31,13 +37,13 @@ const TodayView = ({
 }: TodayViewProps) => {
   const todayTodos = useMemo(() => {
     return todos.filter(
-      (todo) => isToday(todo?.completeAt) && todo?.completed == false
+      (todo) => isToday(todo?.completeAt) && todo?.completed == false,
     );
   }, [todos]);
 
   const todayCompletedTodos = useMemo(() => {
     return todos.filter(
-      (todo) => todo?.completed == true && isToday(todo?.completeAt)
+      (todo) => todo?.completed == true && isToday(todo?.completeAt),
     );
   }, [todos]);
 

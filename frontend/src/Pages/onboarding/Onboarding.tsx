@@ -4,7 +4,11 @@ import { Grid } from "@/Components/ui/grid";
 import { cn } from "@/lib/utils";
 import ProgressBar from "./ProgressBar";
 
-const Onboarding = ({ children }: PropsWithChildren) => {
+const Onboarding = ({
+  className,
+  children,
+  cellSize = 10,
+}: { className?: string; cellSize?: number } & PropsWithChildren) => {
   return (
     <div className="">
       <ProgressBar />
@@ -12,10 +16,11 @@ const Onboarding = ({ children }: PropsWithChildren) => {
         className={cn(
           "absolute inset-y-0 -z-30 left-1/2 w-full -translate-x-1/2",
           "mask-intersect mask-[linear-gradient(black,transparent_1000px),linear-gradient(90deg,transparent,black_5%,black_100%,transparent)]",
+          className,
         )}
       >
         <Grid
-          cellSize={10}
+          cellSize={cellSize}
           patternOffset={[0.75, 0]}
           className="text-neutral-200"
         />

@@ -26,7 +26,6 @@ const InputBox = ({
     () => setIsPasswordVisible(!isPasswordVisible),
     [isPasswordVisible, setIsPasswordVisible],
   );
-  console.log("error", error);
 
   return (
     <div className="flex flex-col my-1 justify-start w-full relative">

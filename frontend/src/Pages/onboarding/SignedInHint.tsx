@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const SignedInHint = () => {
-  const { email } = Auth();
+  const { email, setIsAuthenticated } = Auth();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -16,6 +16,7 @@ const SignedInHint = () => {
     mutationFn: () => logout(),
     onSuccess: () => {
       setLoading(false);
+      setIsAuthenticated(false);
       navigate("/signin");
     },
     onError: (error) => {
