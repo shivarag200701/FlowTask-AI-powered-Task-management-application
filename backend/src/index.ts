@@ -14,6 +14,7 @@ import { processRecurringTasks } from "./utils/recurringTasks.js";
 import cron from "node-cron";
 import oauthRouter from "./routes/oauth.js";
 import QueueService from "./services/notification/QueueService.js";
+import { initRateLimiter } from "./services/rate-limiter/index.js";
 
 const app = express();
 const redisConnectionString = process.env.REDIS_URL || "";
@@ -30,6 +31,9 @@ const PORT = process.env.PORT || 3000;
 export const redisClient = createClient({
   url: redisConnectionString,
 });
+
+//create rate limiter client with redis Client
+initRateLimiter(redisClient);
 
 //create queue as a singlelton
 export const queueService = new QueueService();

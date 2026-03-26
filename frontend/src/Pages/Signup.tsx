@@ -27,7 +27,7 @@ const Verify = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="flex flex-col items-center text-center gap-1 sm:rounded-[28px] sm:border sm:border-border sm:bg-card/80 backdrop-blur-2xl p-8 sm:p-10 sm:shadow-lg"
+        className="flex flex-col items-center text-center gap-1 sm:rounded-[28px] sm:border sm:border-border sm:bg-card/80 backdrop-blur-2xl p-4 sm:p-10 sm:shadow-lg"
       >
         <h3 className="text-center text-xl font-semibold">
           Verify your email address

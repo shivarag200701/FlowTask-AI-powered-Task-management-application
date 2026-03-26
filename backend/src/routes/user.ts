@@ -27,6 +27,7 @@ import {
 import multer from "multer";
 import { nanoid } from "nanoid";
 import { S3 } from "../services/s3/index.js";
+import { getOTPRateLimiter } from "../services/rate-limiter/index.js";
 
 dotenv.config();
 
@@ -121,6 +122,14 @@ userRouter.post("/signup/verify", async (req, res) => {
 
   const { email, password, code } = data;
 
+  const result = await getOTPRateLimiter().get(email);
+
+  if (result !== null && result.remainingPoints <= 0) {
+    return res.status(429).json({
+      msg: "Too many failed attempts. You have to try again later.",
+    });
+  }
+
   try {
     const validToken = await prisma.emailVerificationToken.findUnique({
       where: {
@@ -130,6 +139,9 @@ userRouter.post("/signup/verify", async (req, res) => {
     });
 
     if (!validToken) {
+      //consume a point
+      await getOTPRateLimiter().consume(email);
+
       return res.status(400).json({
         msg: "Invalid verification token entered",
       });

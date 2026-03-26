@@ -41,6 +41,7 @@ const ProtectedRoute = () => {
       const res = await api.get("/v1/user/onboarding/progess");
       return res.data.step;
     },
+    retry: 1,
   });
 
   // Show loading until auth check, user query, AND todos query are complete

@@ -68,7 +68,7 @@ const VerfiyForm = () => {
                   key={idx}
                   className={cn(
                     "relative flex h-14 w-12 items-center justify-center text-xl",
-                    "rounded-lg border border-neutral-200 bg-white ring-0 transition-all",
+                    "rounded-lg border border-neutral-200 bg-white ring-0 transition-all text-black",
                     isActive &&
                       "z-10 border border-neutral-800 ring-2 ring-neutral-200",
                     isInvalidCode && "border-red-500 ring-red-200",

@@ -63,7 +63,7 @@ const SignUpForm = () => {
         transition={{ duration: 0.5 }}
         className="relative w-full max-w-lg z-10"
       >
-        <div className="relative sm:rounded-[28px] sm:border sm:border-border sm:bg-card/80 backdrop-blur-2xl p-8 sm:p-10 sm:shadow-lg">
+        <div className="relative sm:rounded-[28px] sm:border sm:border-border sm:bg-card/80 backdrop-blur-2xl p-4 sm:p-10 sm:shadow-lg">
           <div className="relative ">
             <h2 className="text-2xl sm:text-3xl text-center tracking-tight leading-tight font-semibold text-gray-800 mb-10">
               Get productive
