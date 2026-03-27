@@ -4,7 +4,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Plus,
-  MoreHorizontal,
   PencilLine,
   Trash2,
   CopyPlus,
@@ -50,12 +49,9 @@ import { CSS } from "@dnd-kit/utilities";
 import { useQueryClient } from "@tanstack/react-query";
 import sortTasksByDateAndOrder from "@/utils/sortTask";
 import { useAppTheme } from "@/hooks/useTheme";
-import { Tooltip, TooltipTrigger } from "./ui/tooltip";
-import { TooltipContent } from "./ui/tooltip";
-import { Kbd } from "./ui/kbd";
-import { getBorderColorClass } from "@/lib/utils";
 import { MonthAndYearPicker } from "./Dashboard/UpcomingView/Components/MonthAndYearPicker";
 import { useUpcomingDateRange } from "@/hooks/use-upcoming-date-range";
+import { MoreOptionsPicker } from "./Dashboard/UpcomingView/Components/MoreOptionsPicker";
 
 interface UpcomingViewProps {
   todos: Todo[];
@@ -82,9 +78,6 @@ interface DraggableTaskProps {
   onViewDetails: (todo: Todo) => void;
   openDropdownId: number | string | null;
   setOpenDropdownId: (id: number | string | null) => void;
-  hoveredTodoId: number | string | null;
-  setHoveredTodoId: (id: number | string | null) => void;
-  dropdownRefs: React.RefObject<Map<number | string, HTMLDivElement>>;
   playSound: () => void;
   onDuplicateTask: (todo: Todo) => void;
   onTaskUpdated: (todo: Todo) => void;
@@ -116,9 +109,6 @@ const SortableTask = ({
   onViewDetails,
   openDropdownId,
   setOpenDropdownId,
-  hoveredTodoId,
-  setHoveredTodoId,
-  dropdownRefs,
   playSound,
   onDuplicateTask,
   onTaskUpdated,
@@ -139,7 +129,6 @@ const SortableTask = ({
     top: number;
     right: number;
   } | null>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
   const style = {
     transform: CSS.Transform.toString(transform),
     userSelect: "none" as const,
@@ -174,29 +163,6 @@ const SortableTask = ({
       todoDate.getMonth() === now.getMonth() &&
       todoDate.getDate() === now.getDate() + 1
     );
-  };
-
-  const isMobile = window.innerWidth < 768;
-
-  const toggleDropdown = (
-    todoId: number | string | undefined,
-    event: React.MouseEvent,
-  ) => {
-    event.stopPropagation();
-    if (!todoId) return;
-    const willOpen = openDropdownId !== todoId;
-    setOpenDropdownId(willOpen ? todoId : null);
-
-    if (willOpen && buttonRef.current) {
-      // Calculate position when opening
-      const rect = buttonRef.current.getBoundingClientRect();
-      setDropdownPosition({
-        top: rect.bottom,
-        right: window.innerWidth - rect.right,
-      });
-    } else {
-      setDropdownPosition(null);
-    }
   };
 
   // Reset position when dropdown closes externally
@@ -272,60 +238,31 @@ const SortableTask = ({
           {...listeners}
           {...attributes}
           className={`p-3 ${isDragging ? "bg-muted" : "bg-task"} 
-          ${isDragging ? "h-[100px]" : ""} backdrop-blur-sm border border-border border-l-5 ${getBorderColorClass(todo.color)} rounded-xl relative cursor-pointer active:cursor-grabbing shadow-md hover:shadow-[0_0_6px_-1px_rgba(0,0,0,0.3)] dark:hover:none hover:border-border-hover mb-3 ${openDropdownId === todo.id ? "z-50" : ""}`}
-          onMouseEnter={() => todo.id && setHoveredTodoId(todo.id)}
-          onMouseLeave={() => setHoveredTodoId(null)}
+          ${isDragging ? "h-[100px]" : ""} backdrop-blur-sm border group border-border hover:bg-gray-100 rounded-lg relative cursor-pointer active:cursor-grabbing shadow-md hover:shadow-[0_0_6px_-1px_rgba(0,0,0,0.3)] dark:hover:none hover:border-border-hover mb-3 ${openDropdownId === todo.id ? "z-50" : ""}`}
+          // onMouseEnter={() => todo.id && setHoveredTodoId(todo.id)}
+          // onMouseLeave={() => setHoveredTodoId(null)}
           onClick={() => {
             onViewDetails(todo);
           }}
         >
           {!isDragging && (
             <>
-              {/* Three-dot Menu */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  {todo.id && (
-                    <div
-                      className={`absolute top-2 right-2 z-20 transition-opacity duration-200 pointer-events-auto ${
-                        openDropdownId === todo.id ||
-                        hoveredTodoId === todo.id ||
-                        isMobile
-                          ? "opacity-100"
-                          : "opacity-0"
-                      }`}
-                      ref={(el) => {
-                        if (el && todo.id) {
-                          dropdownRefs.current.set(todo.id, el);
-                        }
-                      }}
-                      onMouseEnter={() => todo.id && setHoveredTodoId(todo.id)}
-                      onMouseLeave={() => {
-                        if (openDropdownId !== todo.id) {
-                          setHoveredTodoId(null);
-                        }
-                      }}
-                    >
-                      <button
-                        ref={buttonRef}
-                        className={`text-muted-foreground ${openDropdownId === todo.id && "bg-secondary"} hover:text-foreground p-1 rounded-sm hover:bg-secondary transition-colors cursor-pointer`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleDropdown(todo.id!, e);
-                        }}
-                        onMouseDown={(e) => e.stopPropagation()}
-                        title="More options"
-                      >
-                        <MoreHorizontal className="w-5 h-5" />
-                      </button>
-                    </div>
-                  )}
-                </TooltipTrigger>
-                <TooltipContent className="pr-1.5">
-                  <div className="flex items-center gap-2 ">
-                    More options<Kbd>.</Kbd>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
+              {todo.id && (
+                <div className="absolute top-2 right-2 z-20 transition-opacity duration-200 pointer-events-auto opacity-0 group-hover:opacity-100">
+                  <MoreOptionsPicker
+                    todoId={todo.id}
+                    openDropdownId={openDropdownId}
+                    setOpenDropdownId={setOpenDropdownId}
+                    onEdit={() => setIsEditing(true)}
+                    onDelete={() => handleDeleteClick(todo)}
+                    onDuplicate={() => onDuplicateTask(todo)}
+                    onPrioritySelect={(priority) => {
+                      todo.priority = priority;
+                      handlePrioritySelect(todo);
+                    }}
+                  />
+                </div>
+              )}
 
               {/* Dropdown Menu - Rendered via Portal */}
               {openDropdownId === todo.id &&
@@ -709,9 +646,6 @@ const UpcomingView = ({
   const [openDropdownId, setOpenDropdownId] = useState<number | string | null>(
     null,
   );
-  const [hoveredTodoId, setHoveredTodoId] = useState<number | string | null>(
-    null,
-  );
   const [activeTodo, setActiveTodo] = useState<Todo | null>(null);
   const [originalCompleteAt, setOriginalCompleteAt] = useState<string | null>(
     null,
@@ -722,7 +656,6 @@ const UpcomingView = ({
 
   // Use external viewType if provided, otherwise default to "board"
   const viewType = externalViewType ?? "board";
-  const dropdownRefs = useRef<Map<number | string, HTMLDivElement>>(new Map());
   const audio = new Audio(completedSound);
 
   const queryClient = useQueryClient();
@@ -1459,9 +1392,6 @@ const UpcomingView = ({
                           onViewDetails={onViewDetails}
                           openDropdownId={openDropdownId}
                           setOpenDropdownId={setOpenDropdownId}
-                          hoveredTodoId={hoveredTodoId}
-                          setHoveredTodoId={setHoveredTodoId}
-                          dropdownRefs={dropdownRefs}
                           playSound={playSound}
                           onDuplicateTask={onDuplicateTask}
                           onTaskUpdated={(todo) => {
@@ -1522,9 +1452,6 @@ const UpcomingView = ({
                         onViewDetails={onViewDetails}
                         openDropdownId={openDropdownId}
                         setOpenDropdownId={setOpenDropdownId}
-                        hoveredTodoId={hoveredTodoId}
-                        setHoveredTodoId={setHoveredTodoId}
-                        dropdownRefs={dropdownRefs}
                         playSound={playSound}
                         onDuplicateTask={onDuplicateTask}
                         onTaskUpdated={(todo) => {

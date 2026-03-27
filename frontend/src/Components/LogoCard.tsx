@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import { CheckCircle2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 const LogoCard = ({ className }: { className?: string }) => {
   const navigate = useNavigate();

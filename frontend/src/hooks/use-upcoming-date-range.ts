@@ -8,8 +8,6 @@ export function useUpcomingDateRange(dayCount: number) {
     return today;
   });
 
-  console.log("startdate", startDate);
-
   const [isMonthYearPickerOpen, setIsMonthYearPickerOpen] = useState(false);
 
   const dateRange = useMemo(() => {

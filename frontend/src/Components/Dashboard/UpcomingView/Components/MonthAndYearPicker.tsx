@@ -49,7 +49,7 @@ export function MonthAndYearPicker({
                       disabled={isDisabled}
                       className={`px-3 py-2.5 text-xs font-medium rounded-lg transition-all flex items-center justify-center cursor-pointer select-none ${
                         isSelected
-                          ? "bg-purple-500 text-white shadow-md shadow-purple-500/30 cursor-pointer"
+                          ? "bg-accent text-white shadow-md  cursor-pointer"
                           : isDisabled
                             ? "text-[#4A4A4A] cursor-not-allowed opacity-40"
                             : "text-muted-foreground hover:bg-muted hover:text-foreground hover:scale-105 active:scale-95"
@@ -85,7 +85,7 @@ export function MonthAndYearPicker({
                       }}
                       className={`w-full px-4 py-2.5 text-sm rounded-lg transition-all text-left cursor-pointer select-none ${
                         isSelected
-                          ? "bg-purple-500 text-white shadow-md shadow-purple-500/30 font-semibold"
+                          ? "bg-accent text-white shadow-md font-semibold"
                           : "text-muted-foreground hover:bg-muted hover:text-foreground"
                       }`}
                     >

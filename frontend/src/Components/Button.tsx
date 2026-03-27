@@ -4,13 +4,13 @@ import type { ReactNode } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 export const ButtonVariants = cva(
-  "transition-all text-white hover:shadow-lg shadow-sm hover:opacity-90",
+  "transition-all text-white hover:shadow-md shadow-sm hover:opacity-90",
   {
     variants: {
       variant: {
         primary: "bg-accent text-white border-transparent",
         secondary:
-          "bg-button-secondary text-foreground border border-gray-400  data-[state=open]:ring-4 data-[state=open]:ring-gray-200 ",
+          "bg-button-secondary text-foreground border border-gray-200 data-[state=open]:border-gray-400  data-[state=open]:ring-4 data-[state=open]:ring-gray-200 ",
       },
       size: {
         small: "text-sm py-2 px-3",
