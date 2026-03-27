@@ -8,7 +8,7 @@ const PublicRoute = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <img src="/favicon.png" alt="Logo" width={100} height={100} />
+        <img src="/logo.png" alt="Logo" width={100} height={100} />
         <Spinner />
       </div>
     );

@@ -13,16 +13,10 @@ import {
   Repeat,
   Calendar,
   AlarmClock,
-  KanbanSquare,
-  List,
-  CalendarDays,
 } from "lucide-react";
 import type { Todo } from "../types";
 import { Checkbox } from "./ui/checkbox";
-import {
-  getUpcomingDateRange,
-  formatUpcomingDateHeader,
-} from "@shiva200701/todotypes";
+import { formatUpcomingDateHeader } from "@shiva200701/todotypes";
 import WarningModal from "./WarningModal";
 import InlineTaskForm from "./InlineTaskForm";
 import completedSound from "@/assets/completed.wav";
@@ -60,6 +54,8 @@ import { Tooltip, TooltipTrigger } from "./ui/tooltip";
 import { TooltipContent } from "./ui/tooltip";
 import { Kbd } from "./ui/kbd";
 import { getBorderColorClass } from "@/lib/utils";
+import { MonthAndYearPicker } from "./Dashboard/UpcomingView/Components/MonthAndYearPicker";
+import { useUpcomingDateRange } from "@/hooks/use-upcoming-date-range";
 
 interface UpcomingViewProps {
   todos: Todo[];
@@ -707,14 +703,7 @@ const UpcomingView = ({
   onDuplicateTask,
   onTaskUpdated,
   viewType: externalViewType,
-  onViewTypeChange,
 }: UpcomingViewProps) => {
-  const [startDate, setStartDate] = useState<Date>(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return today;
-  });
-  const [showMonthYearPicker, setShowMonthYearPicker] = useState(false);
   const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
   const [todoToDelete, setTodoToDelete] = useState<Todo | null>(null);
   const [openDropdownId, setOpenDropdownId] = useState<number | string | null>(
@@ -728,17 +717,13 @@ const UpcomingView = ({
     null,
   );
   const [openFormDate, setOpenFormDate] = useState<string | null>(null);
-  const [hoveredView, setHoveredView] = useState<string | null>(null);
 
   const { theme } = useAppTheme();
 
   // Use external viewType if provided, otherwise default to "board"
   const viewType = externalViewType ?? "board";
-
-  const pickerRef = useRef<HTMLDivElement>(null);
   const dropdownRefs = useRef<Map<number | string, HTMLDivElement>>(new Map());
   const audio = new Audio(completedSound);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const queryClient = useQueryClient();
 
@@ -746,15 +731,6 @@ const UpcomingView = ({
   // This ensures we see reordering changes instantly without waiting for prop updates
   // Read directly from cache on each render to get the latest data synchronously
   const todosFromCache = queryClient.getQueryData<Todo[]>(["todos"]) || todos;
-
-  // Update window width on resize
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   const getOverDueTasks = (): Todo[] => {
     //For all day todo
@@ -774,6 +750,47 @@ const UpcomingView = ({
       );
     });
   };
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  // Calculate number of days based on screen size
+  const getDayCount = () => {
+    const smallTablet = windowWidth >= 768 && windowWidth <= 850;
+    const isTablet = windowWidth <= 1024;
+
+    let dayCount;
+    if (smallTablet) {
+      dayCount = 3;
+    } else if (isTablet) {
+      dayCount = 4;
+    } else {
+      dayCount = 5;
+    }
+    // Reduce by 1 if overdue tasks are present (to make room for overdue column)
+    return getOverDueTasks().length > 0 ? dayCount - 1 : dayCount;
+  };
+
+  const dayCount = getDayCount();
+
+  const {
+    startDate,
+    navigatePrevious,
+    navigateNext,
+    navigateToToday,
+    dateRange,
+    setIsMonthYearPickerOpen,
+    isMonthYearPickerOpen,
+    currentMonthYearLabel,
+    selectMonthYear,
+  } = useUpcomingDateRange(dayCount);
+
+  // Update window width on resize
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const isToday = (completeAt: string | null | undefined): boolean => {
     if (!completeAt) return false;
@@ -808,29 +825,6 @@ const UpcomingView = ({
     });
   };
 
-  // Calculate number of days based on screen size
-  const getDayCount = () => {
-    const smallTablet = windowWidth >= 768 && windowWidth <= 850;
-    const isTablet = windowWidth <= 1024;
-
-    let dayCount;
-    if (smallTablet) {
-      dayCount = 3;
-    } else if (isTablet) {
-      dayCount = 4;
-    } else {
-      dayCount = 5;
-    }
-    // Reduce by 1 if overdue tasks are present (to make room for overdue column)
-    return getOverDueTasks().length > 0 ? dayCount - 1 : dayCount;
-  };
-
-  const dayCount = getDayCount();
-
-  const dateRange = useMemo(() => {
-    return getUpcomingDateRange(startDate, 5);
-  }, [startDate, dayCount]);
-
   const playSound = () => {
     audio.play();
   };
@@ -848,163 +842,6 @@ const UpcomingView = ({
       },
     }),
   );
-
-  // Close picker when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        pickerRef.current &&
-        !pickerRef.current.contains(event.target as Node)
-      ) {
-        setShowMonthYearPicker(false);
-      }
-
-      // Close dropdowns when clicking outside
-      if (openDropdownId !== null) {
-        const dropdownElement = dropdownRefs.current.get(openDropdownId);
-        const target = event.target as HTMLElement;
-        // Check if click is on the portal dropdown menu
-        const isPortalDropdown = target.closest('[data-dropdown-menu="true"]');
-        if (
-          dropdownElement &&
-          !dropdownElement.contains(target) &&
-          !isPortalDropdown
-        ) {
-          setOpenDropdownId(null);
-        }
-      }
-    };
-
-    if (showMonthYearPicker || openDropdownId !== null) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showMonthYearPicker, openDropdownId]);
-
-  const navigatePrevious = () => {
-    const newDate = new Date(startDate);
-    newDate.setDate(newDate.getDate() - dayCount);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    // Only navigate if the new date is today or in the future
-    // If going back would go to past, jump to today instead
-    if (newDate >= today) {
-      setStartDate(newDate);
-    } else {
-      // If going back would go to past, jump to today
-      setStartDate(today);
-    }
-  };
-
-  const navigateNext = () => {
-    const newDate = new Date(startDate);
-    newDate.setDate(newDate.getDate() + dayCount);
-    setStartDate(newDate);
-  };
-
-  const navigateToToday = () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    setStartDate(today);
-  };
-
-  const getCurrentMonthYear = () => {
-    return startDate.toLocaleDateString("en-US", {
-      month: "long",
-      year: "numeric",
-    });
-  };
-
-  const handleShowMonthYearPicker = () => {
-    setShowMonthYearPicker(!showMonthYearPicker);
-  };
-
-  const handleMonthYearSelect = (
-    year: number,
-    month: number,
-    yearPicker: boolean = false,
-  ) => {
-    const today = new Date();
-    const currentYear = today.getFullYear();
-    const currentMonth = today.getMonth();
-    const currentDay = today.getDate();
-
-    let newDate: Date;
-
-    // If selecting current year and current month, start from today
-    if (year === currentYear && month === currentMonth) {
-      newDate = new Date(year, month, currentDay);
-    } else {
-      // Otherwise, start from the 1st of the selected month
-      newDate = new Date(year, month, 1);
-    }
-
-    newDate.setHours(0, 0, 0, 0);
-    today.setHours(0, 0, 0, 0);
-
-    // Only allow selecting today or future dates
-    if (newDate >= today) {
-      if (!yearPicker) {
-        setShowMonthYearPicker(false);
-      }
-      setStartDate(newDate);
-    }
-  };
-
-  // Generate years (current year and future years only)
-  const getYears = () => {
-    const currentYear = new Date().getFullYear();
-    const years = [];
-    for (let i = currentYear; i <= currentYear + 10; i++) {
-      years.push(i);
-    }
-    return years;
-  };
-
-  // Generate months (filter out past months for current year, but allow current month)
-  const getMonths = (selectedYear: number) => {
-    const today = new Date();
-    const currentYear = today.getFullYear();
-    const currentMonth = today.getMonth();
-
-    const allMonths = [
-      { value: 0, label: "January" },
-      { value: 1, label: "February" },
-      { value: 2, label: "March" },
-      { value: 3, label: "April" },
-      { value: 4, label: "May" },
-      { value: 5, label: "June" },
-      { value: 6, label: "July" },
-      { value: 7, label: "August" },
-      { value: 8, label: "September" },
-      { value: 9, label: "October" },
-      { value: 10, label: "November" },
-      { value: 11, label: "December" },
-    ];
-
-    // If selected year is current year, show current month and future months
-    if (selectedYear === currentYear) {
-      return allMonths.filter((month) => month.value >= currentMonth);
-    }
-
-    // For future years, show all months
-    return allMonths;
-  };
-
-  // Check if a month/year combination is in the past
-  const isPastDate = (year: number, month: number): boolean => {
-    const today = new Date();
-    if (month == today.getMonth()) {
-      return false;
-    }
-    const date = new Date(year, month, 1);
-    date.setHours(0, 0, 0, 0);
-    today.setHours(0, 0, 0, 0);
-    return date < today;
-  };
 
   const getTasksForDate = (date: Date): Todo[] => {
     let todosForDate: Todo[] = [];
@@ -1515,180 +1352,30 @@ const UpcomingView = ({
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex justify-between items-end mb-4 border-b-[0.5px]  border-secondary pb-4 px-15 pt-10">
+      <div className="flex flex-wrap justify-between items-end mb-4 border-b-[0.5px]  border-secondary pb-4 px-5 md:px-6 pt-10 w-full">
         <>
           <div className="flex flex-col gap-2">
-            <div className="flex gap-2">
-              <h1 className="text-foreground text-2xl md:text-3xl font-bold">
-                Upcoming Tasks
+            <div className="flex flex-col  gap-2 w-full">
+              <h1 className="text-foreground text-2xl md:text-3xl font-bold ">
+                Upcoming
               </h1>
-              <div className="relative" ref={pickerRef}>
+              <div className="">
                 {viewType === "board" && (
-                  <div
-                    className="hidden sm:flex items-center justify-center gap-2 p-2 text-foreground shadow-sm hover:shadow-md cursor-pointer hover:bg-hover rounded-md border border-border dark:hover:bg-options-hover  transition-colors h-full select-none"
-                    onClick={handleShowMonthYearPicker}
-                  >
-                    <span className="text-sm">{getCurrentMonthYear()}</span>
-                  </div>
-                )}
-                {/* Month/Year Picker Dropdown */}
-                {showMonthYearPicker && (
-                  <div className="absolute top-full left-0 mt-2 bg-card/95 backdrop-blur-xl border border-border rounded-2xl p-5 shadow-[0_8px_32px_rgba(0,0,0,0.5)] z-9999 min-w-[280px] max-w-[90vw] sm:min-w-[320px] select-none">
-                    <div className="grid grid-cols-2 gap-6">
-                      {/* Month Selector */}
-                      <div>
-                        <div className="text-white text-sm font-semibold mb-3 text-center">
-                          Month
-                        </div>
-                        <div className="grid grid-cols-3 gap-2 overflow-hidden">
-                          {getMonths(startDate.getFullYear()).map((month) => {
-                            const isSelected =
-                              startDate.getMonth() === month.value;
-                            const isDisabled = isPastDate(
-                              startDate.getFullYear(),
-                              month.value,
-                            );
-
-                            return (
-                              <button
-                                key={month.value}
-                                onClick={() => {
-                                  if (!isDisabled) {
-                                    handleMonthYearSelect(
-                                      startDate.getFullYear(),
-                                      month.value,
-                                      false,
-                                    );
-                                  }
-                                }}
-                                disabled={isDisabled}
-                                className={`px-3 py-2.5 text-xs font-medium rounded-lg transition-all flex items-center justify-center cursor-pointer select-none ${
-                                  isSelected
-                                    ? "bg-purple-500 text-white shadow-md shadow-purple-500/30 cursor-pointer"
-                                    : isDisabled
-                                      ? "text-[#4A4A4A] cursor-not-allowed opacity-40"
-                                      : "text-muted-foreground hover:bg-muted hover:text-foreground hover:scale-105 active:scale-95"
-                                }`}
-                              >
-                                {month.label.slice(0, 3)}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* Year Selector */}
-                      <div>
-                        <div className="text-white text-sm font-semibold mb-3 text-center">
-                          Year
-                        </div>
-                        <div className="max-h-56 overflow-y-auto overflow-x-hidden custom-scrollbar space-y-1">
-                          {getYears().map((year) => {
-                            const isSelected = startDate.getFullYear() === year;
-                            const isCurrentYear =
-                              year === new Date().getFullYear();
-
-                            return (
-                              <button
-                                key={year}
-                                onClick={() => {
-                                  // If selecting current year, ensure we don't go to past months
-                                  const today = new Date();
-                                  const monthToUse = isCurrentYear
-                                    ? Math.max(
-                                        startDate.getMonth(),
-                                        today.getMonth(),
-                                      )
-                                    : startDate.getMonth();
-                                  handleMonthYearSelect(year, monthToUse, true);
-                                }}
-                                className={`w-full px-4 py-2.5 text-sm rounded-lg transition-all text-left cursor-pointer select-none ${
-                                  isSelected
-                                    ? "bg-purple-500 text-white shadow-md shadow-purple-500/30 font-semibold"
-                                    : "text-muted-foreground hover:bg-muted hover:text-foreground hover:translate-x-1"
-                                }`}
-                              >
-                                {year}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-4 pt-4 border-t border-border">
-                      <div className="text-[#9EA0BB] text-xs text-center">
-                        Only future dates are available
-                      </div>
-                    </div>
-                  </div>
+                  <MonthAndYearPicker
+                    setIsMonthYearPickerOpen={setIsMonthYearPickerOpen}
+                    startDate={startDate}
+                    selectMonthYear={selectMonthYear}
+                    isMonthYearPickerOpen={isMonthYearPickerOpen}
+                    currentMonthYearLabel={currentMonthYearLabel}
+                  />
                 )}
               </div>
             </div>
-            <span className="text-md text-slate-500 font-medium">
-              Organize and track your tasks effortlessly
-            </span>
           </div>
         </>
-        <div className="flex gap-5">
-          {/* View Selector - Desktop */}
-          <div className="hidden sm:block">
-            <div
-              className="flex items-center py-1 px-1 bg-options-hover/30 border border-border rounded-md relative select-none h-10"
-              role="tablist"
-              aria-label="View selector"
-            >
-              {[
-                { id: "board", label: "Board", icon: KanbanSquare },
-                { id: "list", label: "List", icon: List },
-                { id: "calendar", label: "Calendar", icon: CalendarDays },
-              ].map((view) => {
-                const Icon = view.icon;
-                const isActive = viewType === view.id;
-                const isHovered = hoveredView === view.id;
-
-                return (
-                  <button
-                    key={view.id}
-                    role="tab"
-                    aria-selected={isActive}
-                    aria-label={`${view.label} view`}
-                    className={`
-                        flex items-center justify-center gap-1.5 rounded-md
-                        w-[120px] px-3 py-1.5 text-sm
-                        cursor-pointer select-none z-10
-                        transition-all duration-200
-                        ${
-                          isActive
-                            ? "bg-accent text-white shadow-sm"
-                            : "text-muted-foreground"
-                        }
-                        ${isHovered && !isActive ? "bg-muted text-foreground" : ""}
-                      `}
-                    onClick={() => onViewTypeChange?.(view.id)}
-                    onMouseEnter={() => setHoveredView(view.id)}
-                    onMouseLeave={() => setHoveredView(null)}
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span>{view.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* View Selector - Mobile (simplified dropdown) */}
-          <select
-            className="sm:hidden bg-options-hover/30 rounded-md px-3 py-2 text-sm border border-border focus:outline-none focus:ring-2 focus:ring-accent"
-            value={viewType}
-            onChange={(e) => onViewTypeChange?.(e.target.value)}
-            aria-label="Select view"
-          >
-            <option value="board">Board</option>
-            <option value="list">List</option>
-            <option value="calendar">Calendar</option>
-          </select>
+        <div className="">
           {viewType === "board" && (
-            <div className="hidden sm:flex  border border-border rounded-sm ">
+            <div className="flex  border border-border rounded-sm ">
               <button
                 onClick={navigatePrevious}
                 className="text-muted-foreground hover:text-foreground transition-colors p-1  hover:bg-muted cursor-pointer"

@@ -35,7 +35,7 @@ const ProtectedRoute = () => {
   });
 
   //get onboarding progress
-  const { isLoading: stepLoading, data: onboardingStep } = useQuery({
+  const { data: onboardingStep } = useQuery({
     queryKey: ["onboardingProgress"],
     queryFn: async (): Promise<OnboardingStep> => {
       const res = await api.get("/v1/user/onboarding/progess");
@@ -45,13 +45,10 @@ const ProtectedRoute = () => {
   });
 
   // Show loading until auth check, user query, AND todos query are complete
-  if (
-    isLoading ||
-    (isAuthenticated && (userLoading || todosLoading || stepLoading))
-  ) {
+  if (isLoading || (isAuthenticated && (userLoading || todosLoading))) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <img src="/favicon.png" alt="Logo" width={100} height={100} />
+        <img src="/logo.png" alt="Logo" width={100} height={100} />
         <Spinner />
       </div>
     );

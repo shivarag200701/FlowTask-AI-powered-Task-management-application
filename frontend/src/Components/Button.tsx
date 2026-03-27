@@ -10,7 +10,7 @@ export const ButtonVariants = cva(
       variant: {
         primary: "bg-accent text-white border-transparent",
         secondary:
-          "bg-white text-gray-800 border border-gray-200 hover:border-gray-400",
+          "bg-button-secondary text-foreground border border-gray-400  data-[state=open]:ring-4 data-[state=open]:ring-gray-200 ",
       },
       size: {
         small: "text-sm py-2 px-3",
@@ -29,7 +29,7 @@ interface ButtonProps
     React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof ButtonVariants> {
   isSubmitting?: boolean;
-  Initial?: string;
+  Initial?: ReactNode;
   Loading?: string;
   icon?: ReactNode;
 }

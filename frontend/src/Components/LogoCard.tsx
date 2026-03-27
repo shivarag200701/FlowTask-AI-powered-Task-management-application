@@ -11,11 +11,8 @@ const LogoCard = ({ className }: { className?: string }) => {
       )}
       onClick={() => navigate("/")}
     >
-      <div className="w-12 h-12 rounded-2xl bg-accent flex items-center justify-center">
-        <CheckCircle2
-          className="w-7 h-7 text-primary-foreground"
-          color="white"
-        />
+      <div className="w-12 h-12 rounded-2xl flex items-center justify-center">
+        <img src="/logo.png" />
       </div>
       <h1 className="text-2xl font-bold tracking-tight text-accent">
         FlowTask

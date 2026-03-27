@@ -39,13 +39,15 @@
   --color-options-hover: var(--options-hover);
   --color-drag-task: var(--drag-task);
   --color-tool-tip: var(--tool-tip);
-
-  /* Sidebar & Component Specific */
+  --color-border-emphasis: var(
+    --border-emphasis
+  ); /* Sidebar & Component Specific */
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-button-subtle: var(--button-subtle);
   --color-button-subtle-hover: var(--button-subtle-hover);
+  --color-button-secondary: var(--button-secondary);
 
   /* Custom Scrollbar Variables */
   --color-scrollbar-track: var(--scrollbar-track);
@@ -159,12 +161,15 @@ html {
   --task: oklch(0.233 0 0);
   --toast: oklch(0.233 0 0);
   --drag-task: oklch(0.22 0 0);
+  --border-emphasis: oklch(0.7155 0 0);
+  --button-secondary: oklch(0.3211 0 0);
 }
 
 /* --- Light Theme Variables --- */
 [data-theme="light"] {
   --background: oklch(0.99 0 0);
   --foreground: oklch(0.15 0 0);
+  --border-emphasis: oklch(0.7155 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.15 0 0);
   --primary: oklch(0.45 0.15 264);
@@ -193,6 +198,7 @@ html {
   --task: oklch(0.99 0 0);
   --toast: oklch(0.2 0 0);
   --drag-task: oklch(0.99 0 0);
+  --button-secondary: oklch(1 0 0);
 }
 
 body {

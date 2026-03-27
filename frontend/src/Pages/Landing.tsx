@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { CheckCircle2, Brain, Calendar1, RefreshCcw } from "lucide-react";
+import { Brain, Calendar1, RefreshCcw } from "lucide-react";
 import { Calendar } from "@/Components/ui/calendar";
 import { useScrollbarWidth } from "../hooks/useScrollbarWidth";
 import { AuroraText } from "@/Components/ui/aurora-text";
@@ -238,8 +238,8 @@ const Landing = () => {
                   : {}
               }
             >
-              <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center">
-                <CheckCircle2 className="w-5 h-5 text-white" />
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center">
+                <img src="/logo.png" />
               </div>
               <h1 className="text-2xl font-bold tracking-tight text-accent">
                 FlowTask
