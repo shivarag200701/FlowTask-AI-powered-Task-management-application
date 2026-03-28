@@ -68,7 +68,7 @@ const SideBar = ({
   return (
     <aside
       className={`h-screen transition-all duration-300 ease-in-out ${expanded ? "min-w-70 max-w-70" : "w-0"} 
-    z-50 `}
+    z-30 `}
       aria-expanded={expanded}
       aria-hidden={!expanded}
     >

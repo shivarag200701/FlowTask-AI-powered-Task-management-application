@@ -10,12 +10,13 @@ import {
   calculateNextOccurence,
   type RecurrencePattern,
 } from "@shiva200701/todotypes";
-import TaskDetailDrawer from "@/Components/TaskDetailDrawer";
 import { CalendarDays, Plus, Calendar1, CircleCheck } from "lucide-react";
 import AddTaskCalendar from "../Components/AddTaskCalender";
 import SideBar, { SideBarItem } from "@/Components/SideBar";
 import { ViewDropDown } from "@/Components/ViewDropDown";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { TaskDetailDialog } from "@/Components/Dashboard/UpcomingView/Components/TaskDetailDialog";
 
 const Dashboard = () => {
   const queryClient = useQueryClient();
@@ -40,7 +41,6 @@ const Dashboard = () => {
   const viewDropdownButtonRef = useRef<HTMLButtonElement | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [expanded, setExpanded] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
   const { refreshAuth } = Auth();
 
   // Handle OAuth success redirect
@@ -136,7 +136,7 @@ const Dashboard = () => {
     setIsAddTaskCalendarOpen(true);
   };
 
-  const handleViewDetails = (todo: Todo) => {
+  const openTaskDetail = (todo: Todo) => {
     const params = new URLSearchParams(searchParams.toString());
     if (todo.id) {
       params.set("task", String(todo.id));
@@ -359,16 +359,7 @@ const Dashboard = () => {
     }
   };
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-
-    window.addEventListener("resize", checkMobile);
-
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  const { isMobile } = useMediaQuery();
 
   useEffect(() => {
     const taskIdParam = searchParams.get("task");
@@ -472,7 +463,7 @@ const Dashboard = () => {
               onDelete={deleteTodo}
               onEdit={handleEdit}
               onAddTask={() => openModal()}
-              onViewDetails={handleViewDetails}
+              onViewDetails={openTaskDetail}
             />
           )}
           {activeTab === "upcoming" && (
@@ -483,7 +474,7 @@ const Dashboard = () => {
               onEdit={handleEdit}
               onUpdateTodo={updateTodo}
               onAddTask={() => openModal()}
-              onViewDetails={handleViewDetails}
+              onOpenTaskDetail={openTaskDetail}
               onTaskCreated={addTodo}
               onTaskUpdated={updateTodo}
               onDuplicateTask={duplicateTodo}
@@ -499,7 +490,7 @@ const Dashboard = () => {
               onDelete={deleteTodo}
               onEdit={handleEdit}
               onAddTask={() => openModal()}
-              onViewDetails={handleViewDetails}
+              onViewDetails={openTaskDetail}
             />
           )}
         </div>
@@ -516,16 +507,16 @@ const Dashboard = () => {
         />
       )}
       {isDetailOpen && selectedTodo && (
-        <TaskDetailDrawer
+        <TaskDetailDialog
           todo={selectedTodo}
-          isOpen={isDetailOpen}
-          onClose={closeDetailDrawer}
-          editAllowed={activeTab === "upcoming" && viewType === "calendar"}
-          onEdit={updateTodo}
-          onToggleComplete={toggleTodoCompletion}
-          onDelete={deleteTodo}
-          handleDuplicate={duplicateTodo}
-          key={selectedTodo.id}
+          modalOpen={isDetailOpen}
+          setModalOpen={(open) => {
+            console.log("is this open", open);
+
+            if (!open) {
+              closeDetailDrawer();
+            }
+          }}
         />
       )}
       {showViewDropdown && (

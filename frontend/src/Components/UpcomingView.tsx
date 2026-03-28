@@ -1,13 +1,8 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { createPortal } from "react-dom";
 import {
   ChevronLeft,
   ChevronRight,
   Plus,
-  PencilLine,
-  Trash2,
-  CopyPlus,
-  Flag,
   Tag,
   Repeat,
   Calendar,
@@ -32,7 +27,6 @@ import {
 import {
   SortableContext,
   verticalListSortingStrategy,
-  useSortable,
   arrayMove,
 } from "@dnd-kit/sortable";
 import CalendarView from "./CalendarView";
@@ -45,13 +39,12 @@ import type {
 import api from "../utils/api";
 import { format, startOfWeek, endOfWeek, isWithinInterval } from "date-fns";
 import CustomDatePicker from "./CustomDatePicker";
-import { CSS } from "@dnd-kit/utilities";
 import { useQueryClient } from "@tanstack/react-query";
 import sortTasksByDateAndOrder from "@/utils/sortTask";
 import { useAppTheme } from "@/hooks/useTheme";
 import { MonthAndYearPicker } from "./Dashboard/UpcomingView/Components/MonthAndYearPicker";
 import { useUpcomingDateRange } from "@/hooks/use-upcoming-date-range";
-import { MoreOptionsPicker } from "./Dashboard/UpcomingView/Components/MoreOptionsPicker";
+import { DraggableTask } from "./Dashboard/UpcomingView/Components/DraggableTask";
 
 interface UpcomingViewProps {
   todos: Todo[];
@@ -60,28 +53,12 @@ interface UpcomingViewProps {
   onEdit: (todo: Todo) => void;
   onUpdateTodo: (todo: Todo) => void;
   onAddTask: (preselectedDate?: string) => void;
-  onViewDetails: (todo: Todo) => void;
+  onOpenTaskDetail: (todo: Todo) => void;
   onTaskCreated?: (todo: Todo) => void;
   onDuplicateTask: (todo: Todo) => void;
   onTaskUpdated: (todo: Todo) => void;
   viewType?: string;
   onViewTypeChange?: (viewType: string) => void;
-}
-
-interface DraggableTaskProps {
-  todo: Todo;
-  index: number;
-  columnIndex: number;
-  onToggleComplete: (todoId: string | number) => void;
-  onDelete: (todo: Todo) => void;
-  onEdit: (todo: Todo) => void;
-  onViewDetails: (todo: Todo) => void;
-  openDropdownId: number | string | null;
-  setOpenDropdownId: (id: number | string | null) => void;
-  playSound: () => void;
-  onDuplicateTask: (todo: Todo) => void;
-  onTaskUpdated: (todo: Todo) => void;
-  todos: Todo[];
 }
 
 interface DroppableDateColumnProps {
@@ -100,326 +77,230 @@ interface DroppableDateColumnProps {
   activeTodo?: Todo | null;
 }
 
-const SortableTask = ({
-  todo,
-  index,
-  columnIndex,
-  onToggleComplete,
-  onDelete,
-  onViewDetails,
-  openDropdownId,
-  setOpenDropdownId,
-  playSound,
-  onDuplicateTask,
-  onTaskUpdated,
-  todos,
-}: DraggableTaskProps) => {
-  const { attributes, listeners, setNodeRef, isDragging, transform } =
-    useSortable({
-      id: todo.id || `temp-${index}`,
-      data: {
-        todo,
-        columnIndex,
-        type: "task",
-      },
-      animateLayoutChanges: () => false,
-    });
+// const SortableTask = ({
+//   todo,
+//   index,
+//   columnIndex,
+//   onToggleComplete,
+//   onDelete,
+//   onViewDetails,
+//   openDropdownId,
+//   setOpenDropdownId,
+//   playSound,
+//   onDuplicateTask,
+//   onTaskUpdated,
+//   todos,
+// }: DraggableTaskProps) => {
+//   const { attributes, listeners, setNodeRef, isDragging, transform } =
+//     useSortable({
+//       id: todo.id || `temp-${index}`,
+//       data: {
+//         todo,
+//         columnIndex,
+//         type: "task",
+//       },
+//       animateLayoutChanges: () => false,
+//     });
 
-  const [dropdownPosition, setDropdownPosition] = useState<{
-    top: number;
-    right: number;
-  } | null>(null);
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    userSelect: "none" as const,
-  };
+//   const style = {
+//     transform: CSS.Transform.toString(transform),
+//     userSelect: "none" as const,
+//   };
 
-  const priorityColors = {
-    high: "text-red-500",
-    medium: "text-blue-500",
-    low: "text-green-500",
-    none: "text-gray-500",
-  };
+//   // Check if todo.completeAt is for today (comparing local dates)
+//   const isToday = (completeAt: string | null | undefined): boolean => {
+//     if (!completeAt) return false;
+//     const todoDate = new Date(completeAt);
+//     const now = new Date();
 
-  // Check if todo.completeAt is for today (comparing local dates)
-  const isToday = (completeAt: string | null | undefined): boolean => {
-    if (!completeAt) return false;
-    const todoDate = new Date(completeAt);
-    const now = new Date();
+//     return (
+//       todoDate.getFullYear() === now.getFullYear() &&
+//       todoDate.getMonth() === now.getMonth() &&
+//       todoDate.getDate() === now.getDate()
+//     );
+//   };
 
-    return (
-      todoDate.getFullYear() === now.getFullYear() &&
-      todoDate.getMonth() === now.getMonth() &&
-      todoDate.getDate() === now.getDate()
-    );
-  };
+//   const isTomorrow = (completeAt: string | null | undefined): boolean => {
+//     if (!completeAt) return false;
+//     const todoDate = new Date(completeAt);
+//     const now = new Date();
+//     return (
+//       todoDate.getFullYear() === now.getFullYear() &&
+//       todoDate.getMonth() === now.getMonth() &&
+//       todoDate.getDate() === now.getDate() + 1
+//     );
+//   };
 
-  const isTomorrow = (completeAt: string | null | undefined): boolean => {
-    if (!completeAt) return false;
-    const todoDate = new Date(completeAt);
-    const now = new Date();
-    return (
-      todoDate.getFullYear() === now.getFullYear() &&
-      todoDate.getMonth() === now.getMonth() &&
-      todoDate.getDate() === now.getDate() + 1
-    );
-  };
+//   const [isEditing, setIsEditing] = useState(false);
+//   const { isMobile } = useMediaQuery();
+//   const suppressClickRef = useRef(false);
 
-  // Reset position when dropdown closes externally
-  useEffect(() => {
-    if (openDropdownId !== todo.id) {
-      setDropdownPosition(null);
-    }
-  }, [openDropdownId, todo.id]);
+//   useEffect(() => {
+//     if (openDropdownId === todo.id) {
+//       suppressClickRef.current = true;
+//     } else if (suppressClickRef.current) {
+//       const timeout = setTimeout(() => {
+//         suppressClickRef.current = false;
+//       }, 350);
+//       return () => clearTimeout(timeout);
+//     }
+//   }, [openDropdownId]);
 
-  const handleDeleteClick = (todo: Todo) => {
-    setOpenDropdownId(null);
-    setDropdownPosition(null);
-    onDelete(todo);
-  };
-  const [isEditing, setIsEditing] = useState(false);
+//   const handlePrioritySelect = (todo: Todo) => {
+//     // Optimistic update - update UI first
+//     onTaskUpdated(todo);
+//     setOpenDropdownId(null);
 
-  const handlePrioritySelect = (todo: Todo) => {
-    // Optimistic update - update UI first
-    onTaskUpdated(todo);
-    setOpenDropdownId(null);
-    setDropdownPosition(null);
+//     api
+//       .put(`/v1/todo/${todo.id}`, {
+//         title: todo.title,
+//         description: todo.description,
+//         completeAt: todo.completeAt,
+//         category: todo.category,
+//         priority: todo.priority ?? null,
+//         isRecurring: todo.isRecurring,
+//         recurrencePattern: todo.recurrencePattern ?? null,
+//         recurrenceInterval: todo.recurrenceInterval ?? null,
+//         recurrenceEndDate: todo.recurrenceEndDate ?? null,
+//         isAllDay: todo.isAllDay,
+//       })
+//       .catch((error) => {
+//         console.error("Error updating priority", error);
+//       });
+//   };
+//   const getTimeFromDate12hr = (date: string): string => {
+//     if (!date) return "";
+//     const dateObj = new Date(date);
+//     return dateObj.toLocaleTimeString("en-US", {
+//       hour: "numeric",
+//       minute: "2-digit",
+//       hour12: true,
+//     });
+//   };
 
-    // Fire-and-forget API call
-    api
-      .put(`/v1/todo/${todo.id}`, {
-        title: todo.title,
-        description: todo.description,
-        completeAt: todo.completeAt,
-        category: todo.category,
-        priority: todo.priority ?? null,
-        isRecurring: todo.isRecurring,
-        recurrencePattern: todo.recurrencePattern ?? null,
-        recurrenceInterval: todo.recurrenceInterval ?? null,
-        recurrenceEndDate: todo.recurrenceEndDate ?? null,
-        isAllDay: todo.isAllDay,
-      })
-      .catch((error) => {
-        console.error("Error updating priority", error);
-      });
-  };
-  const getTimeFromDate12hr = (date: string): string => {
-    if (!date) return "";
-    const dateObj = new Date(date);
-    return dateObj.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    });
-  };
+//   return (
+//     <>
+//       {isEditing ? (
+//         <InlineTaskForm
+//           columnIndex={columnIndex}
+//           index={index}
+//           preselectedDate={
+//             todo.completeAt ? new Date(todo.completeAt) : new Date()
+//           }
+//           todo={todo}
+//           onCancel={() => setIsEditing(false)}
+//           onSuccess={() => setIsEditing(false)}
+//           onUpdate={(todo) => {
+//             onTaskUpdated(todo);
+//             setIsEditing(false);
+//           }}
+//           todos={todos}
+//         />
+//       ) : (
+//         <div
+//           ref={setNodeRef}
+//           style={style}
+//           {...listeners}
+//           {...attributes}
+//           className={`p-3 ${isDragging ? "bg-muted" : "bg-task"}
+//           ${isDragging ? "h-[100px]" : ""} backdrop-blur-sm border group border-border hover:bg-gray-100 rounded-lg relative cursor-pointer active:cursor-grabbing shadow-md hover:shadow-[0_0_6px_-1px_rgba(0,0,0,0.3)] dark:hover:none hover:border-border-hover mb-3 `}
+//           onClick={(e) => {
+//             if (isMobile && suppressClickRef.current) return;
+//             e.preventDefault();
+//             onViewDetails(todo);
+//           }}
+//         >
+//           {!isDragging && (
+//             <>
+//               {todo.id && !isMobile && (
+//                 <div
+//                   className={`absolute top-2 right-2 z-20 transition-opacity duration-200 pointer-events-auto opacity-0 group-hover:opacity-100 `}
+//                 >
+//                   <MoreOptionsPicker
+//                     todoId={todo.id}
+//                     openDropdownId={openDropdownId}
+//                     setOpenDropdownId={setOpenDropdownId}
+//                     onEdit={() => setIsEditing(true)}
+//                     onDelete={() => onDelete(todo)}
+//                     onDuplicate={() => onDuplicateTask(todo)}
+//                     onPrioritySelect={(priority) => {
+//                       todo.priority = priority;
+//                       handlePrioritySelect(todo);
+//                     }}
+//                   />
+//                 </div>
+//               )}
 
-  return (
-    <>
-      {isEditing ? (
-        <InlineTaskForm
-          columnIndex={columnIndex}
-          index={index}
-          preselectedDate={
-            todo.completeAt ? new Date(todo.completeAt) : new Date()
-          }
-          todo={todo}
-          onCancel={() => setIsEditing(false)}
-          onSuccess={() => setIsEditing(false)}
-          onUpdate={(todo) => {
-            onTaskUpdated(todo);
-            setIsEditing(false);
-          }}
-          todos={todos}
-        />
-      ) : (
-        <div
-          ref={setNodeRef}
-          style={style}
-          {...listeners}
-          {...attributes}
-          className={`p-3 ${isDragging ? "bg-muted" : "bg-task"} 
-          ${isDragging ? "h-[100px]" : ""} backdrop-blur-sm border group border-border hover:bg-gray-100 rounded-lg relative cursor-pointer active:cursor-grabbing shadow-md hover:shadow-[0_0_6px_-1px_rgba(0,0,0,0.3)] dark:hover:none hover:border-border-hover mb-3 ${openDropdownId === todo.id ? "z-50" : ""}`}
-          // onMouseEnter={() => todo.id && setHoveredTodoId(todo.id)}
-          // onMouseLeave={() => setHoveredTodoId(null)}
-          onClick={() => {
-            onViewDetails(todo);
-          }}
-        >
-          {!isDragging && (
-            <>
-              {todo.id && (
-                <div className="absolute top-2 right-2 z-20 transition-opacity duration-200 pointer-events-auto opacity-0 group-hover:opacity-100">
-                  <MoreOptionsPicker
-                    todoId={todo.id}
-                    openDropdownId={openDropdownId}
-                    setOpenDropdownId={setOpenDropdownId}
-                    onEdit={() => setIsEditing(true)}
-                    onDelete={() => handleDeleteClick(todo)}
-                    onDuplicate={() => onDuplicateTask(todo)}
-                    onPrioritySelect={(priority) => {
-                      todo.priority = priority;
-                      handlePrioritySelect(todo);
-                    }}
-                  />
-                </div>
-              )}
-
-              {/* Dropdown Menu - Rendered via Portal */}
-              {openDropdownId === todo.id &&
-                dropdownPosition &&
-                createPortal(
-                  <div
-                    className="fixed z-9999 w-45 bg-card/95 backdrop-blur-xl border border-border rounded-lg shadow-[0_8px_16px_rgba(0,0,0,0.2)]"
-                    data-dropdown-menu="true"
-                    style={{
-                      top: `${dropdownPosition.top}px`,
-                      right: `${dropdownPosition.right}px`,
-                    }}
-                  >
-                    <button
-                      className="w-full px-3 py-2 text-left text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors flex items-center gap-3 cursor-pointer border-b border-border"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        setIsEditing(true);
-                        setOpenDropdownId(null);
-                        setDropdownPosition(null);
-                      }}
-                    >
-                      <PencilLine className="w-4 h-4" />
-                      <span>Edit</span>
-                    </button>
-                    <div className="text-foreground px-3 py-2 text-xs font-semibold">
-                      Priority
-                    </div>
-                    <div className="px-3 py-1 flex items-center gap-3">
-                      {Array.from({ length: 4 }).map((_, index) => (
-                        <button
-                          key={index}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            todo.priority =
-                              index === 0
-                                ? "high"
-                                : index === 1
-                                  ? "medium"
-                                  : index === 2
-                                    ? "low"
-                                    : null;
-                            handlePrioritySelect(todo);
-                          }}
-                        >
-                          <Flag
-                            className={`w-7 h-7 hover:bg-gray-800 p-[5px] rounded-md cursor-pointer ${priorityColors[index === 0 ? "high" : index === 1 ? "medium" : index === 2 ? "low" : "none"]}`}
-                            style={{
-                              fill:
-                                index === 0
-                                  ? "#DC2828"
-                                  : index === 1
-                                    ? "#3B82F6"
-                                    : index === 2
-                                      ? "#28A745"
-                                      : "none",
-                            }}
-                          />
-                        </button>
-                      ))}
-                    </div>
-                    <button
-                      className="w-full px-3 py-2 text-left text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors flex items-center gap-3 cursor-pointer"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onDuplicateTask(todo as Todo);
-                        setOpenDropdownId(null);
-                        setDropdownPosition(null);
-                      }}
-                    >
-                      <CopyPlus className="w-4 h-4" />
-                      <span>Duplicate</span>
-                    </button>
-                    <button
-                      className="w-full px-3 py-2 text-left text-sm text-muted-foreground hover:bg-muted hover:text-red-400 transition-colors flex items-center gap-3 cursor-pointer"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteClick(todo);
-                      }}
-                    >
-                      <Trash2 className="w-4 h-4 text-red-500" />
-                      <span className="text-red-500">Delete</span>
-                    </button>
-                  </div>,
-                  document.body,
-                )}
-              <div className="flex gap-3 pr-4">
-                <div className="pt-0.5">
-                  <Checkbox
-                    className={` rounded-full cursor-pointer h-4.5 w-4.5 border-2 ${todo.priority === "high" ? "border-red-500" : todo.priority === "medium" ? "border-blue-500" : todo.priority === "low" ? "border-green-500" : "border-gray-500"}`}
-                    defaultChecked={todo.completed}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      todo.id && onToggleComplete(todo.id);
-                      playSound();
-                    }}
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-foreground text-sm font-medium mb-1 line-clamp-2">
-                    {todo.title}
-                  </div>
-                  {todo.description && (
-                    <div className="text-muted-foreground text-xs mt-1 line-clamp-2">
-                      {todo.description}
-                    </div>
-                  )}
-                  <div className="flex gap-2">
-                    {todo.category && (
-                      <div className="mt-2 text-gray-500  w-fit  rounded-md text-xs flex gap-1">
-                        <div className="flex justify-center items-center">
-                          <Tag className="w-3 h-3" />
-                        </div>
-                        <div>{todo.category}</div>
-                      </div>
-                    )}
-                    <div className="flex items-center gap-2">
-                      {!todo.isAllDay && (
-                        <div
-                          className={`mt-2 ${isToday(todo.completeAt) ? "text-[#f46d63]" : isTomorrow(todo.completeAt) ? "text-[#b77424]" : "text-[#9062d4]"}  w-fit  rounded-md text-xs flex gap-1`}
-                        >
-                          <div className="flex justify-center items-center">
-                            <Calendar className="w-3 h-3" />
-                          </div>
-                          <div>
-                            {getTimeFromDate12hr(todo.completeAt ?? "")}
-                          </div>
-                        </div>
-                      )}
-                      {todo.isRecurring && (
-                        <div
-                          className={`mt-2 ${isToday(todo.completeAt) ? "text-[#f46d63]" : isTomorrow(todo.completeAt) ? "text-[#b77424]" : "text-[#9062d4]"}  w-fit  rounded-md text-xs flex gap-1`}
-                        >
-                          <div className="flex justify-center items-center">
-                            <Repeat className="w-3 h-3" />
-                          </div>
-                        </div>
-                      )}
-                      {todo.reminder && (
-                        <div className="mt-2 w-fit  rounded-md text-xs flex gap-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-                          <div className="flex justify-center items-center">
-                            <AlarmClock className="w-3 h-3" />
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-      )}
-    </>
-  );
-};
+//               <div className="flex gap-3 pr-4">
+//                 <div className="pt-0.5">
+//                   <Checkbox
+//                     className={` rounded-full cursor-pointer h-4.5 w-4.5 border-2 ${todo.priority === "high" ? "border-red-500" : todo.priority === "medium" ? "border-blue-500" : todo.priority === "low" ? "border-green-500" : "border-gray-500"}`}
+//                     defaultChecked={todo.completed}
+//                     onClick={(e) => {
+//                       e.stopPropagation();
+//                       todo.id && onToggleComplete(todo.id);
+//                       playSound();
+//                     }}
+//                   />
+//                 </div>
+//                 <div className="flex-1 min-w-0">
+//                   <div className="text-foreground text-sm font-medium mb-1 line-clamp-2">
+//                     {todo.title}
+//                   </div>
+//                   {todo.description && (
+//                     <div className="text-muted-foreground text-xs mt-1 line-clamp-2">
+//                       {todo.description}
+//                     </div>
+//                   )}
+//                   <div className="flex gap-2">
+//                     {todo.category && (
+//                       <div className="mt-2 text-gray-500  w-fit  rounded-md text-xs flex gap-1">
+//                         <div className="flex justify-center items-center">
+//                           <Tag className="w-3 h-3" />
+//                         </div>
+//                         <div>{todo.category}</div>
+//                       </div>
+//                     )}
+//                     <div className="flex items-center gap-2">
+//                       {!todo.isAllDay && (
+//                         <div
+//                           className={`mt-2 ${isToday(todo.completeAt) ? "text-[#f46d63]" : isTomorrow(todo.completeAt) ? "text-[#b77424]" : "text-[#9062d4]"}  w-fit  rounded-md text-xs flex gap-1`}
+//                         >
+//                           <div className="flex justify-center items-center">
+//                             <Calendar className="w-3 h-3" />
+//                           </div>
+//                           <div>
+//                             {getTimeFromDate12hr(todo.completeAt ?? "")}
+//                           </div>
+//                         </div>
+//                       )}
+//                       {todo.isRecurring && (
+//                         <div
+//                           className={`mt-2 ${isToday(todo.completeAt) ? "text-[#f46d63]" : isTomorrow(todo.completeAt) ? "text-[#b77424]" : "text-[#9062d4]"}  w-fit  rounded-md text-xs flex gap-1`}
+//                         >
+//                           <div className="flex justify-center items-center">
+//                             <Repeat className="w-3 h-3" />
+//                           </div>
+//                         </div>
+//                       )}
+//                       {todo.reminder && (
+//                         <div className="mt-2 w-fit  rounded-md text-xs flex gap-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
+//                           <div className="flex justify-center items-center">
+//                             <AlarmClock className="w-3 h-3" />
+//                           </div>
+//                         </div>
+//                       )}
+//                     </div>
+//                   </div>
+//                 </div>
+//               </div>
+//             </>
+//           )}
+//         </div>
+//       )}
+//     </>
+//   );
+// };
 
 const DroppableDateColumn = ({
   date,
@@ -635,7 +516,7 @@ const UpcomingView = ({
   onEdit,
   onUpdateTodo,
   onAddTask,
-  onViewDetails,
+  onOpenTaskDetail,
   onTaskCreated,
   onDuplicateTask,
   onTaskUpdated,
@@ -1381,7 +1262,7 @@ const UpcomingView = ({
                       activeTodo={activeTodo}
                     >
                       {overDueTasks.map((todo, taskIndex) => (
-                        <SortableTask
+                        <DraggableTask
                           key={todo.id || `temp-overdue-${todo.title}`}
                           todo={todo}
                           columnIndex={-1}
@@ -1389,7 +1270,7 @@ const UpcomingView = ({
                           onToggleComplete={onToggleComplete}
                           onDelete={handleDeleteClick}
                           onEdit={handleEditClick}
-                          onViewDetails={onViewDetails}
+                          onOpenTaskDetail={onOpenTaskDetail}
                           openDropdownId={openDropdownId}
                           setOpenDropdownId={setOpenDropdownId}
                           playSound={playSound}
@@ -1441,7 +1322,7 @@ const UpcomingView = ({
                     activeTodo={activeTodo}
                   >
                     {sortedDayTasks.map((todo, taskIndex) => (
-                      <SortableTask
+                      <DraggableTask
                         key={todo.id || `temp-${index}-${todo.title}`}
                         todo={todo}
                         columnIndex={index}
@@ -1449,7 +1330,7 @@ const UpcomingView = ({
                         onToggleComplete={onToggleComplete}
                         onDelete={handleDeleteClick}
                         onEdit={handleEditClick}
-                        onViewDetails={onViewDetails}
+                        onOpenTaskDetail={onOpenTaskDetail}
                         openDropdownId={openDropdownId}
                         setOpenDropdownId={setOpenDropdownId}
                         playSound={playSound}
@@ -1548,7 +1429,7 @@ const UpcomingView = ({
             onEdit={onEdit}
             onUpdateTodo={onUpdateTodo}
             onAddTask={onAddTask}
-            onViewDetails={onViewDetails}
+            onViewDetails={onOpenTaskDetail}
             onTaskCreated={onTaskCreated}
             onDuplicateTask={onDuplicateTask}
             onTaskUpdated={onTaskUpdated}

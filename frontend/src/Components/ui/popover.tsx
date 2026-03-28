@@ -35,8 +35,6 @@ export const Popover = ({
   const { isMobile } = useMediaQuery();
 
   if (isMobile || mobileOnly) {
-    console.log("here");
-
     return (
       <Drawer.Root open={openPopover} onOpenChange={setOpenPopover}>
         <Drawer.Trigger className="sm:hidden" asChild>
@@ -67,7 +65,6 @@ export const Popover = ({
               {content}
             </div>
           </Drawer.Content>
-          <Drawer.Overlay />
         </Drawer.Portal>
       </Drawer.Root>
     );
