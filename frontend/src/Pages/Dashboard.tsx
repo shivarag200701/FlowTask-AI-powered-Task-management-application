@@ -16,7 +16,7 @@ import SideBar, { SideBarItem } from "@/Components/SideBar";
 import { ViewDropDown } from "@/Components/ViewDropDown";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { TaskDetailDialog } from "@/Components/Dashboard/UpcomingView/Components/TaskDetailDialog";
+import { TaskDetailModal } from "@/Components/Dashboard/UpcomingView/Components/TaskDetailDialog";
 
 const Dashboard = () => {
   const queryClient = useQueryClient();
@@ -507,16 +507,18 @@ const Dashboard = () => {
         />
       )}
       {isDetailOpen && selectedTodo && (
-        <TaskDetailDialog
+        <TaskDetailModal
           todo={selectedTodo}
           modalOpen={isDetailOpen}
           setModalOpen={(open) => {
-            console.log("is this open", open);
-
             if (!open) {
               closeDetailDrawer();
             }
           }}
+          onEdit={updateTodo}
+          onToggleComplete={toggleTodoCompletion}
+          onDelete={deleteTodo}
+          handleDuplicate={duplicateTodo}
         />
       )}
       {showViewDropdown && (
