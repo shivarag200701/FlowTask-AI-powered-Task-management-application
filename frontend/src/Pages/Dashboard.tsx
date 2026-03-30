@@ -16,7 +16,7 @@ import SideBar, { SideBarItem } from "@/Components/SideBar";
 import { ViewDropDown } from "@/Components/ViewDropDown";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { TaskDetailModal } from "@/Components/Dashboard/UpcomingView/Components/TaskDetailDialog";
+import { TaskDetailModal } from "@/Components/Dashboard/UpcomingView/Components/TaskDetailModal";
 
 const Dashboard = () => {
   const queryClient = useQueryClient();

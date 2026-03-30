@@ -58,10 +58,6 @@ export const Popover = ({
               <div className="bg-border my-3 h-1 w-12 rounded-full" />
             </div>
             <div className="bg-background flex w-full items-center justify-center overflow-hidden pb-4 align-middle shadow-xl">
-              <Drawer.Handle />
-              <Drawer.Title />
-              <Drawer.Description />
-              <Drawer.Close />
               {content}
             </div>
           </Drawer.Content>

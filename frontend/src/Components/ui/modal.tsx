@@ -10,7 +10,7 @@ import type {
   SetStateAction,
 } from "react";
 
-export type DialogProps = PropsWithChildren<{
+export type ModalProps = PropsWithChildren<{
   showModal?: boolean;
   setShowModal?: Dispatch<SetStateAction<boolean>>;
   children?: ReactNode;
@@ -26,7 +26,7 @@ export function Modal({
   mobileOnly,
   className,
   onClose,
-}: DialogProps) {
+}: ModalProps) {
   const { isMobile } = useMediaQuery();
 
   const closeModal = () => {
@@ -65,7 +65,7 @@ export function Modal({
               className,
             )}
           >
-            <div className="scrollbar-hide flex-1 overflow-y-auto rounded-t-[10px] bg-inherit">
+            <div className="scrollbar-hide  rounded-t-[10px] bg-inherit">
               <VisuallyHidden.Root>
                 <Drawer.Title>Modal</Drawer.Title>
                 <Drawer.Description>This is a modal</Drawer.Description>
@@ -74,7 +74,6 @@ export function Modal({
               {children}
             </div>
           </Drawer.Content>
-          <Drawer.Overlay />
         </Drawer.Portal>
       </Drawer.Root>
     );

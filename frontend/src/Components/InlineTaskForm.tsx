@@ -10,12 +10,13 @@ import {
 } from "lucide-react";
 import api from "../utils/api";
 import type { Todo } from "../types";
-import CustomDatePicker from "./CustomDatePicker";
 import PriorityPicker from "./PriorityPicker";
 import { parseNaturalLanguageDate } from "../utils/nlpDateParser";
 import WarningModal from "./WarningModal";
 import MoreOptionsPicker, { CategoryPicker } from "./MoreOptionsPicker";
 import ReminderDropdown from "./ReminderDropdown";
+import { Popover } from "./ui/popover";
+import CustomDatePicker from "./CustomDatePicker/CustomDatePicker";
 interface InlineTaskFormProps {
   todo?: Todo;
   preselectedDate: Date;
@@ -80,6 +81,7 @@ const InlineTaskForm = ({
     null,
   );
   const [recurrenceEndDate, setRecurrenceEndDate] = useState<string>("");
+
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showPriorityPicker, setShowPriorityPicker] = useState(false);
   const [showReminderPicker, setShowReminderPicker] = useState(false);
@@ -391,6 +393,10 @@ const InlineTaskForm = ({
     setIsWarningModalOpen(false);
   };
 
+  const handleDateSelect = (date: string) => {
+    setSelectedDate(date);
+  };
+
   return (
     <>
       <form
@@ -446,83 +452,59 @@ const InlineTaskForm = ({
         {/* Action Buttons Row */}
         <div className="flex items-center gap-1.5 mb-4 flex-wrap">
           {/* Date Button */}
-          <div className="relative">
-            <button
-              ref={dateButtonRef}
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                setShowDatePicker(!showDatePicker);
-              }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 border border-border text-xs font-medium hover:bg-muted hover:border-white/20 transition-colors focus:outline-none focus-visible:ring-3 focus-visible:ring-purple-400 cursor-pointer shrink-0 ${dateLabel ? "text-green-500" : "text-white"} ${
-                isTodaySelected ? "rounded-full" : "rounded-md"
-              }`}
-            >
-              <Calendar className="w-3.5 h-3.5 shrink-0 " />
-              {dateLabel && (
-                <span className="whitespace-nowrap max-w-[100px]">
-                  {dateLabel}
-                </span>
-              )}
-              <div className="flex items-center gap-1 ml-3">
-                {isRecurring && (
-                  <RefreshCw className="w-2.5 h-2.5 shrink-0 text-gray-300" />
-                )}
-                {selectedDate && (
-                  <X
-                    className="w-3 h-3 text-[#A2A2A9] shrink-0"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleNoDate();
-                    }}
-                  />
-                )}
-              </div>
-            </button>
-
-            {/* Custom Date Picker */}
-            {showDatePicker && (
+          <Popover
+            openPopover={showDatePicker}
+            setOpenPopover={setShowDatePicker}
+            content={
               <CustomDatePicker
-                columnIndex={columnIndex}
-                todo={todo}
-                isAllDay={isAllDay}
-                todos={todos}
-                selectedDate={selectedDate}
-                setIsAllDay={setIsAllDay}
-                selectedTime={selectedTime}
-                isRecurring={isRecurring}
-                setIsRecurring={setIsRecurring}
-                recurrencePattern={recurrencePattern}
-                setRecurrencePattern={setRecurrencePattern}
-                onTimeSelect={(time: string) => {
-                  setSelectedTime(time);
-                  hasChangesRef.current = true;
-                }}
-                onDateSelect={(date: string) => {
-                  setSelectedDate(date);
-                  hasChangesRef.current = true;
-                  // setShowDatePicker(false);
-                }}
-                onRecurringSelect={(config) => {
-                  setIsRecurring(config.isRecurring || false);
-                  if (config.recurrencePattern) {
-                    setRecurrencePattern(config.recurrencePattern);
-                  }
-                  if (config.recurrenceInterval) {
-                    setRecurrenceInterval(config.recurrenceInterval);
-                  }
-                  if (config.recurrenceEndDate !== undefined) {
-                    setRecurrenceEndDate(config.recurrenceEndDate || "");
-                  }
-                  hasChangesRef.current = true;
-                }}
-                index={index}
                 onClose={() => setShowDatePicker(false)}
-                onSave={() => setIsAllDay(false)}
-                buttonRef={dateButtonRef}
+                selectedDate={selectedDate}
+                selectedTime={selectedTime}
+                todo={todo}
+                todos={todos}
+                isRecurring={isRecurring}
+                isAllDay={isAllDay}
+                setIsRecurring={setIsRecurring}
+                setIsAllDay={setIsAllDay}
+                onDateSelect={handleDateSelect}
               />
-            )}
-          </div>
+            }
+          >
+            <div className="relative">
+              <button
+                ref={dateButtonRef}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShowDatePicker(!showDatePicker);
+                }}
+                className={`flex items-center gap-1.5 px-3 py-1.5 border border-border text-xs font-medium hover:bg-muted hover:border-white/20 transition-colors focus:outline-none focus-visible:ring-3 focus-visible:ring-purple-400 cursor-pointer shrink-0 ${dateLabel ? "text-green-500" : "text-white"} ${
+                  isTodaySelected ? "rounded-full" : "rounded-md"
+                }`}
+              >
+                <Calendar className="w-3.5 h-3.5 shrink-0 " />
+                {dateLabel && (
+                  <span className="whitespace-nowrap max-w-[100px]">
+                    {dateLabel}
+                  </span>
+                )}
+                <div className="flex items-center gap-1 ml-3">
+                  {isRecurring && (
+                    <RefreshCw className="w-2.5 h-2.5 shrink-0 text-gray-300" />
+                  )}
+                  {selectedDate && (
+                    <X
+                      className="w-3 h-3 text-[#A2A2A9] shrink-0"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleNoDate();
+                      }}
+                    />
+                  )}
+                </div>
+              </button>
+            </div>
+          </Popover>
 
           {/* Priority Button */}
           <div className="relative">

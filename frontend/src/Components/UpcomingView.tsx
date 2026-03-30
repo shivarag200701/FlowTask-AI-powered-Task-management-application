@@ -38,7 +38,7 @@ import type {
 } from "@dnd-kit/core";
 import api from "../utils/api";
 import { format, startOfWeek, endOfWeek, isWithinInterval } from "date-fns";
-import CustomDatePicker from "./CustomDatePicker";
+// import CustomDatePicker from "./CustomDatePicker";
 import { useQueryClient } from "@tanstack/react-query";
 import sortTasksByDateAndOrder from "@/utils/sortTask";
 import { useAppTheme } from "@/hooks/useTheme";
