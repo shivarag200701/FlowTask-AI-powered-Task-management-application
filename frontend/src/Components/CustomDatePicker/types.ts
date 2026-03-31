@@ -4,7 +4,7 @@ import type { Dispatch, SetStateAction } from "react";
 export interface CustomDatePickerProps {
   onClose: () => void;
   selectedDate: string; // YYYY-MM-DD format
-  onDateSelect: (date: string, isQuickAction?: boolean) => void;
+  onDateSelect: (date: string) => void;
   selectedTime: string;
   onTimeSelect?: (time: string) => void;
   noTimeSelect?: () => void;

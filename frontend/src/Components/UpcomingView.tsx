@@ -12,7 +12,7 @@ import type { Todo } from "../types";
 import { Checkbox } from "./ui/checkbox";
 import { formatUpcomingDateHeader } from "@shiva200701/todotypes";
 import WarningModal from "./WarningModal";
-import InlineTaskForm from "./InlineTaskForm";
+import InlineTaskForm from "./Dashboard/UpcomingView/Components/InlineTaskForm";
 import completedSound from "@/assets/completed.wav";
 import {
   DndContext,
@@ -45,6 +45,7 @@ import { useAppTheme } from "@/hooks/useTheme";
 import { MonthAndYearPicker } from "./Dashboard/UpcomingView/Components/MonthAndYearPicker";
 import { useUpcomingDateRange } from "@/hooks/use-upcoming-date-range";
 import { DraggableTask } from "./Dashboard/UpcomingView/Components/DraggableTask";
+import CustomDatePicker from "./CustomDatePicker/CustomDatePicker";
 
 interface UpcomingViewProps {
   todos: Todo[];
@@ -248,22 +249,13 @@ const DroppableDateColumn = ({
             <div
               className={` ${dayTasks.length > 5 ? "absolute inset-x-0 bottom-0 flex" : ""} `}
             >
-              <InlineTaskForm
-                columnIndex={columnIndex}
-                todos={todos}
-                index={dayTasks.length}
-                preselectedDate={date}
-                onCancel={handleCancel}
-                onSuccess={handleTaskCreated}
-                onUpdate={handleTaskUpdated}
-              />
+              <InlineTaskForm />
             </div>
           )}
         </>
       )}
       {showDatePicker && (
         <CustomDatePicker
-          columnIndex={-1}
           isAllDay={isAllDay}
           todos={[]}
           selectedDate={selectedDate}
@@ -273,11 +265,9 @@ const DroppableDateColumn = ({
           setRecurrencePattern={setRecurrencePattern}
           onDateSelect={(date: string) => setSelectedDate(date)}
           onClose={() => setShowDatePicker(false)}
-          index={0}
           selectedTime={selectedTime}
           onTimeSelect={(time: string) => setSelectedTime(time)}
           setIsAllDay={setIsAllDay}
-          buttonRef={buttonRef}
         />
       )}
     </div>

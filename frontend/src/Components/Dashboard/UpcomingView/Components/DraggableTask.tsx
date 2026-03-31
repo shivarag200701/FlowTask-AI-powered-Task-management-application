@@ -1,4 +1,4 @@
-import InlineTaskForm from "@/Components/InlineTaskForm";
+import InlineTaskForm from "@/Components/Dashboard/UpcomingView/Components/InlineTaskForm";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { type Todo } from "@/types";
 import api from "@/utils/api";
@@ -129,21 +129,7 @@ export const DraggableTask = ({
   return (
     <>
       {isEditing ? (
-        <InlineTaskForm
-          columnIndex={columnIndex}
-          index={index}
-          preselectedDate={
-            todo.completeAt ? new Date(todo.completeAt) : new Date()
-          }
-          todo={todo}
-          onCancel={() => setIsEditing(false)}
-          onSuccess={() => setIsEditing(false)}
-          onUpdate={(todo) => {
-            onTaskUpdated(todo);
-            setIsEditing(false);
-          }}
-          todos={todos}
-        />
+        <InlineTaskForm todo={todo} />
       ) : (
         <div
           ref={setNodeRef}

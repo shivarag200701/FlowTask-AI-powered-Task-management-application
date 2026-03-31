@@ -7,7 +7,6 @@ import { Calendar } from "../ui/calendar";
 
 export default function CustomDatePicker({
   selectedDate,
-  setS,
   selectedTime,
   onDateSelect,
   setIsRecurring,
@@ -15,11 +14,9 @@ export default function CustomDatePicker({
 }: CustomDatePickerProps) {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [showReccurencePicker, setShowReccurencePicker] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState();
+  const [currentMonth, setCurrentMonth] = useState<Date>();
 
-  const { nlpInput, setNlpInput, parsedResult } = useNLPDate(300);
-  const [date, setDate] = useState<Date>();
-
+  const today = new Date();
   const handleNLPApplyDate = () => {
     if (
       parsedResult &&
@@ -29,17 +26,29 @@ export default function CustomDatePicker({
       onDateSelect(parsedResult.date);
     }
   };
+  const date = new Date(selectedDate);
+  console.log("date", date);
 
   return (
     <div className="bg-task md:border md:border-border rounded-md md:w-[230px] w-full transition-opacity duration-150 md:max-h-[600px] overflow-hidden">
-      <NLPDateParser
-        onApply={handleNLPApplyDate}
-        nlpInput={nlpInput}
-        setNlpInput={setNlpInput}
-        parsedResult={parsedResult}
-      />
+      <NLPDateParser />
       <QuickActions handleDateSelect={onDateSelect} />
-      <Calendar mode="single" selected={date} onSelect={setDate} />
+      <Calendar
+        mode="single"
+        selected={date}
+        onSelect={onDateSelect}
+        month={currentMonth}
+        onMonthChange={setCurrentMonth}
+        startMonth={today}
+        navLayout="after"
+        numberOfMonths={12}
+        classNames={{
+          months: "relative flex w-full flex-col gap-4",
+          today: "[&_button]:font-semibold",
+        }}
+        disabled={{ before: new Date() }}
+        className="max-h-[260px] overflow-y-auto no-scrollbar"
+      />
     </div>
   );
 }

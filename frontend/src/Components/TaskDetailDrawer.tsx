@@ -25,7 +25,10 @@ import AddTaskCalender from "./AddTaskCalender";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import CustomDatePicker from "./CustomDatePicker";
-import { roundToNearest15Minutes, getTimeFromDate } from "./InlineTaskForm";
+import {
+  roundToNearest15Minutes,
+  getTimeFromDate,
+} from "./Dashboard/UpcomingView/Components/InlineTaskForm";
 import PriorityPicker from "./PriorityPicker";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { Kbd } from "./ui/kbd";

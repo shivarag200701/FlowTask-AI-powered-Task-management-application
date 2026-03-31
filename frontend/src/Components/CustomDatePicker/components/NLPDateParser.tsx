@@ -1,16 +1,30 @@
-import { ArrowRight, Calendar, RefreshCw } from "lucide-react";
-import type { NLPDateParserProps } from "../types";
+import { Calendar } from "lucide-react";
+import * as chrono from "chrono-node";
+import { useEffect, useState } from "react";
+import { toLuxonDate } from "@/utils/datetime";
 
-export default function NLPDateParser({
-  onApply,
-  nlpInput,
-  setNlpInput,
-  parsedResult,
-}: NLPDateParserProps) {
+export default function NLPDateParser() {
+  const [nlpInput, setNlpInput] = useState("");
+  const [parsedResult, setParsedResult] = useState<
+    chrono.en.ParsedResult[] | null
+  >(null);
+  useEffect(() => {
+    const id = setTimeout(() => {
+      const result = chrono.parse(nlpInput);
+      if (result) {
+        setParsedResult(result);
+      }
+    }, 300);
+
+    return () => {
+      clearTimeout(id);
+    };
+  }, [nlpInput, setNlpInput]);
+
   return (
     <div className="border-b border-border">
       <div
-        className={`${parsedResult?.confidence === "high" ? "border-b border-border" : ""}`}
+        className={`${parsedResult && parsedResult.length > 0 ? "border-b border-border" : ""}`}
       >
         <input
           type="text"
@@ -18,33 +32,23 @@ export default function NLPDateParser({
           onChange={(e) => setNlpInput(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              onApply();
+              // onApply();
             }
           }}
           placeholder="Type a date"
           className="w-full text-base sm:text-lg text-foreground placeholder:text-secondary focus:outline-none focus:border-ring bg-transparent h-10 px-3 "
         />
       </div>
-      {parsedResult?.confidence === "high" && (
+      {parsedResult && parsedResult.length > 0 && (
         <div className="mt-3 text-xs flex items-center gap-3 px-3">
           <div>
             <div
               className="flex items-center gap-3 cursor-pointer"
-              onClick={onApply}
+              // onClick={onApply}
             >
-              {parsedResult.isRecurring && (
-                <RefreshCw className="w-4 h-4 text-muted-foreground" />
-              )}
-              {!parsedResult.isRecurring && (
-                <Calendar className="w-4 h-4 text-muted-foreground" />
-              )}
-              <div className="text-white text-[13px] flex items-center gap-1">
-                {parsedResult.displayText}
-                {parsedResult.isRecurring && (
-                  <span className="flex items-center gap-1">
-                    <ArrowRight className="w-4 h-4 text-white" /> Forever
-                  </span>
-                )}
+              <Calendar className="w-4 h-4 text-muted-foreground" />
+              <div className="text-black text-[13px] flex items-center gap-1">
+                {toLuxonDate(parsedResult[0].start.date()).toFormat("DD")}
               </div>
             </div>
             <div className="text-muted-foreground mt-3 text-[10px] pb-2">

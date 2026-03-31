@@ -81,7 +81,7 @@ export const Popover = ({
           align={align}
           alignOffset={0}
           className={cn(
-            "animate-slide-up-fade border border-border bg-white rounded-md z-50 items-center sm:block",
+            "animate-slide-up-fade border border-border outline-none bg-white rounded-md z-50 items-center sm:block",
             popoverContentClassName,
           )}
         >
