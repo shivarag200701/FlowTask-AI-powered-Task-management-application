@@ -1,15 +1,15 @@
 import { X } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Settings,CircleUserRound, AlarmClock } from 'lucide-react';
-import AccountSettings from './AccountSettings';
-import GeneralSettings from './GeneralSettings';
-import NotificationsSettings  from './NotificationsSettings';
-import {AddPassword,ChangePassword} from './Password';
+import AccountSettings from '@/features/SettingsModal/AccountSettings';
+import GeneralSettings from '@/features/SettingsModal/GeneralSettings';
+import NotificationsSettings  from '@/features/SettingsModal/NotificationsSettings';
+import {AddPassword,ChangePassword} from '@/features/SettingsModal/Password';
 import {useQuery} from '@tanstack/react-query'
 import api from '@/utils/api';
 import { useState } from 'react';
 import type { Dispatch,SetStateAction } from 'react';
-import ReminderSettings from './ReminderSettings';
+import ReminderSettings from '@/features/SettingsModal/ReminderSettings';
 
 
 

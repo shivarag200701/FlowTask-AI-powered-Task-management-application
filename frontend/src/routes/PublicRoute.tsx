@@ -1,6 +1,6 @@
-import { Auth } from "@/Context/AuthContext";
+import { Auth } from "@/context/AuthContext";
 import { Outlet, Navigate } from "react-router-dom";
-import { Spinner } from "./ui/spinner";
+import { Spinner } from "@/components/ui/spinner";
 
 const PublicRoute = () => {
   const { isAuthenticated, isLoading } = Auth();

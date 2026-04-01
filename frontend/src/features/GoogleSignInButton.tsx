@@ -1,8 +1,8 @@
 import { useState } from "react";
-import api from "../utils/api";
-import { Auth } from "@/Context/AuthContext";
-import { Google } from "./ui/google";
-import Button from "./Button";
+import api from "@/utils/api";
+import { Auth } from "@/context/AuthContext";
+import { Google } from "@/components/ui/google";
+import Button from "@/features/Button";
 
 export function GoogleSignInButton() {
   const [loading, setLoading] = useState(false);

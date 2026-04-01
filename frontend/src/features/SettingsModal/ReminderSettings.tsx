@@ -1,9 +1,9 @@
 import { Mail, Bell, Smartphone, MessageSquare } from "lucide-react";
-import { Switch } from "../ui/switch";
+import { Switch } from "@/components/ui/switch";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "@/utils/api";
-import { UnsavedModal } from "./SettingsModal";
+import { UnsavedModal } from "@/features/SettingsModal/SettingsModal";
 
 interface ReminderSettingProps {
   hasChanged: boolean;

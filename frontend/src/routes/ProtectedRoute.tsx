@@ -1,51 +1,37 @@
 import { useLocation, Navigate, Outlet } from "react-router-dom";
-import { Auth } from "../Context/AuthContext";
-import { Spinner } from "./ui/spinner";
+import { Auth } from "@/context/AuthContext";
+import { Spinner } from "@/components/ui/spinner";
 import { useQuery } from "@tanstack/react-query";
-import api from "../utils/api";
-import type { Todo, TodoWithCompleteAtDateTime, User } from "@/types";
+import { ONBOARDING_WINDOW_SECONDS } from "@shiva200701/todotypes";
+import { getCurrentUser, fetchTodos, getOnboardingProgress } from "@/api";
 import {
-  ONBOARDING_WINDOW_SECONDS,
-  type OnboardingStep,
-} from "@shiva200701/todotypes";
-import { DateTime } from "luxon";
+  authQueryKeys,
+  todosQueryKeys,
+  onboardingQueryKeys,
+} from "@/queryKeys";
 
 const ProtectedRoute = () => {
   const { isAuthenticated, isLoading } = Auth();
   const location = useLocation();
 
-  // Fetch user data - this ensures user profile is loaded before showing dashboard
   const { isLoading: userLoading, data: user } = useQuery({
-    queryKey: ["users"],
-    queryFn: async (): Promise<User> => {
-      const res = await api.get("/v1/user/profile");
-      return res.data.user;
-    },
+    queryKey: authQueryKeys.users,
+    queryFn: getCurrentUser,
     enabled: isAuthenticated, // Only fetch if authenticated
   });
 
   // Fetch todos - this ensures todos are loaded before showing dashboard
   const { isLoading: todosLoading } = useQuery({
-    queryKey: ["todos"],
-    queryFn: async (): Promise<TodoWithCompleteAtDateTime[]> => {
-      const { todos }: { todos: Todo[] } = (await api.get("/v1/todo/")).data;
-
-      return todos.map((todo) => ({
-        ...todo,
-        completeAt: DateTime.fromISO(todo.completeAt ?? ""),
-      }));
-    },
+    queryKey: todosQueryKeys.all,
+    queryFn: fetchTodos,
     enabled: isAuthenticated, // Only fetch if authenticated
     staleTime: 60000,
   });
 
   //get onboarding progress
   const { data: onboardingStep } = useQuery({
-    queryKey: ["onboardingProgress"],
-    queryFn: async (): Promise<OnboardingStep> => {
-      const res = await api.get("/v1/user/onboarding/progess");
-      return res.data.step;
-    },
+    queryKey: onboardingQueryKeys.progress,
+    queryFn: getOnboardingProgress,
     retry: 1,
   });
 

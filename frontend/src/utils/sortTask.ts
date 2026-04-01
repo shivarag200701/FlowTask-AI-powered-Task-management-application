@@ -1,4 +1,4 @@
-import type { Todo } from "../types";
+import type { Todo } from "@/types";
 
 export default function sortTasksByDateAndOrder(tasks: Todo[]): Todo[] {
   return [...tasks].sort((a, b) => {

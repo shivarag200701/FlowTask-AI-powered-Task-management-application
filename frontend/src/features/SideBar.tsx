@@ -2,17 +2,17 @@ import api from "@/utils/api";
 import { LogOut } from "lucide-react";
 import React, { createContext, useContext, useRef, useState } from "react";
 import { PanelLeft, Settings } from "lucide-react";
-import DropDown from "./DropDown";
-import { SettingsModal } from "./SettingsModal/SettingsModal";
+import DropDown from "@/features/DropDown";
+import { SettingsModal } from "@/features/SettingsModal/SettingsModal";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { Spinner } from "./ui/spinner";
-import { Tooltip, TooltipTrigger } from "./ui/tooltip";
-import { TooltipContent } from "./ui/tooltip";
-import { Kbd } from "./ui/kbd";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Spinner } from "@/components/ui/spinner";
+import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
+import { TooltipContent } from "@/components/ui/tooltip";
+import { Kbd } from "@/components/ui/kbd";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { User } from "@/types";
-import { Auth } from "@/Context/AuthContext";
+import { Auth } from "@/context/AuthContext";
 
 const SideBarContext = createContext<{ expanded: boolean }>({
   expanded: false,

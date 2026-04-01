@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { ParsedDateResult } from "../types";
+import type { ParsedDateResult } from "@/features/CustomDatePicker/types";
 import { parseNaturalLanguageDate } from "@/utils/nlpDateParser";
 
 function useNLPDate(delayMs: number) {

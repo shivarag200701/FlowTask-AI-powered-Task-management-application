@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import type { Todo } from "../types";
-import { Button } from "./ui/button";
+import type { Todo } from "@/types";
+import { Button } from "@/components/ui/button";
 import {
   Bell,
   Clock4,
@@ -20,19 +20,19 @@ import {
   Flag,
 } from "lucide-react";
 import { formatCompleteAt } from "@shiva200701/todotypes";
-import api from "../utils/api";
-import AddTaskCalender from "./AddTaskCalender";
+import api from "@/utils/api";
+import AddTaskCalender from "@/features/AddTaskCalender";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import CustomDatePicker from "./CustomDatePicker";
+import CustomDatePicker from "@/features/CustomDatePicker/CustomDatePicker";
 import {
   roundToNearest15Minutes,
   getTimeFromDate,
-} from "./Dashboard/UpcomingView/components/InlineTaskForm";
-import PriorityPicker from "./PriorityPicker";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
-import { Kbd } from "./ui/kbd";
-import { TaskDetailPopover } from "./Dashboard/UpcomingView/components/TaskDetailModal";
+} from "@/features/Dashboard/UpcomingView/components/InlineTaskForm";
+import PriorityPicker from "@/features/PriorityPicker";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Kbd } from "@/components/ui/kbd";
+import { TaskDetailPopover } from "@/features/Dashboard/UpcomingView/components/TaskDetailModal";
 
 interface TaskDetailDrawerProps {
   todo: Todo | null;

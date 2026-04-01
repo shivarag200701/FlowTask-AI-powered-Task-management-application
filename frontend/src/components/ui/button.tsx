@@ -1,5 +1,5 @@
 import { cn } from "@/utils/cn";
-import { Spinner } from "./spinner";
+import { Spinner } from "@/components/ui/spinner";
 import type { ReactNode } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 

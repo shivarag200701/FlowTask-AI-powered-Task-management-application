@@ -1,10 +1,10 @@
-import { Modal } from "@/features/ui/modal";
-import { Popover } from "@/features/ui/popover";
+import { Modal } from "@/components/ui/modal";
+import { Popover } from "@/components/ui/popover";
 import type { Todo } from "@/types";
 import { MoreHorizontal, X } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
-import { useTaskDetail } from "../hooks/use-task-detail";
+import { useTaskDetail } from "@/features/Dashboard/UpcomingView/hooks/use-task-detail";
 
 interface TaskDetailProps {
   modalOpen: boolean;

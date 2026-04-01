@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { AlertCircle, Tag, Calendar } from "lucide-react";
-import api from "../utils/api";
-import { Checkbox } from "./ui/checkbox";
-import { type Todo } from "../types";
+import api from "@/utils/api";
+import { Checkbox } from "@/components/ui/checkbox";
+import { type Todo } from "@/types";
 
 interface ModalProps {
   isOpen: boolean;

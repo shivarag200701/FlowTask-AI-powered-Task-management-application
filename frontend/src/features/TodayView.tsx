@@ -6,13 +6,13 @@ import {
   ListTodo,
   TrendingUp,
 } from "lucide-react";
-import type { Todo } from "../types";
-import StatsCard from "./StatsCard";
-import TaskCard from "./TaskCard";
-import Day from "./Day";
-import NoTodo from "./NoTodo";
-import NewSection from "./NewSection";
-import LoadingSkeleton from "./LoadingSkeleton";
+import type { Todo } from "@/types";
+import StatsCard from "@/features/StatsCard";
+import TaskCard from "@/features/TaskCard";
+import Day from "@/features/Day";
+import NoTodo from "@/features/NoTodo";
+import NewSection from "@/features/NewSection";
+import LoadingSkeleton from "@/features/LoadingSkeleton";
 import { isToday } from "@shiva200701/todotypes";
 import { calculateStreak } from "@/utils/calculateStreak";
 

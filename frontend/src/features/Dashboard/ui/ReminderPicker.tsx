@@ -1,16 +1,16 @@
 //for now reminder is simple , reminder is boolean is if true, then reminder is at the time of the task
 //so in the reminder preset we fill it with if todo.reminder is true then atTimeOfTask
 //
-import { Button } from "@/features/ui/button";
-import { Popover } from "@/features/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Popover } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/features/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/features/ui/tabs";
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { AlarmClock, AlarmClockCheck, X } from "lucide-react";
 import { useState, type Dispatch, type SetStateAction } from "react";

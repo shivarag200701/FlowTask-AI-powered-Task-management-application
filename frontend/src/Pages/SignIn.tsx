@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import SignInForm from "../features/auth/signin/SignInForm";
-import { Auth } from "@/Context/AuthContext";
+import SignInForm from "@/features/auth/signin/SignInForm";
+import { Auth } from "@/context/AuthContext";
 
 const SignIn = () => {
   const navigate = useNavigate();

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, X, Check } from "lucide-react";
-import type { Todo } from "../types";
-import AddTaskCalender from "./AddTaskCalender";
+import type { Todo } from "@/types";
+import AddTaskCalender from "@/features/AddTaskCalender";
 
 interface CalendarViewProps {
   todos: Todo[];

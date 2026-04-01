@@ -1,13 +1,13 @@
-import { SignupProvider, useSignupContext } from "@/Context/SingupContext";
-import SignUpForm from "../features/auth/signup/SignUpForm";
+import { SignupProvider, useSignupContext } from "@/context/SingupContext";
+import SignUpForm from "@/features/auth/signup/SignUpForm";
 import LogoCard from "@/features/LogoCard";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import VerfiyForm from "@/features/auth/signup/VerfiyForm";
-import { Grid } from "@/features/ui/grid";
+import { Grid } from "@/components/ui/grid";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
-import { Gradient } from "./onboarding/pages/Welcome";
+import { Gradient } from "@/pages/onboarding/pages/Welcome";
 
 const Signup = () => {
   return (

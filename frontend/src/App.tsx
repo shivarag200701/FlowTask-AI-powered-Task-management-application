@@ -1,22 +1,22 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import "./App.css";
-import SignIn from "./Pages/SignIn";
-import Signup from "./Pages/Signup";
-import { AuthProvider } from "./Context/AuthContext";
-import ProtectedRoute from "./features/ProtectedRoute";
-import { SignupProvider } from "./Context/SingupContext";
-import Dashboard from "./Pages/Dashboard";
-import Landing from "./Pages/Landing";
+import "@/App.css";
+import SignIn from "@/pages/SignIn";
+import Signup from "@/pages/Signup";
+import { AuthProvider } from "@/context/AuthContext";
+import ProtectedRoute from "@/routes/ProtectedRoute";
+import { SignupProvider } from "@/context/SingupContext";
+import Dashboard from "@/pages/Dashboard";
+import Landing from "@/pages/Landing";
 import { Toaster } from "sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { useEffect } from "react";
 
-import Welcome from "./Pages/onboarding/pages/Welcome";
-import UserProfile from "./Pages/onboarding/pages/UserProfile";
-import { Completed } from "./Pages/onboarding/pages/Completed";
-import PublicRoute from "./features/PublicRoute";
-import { SideNavProvider } from "./Context/SideNavContext";
+import Welcome from "@/pages/onboarding/pages/Welcome";
+import UserProfile from "@/pages/onboarding/pages/UserProfile";
+import { Completed } from "@/pages/onboarding/pages/Completed";
+import PublicRoute from "@/routes/PublicRoute";
+import { SideNavProvider } from "@/context/SideNavContext";
 
 const queryClient = new QueryClient();
 

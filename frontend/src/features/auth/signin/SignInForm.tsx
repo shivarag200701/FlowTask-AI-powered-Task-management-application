@@ -1,21 +1,21 @@
 import { isAxiosError } from "axios";
 import { useEffect, useRef } from "react";
-import InputBox from "../../InputBox";
+import InputBox from "@/features/InputBox";
 import { ArrowLeft } from "lucide-react";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import api from "../../../utils/api";
-import { Auth, type AuthMethod } from "@/Context/AuthContext";
-import { GoogleSignInButton } from "../../GoogleSignInButton";
+import api from "@/utils/api";
+import { Auth, type AuthMethod } from "@/context/AuthContext";
+import { GoogleSignInButton } from "@/features/GoogleSignInButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { cn } from "@/lib/utils";
-import { Grid } from "@/features/ui/grid";
+import { Grid } from "@/components/ui/grid";
 import LogoCard from "@/features/LogoCard";
 import { motion } from "motion/react";
 import { toast } from "sonner";
-import { Gradient } from "../../../Pages/onboarding/pages/Welcome";
-import { Button } from "../../ui/button";
+import { Gradient } from "@/pages/onboarding/pages/Welcome";
+import { Button } from "@/components/ui/button";
 
 type Inputs = {
   username: string;

@@ -1,4 +1,4 @@
-import ThemePicker from './ThemePicker';
+import ThemePicker from '@/features/SettingsModal/ThemePicker';
 
 const GeneralSettings = () => {
   return (

@@ -1,6 +1,6 @@
 import Button from "@/features/Button";
 import type { OnboardingStep } from "@shiva200701/todotypes";
-import UseOnboardingProgess from "./UseOnboardingProgess";
+import UseOnboardingProgess from "@/pages/onboarding/UseOnboardingProgess";
 
 const NextButton = ({
   step,

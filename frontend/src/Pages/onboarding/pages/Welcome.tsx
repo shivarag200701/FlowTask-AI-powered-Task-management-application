@@ -1,8 +1,8 @@
-import Onboarding from "../Onboarding";
+import Onboarding from "@/pages/onboarding/Onboarding";
 import { cn } from "@/lib/utils";
-import Wordmark from "@/features/ui/wordmark";
+import Wordmark from "@/components/ui/wordmark";
 import { motion } from "motion/react";
-import NextButton from "../NextButton";
+import NextButton from "@/pages/onboarding/NextButton";
 
 export const container = {
   hidden: { opacity: 0 },

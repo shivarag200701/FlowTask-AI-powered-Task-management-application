@@ -1,9 +1,9 @@
 import { useState } from "react";
-import NLPDateParser from "./components/NLPDateParser";
-import type { CustomDatePickerProps } from "./types";
-import QuickActions from "./components/QuickActions";
-import { Calendar } from "../ui/calendar";
-import { Popover } from "../ui/popover";
+import NLPDateParser from "@/features/CustomDatePicker/components/NLPDateParser";
+import type { CustomDatePickerProps } from "@/features/CustomDatePicker/types";
+import QuickActions from "@/features/CustomDatePicker/components/QuickActions";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover } from "@/components/ui/popover";
 import { CalendarClockIcon } from "lucide-react";
 import { DateTime } from "luxon";
 

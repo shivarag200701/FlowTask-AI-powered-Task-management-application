@@ -1,13 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { Brain, Calendar1, RefreshCcw } from "lucide-react";
-import { Calendar } from "@/features/ui/calendar";
-import { useScrollbarWidth } from "../hooks/useScrollbarWidth";
-import { AuroraText } from "@/features/ui/aurora-text";
+import { Calendar } from "@/components/ui/calendar";
+import { useScrollbarWidth } from "@/hooks/useScrollbarWidth";
+import { AuroraText } from "@/components/ui/aurora-text";
 import { motion } from "motion/react";
-import { Highlighter } from "@/features/ui/highlighter";
+import { Highlighter } from "@/components/ui/highlighter";
 import ChatGPTIntegration from "@/features/LandingPage/ChatGPTIntegration";
-import { AnimatedList } from "@/features/ui/animated-list";
+import { AnimatedList } from "@/components/ui/animated-list";
 import Notification from "@/features/LandingPage/Notification";
 import type { NotificationProps } from "@/features/LandingPage/Notification";
 

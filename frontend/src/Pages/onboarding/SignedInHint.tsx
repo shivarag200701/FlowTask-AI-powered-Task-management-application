@@ -1,7 +1,7 @@
 import Button from "@/features/Button";
 import { useState } from "react";
 
-import { Auth } from "@/Context/AuthContext";
+import { Auth } from "@/context/AuthContext";
 import { useMutation } from "@tanstack/react-query";
 import api from "@/utils/api";
 import { useNavigate } from "react-router-dom";

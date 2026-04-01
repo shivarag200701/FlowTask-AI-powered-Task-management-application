@@ -1,13 +1,13 @@
 //todo-implement tags later for the whole application
 import { cn } from "@/utils/cn";
 import { useForm } from "react-hook-form";
-import InputBox from "../../../InputBox";
+import InputBox from "@/features/InputBox";
 import type { Todo } from "@/types";
-import useInlineTask from "../hooks/use-inline-task";
-import { Button } from "@/features/ui/button";
+import useInlineTask from "@/features/Dashboard/UpcomingView/hooks/use-inline-task";
+import { Button } from "@/components/ui/button";
 import { SendHorizonal, X } from "lucide-react";
-import PriorityPicker from "../../ui/PriorityPicker";
-import ReminderPicker from "../../ui/ReminderPicker";
+import PriorityPicker from "@/features/Dashboard/ui/PriorityPicker";
+import ReminderPicker from "@/features/Dashboard/ui/ReminderPicker";
 import CustomDatePicker from "@/features/CustomDatePicker/CustomDatePicker";
 
 interface InlineTaskFormProps {

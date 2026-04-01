@@ -1,15 +1,15 @@
 import InputBox from "@/features/InputBox";
-import ProfileUpload from "../ProfileUpload";
-import Onboarding from "../Onboarding";
+import ProfileUpload from "@/pages/onboarding/ProfileUpload";
+import Onboarding from "@/pages/onboarding/Onboarding";
 import { motion } from "motion/react";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { User } from "lucide-react";
 import api from "@/utils/api";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
-import { Gradient } from "./Welcome";
+import { Gradient } from "@/pages/onboarding/pages/Welcome";
 import Button from "@/features/Button";
-import UseOnboardingProgess from "../UseOnboardingProgess";
+import UseOnboardingProgess from "@/pages/onboarding/UseOnboardingProgess";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 

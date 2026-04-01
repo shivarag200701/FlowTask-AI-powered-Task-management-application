@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import Onboarding from "../Onboarding";
+import Onboarding from "@/pages/onboarding/Onboarding";
 import { CircleCheckBig, Sparkles, Award } from "lucide-react";
 import api from "@/utils/api";
 import Button from "@/features/Button";
