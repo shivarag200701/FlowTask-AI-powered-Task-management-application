@@ -25,12 +25,12 @@ export function GoogleSignInButton() {
     <Button
       Initial="Continue with Google"
       Loading="Continue with Google"
-      size="small"
+      size="lg"
       onClick={() => {
         handleGoogleSignIn();
         setLastUsedAuthMethod("google");
       }}
-      className="bg-white text-gray-900 border border-slate-200 hover:border-slate-300 hover:shadow-md ease-in-out shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium "
+      className="w-full "
       icon={<Google className="w-5 h-5" />}
       isSubmitting={loading}
       variant="secondary"

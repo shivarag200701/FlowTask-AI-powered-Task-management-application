@@ -1,8 +1,7 @@
-import * as React from "react";
+import { cn } from "@/utils/cn";
+import { Spinner } from "./spinner";
+import type { ReactNode } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { Slot } from "radix-ui";
-
-import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
   "inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -36,28 +35,48 @@ const buttonVariants = cva(
     },
   },
 );
-
-function Button({
-  className,
-  variant = "default",
-  size = "default",
-  asChild = false,
-  ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean;
-  }) {
-  const Comp = asChild ? Slot.Root : "button";
-
-  return (
-    <Comp
-      data-slot="button"
-      data-variant={variant}
-      data-size={size}
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    />
-  );
+interface ButtonProps
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  isSubmitting?: boolean;
+  Initial?: ReactNode;
+  Loading?: string;
+  icon?: ReactNode;
 }
+
+const Button = ({
+  isSubmitting,
+  Initial,
+  Loading,
+  onClick,
+  icon,
+  variant,
+  size,
+  className,
+  ...props
+}: ButtonProps) => {
+  return (
+    <button
+      type="submit"
+      disabled={isSubmitting}
+      className={cn(className, buttonVariants({ variant, size }))}
+      onClick={onClick}
+      {...props}
+    >
+      {isSubmitting ? (
+        <div className="flex gap-2 justify-center">
+          <Spinner className="text-gray-300" />
+          <span>{Loading}</span>
+        </div>
+      ) : (
+        <div className="flex gap-2 justify-center items-center">
+          {icon}
+          {Initial}
+        </div>
+      )}
+    </button>
+  );
+};
 
 export { Button, buttonVariants };

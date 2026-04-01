@@ -4,7 +4,6 @@ import InputBox from "../../InputBox";
 import { ArrowLeft } from "lucide-react";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
-import Button from "../../Button";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../../../utils/api";
 import { Auth, type AuthMethod } from "@/Context/AuthContext";
@@ -16,6 +15,7 @@ import LogoCard from "@/features/LogoCard";
 import { motion } from "motion/react";
 import { toast } from "sonner";
 import { Gradient } from "../../../Pages/onboarding/pages/Welcome";
+import { Button } from "../../ui/button";
 
 type Inputs = {
   username: string;
@@ -174,15 +174,7 @@ const SignInForm = () => {
                     error={errors.password ? true : false}
                   ></InputBox>
                 </label>
-                <Button
-                  isSubmitting={isSubmitting}
-                  Loading="Signing in..."
-                  Initial="Sign in"
-                  onClick={() => {
-                    setLastUsedAuthMethod("email");
-                  }}
-                  size="small"
-                />
+                <Button>Get started</Button>
               </div>
             </form>
             <div className="text-center text-muted-foreground mt-8 font-light text-sm">

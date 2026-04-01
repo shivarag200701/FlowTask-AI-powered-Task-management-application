@@ -1,11 +1,11 @@
 import { useState } from "react";
 import NLPDateParser from "./components/NLPDateParser";
-import useNLPDate from "./hooks/use-nlp-date";
 import type { CustomDatePickerProps } from "./types";
 import QuickActions from "./components/QuickActions";
 import { Calendar } from "../ui/calendar";
 import { Popover } from "../ui/popover";
 import { CalendarClockIcon } from "lucide-react";
+import { DateTime } from "luxon";
 
 export default function CustomDatePicker({
   open,
@@ -40,27 +40,27 @@ export default function CustomDatePicker({
   );
 }
 
-// function DatePickerInner(){
-//     return (
-//         <div className="bg-task md:border md:border-border rounded-md md:w-[230px] w-full transition-opacity duration-150 md:max-h-[600px] overflow-hidden">
-//           <NLPDateParser />
-//           <QuickActions handleDateSelect={onDateSelect} />
-//           <Calendar
-//             mode="single"
-//             selected={date}
-//             onSelect={onDateSelect}
-//             month={currentMonth}
-//             onMonthChange={setCurrentMonth}
-//             startMonth={today}
-//             navLayout="after"
-//             numberOfMonths={12}
-//             classNames={{
-//               months: "relative flex w-full flex-col gap-4",
-//               today: "[&_button]:font-semibold",
-//             }}
-//             disabled={{ before: new Date() }}
-//             className="max-h-[260px] overflow-y-auto no-scrollbar"
-//           />
-//         </div>
-//       );
-// }
+function DatePickerInner() {
+  return (
+    <div className="bg-task md:border md:border-border rounded-md md:w-[230px] w-full transition-opacity duration-150 md:max-h-[600px] overflow-hidden">
+      <NLPDateParser />
+      <QuickActions handleDateSelect={onDateSelect} />
+      <Calendar
+        mode="single"
+        selected={date}
+        onSelect={onDateSelect}
+        month={currentMonth}
+        onMonthChange={setCurrentMonth}
+        startMonth={today}
+        navLayout="after"
+        numberOfMonths={12}
+        classNames={{
+          months: "relative flex w-full flex-col gap-4",
+          today: "[&_button]:font-semibold",
+        }}
+        disabled={{ before: new Date() }}
+        className="max-h-[260px] overflow-y-auto no-scrollbar"
+      />
+    </div>
+  );
+}

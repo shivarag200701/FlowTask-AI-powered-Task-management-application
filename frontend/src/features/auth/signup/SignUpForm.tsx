@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import InputBox from "../../InputBox";
 import { useForm, FormProvider } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
-import Button from "../../Button";
+import { Button } from "../../ui/button";
 import { useNavigate } from "react-router-dom";
 import api from "../../../utils/api";
 import { GoogleSignInButton } from "../../GoogleSignInButton";
@@ -123,7 +123,7 @@ const SignUpForm = () => {
                   isSubmitting={isSubmitting}
                   Initial="Create Account"
                   Loading="Creating Account..."
-                  size="small"
+                  size="sm"
                 />
               </div>
             </form>
