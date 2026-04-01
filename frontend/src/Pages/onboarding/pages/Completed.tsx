@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import Onboarding from "../Onboarding";
 import { CircleCheckBig, Sparkles, Award } from "lucide-react";
 import api from "@/utils/api";
-import Button from "@/Components/Button";
+import Button from "@/features/Button";
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import type { User } from "@/types";

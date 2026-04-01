@@ -1,11 +1,11 @@
 import {
   useContext,
   createContext,
-  type ReactNode,
   useState,
   useEffect,
   useRef,
   useCallback,
+  type PropsWithChildren,
 } from "react";
 import api from "../utils/api";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -14,9 +14,6 @@ export const authMethods = ["google", "email"] as const;
 
 export type AuthMethod = (typeof authMethods)[number];
 
-interface AuthProps {
-  children: ReactNode;
-}
 interface ContextProps {
   isAuthenticated: boolean;
   setIsAuthenticated: (isAuthenticated: boolean) => void;
@@ -27,7 +24,7 @@ interface ContextProps {
   lastUsedAuthMethod: AuthMethod | undefined;
   email: string | undefined;
 }
-const AuthContext = createContext<ContextProps>({
+const authContext = createContext<ContextProps>({
   isAuthenticated: false,
   setIsAuthenticated: () => {},
   setEmail: () => {},
@@ -38,7 +35,7 @@ const AuthContext = createContext<ContextProps>({
   email: undefined,
 });
 
-export function AuthProvider({ children }: AuthProps) {
+export function AuthProvider({ children }: PropsWithChildren) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -85,8 +82,8 @@ export function AuthProvider({ children }: AuthProps) {
     setEmail,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return <authContext.Provider value={value}>{children}</authContext.Provider>;
 }
 
 //for cretaing protected routes
-export const Auth = () => useContext(AuthContext);
+export const Auth = () => useContext(authContext);

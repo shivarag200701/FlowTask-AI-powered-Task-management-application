@@ -4,7 +4,7 @@ import {
   FileUploadItem,
   FileUploadItemPreview,
   FileUploadList,
-} from "@/Components/ui/file-upload";
+} from "@/features/ui/file-upload";
 import { useState } from "react";
 import { CloudUpload } from "lucide-react";
 import { cn } from "@/lib/utils";

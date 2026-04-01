@@ -1,6 +1,6 @@
 // frontend/src/utils/nlpDateParser.ts
 
-import type { ParsedDateResult } from "@/Components/CustomDatePicker/types";
+import type { ParsedDateResult } from "@/features/CustomDatePicker/types";
 
 const weekdayMap: Record<string, string> = {
   sun: "sunday",

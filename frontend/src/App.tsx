@@ -3,7 +3,7 @@ import "./App.css";
 import SignIn from "./Pages/SignIn";
 import Signup from "./Pages/Signup";
 import { AuthProvider } from "./Context/AuthContext";
-import ProtectedRoute from "./Components/ProtectedRoute";
+import ProtectedRoute from "./features/ProtectedRoute";
 import { SignupProvider } from "./Context/SingupContext";
 import Dashboard from "./Pages/Dashboard";
 import Landing from "./Pages/Landing";
@@ -15,7 +15,8 @@ import { useEffect } from "react";
 import Welcome from "./Pages/onboarding/pages/Welcome";
 import UserProfile from "./Pages/onboarding/pages/UserProfile";
 import { Completed } from "./Pages/onboarding/pages/Completed";
-import PublicRoute from "./Components/PublicRoute";
+import PublicRoute from "./features/PublicRoute";
+import { SideNavProvider } from "./Context/SideNavContext";
 
 const queryClient = new QueryClient();
 
@@ -85,7 +86,15 @@ function App() {
                       path="/onboarding/completed"
                       element={<Completed />}
                     />
-                    <Route path="/dashboard" element={<Dashboard />} />
+
+                    <Route
+                      path="/dashboard"
+                      element={
+                        <SideNavProvider>
+                          <Dashboard />
+                        </SideNavProvider>
+                      }
+                    />
                   </Route>
                 </Routes>
               </SignupProvider>

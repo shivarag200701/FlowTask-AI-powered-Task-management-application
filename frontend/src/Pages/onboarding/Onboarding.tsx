@@ -1,6 +1,6 @@
 import { type PropsWithChildren } from "react";
 import SignedInHint from "./SignedInHint";
-import { Grid } from "@/Components/ui/grid";
+import { Grid } from "@/features/ui/grid";
 import { cn } from "@/lib/utils";
 
 const Onboarding = ({

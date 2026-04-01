@@ -28,11 +28,11 @@ import CustomDatePicker from "./CustomDatePicker";
 import {
   roundToNearest15Minutes,
   getTimeFromDate,
-} from "./Dashboard/UpcomingView/Components/InlineTaskForm";
+} from "./Dashboard/UpcomingView/components/InlineTaskForm";
 import PriorityPicker from "./PriorityPicker";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { Kbd } from "./ui/kbd";
-import { TaskDetailPopover } from "./Dashboard/UpcomingView/Components/TaskDetailModal";
+import { TaskDetailPopover } from "./Dashboard/UpcomingView/components/TaskDetailModal";
 
 interface TaskDetailDrawerProps {
   todo: Todo | null;

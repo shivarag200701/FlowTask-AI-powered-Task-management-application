@@ -1,4 +1,4 @@
-import Button from "@/Components/Button";
+import Button from "@/features/Button";
 import type { OnboardingStep } from "@shiva200701/todotypes";
 import UseOnboardingProgess from "./UseOnboardingProgess";
 

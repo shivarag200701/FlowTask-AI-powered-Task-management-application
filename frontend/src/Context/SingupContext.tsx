@@ -1,46 +1,50 @@
-import { useContext, createContext, useState } from "react";
+import {
+  useContext,
+  createContext,
+  useState,
+  type PropsWithChildren,
+} from "react";
 
-export interface SignupContext{
-    email: string,
-    password: string,
-    step: "signup" | "verify",
-    setEmail: (email:string) => void,
-    setPassword: (password: string) => void
-    setStep: (step: "signup"|"verify") => void
+interface SignupContextProps {
+  email: string;
+  password: string;
+  step: "signup" | "verify";
+  setEmail: (email: string) => void;
+  setPassword: (password: string) => void;
+  setStep: (step: "signup" | "verify") => void;
 }
 
+const signupContext = createContext<SignupContextProps | undefined>(undefined);
 
-const SignupContext = createContext<SignupContext | undefined>(undefined)
+export function SignupProvider({ children }: PropsWithChildren) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [step, setStep] = useState<"signup" | "verify">("signup");
 
-export function SignupProvider({children}:React.PropsWithChildren){
-    const [email,setEmail] = useState("")
-    const [password,setPassword] = useState("")
-    const [step,setStep] = useState<"signup"|"verify">("signup")
-
-    return(
-         <SignupContext.Provider 
-            value={{
-                email,
-                password,
-                step,
-                setEmail,
-                setPassword,
-                setStep
-            }}
-         >
-            {children}
-         </SignupContext.Provider>
-        )
+  return (
+    <signupContext.Provider
+      value={{
+        email,
+        password,
+        step,
+        setEmail,
+        setPassword,
+        setStep,
+      }}
+    >
+      {children}
+    </signupContext.Provider>
+  );
 }
 
 export const useSignupContext = () => {
-    const context = useContext(SignupContext)
+  const context = useContext(signupContext);
 
-    if (context === undefined) {
-        throw new Error(
-          "useRegisterContext must be used within a RegisterProvider",
-        );
-      }
-    
-      return context;
-}
+  if (context === undefined) {
+    throw new Error(
+      "useRegisterContext must be used within a RegisterProvider",
+    );
+  }
+
+  return context;
+};

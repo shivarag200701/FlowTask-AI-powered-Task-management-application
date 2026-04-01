@@ -1,6 +1,6 @@
 import type { Todo } from "../types";
 import { Tag, Calendar, Trash, Pencil, Repeat } from "lucide-react";
-import { Checkbox } from "../Components/ui/checkbox";
+import { Checkbox } from "./ui/checkbox";
 import { formatCompleteAt } from "@shiva200701/todotypes";
 import WarningModal from "./WarningModal";
 import { useState } from "react";

@@ -1,5 +1,5 @@
-import { Modal } from "@/Components/ui/modal";
-import { Popover } from "@/Components/ui/popover";
+import { Modal } from "@/features/ui/modal";
+import { Popover } from "@/features/ui/popover";
 import type { Todo } from "@/types";
 import { MoreHorizontal, X } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";

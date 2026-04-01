@@ -1,5 +1,5 @@
-import Button from "@/Components/Button";
-import AnimatedSizeContainer from "@/Components/ui/animated-size-container";
+import Button from "@/features/Button";
+import AnimatedSizeContainer from "@/features/ui/animated-size-container";
 import { Auth } from "@/Context/AuthContext";
 import { useSignupContext } from "@/Context/SingupContext";
 import UseOnboardingProgess from "@/Pages/onboarding/UseOnboardingProgess";

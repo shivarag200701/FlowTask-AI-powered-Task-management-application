@@ -1,6 +1,6 @@
 import Onboarding from "../Onboarding";
 import { cn } from "@/lib/utils";
-import Wordmark from "@/Components/ui/wordmark";
+import Wordmark from "@/features/ui/wordmark";
 import { motion } from "motion/react";
 import NextButton from "../NextButton";
 

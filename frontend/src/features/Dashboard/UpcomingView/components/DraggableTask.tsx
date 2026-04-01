@@ -1,16 +1,16 @@
-import InlineTaskForm from "@/Components/Dashboard/UpcomingView/Components/InlineTaskForm";
+import InlineTaskForm from "@/features/Dashboard/UpcomingView/components/InlineTaskForm";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { type Todo } from "@/types";
+import { type Todo, type TodoWithCompleteAtDateTime } from "@/types";
 import api from "@/utils/api";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useEffect, useRef, useState } from "react";
 import { MoreOptionsPicker } from "./MoreOptionsPicker";
-import { Checkbox } from "@/Components/ui/checkbox";
+import { Checkbox } from "@/features/ui/checkbox";
 import { AlarmClock, Calendar, Repeat, Tag } from "lucide-react";
 
 interface DraggableTaskProps {
-  todo: Todo;
+  todo: TodoWithCompleteAtDateTime;
   index: number;
   columnIndex: number;
   onToggleComplete: (todoId: string | number) => void;
@@ -22,7 +22,7 @@ interface DraggableTaskProps {
   playSound: () => void;
   onDuplicateTask: (todo: Todo) => void;
   onTaskUpdated: (todo: Todo) => void;
-  todos: Todo[];
+  todos: TodoWithCompleteAtDateTime[];
 }
 
 export const DraggableTask = ({

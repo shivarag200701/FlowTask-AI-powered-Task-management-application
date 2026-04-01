@@ -1,4 +1,4 @@
-import InputBox from "@/Components/InputBox";
+import InputBox from "@/features/InputBox";
 import ProfileUpload from "../ProfileUpload";
 import Onboarding from "../Onboarding";
 import { motion } from "motion/react";
@@ -8,7 +8,7 @@ import api from "@/utils/api";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
 import { Gradient } from "./Welcome";
-import Button from "@/Components/Button";
+import Button from "@/features/Button";
 import UseOnboardingProgess from "../UseOnboardingProgess";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";

@@ -1,15 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { Brain, Calendar1, RefreshCcw } from "lucide-react";
-import { Calendar } from "@/Components/ui/calendar";
+import { Calendar } from "@/features/ui/calendar";
 import { useScrollbarWidth } from "../hooks/useScrollbarWidth";
-import { AuroraText } from "@/Components/ui/aurora-text";
+import { AuroraText } from "@/features/ui/aurora-text";
 import { motion } from "motion/react";
-import { Highlighter } from "@/Components/ui/highlighter";
-import ChatGPTIntegration from "@/Components/LandingPage/ChatGPTIntegration";
-import { AnimatedList } from "@/Components/ui/animated-list";
-import Notification from "@/Components/LandingPage/Notification";
-import type { NotificationProps } from "@/Components/LandingPage/Notification";
+import { Highlighter } from "@/features/ui/highlighter";
+import ChatGPTIntegration from "@/features/LandingPage/ChatGPTIntegration";
+import { AnimatedList } from "@/features/ui/animated-list";
+import Notification from "@/features/LandingPage/Notification";
+import type { NotificationProps } from "@/features/LandingPage/Notification";
 
 const Landing = () => {
   const navigate = useNavigate();
