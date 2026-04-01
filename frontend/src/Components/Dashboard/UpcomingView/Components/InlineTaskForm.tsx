@@ -8,10 +8,11 @@ import { Button } from "@/Components/ui/button";
 import { SendHorizonal, X } from "lucide-react";
 import PriorityPicker from "../../ui/PriorityPicker";
 import ReminderPicker from "../../ui/ReminderPicker";
+import CustomDatePicker from "@/Components/CustomDatePicker/CustomDatePicker";
 
 interface InlineTaskFormProps {
   className?: string;
-  todo: Todo;
+  todo?: Todo;
 }
 
 function InlineTaskForm({ className, todo }: InlineTaskFormProps) {
@@ -28,6 +29,10 @@ function InlineTaskForm({ className, todo }: InlineTaskFormProps) {
     setIsReminderOpen,
     reminder,
     setReminder,
+    isDateOpen,
+    setIsDateOpen,
+    date,
+    setDate,
   } = useInlineTask(todo);
   const {} = useForm();
   return (
@@ -54,7 +59,7 @@ function InlineTaskForm({ className, todo }: InlineTaskFormProps) {
             placeholder="Description"
           />
           <div className="flex gap-2">
-            <div className="w-full h-5 border border-border rounded-sm"></div>
+            <CustomDatePicker open={isDateOpen} setOpen={setIsDateOpen} />
             <PriorityPicker
               open={isPriorityOpen}
               setOpen={setIsPriorityOpen}
@@ -68,8 +73,8 @@ function InlineTaskForm({ className, todo }: InlineTaskFormProps) {
               open={isReminderOpen}
               setOpen={setIsReminderOpen}
               reminder={reminder ?? false}
+              setReminder={setReminder}
             />
-            <div className="w-[50%] h-5 border border-border rounded-sm"></div>
           </div>
           <div className="h-px bg-border/70  -mx-2" />
           <div className="flex justify-end">

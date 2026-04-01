@@ -3,11 +3,12 @@ import { Auth } from "../Context/AuthContext";
 import { Spinner } from "./ui/spinner";
 import { useQuery } from "@tanstack/react-query";
 import api from "../utils/api";
-import type { Todo, User } from "@/types";
+import type { Todo, TodoWithCompleteAtDateTime, User } from "@/types";
 import {
   ONBOARDING_WINDOW_SECONDS,
   type OnboardingStep,
 } from "@shiva200701/todotypes";
+import { DateTime } from "luxon";
 
 const ProtectedRoute = () => {
   const { isAuthenticated, isLoading } = Auth();
@@ -26,9 +27,13 @@ const ProtectedRoute = () => {
   // Fetch todos - this ensures todos are loaded before showing dashboard
   const { isLoading: todosLoading } = useQuery({
     queryKey: ["todos"],
-    queryFn: async (): Promise<Todo> => {
-      const res = await api.get("/v1/todo/");
-      return res.data.todos;
+    queryFn: async (): Promise<TodoWithCompleteAtDateTime[]> => {
+      const { todos }: { todos: Todo[] } = (await api.get("/v1/todo/")).data;
+
+      return todos.map((todo) => ({
+        ...todo,
+        completeAt: DateTime.fromISO(todo.completeAt ?? ""),
+      }));
     },
     enabled: isAuthenticated, // Only fetch if authenticated
     staleTime: 60000,

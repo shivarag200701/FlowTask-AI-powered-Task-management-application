@@ -2,23 +2,25 @@ import type { Todo } from "@/types";
 import type { Dispatch, SetStateAction } from "react";
 
 export interface CustomDatePickerProps {
-  onClose: () => void;
-  selectedDate: string; // YYYY-MM-DD format
-  onDateSelect: (date: string) => void;
-  selectedTime: string;
-  onTimeSelect?: (time: string) => void;
-  noTimeSelect?: () => void;
-  todos: Todo[];
-  todo?: Todo;
-  isAllDay: boolean;
-  isRecurring: boolean;
-  recurrencePattern?: "daily" | "weekly" | "monthly" | "yearly" | null;
-  onSave?: () => void;
-  setIsAllDay: (isAllDay: boolean) => void;
-  setIsRecurring: (isRecurring: boolean) => void;
-  setRecurrencePattern: (
-    pattern: "daily" | "weekly" | "monthly" | "yearly" | null,
-  ) => void;
+  // onClose: () => void;
+  // selectedDate: string; // YYYY-MM-DD format
+  // onDateSelect: (date: string) => void;
+  // selectedTime: string;
+  // onTimeSelect?: (time: string) => void;
+  // noTimeSelect?: () => void;
+  // todos: Todo[];
+  // todo?: Todo;
+  // isAllDay: boolean;
+  // isRecurring: boolean;
+  // recurrencePattern?: "daily" | "weekly" | "monthly" | "yearly" | null;
+  // onSave?: () => void;
+  // setIsAllDay: (isAllDay: boolean) => void;
+  // setIsRecurring: (isRecurring: boolean) => void;
+  // setRecurrencePattern: (
+  //   pattern: "daily" | "weekly" | "monthly" | "yearly" | null,
+  // ) => void;
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface TimeOption {

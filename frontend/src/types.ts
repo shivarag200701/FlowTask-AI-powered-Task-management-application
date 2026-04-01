@@ -1,3 +1,5 @@
+import type { DateTime } from "luxon";
+
 export interface User {
   id: number;
   name: string | null;
@@ -30,3 +32,7 @@ export interface Todo {
   createdAt: string | null;
   reminder?: boolean;
 }
+
+export type TodoWithCompleteAtDateTime = Omit<Todo, "completeAt"> & {
+  completeAt: DateTime | null;
+};

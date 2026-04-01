@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DateTime } from "luxon";
 export declare const emailSchema: z.ZodPipe<z.ZodEmail, z.ZodTransform<string, string>>;
 export declare const passwordSchema: z.ZodString;
 export declare const signUpSchema: z.ZodObject<{
@@ -101,7 +102,7 @@ export declare function formatCompleteAt(dateString: string | null | undefined):
 /**
  * Gets an array of dates for the upcoming view (5-7 days starting from a given date)
  */
-export declare function getUpcomingDateRange(startDate: Date, days?: number): Date[];
+export declare function getUpcomingDateRange(startDate: DateTime, days?: number): DateTime[];
 /**
  * Formats a date for the upcoming view column header
  * Returns format like "Nov 11 • Today" or "Nov 12 • Tomorrow" or "Nov 13 • Thursday"

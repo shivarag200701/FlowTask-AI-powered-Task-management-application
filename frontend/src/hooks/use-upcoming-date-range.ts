@@ -1,11 +1,12 @@
 import { getUpcomingDateRange } from "@shiva200701/todotypes";
 import { useCallback, useMemo, useState } from "react";
+import { DateTime } from "luxon";
 
 export function useUpcomingDateRange(dayCount: number) {
   const [startDate, setStartDate] = useState(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return today;
+    const now = DateTime.now();
+    const start = now.startOf("day");
+    return start;
   });
 
   const [isMonthYearPickerOpen, setIsMonthYearPickerOpen] = useState(false);
@@ -15,80 +16,46 @@ export function useUpcomingDateRange(dayCount: number) {
   }, [startDate, dayCount]);
 
   const navigatePrevious = useCallback(() => {
-    let newDate = new Date(startDate);
-
-    newDate.setDate(startDate.getDate() - dayCount);
-    newDate.setHours(0, 0, 0, 0);
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    if (newDate >= today) {
-      setStartDate(newDate);
-    } else {
-      setStartDate(today);
-    }
+    const candidate = startDate.minus({ days: dayCount });
+    if (candidate < DateTime.now().startOf("day")) return;
+    setStartDate(candidate);
   }, [dayCount, startDate]);
 
+  DateTime.now;
+
   const navigateNext = useCallback(() => {
-    let newDate = new Date(startDate);
-
-    newDate.setDate(startDate.getDate() + dayCount);
-    newDate.setHours(0, 0, 0, 0);
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    if (newDate >= today) {
-      setStartDate(newDate);
-    } else {
-      setStartDate(today);
-    }
+    const candidate = startDate.plus({ days: dayCount });
+    setStartDate(candidate);
   }, [dayCount, startDate]);
 
   const navigateToToday = useCallback(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
+    const today = DateTime.now().startOf("day");
     setStartDate(today);
   }, []);
 
   const selectMonthYear = useCallback(
     (year: number, month: number) => {
-      const today = new Date();
-      const currentYear = today.getFullYear();
-      const currentMonth = today.getMonth();
-      const currentDay = today.getDate();
-
-      let newDate: Date;
-
-      // If selecting current year and current month, start from today
-      if (year === currentYear && month === currentMonth) {
-        newDate = new Date(year, month, currentDay);
+      const now = DateTime.now();
+      if (year === now.year && month === now.month) {
+        setStartDate(
+          DateTime.now()
+            .set({ year: year, month: month, day: now.day })
+            .startOf("day"),
+        );
       } else {
-        // Otherwise, start from the 1st of the selected month
-        newDate = new Date(year, month, 1);
-      }
-
-      newDate.setHours(0, 0, 0, 0);
-      today.setHours(0, 0, 0, 0);
-
-      // Only allow selecting today or future dates
-      if (newDate >= today) {
-        setStartDate(newDate);
+        setStartDate(
+          DateTime.now()
+            .set({ year: year, month: month, day: 1 })
+            .startOf("day"),
+        );
       }
     },
     [startDate, setStartDate],
   );
 
-  const currentMonthYearLabel = useMemo(
-    () =>
-      startDate.toLocaleDateString("en-US", {
-        month: "long",
-        year: "numeric",
-      }),
-    [startDate],
-  );
+  const currentMonthYearLabel = useMemo(() => {
+    return startDate.toFormat("LLLL yyyy");
+  }, [startDate]);
 
   return {
     startDate,

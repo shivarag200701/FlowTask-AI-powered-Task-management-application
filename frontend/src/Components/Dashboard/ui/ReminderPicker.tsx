@@ -6,14 +6,13 @@ import { Popover } from "@/Components/ui/popover";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/Components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
-import { AlarmClock } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { AlarmClock, AlarmClockCheck, X } from "lucide-react";
 import { useState, type Dispatch, type SetStateAction } from "react";
 
 interface ReminderPickerProps {
@@ -21,6 +20,7 @@ interface ReminderPickerProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
   className?: string;
   reminder: boolean;
+  setReminder: (v: boolean) => void;
 }
 
 function ReminderPicker({
@@ -28,26 +28,29 @@ function ReminderPicker({
   setOpen,
   className,
   reminder,
+  setReminder,
 }: ReminderPickerProps) {
-  const [reminderPreset, setReminderPreset] = useState<string>(() => {
-    if (reminder) {
-      return "atTimeOfTask";
-    }
-    return "";
-  });
+  const [draft, setDraft] = useState("");
+
+  const handleOpenChange = (next: boolean) => {
+    if (next) setDraft(reminder ? "atTimeOfTask" : "");
+    setOpen(next);
+  };
+
   return (
     <Popover
       openPopover={open}
-      setOpenPopover={setOpen}
+      setOpenPopover={handleOpenChange}
       sideOffset={0}
       content={
-        <div className="p-3 flex flex-col gap-3 w-full">
-          <h2 className="text-md md:text-xs font-bold">Reminders</h2>
+        <div className={cn("flex flex-col gap-3 w-full p-3", className)}>
+          <h2 className="text-md font-bold md:text-xs">Reminders</h2>
           <Tabs defaultValue="beforeTask">
             <TabsList className="rounded-2xl">
               <TabsTrigger
                 className="rounded-2xl px-5 py-2.5"
                 value="dateAndTime"
+                disabled
               >
                 Date And Time
               </TabsTrigger>
@@ -58,25 +61,49 @@ function ReminderPicker({
                 Before Task
               </TabsTrigger>
             </TabsList>
-            <TabsContent value="dateAndTime"></TabsContent>
+            <TabsContent value="dateAndTime" />
             <TabsContent value="beforeTask">
-              <BeforeTask
-                value={reminderPreset}
-                onValueChange={setReminderPreset}
-              />
+              <BeforeTask value={draft} onValueChange={setDraft} />
             </TabsContent>
           </Tabs>
           <div className="flex justify-end">
-            <Button size="sm" className="text-xs rounded-sm">
+            <Button
+              type="button"
+              size="sm"
+              className="rounded-sm text-xs"
+              onClick={() => {
+                setReminder(draft === "atTimeOfTask");
+                setOpen(false);
+              }}
+            >
               Add Reminder
             </Button>
           </div>
         </div>
       }
     >
-      <button className="w-fit h-full border border-border rounded-sm p-1 flex gap-2 items-center hover:bg-muted/50 cursor-pointer">
+      <div className="flex h-full w-fit cursor-pointer items-center gap-2 rounded-sm border border-border p-1 hover:bg-muted/50">
         <AlarmClock size={18} strokeWidth={1} />
-      </button>
+        {reminder && (
+          <>
+            <span className="text-xs text-black">At time of Task</span>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                setReminder(false);
+              }}
+            >
+              <X
+                strokeWidth={1}
+                size={12}
+                className="hover:bg-muted rounded-xs cursor-pointer"
+                aria-label="Clear Reminder"
+              />
+            </button>
+          </>
+        )}
+      </div>
     </Popover>
   );
 }
@@ -91,7 +118,15 @@ function BeforeTask({
   return (
     <Select value={value} onValueChange={onValueChange}>
       <SelectTrigger className="w-full cursor-pointer">
-        <SelectValue defaultValue="atTimeOfTask" />
+        <span className="flex min-w-0 flex-1 items-center gap-2">
+          {value ? (
+            <AlarmClockCheck
+              className="size-4 shrink-0 text-muted-foreground"
+              aria-hidden
+            />
+          ) : null}
+          <SelectValue defaultValue={value} placeholder="At time of task" />
+        </span>
       </SelectTrigger>
       <SelectContent position="popper" className="bg-task">
         <SelectItem value="atTimeOfTask">At time of task</SelectItem>
@@ -99,7 +134,5 @@ function BeforeTask({
     </Select>
   );
 }
-
-//Todo Date time reminder for pro users
 
 export default ReminderPicker;

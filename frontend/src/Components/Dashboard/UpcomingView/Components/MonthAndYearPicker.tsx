@@ -3,10 +3,11 @@ import { Popover } from "@/Components/ui/popover";
 import { cn } from "@/lib/utils";
 import { getMonths, isPastDate, getYears } from "@/utils/monthYearPicker";
 import { ChevronDown } from "lucide-react";
+import type { DateTime } from "luxon";
 import type { Dispatch, SetStateAction } from "react";
 
 interface MonthAndYearPickerProps {
-  startDate: Date;
+  startDate: DateTime;
   selectMonthYear: (year: number, month: number) => void;
   currentMonthYearLabel: string;
   isMonthYearPickerOpen: boolean;
@@ -31,19 +32,16 @@ export function MonthAndYearPicker({
                 Month
               </div>
               <div className="grid grid-cols-3 gap-2 overflow-hidden">
-                {getMonths(startDate.getFullYear()).map((month) => {
-                  const isSelected = startDate.getMonth() === month.value;
-                  const isDisabled = isPastDate(
-                    startDate.getFullYear(),
-                    month.value,
-                  );
+                {getMonths(startDate.year).map((month) => {
+                  const isSelected = startDate.month === month.value;
+                  const isDisabled = isPastDate(startDate.year, month.value);
 
                   return (
                     <button
                       key={month.value}
                       onClick={() => {
                         if (!isDisabled) {
-                          selectMonthYear(startDate.getFullYear(), month.value);
+                          selectMonthYear(startDate.year, month.value);
                         }
                       }}
                       disabled={isDisabled}
@@ -69,7 +67,7 @@ export function MonthAndYearPicker({
               </div>
               <div className="max-h-56 overflow-y-auto overflow-x-hidden custom-scrollbar space-y-1">
                 {getYears().map((year) => {
-                  const isSelected = startDate.getFullYear() === year;
+                  const isSelected = startDate.year === year;
                   const isCurrentYear = year === new Date().getFullYear();
 
                   return (
@@ -79,8 +77,8 @@ export function MonthAndYearPicker({
                         // If selecting current year, ensure we don't go to past months
                         const today = new Date();
                         const monthToUse = isCurrentYear
-                          ? Math.max(startDate.getMonth(), today.getMonth())
-                          : startDate.getMonth();
+                          ? Math.max(startDate.month, today.getMonth())
+                          : startDate.month;
                         selectMonthYear(year, monthToUse);
                       }}
                       className={`w-full px-4 py-2.5 text-sm rounded-lg transition-all text-left cursor-pointer select-none ${

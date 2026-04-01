@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DateTime } from "luxon";
 export const emailSchema = z
     .email()
     .min(1)
@@ -289,11 +290,8 @@ export function formatCompleteAt(dateString) {
  */
 export function getUpcomingDateRange(startDate, days = 5) {
     const dates = [];
-    const current = new Date(startDate);
-    current.setHours(0, 0, 0, 0);
-    for (let i = 0; i < days; i++) {
-        const date = new Date(current);
-        date.setDate(current.getDate() + i);
+    for (let i = 1; i <= days; i++) {
+        const date = startDate.plus({ days: i });
         dates.push(date);
     }
     return dates;

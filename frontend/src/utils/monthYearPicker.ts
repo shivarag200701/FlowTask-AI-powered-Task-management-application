@@ -1,21 +1,23 @@
+import { DateTime } from "luxon";
+
 export const getMonths = (selectedYear: number) => {
-  const today = new Date();
-  const currentYear = today.getFullYear();
-  const currentMonth = today.getMonth();
+  const today = DateTime.now();
+  const currentYear = today.year;
+  const currentMonth = today.month;
 
   const allMonths = [
-    { value: 0, label: "January" },
-    { value: 1, label: "February" },
-    { value: 2, label: "March" },
-    { value: 3, label: "April" },
-    { value: 4, label: "May" },
-    { value: 5, label: "June" },
-    { value: 6, label: "July" },
-    { value: 7, label: "August" },
-    { value: 8, label: "September" },
-    { value: 9, label: "October" },
-    { value: 10, label: "November" },
-    { value: 11, label: "December" },
+    { value: 1, label: "January" },
+    { value: 2, label: "February" },
+    { value: 3, label: "March" },
+    { value: 4, label: "April" },
+    { value: 5, label: "May" },
+    { value: 6, label: "June" },
+    { value: 7, label: "July" },
+    { value: 8, label: "August" },
+    { value: 9, label: "September" },
+    { value: 10, label: "October" },
+    { value: 11, label: "November" },
+    { value: 12, label: "December" },
   ];
 
   // If selected year is current year, show current month and future months
@@ -28,7 +30,7 @@ export const getMonths = (selectedYear: number) => {
 };
 
 export const getYears = () => {
-  const currentYear = new Date().getFullYear();
+  const currentYear = DateTime.now().year;
   const years = [];
   for (let i = currentYear; i <= currentYear + 10; i++) {
     years.push(i);
@@ -37,12 +39,10 @@ export const getYears = () => {
 };
 
 export const isPastDate = (year: number, month: number): boolean => {
-  const today = new Date();
-  if (month == today.getMonth()) {
+  const today = DateTime.now().startOf("day");
+  if (month == today.month) {
     return false;
   }
-  const date = new Date(year, month, 1);
-  date.setHours(0, 0, 0, 0);
-  today.setHours(0, 0, 0, 0);
+  const date = DateTime.fromObject({ year: year, month: month, day: 1 });
   return date < today;
 };

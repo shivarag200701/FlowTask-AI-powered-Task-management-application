@@ -1,4 +1,5 @@
 import type { Todo } from "@/types";
+import type { DateTime } from "luxon";
 import { useState } from "react";
 
 function useInlineTask(todo: Todo) {
@@ -11,6 +12,8 @@ function useInlineTask(todo: Todo) {
 
   const [isPriorityOpen, setIsPriorityOpen] = useState(false);
   const [isReminderOpen, setIsReminderOpen] = useState(false);
+  const [isDateOpen, setIsDateOpen] = useState(false);
+  const [date, setDate] = useState<DateTime | null>(null);
 
   return {
     title,
@@ -25,6 +28,10 @@ function useInlineTask(todo: Todo) {
     setIsReminderOpen,
     reminder,
     setReminder,
+    isDateOpen,
+    setIsDateOpen,
+    date,
+    setDate,
   };
 }
 

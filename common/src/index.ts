@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DateTime } from "luxon";
 
 export const emailSchema = z
   .email()
@@ -394,19 +395,14 @@ export function formatCompleteAt(
  * Gets an array of dates for the upcoming view (5-7 days starting from a given date)
  */
 export function getUpcomingDateRange(
-  startDate: Date,
+  startDate: DateTime,
   days: number = 5,
-): Date[] {
-  const dates: Date[] = [];
-  const current = new Date(startDate);
-  current.setHours(0, 0, 0, 0);
-
-  for (let i = 0; i < days; i++) {
-    const date = new Date(current);
-    date.setDate(current.getDate() + i);
+): DateTime[] {
+  const dates: DateTime[] = [];
+  for (let i = 1; i <= days; i++) {
+    const date = startDate.plus({ days: i });
     dates.push(date);
   }
-
   return dates;
 }
 
