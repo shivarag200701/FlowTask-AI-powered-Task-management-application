@@ -174,7 +174,12 @@ const SignInForm = () => {
                     error={errors.password ? true : false}
                   ></InputBox>
                 </label>
-                <Button>Get started</Button>
+                <Button
+                  isSubmitting={isSubmitting}
+                  Initial="Log in with email"
+                  Loading="Log in with email"
+                  size="lg"
+                />
               </div>
             </form>
             <div className="text-center text-muted-foreground mt-8 font-light text-sm">

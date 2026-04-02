@@ -17,6 +17,7 @@ interface ProfileUploadProps {
 
 const ProfileUpload = ({ className, onChange }: ProfileUploadProps) => {
   const [files, setFiles] = useState<File[]>([]);
+  console.log("files", files);
 
   return (
     <div className={cn("relative flex items-center justify-center", className)}>

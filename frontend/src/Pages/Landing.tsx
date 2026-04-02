@@ -10,6 +10,7 @@ import ChatGPTIntegration from "@/features/LandingPage/ChatGPTIntegration";
 import { AnimatedList } from "@/components/ui/animated-list";
 import Notification from "@/features/LandingPage/Notification";
 import type { NotificationProps } from "@/features/LandingPage/Notification";
+import { Button } from "@/components/ui/button";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -184,7 +185,7 @@ const Landing = () => {
     const targetTop = target.getBoundingClientRect().top;
     const offset = targetTop - containerTop - demoHeaderOffset;
 
-    document.body.scrollTo({ top: offset, behavior: "smooth" });
+    window.scrollTo({ top: offset, behavior: "smooth" });
   };
 
   const scrollToFeatures = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -196,8 +197,9 @@ const Landing = () => {
     const containerTop = container.getBoundingClientRect().top;
     const targetTop = target.getBoundingClientRect().top;
     const offset = targetTop - containerTop - featureHeaderOffset;
+    console.log("offset ", offset);
 
-    document.body.scrollTo({ top: offset, behavior: "smooth" });
+    window.scrollTo({ top: offset, behavior: "smooth" });
   };
 
   notifications = Array.from({ length: 10 }, () => notifications).flat();
@@ -241,7 +243,7 @@ const Landing = () => {
               <div className="w-12 h-12 rounded-2xl flex items-center justify-center">
                 <img src="/logo.png" />
               </div>
-              <h1 className="text-2xl font-bold tracking-tight text-accent">
+              <h1 className="text-2xl font-bold tracking-tight text-primary">
                 FlowTask
               </h1>
             </div>
@@ -276,18 +278,15 @@ const Landing = () => {
                   : {}
               }
             >
-              <button
+              <Button
+                Initial="Sign In"
+                variant="outline"
                 onClick={() => navigate("/signin")}
-                className="px-4 py-2 text-black hover:bg-gray-200 transition-colors border border-black/20 rounded-md bg-white backdrop-blur cursor-pointer text-center text-sm font-medium"
-              >
-                Sign In
-              </button>
-              <button
+              />
+              <Button
                 onClick={() => navigate("/signup")}
-                className="px-6 py-2 bg-accent text-white rounded-md hover:opacity-90 transition-opacity font-semibold text-sm cursor-pointer"
-              >
-                Get Started
-              </button>
+                Initial="Get Started"
+              />
             </div>
           </div>
         </div>
@@ -327,7 +326,7 @@ const Landing = () => {
             >
               <button
                 onClick={() => navigate("/signup")}
-                className="px-4 py-2 2xl:px-8 2xl:py-4 bg-linear-to-r from-accent to-accent/60 hover:bg-accent text-white rounded-xl hover:opacity-90 transition-all duration-200 font-semibold text-md 2xl:text-lg shadow-[0_5px_10px_rgba(0,0,0,0.2)] cursor-pointer"
+                className="px-4 py-2 2xl:px-8 2xl:py-4 bg-linear-to-r from-primary to-primary/60 hover:bg-primary text-white rounded-xl hover:opacity-90 transition-all duration-200 font-semibold text-md 2xl:text-lg shadow-[0_5px_10px_rgba(0,0,0,0.2)] cursor-pointer"
               >
                 Start Tracking
               </button>

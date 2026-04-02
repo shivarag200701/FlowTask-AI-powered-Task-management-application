@@ -1,19 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
-import Onboarding from "@/pages/onboarding/Onboarding";
+import Onboarding from "@/features/auth/onboarding/Onboarding";
 import { CircleCheckBig, Sparkles, Award } from "lucide-react";
-import api from "@/utils/api";
-import Button from "@/features/Button";
+import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
-import type { User } from "@/types";
+import { authQueryKeys } from "@/query-keys";
+import { getCurrentUser } from "@/api";
 
 export const Completed = () => {
   const { data: user } = useQuery({
-    queryKey: ["users"],
-    queryFn: async (): Promise<User> => {
-      const res = await api.get("/v1/user/profile");
-      return res.data.user;
-    },
+    queryKey: authQueryKeys.users,
+    queryFn: getCurrentUser,
   });
 
   const navigate = useNavigate();

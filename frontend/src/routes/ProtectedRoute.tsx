@@ -8,7 +8,7 @@ import {
   authQueryKeys,
   todosQueryKeys,
   onboardingQueryKeys,
-} from "@/queryKeys";
+} from "@/query-keys";
 
 const ProtectedRoute = () => {
   const { isAuthenticated, isLoading } = Auth();

@@ -1,8 +1,8 @@
-import Button from "@/features/Button";
+import { Button } from "@/components/ui/button";
 import AnimatedSizeContainer from "@/components/ui/animated-size-container";
 import { Auth } from "@/context/AuthContext";
 import { useSignupContext } from "@/context/SingupContext";
-import UseOnboardingProgess from "@/pages/onboarding/UseOnboardingProgess";
+import UseOnboardingProgess from "@/features/auth/onboarding/Use-onboarding-progess";
 import api from "@/utils/api";
 import { cn } from "@/utils/cn";
 import { isAxiosError } from "axios";

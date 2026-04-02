@@ -1,6 +1,5 @@
-import Button from "@/features/Button";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
-
 import { Auth } from "@/context/AuthContext";
 import { useMutation } from "@tanstack/react-query";
 import api from "@/utils/api";
@@ -40,7 +39,7 @@ const SignedInHint = () => {
         isSubmitting={loading}
         Initial="Sign in as a different user"
         variant="secondary"
-        size="small"
+        size="sm"
         className="w-fit rounded-md"
         onClick={() => {
           mutate();

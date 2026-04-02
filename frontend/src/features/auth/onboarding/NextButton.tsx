@@ -1,6 +1,6 @@
-import Button from "@/features/Button";
+import { Button } from "@/components/ui/button";
 import type { OnboardingStep } from "@shiva200701/todotypes";
-import UseOnboardingProgess from "@/pages/onboarding/UseOnboardingProgess";
+import UseOnboardingProgess from "@/features/auth/onboarding/Use-onboarding-progess";
 
 const NextButton = ({
   step,
@@ -19,7 +19,7 @@ const NextButton = ({
     <Button
       Initial={text}
       Loading={loadingText}
-      className="rounded-md mt-5"
+      className="mt-5 w-full"
       onClick={() => {
         if (!isSubmitting) continueTo(step);
       }}

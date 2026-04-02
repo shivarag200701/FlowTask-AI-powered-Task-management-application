@@ -123,7 +123,7 @@ const SignUpForm = () => {
                   isSubmitting={isSubmitting}
                   Initial="Create Account"
                   Loading="Creating Account..."
-                  size="sm"
+                  size="lg"
                 />
               </div>
             </form>

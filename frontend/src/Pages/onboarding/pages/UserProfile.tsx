@@ -1,19 +1,18 @@
 import InputBox from "@/features/InputBox";
-import ProfileUpload from "@/pages/onboarding/ProfileUpload";
-import Onboarding from "@/pages/onboarding/Onboarding";
+import ProfileUpload from "@/features/auth/onboarding/ProfileUpload";
+import Onboarding from "@/features/auth/onboarding/Onboarding";
 import { motion } from "motion/react";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
-import { User } from "lucide-react";
-import api from "@/utils/api";
-import { toast } from "sonner";
-import { isAxiosError } from "axios";
 import { Gradient } from "@/pages/onboarding/pages/Welcome";
-import Button from "@/features/Button";
-import UseOnboardingProgess from "@/pages/onboarding/UseOnboardingProgess";
-import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import UseOnboardingProgess from "@/features/auth/onboarding/Use-onboarding-progess";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { saveUserProfile } from "@/api/user";
+import { authQueryKeys } from "@/query-keys";
+import { isAxiosError } from "axios";
+import { toast } from "sonner";
 
-type FormData = {
+export type UserProfileFormValues = {
   name: string;
   photo?: File;
 };
@@ -24,44 +23,38 @@ const UserProfile = () => {
     handleSubmit,
     control,
     formState: { isSubmitting },
-  } = useForm<FormData>();
+  } = useForm<UserProfileFormValues>();
 
   const { continueTo } = UseOnboardingProgess();
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
 
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
-    const formData = new FormData();
-
-    formData.append("name", data.name);
-    if (data.photo) {
-      formData.append("image", data.photo);
-    }
-    try {
-      await api.post("/v1/user/profile", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      //confirm that the name correct and retirved from the db for safe side, may remove it alter
-      const res = await api.get("/v1/user/profile");
-      if (!res.data.user) {
-        navigate("/onboarding/welcome");
-      }
-
-      queryClient.setQueryData(["users"], res.data.user);
+  const { mutate } = useMutation({
+    mutationFn: (data: FormData) => saveUserProfile(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: authQueryKeys.users });
       continueTo("completed");
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error(error);
       if (isAxiosError(error)) {
         const data = error.response?.data;
         toast.error(data.msg);
       }
+    },
+  });
+
+  const onSubmit: SubmitHandler<UserProfileFormValues> = async (data) => {
+    const formData = new FormData();
+    formData.append("name", data.name);
+    if (data.photo) {
+      formData.append("image", data.photo);
     }
+    mutate(formData);
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <Onboarding className="">
+      <Onboarding>
         <div className="relative z-10 max-w-sm sm:max-w-xl">
           <Gradient className="opacity-30 size-[700px] mix-blend-overlay -translate-y-10" />
           <motion.div
@@ -105,9 +98,7 @@ const UserProfile = () => {
                     register={register("name", {
                       required: "name is required",
                     })}
-                  >
-                    <User className="absolute left-3 top-6 -translate-y-1/2 w-4.5 h-4.5 text-[#9EA0BB] z-10" />
-                  </InputBox>
+                  />
                 </label>
                 <Button
                   Initial="Create Profile"

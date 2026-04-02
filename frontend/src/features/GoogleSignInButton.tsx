@@ -2,7 +2,7 @@ import { useState } from "react";
 import api from "@/utils/api";
 import { Auth } from "@/context/AuthContext";
 import { Google } from "@/components/ui/google";
-import Button from "@/features/Button";
+import { Button } from "@/components/ui/button";
 
 export function GoogleSignInButton() {
   const [loading, setLoading] = useState(false);
@@ -33,7 +33,7 @@ export function GoogleSignInButton() {
       className="w-full "
       icon={<Google className="w-5 h-5" />}
       isSubmitting={loading}
-      variant="secondary"
+      variant="outline"
     />
   );
 }

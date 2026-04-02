@@ -1,5 +1,5 @@
 import { type PropsWithChildren } from "react";
-import SignedInHint from "@/pages/onboarding/SignedInHint";
+import SignedInHint from "@/features/auth/onboarding/SignedInHint";
 import { Grid } from "@/components/ui/grid";
 import { cn } from "@/lib/utils";
 

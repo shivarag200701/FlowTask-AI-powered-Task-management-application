@@ -13,9 +13,7 @@ const LogoCard = ({ className }: { className?: string }) => {
       <div className="w-12 h-12 rounded-2xl flex items-center justify-center">
         <img src="/logo.png" />
       </div>
-      <h1 className="text-2xl font-bold tracking-tight text-accent">
-        FlowTask
-      </h1>
+      <h1 className="text-2xl font-bold tracking-tight text-">FlowTask</h1>
     </div>
   );
 };
