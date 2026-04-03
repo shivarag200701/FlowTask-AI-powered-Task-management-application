@@ -63,7 +63,8 @@ function SidebarProvider({
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }) {
-  const { isTablet: isMobile } = useMediaQuery();
+  const { isMobile, isTablet } = useMediaQuery();
+  const isOverlaySidebar = Boolean(isMobile || isTablet);
   const [openMobile, setOpenMobile] = React.useState(false);
 
   // This is the internal state of the sidebar.
@@ -87,8 +88,10 @@ function SidebarProvider({
 
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {
-    return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open);
-  }, [isMobile, setOpen, setOpenMobile]);
+    return isOverlaySidebar
+      ? setOpenMobile((open) => !open)
+      : setOpen((open) => !open);
+  }, [isOverlaySidebar, setOpen, setOpenMobile]);
 
   // Adds a keyboard shortcut to toggle the sidebar.
   React.useEffect(() => {
@@ -115,12 +118,20 @@ function SidebarProvider({
       state,
       open,
       setOpen,
-      isMobile,
+      isMobile: isOverlaySidebar,
       openMobile,
       setOpenMobile,
       toggleSidebar,
     }),
-    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar],
+    [
+      state,
+      open,
+      setOpen,
+      isOverlaySidebar,
+      openMobile,
+      setOpenMobile,
+      toggleSidebar,
+    ],
   );
 
   return (
@@ -258,14 +269,13 @@ function SidebarTrigger({
   ...props
 }: React.ComponentProps<typeof Button>) {
   const { toggleSidebar } = useSidebar();
-
   return (
     <Button
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
       variant="ghost"
       size="icon"
-      className={cn("size-7", className)}
+      className={cn("size-7 lg:hidden", className)}
       onClick={(event) => {
         onClick?.(event);
         toggleSidebar();

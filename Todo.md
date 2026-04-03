@@ -13,7 +13,7 @@
 
 - [ ] **Search & Filter** - Search tasks by title/description, filter by priority/category/date
 - [ ] **Tags/Labels** - Multiple tags per task (beyond single category)
-- [ ] **Reminders & Notifications** - Browser notifications for due tasks
+- [x] **Reminders & Notifications** - Browser notifications for due tasks
 - [ ] **Bulk Operations** - Select multiple tasks, bulk delete/complete
 - [ ] **Task Templates** - Save task templates for quick creation
 - [ ] **Export/Import** - Export todos to JSON/CSV, import from other apps

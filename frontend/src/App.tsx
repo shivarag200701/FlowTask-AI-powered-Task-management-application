@@ -87,7 +87,7 @@ function App() {
                       element={<Completed />}
                     />
                     <Route element={<AppLayout />}>
-                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/app/today" element={<Dashboard />} />
                     </Route>
                   </Route>
                 </Routes>
