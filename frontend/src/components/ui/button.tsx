@@ -54,6 +54,7 @@ const Button = ({
   variant,
   size,
   className,
+  children,
   ...props
 }: ButtonProps) => {
   return (
@@ -79,6 +80,7 @@ const Button = ({
           {Initial}
         </div>
       )}
+      {children}
     </button>
   );
 };

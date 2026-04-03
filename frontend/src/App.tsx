@@ -16,7 +16,7 @@ import Welcome from "@/pages/onboarding/pages/Welcome";
 import UserProfile from "@/pages/onboarding/pages/UserProfile";
 import { Completed } from "@/pages/onboarding/pages/Completed";
 import PublicRoute from "@/routes/PublicRoute";
-import { SideNavProvider } from "@/context/SideNavContext";
+import AppLayout from "./layouts/AppLayout";
 
 const queryClient = new QueryClient();
 
@@ -86,15 +86,9 @@ function App() {
                       path="/onboarding/completed"
                       element={<Completed />}
                     />
-
-                    <Route
-                      path="/dashboard"
-                      element={
-                        <SideNavProvider>
-                          <Dashboard />
-                        </SideNavProvider>
-                      }
-                    />
+                    <Route element={<AppLayout />}>
+                      <Route path="/dashboard" element={<Dashboard />} />
+                    </Route>
                   </Route>
                 </Routes>
               </SignupProvider>
