@@ -1,4 +1,4 @@
-import TaskDisplaySelector from "@/components/task-display-selector/TaskDisplaySelector";
+import TaskDisplaySelector from "@/components/TaskDisplaySelector";
 import PageContentHeader from "@/layouts/PageContentHeader";
 import { cn } from "@/lib/utils";
 

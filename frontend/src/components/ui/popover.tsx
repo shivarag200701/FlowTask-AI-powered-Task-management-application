@@ -17,6 +17,7 @@ export type PopoverProps = PropsWithChildren<{
   popoverContentClassName?: string;
   align?: "start" | "center" | "end";
   mobileOnly?: boolean;
+  collisionPadding?: number;
 }>;
 
 export const Popover = ({
@@ -31,6 +32,7 @@ export const Popover = ({
   popoverContentClassName,
   align = "center",
   mobileOnly,
+  collisionPadding = 8,
 }: PopoverProps) => {
   const { isMobile } = useMediaQuery();
 
@@ -76,7 +78,7 @@ export const Popover = ({
           sideOffset={sideOffset}
           avoidCollisions={avoidCollisions}
           collisionBoundary={collisionBoundary}
-          collisionPadding={{ left: 20 }}
+          collisionPadding={collisionPadding}
           side={side}
           align={align}
           alignOffset={0}
