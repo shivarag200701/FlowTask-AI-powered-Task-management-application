@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Popover } from "./ui/popover";
 import { Button } from "./ui/button";
 import { useTaskDisplayContext } from "@/context/TaskDisplayContext";
@@ -14,15 +14,19 @@ import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
 import { outlinePopoverTriggerClasses } from "@/lib/constants";
 import type { ViewMode } from "@/types";
 import { AnimatePresence, motion } from "motion/react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 
 function TaskDisplaySelector() {
-  const [isopen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [hasPendingLayoutChanges, setHasPendingLayoutChanges] = useState(false);
+
   return (
     <Popover
-      openPopover={isopen}
+      openPopover={isOpen}
       setOpenPopover={setIsOpen}
-      content={<DisplaySettingsDropdown />}
+      content={
+        <DisplaySettingsDropdown setIsDirty={setHasPendingLayoutChanges} />
+      }
       sideOffset={4}
       popoverContentClassName="shadow-md"
     >
@@ -36,9 +40,11 @@ function TaskDisplaySelector() {
         <div className="flex w-full gap-2  items-center relative">
           <div className="relative shrink-0">
             <Settings2 />
-            <div className="absolute -right-0.5 -top-0.5 size-2 rounded-full bg-blue-500">
-              <div className="h-full w-full animate-pulse rounded-full ring-2 ring-blue-500/40" />
-            </div>
+            {hasPendingLayoutChanges && (
+              <div className="absolute -right-0.5 -top-0.5 size-2 rounded-full bg-blue-500">
+                <div className="h-full w-full animate-pulse rounded-full ring-2 ring-blue-500/40" />
+              </div>
+            )}
           </div>
           Display
           <ChevronDown
@@ -50,17 +56,36 @@ function TaskDisplaySelector() {
   );
 }
 
-function DisplaySettingsDropdown() {
+function DisplaySettingsDropdown({
+  setIsDirty,
+}: {
+  setIsDirty: (v: boolean) => void;
+}) {
   const { viewMode, setViewMode } = useTaskDisplayContext();
+
+  type FormValues = {
+    viewMode: ViewMode;
+  };
+
   const {
+    reset,
     control,
     formState: { isDirty },
-  } = useForm({
+    handleSubmit,
+  } = useForm<FormValues>({
     defaultValues: {
-      viewMode,
+      viewMode: viewMode,
     },
   });
-  console.log("is Dirty", isDirty);
+
+  useEffect(() => {
+    setIsDirty(isDirty);
+  }, [isDirty, setIsDirty]);
+
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    setViewMode(data.viewMode);
+    reset({ viewMode: data.viewMode });
+  };
 
   return (
     <form className="w-full divide-y divide-neutral-200">
@@ -71,11 +96,9 @@ function DisplaySettingsDropdown() {
           control={control}
           render={({ field }) => (
             <Tabs
-              defaultValue={viewMode}
               className="w-full"
               onValueChange={(v) => {
-                field.onChange(v);
-                setViewMode(v as ViewMode);
+                field.onChange(v); // reset({ viewMode: v as ViewMode });
               }}
               value={field.value}
             >
@@ -111,8 +134,20 @@ function DisplaySettingsDropdown() {
                 className="h-8 w-auto px-2"
                 variant="ghost"
                 Initial="Reset to default"
+                type="button"
+                onClick={() => {
+                  reset({ viewMode });
+                }}
               />
-              <Button className="h-8 w-auto px-2" Initial="Set as default" />
+              <Button
+                type="submit"
+                className="h-8 w-auto px-2"
+                Initial="Set as default"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleSubmit(onSubmit)();
+                }}
+              />
             </div>
           </motion.div>
         )}
