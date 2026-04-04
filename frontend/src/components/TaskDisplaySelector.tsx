@@ -14,7 +14,7 @@ import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
 import { outlinePopoverTriggerClasses } from "@/lib/constants";
 import type { ViewMode } from "@/types";
 import { AnimatePresence, motion } from "motion/react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 function TaskDisplaySelector() {
   const [isopen, setIsOpen] = useState(false);
@@ -33,9 +33,14 @@ function TaskDisplaySelector() {
           outlinePopoverTriggerClasses,
         )}
       >
-        <div className="flex w-full gap-2  items-center">
-          <Settings2 />
-          <p>Display</p>
+        <div className="flex w-full gap-2  items-center relative">
+          <div className="relative shrink-0">
+            <Settings2 />
+            <div className="absolute -right-0.5 -top-0.5 size-2 rounded-full bg-blue-500">
+              <div className="h-full w-full animate-pulse rounded-full ring-2 ring-blue-500/40" />
+            </div>
+          </div>
+          Display
           <ChevronDown
             className={cn("h-4 w-4 text-neutral-400 transition-transform")}
           />
@@ -48,7 +53,7 @@ function TaskDisplaySelector() {
 function DisplaySettingsDropdown() {
   const { viewMode, setViewMode } = useTaskDisplayContext();
   const {
-    register,
+    control,
     formState: { isDirty },
   } = useForm({
     defaultValues: {
@@ -61,30 +66,39 @@ function DisplaySettingsDropdown() {
     <form className="w-full divide-y divide-neutral-200">
       <div className="p-3 flex flex-col gap-1 border-b border-border w-full">
         <p className="font-semibold text-[13px]">Layout</p>
-        <Tabs
-          defaultValue={viewMode}
-          className="w-full"
-          onValueChange={(v) => setViewMode(v as ViewMode)}
-          {...register("viewMode")}
-        >
-          <TabsList className="h-15! sm:w-70 w-full shadow-none!">
-            <TabsTrigger value="list" className="flex flex-col">
-              <Rows3 />
-              List
-            </TabsTrigger>
-            <TabsTrigger value="board" className="flex flex-col">
-              <Columns3 />
-              Board
-            </TabsTrigger>
-            <TabsTrigger value="home" className="flex flex-col">
-              <Calendar />
-              Calendar
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <Controller
+          name="viewMode"
+          control={control}
+          render={({ field }) => (
+            <Tabs
+              defaultValue={viewMode}
+              className="w-full"
+              onValueChange={(v) => {
+                field.onChange(v);
+                setViewMode(v as ViewMode);
+              }}
+              value={field.value}
+            >
+              <TabsList className="h-15! sm:w-70 w-full shadow-none!">
+                <TabsTrigger value="list" className="flex flex-col">
+                  <Rows3 />
+                  List
+                </TabsTrigger>
+                <TabsTrigger value="board" className="flex flex-col">
+                  <Columns3 />
+                  Board
+                </TabsTrigger>
+                <TabsTrigger value="calendar" className="flex flex-col">
+                  <Calendar />
+                  Calendar
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          )}
+        />
       </div>
-      {isDirty && (
-        <AnimatePresence initial={false}>
+      <AnimatePresence initial={false}>
+        {isDirty && (
           <motion.div
             initial={{ height: 0 }}
             animate={{ height: "auto" }}
@@ -101,8 +115,8 @@ function DisplaySettingsDropdown() {
               <Button className="h-8 w-auto px-2" Initial="Set as default" />
             </div>
           </motion.div>
-        </AnimatePresence>
-      )}
+        )}
+      </AnimatePresence>
     </form>
   );
 }
