@@ -36,3 +36,5 @@ export interface Todo {
 export type TodoWithCompleteAtDateTime = Omit<Todo, "completeAt"> & {
   completeAt: DateTime | null;
 };
+
+export type ViewMode = "list" | "board" | "calendar";

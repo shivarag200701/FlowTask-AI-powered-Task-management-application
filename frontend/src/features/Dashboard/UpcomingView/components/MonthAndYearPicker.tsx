@@ -105,20 +105,16 @@ export function MonthAndYearPicker({
       setOpenPopover={setIsMonthYearPickerOpen}
       popoverContentClassName="shadow-md"
     >
-      <Button
-        variant="secondary"
-        Initial={
-          <div className="flex w-full gap-2  items-center">
-            <span className="grow text-left">{currentMonthYearLabel}</span>
-            <ChevronDown
-              className={cn("h-4 w-4 text-neutral-400 transition-transform", {
-                "rotate-180": isMonthYearPickerOpen,
-              })}
-            />
-          </div>
-        }
-        size="small"
-      />
+      <Button variant="secondary">
+        <div className="flex w-full gap-2  items-center">
+          <span className="grow text-left">{currentMonthYearLabel}</span>
+          <ChevronDown
+            className={cn("h-4 w-4 text-neutral-400 transition-transform", {
+              "rotate-180": isMonthYearPickerOpen,
+            })}
+          />
+        </div>
+      </Button>
     </Popover>
   );
 }

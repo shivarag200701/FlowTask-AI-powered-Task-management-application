@@ -17,6 +17,7 @@ import UserProfile from "@/pages/onboarding/pages/UserProfile";
 import { Completed } from "@/pages/onboarding/pages/Completed";
 import PublicRoute from "@/routes/PublicRoute";
 import AppLayout from "./layouts/AppLayout";
+import Today from "./pages/Today";
 
 const queryClient = new QueryClient();
 
@@ -87,7 +88,7 @@ function App() {
                       element={<Completed />}
                     />
                     <Route element={<AppLayout />}>
-                      <Route path="/app/today" element={<Dashboard />} />
+                      <Route path="/app/today" element={<Today />} />
                     </Route>
                   </Route>
                 </Routes>
