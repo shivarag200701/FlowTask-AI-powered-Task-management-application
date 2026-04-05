@@ -1,3 +1,4 @@
+//todo:- check later to persist the changesd when the tab is closed
 import { useEffect, useState } from "react";
 import { Popover } from "./ui/popover";
 import { Button } from "./ui/button";
@@ -15,6 +16,9 @@ import { outlinePopoverTriggerClasses } from "@/lib/constants";
 import type { ViewMode } from "@/types";
 import { AnimatePresence, motion } from "motion/react";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
+import api from "@/utils/api";
+import { AxiosError } from "axios";
+import { toast } from "sonner";
 
 function TaskDisplaySelector() {
   const [isOpen, setIsOpen] = useState(false);
@@ -48,7 +52,9 @@ function TaskDisplaySelector() {
           </div>
           Display
           <ChevronDown
-            className={cn("h-4 w-4 text-neutral-400 transition-transform")}
+            className={cn("h-4 w-4 text-neutral-400 transition-transform", {
+              "rotate-180": isOpen,
+            })}
           />
         </div>
       </Button>
@@ -82,9 +88,20 @@ function DisplaySettingsDropdown({
     setIsDirty(isDirty);
   }, [isDirty, setIsDirty]);
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setViewMode(data.viewMode);
     reset({ viewMode: data.viewMode });
+
+    try {
+      await api.put("/v1/user/user-preferences", {
+        taskDisplayPreferences: { viewMode: data.viewMode },
+      });
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const data = error.response?.data;
+        toast.error(data.msg);
+      }
+    }
   };
 
   return (

@@ -24,9 +24,7 @@ function PageContentHeader({
           <div className="flex items-center gap-4 min-w-0">
             {<SidebarTrigger className="-ml-1" />}
             {title && (
-              <h1 className="min-w-0 text-lg font-semibold leading-7">
-                {title}
-              </h1>
+              <h1 className="min-w-0 text-2xl font-bold leading-7">{title}</h1>
             )}
           </div>
           <div>{controls}</div>

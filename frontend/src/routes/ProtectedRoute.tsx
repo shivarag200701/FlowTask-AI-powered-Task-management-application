@@ -8,7 +8,9 @@ import {
   authQueryKeys,
   todosQueryKeys,
   onboardingQueryKeys,
+  userPreferenceKeys,
 } from "@/query-keys";
+import { getUserPreference } from "@/api/user";
 
 const ProtectedRoute = () => {
   const { isAuthenticated, isLoading } = Auth();
@@ -18,6 +20,12 @@ const ProtectedRoute = () => {
     queryKey: authQueryKeys.users,
     queryFn: getCurrentUser,
     enabled: isAuthenticated, // Only fetch if authenticated
+  });
+
+  const { isLoading: preferenceLoading } = useQuery({
+    queryKey: userPreferenceKeys.preferences,
+    queryFn: getUserPreference,
+    staleTime: 60000,
   });
 
   // Fetch todos - this ensures todos are loaded before showing dashboard
@@ -36,7 +44,10 @@ const ProtectedRoute = () => {
   });
 
   // Show loading until auth check, user query, AND todos query are complete
-  if (isLoading || (isAuthenticated && (userLoading || todosLoading))) {
+  if (
+    isLoading ||
+    (isAuthenticated && (userLoading || todosLoading || preferenceLoading))
+  ) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4">
         <img src="/logo.png" alt="Logo" width={100} height={100} />

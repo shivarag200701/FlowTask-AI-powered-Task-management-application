@@ -53,6 +53,10 @@ model UserPrefrence {
   pushEnabled     Boolean @default(true)
   inAppEnabled    Boolean @default(true)
 
+
+  taskDisplayPreferences    Json?
+
+
   //notification remainders
   taskRemainders  Boolean @default(true)
 

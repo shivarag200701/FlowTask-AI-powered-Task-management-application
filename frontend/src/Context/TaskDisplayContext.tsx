@@ -1,4 +1,7 @@
+import { getUserPreference } from "@/api/user";
+import { userPreferenceKeys } from "@/query-keys";
 import type { ViewMode } from "@/types";
+import { useQuery } from "@tanstack/react-query";
 import {
   createContext,
   useContext,
@@ -19,7 +22,15 @@ const taskDisplayContext = createContext<TaskDisplayContext>({
 });
 
 function TaskDisplayProvider({ children }: PropsWithChildren) {
-  const [viewMode, setViewMode] = useState<ViewMode>("list");
+  const { data: preference } = useQuery({
+    queryKey: userPreferenceKeys.preferences,
+    queryFn: getUserPreference,
+    staleTime: 60000,
+  });
+
+  const [viewMode, setViewMode] = useState<ViewMode>(
+    () => preference?.taskDisplayPreferences?.viewMode ?? "list",
+  );
 
   return (
     <taskDisplayContext.Provider value={{ viewMode, setViewMode }}>
