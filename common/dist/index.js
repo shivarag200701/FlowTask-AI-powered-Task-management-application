@@ -354,6 +354,7 @@ export const changeEmailSchema = z.object({
 export const ChangeNameSchema = z.object({
     name: z.string(),
 });
+const taskViewModes = z.enum(["list", "board", "calendar"]);
 export const changePreferencesSchema = z.object({
     emailEnabled: z.boolean().optional(),
     smsEnabled: z.boolean().optional(),
@@ -364,6 +365,11 @@ export const changePreferencesSchema = z.object({
     dailyDigest: z.boolean().optional(),
     digestTime: z.string().optional(),
     phoneNumber: z.string().optional(),
+    taskDisplayPreferences: z
+        .object({
+        viewMode: taskViewModes,
+    })
+        .optional(),
 });
 export const OnboardingStepSchema = z.enum([
     "welcome",

@@ -138,6 +138,13 @@ export declare const changePreferencesSchema: z.ZodObject<{
     dailyDigest: z.ZodOptional<z.ZodBoolean>;
     digestTime: z.ZodOptional<z.ZodString>;
     phoneNumber: z.ZodOptional<z.ZodString>;
+    taskDisplayPreferences: z.ZodOptional<z.ZodObject<{
+        viewMode: z.ZodEnum<{
+            list: "list";
+            board: "board";
+            calendar: "calendar";
+        }>;
+    }, z.core.$strip>>;
 }, z.core.$strip>;
 export declare const OnboardingStepSchema: z.ZodEnum<{
     welcome: "welcome";
