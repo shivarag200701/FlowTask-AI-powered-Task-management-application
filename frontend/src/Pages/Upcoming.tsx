@@ -1,30 +1,35 @@
 import TaskDisplaySelector from "@/components/TaskDisplaySelector";
-import { useTaskDisplayContext } from "@/context/TaskDisplayContext";
-import BoardView from "@/features/today/components/BoardView";
-import ListView from "@/features/today/components/ListView";
+import { Button } from "@/components/ui/button";
 import { useTodayTodos } from "@/hooks/use-today-todos";
 import PageContentHeader from "@/layouts/PageContentHeader";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 
 interface TodayProps {
   className?: string;
 }
 
-function Today({ className }: TodayProps) {
+function Upcoming({ className }: TodayProps) {
   const { data: todos } = useTodayTodos();
-
-  const { viewMode } = useTaskDisplayContext();
+  const navigate = useNavigate();
 
   return (
     <div className={cn(`bg-neutral-200 w-full lg:py-2 lg:pr-2`, className)}>
       {/* create compoent for header*/}
       <div className="bg-white h-full lg:rounded-xl">
-        <PageContentHeader title="Today" controls={<TaskDisplaySelector />} />
-        {viewMode === "list" && <ListView />}
-        {viewMode === "board" && <BoardView />}
+        <PageContentHeader
+          title="Upcoming"
+          controls={<TaskDisplaySelector />}
+        />
+        <Button
+          Initial="Go to today"
+          onClick={() => {
+            navigate("/app/today");
+          }}
+        />
       </div>
     </div>
   );
 }
 
-export default Today;
+export default Upcoming;

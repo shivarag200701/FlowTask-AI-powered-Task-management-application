@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { TaskDetailInnerProps } from "@/features/Dashboard/UpcomingView/components/TaskDetailModal";
+import type { TaskDetailInnerProps } from "@/features/dashboard/UpcomingView/components/TaskDetailModal";
 
 export function useTaskDetail({
   todo,

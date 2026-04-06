@@ -2,7 +2,7 @@ import api from "@/utils/api";
 import { useEffect, useState, useMemo } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { useQuery } from "@tanstack/react-query";
-import { UnsavedModal } from "@/features/SettingsModal/SettingsModal";
+import { UnsavedModal } from "@/features/settingsModal/SettingsModal";
 import type { User } from "@/types";
 
 interface AccountSettingsProps {

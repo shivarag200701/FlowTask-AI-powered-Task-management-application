@@ -3,7 +3,7 @@ import { Switch } from "@/components/ui/switch";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "@/utils/api";
-import { UnsavedModal } from "@/features/SettingsModal/SettingsModal";
+import { UnsavedModal } from "@/features/settingsModal/SettingsModal";
 
 interface ReminderSettingProps {
   hasChanged: boolean;

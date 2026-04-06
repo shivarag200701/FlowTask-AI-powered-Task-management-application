@@ -18,6 +18,7 @@ import { Completed } from "@/pages/onboarding/pages/Completed";
 import PublicRoute from "@/routes/PublicRoute";
 import AppLayout from "./layouts/AppLayout";
 import Today from "./pages/Today";
+import Upcoming from "./pages/Upcoming";
 
 const queryClient = new QueryClient();
 
@@ -89,6 +90,7 @@ function App() {
                     />
                     <Route element={<AppLayout />}>
                       <Route path="/app/today" element={<Today />} />
+                      <Route path="/app/upcoming" element={<Upcoming />} />
                     </Route>
                   </Route>
                 </Routes>

@@ -89,7 +89,6 @@ function DisplaySettingsDropdown({
   }, [isDirty, setIsDirty]);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    setViewMode(data.viewMode);
     reset({ viewMode: data.viewMode });
 
     try {
@@ -116,6 +115,7 @@ function DisplaySettingsDropdown({
               className="w-full"
               onValueChange={(v) => {
                 field.onChange(v); // reset({ viewMode: v as ViewMode });
+                setViewMode(v as ViewMode);
               }}
               value={field.value}
             >

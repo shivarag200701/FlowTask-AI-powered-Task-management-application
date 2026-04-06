@@ -6,10 +6,10 @@ import { useScrollbarWidth } from "@/hooks/useScrollbarWidth";
 import { AuroraText } from "@/components/ui/aurora-text";
 import { motion } from "motion/react";
 import { Highlighter } from "@/components/ui/highlighter";
-import ChatGPTIntegration from "@/features/LandingPage/ChatGPTIntegration";
+import ChatGPTIntegration from "@/features/landingPage/ChatGPTIntegration";
 import { AnimatedList } from "@/components/ui/animated-list";
-import Notification from "@/features/LandingPage/Notification";
-import type { NotificationProps } from "@/features/LandingPage/Notification";
+import Notification from "@/features/landingPage/Notification";
+import type { NotificationProps } from "@/features/landingPage/Notification";
 import { Button } from "@/components/ui/button";
 
 const Landing = () => {

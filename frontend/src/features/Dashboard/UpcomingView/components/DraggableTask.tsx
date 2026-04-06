@@ -1,11 +1,11 @@
-import InlineTaskForm from "@/features/Dashboard/UpcomingView/components/InlineTaskForm";
+import InlineTaskForm from "@/features/dashboard/UpcomingView/components/InlineTaskForm";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { type Todo, type TodoWithCompleteAtDateTime } from "@/types";
 import api from "@/utils/api";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useEffect, useRef, useState } from "react";
-import { MoreOptionsPicker } from "@/features/Dashboard/UpcomingView/components/MoreOptionsPicker";
+import { MoreOptionsPicker } from "@/features/dashboard/UpcomingView/components/MoreOptionsPicker";
 import { Checkbox } from "@/components/ui/checkbox";
 import { AlarmClock, Calendar, Repeat, Tag } from "lucide-react";
 

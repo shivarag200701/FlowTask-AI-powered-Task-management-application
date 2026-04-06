@@ -3,11 +3,11 @@ import { cn } from "@/utils/cn";
 import { useForm } from "react-hook-form";
 import InputBox from "@/features/InputBox";
 import type { Todo } from "@/types";
-import useInlineTask from "@/features/Dashboard/UpcomingView/hooks/use-inline-task";
+import useInlineTask from "@/features/dashboard/UpcomingView/hooks/use-inline-task";
 import { Button } from "@/components/ui/button";
 import { SendHorizonal, X } from "lucide-react";
-import PriorityPicker from "@/features/Dashboard/ui/PriorityPicker";
-import ReminderPicker from "@/features/Dashboard/ui/ReminderPicker";
+import PriorityPicker from "@/features/dashboard/ui/PriorityPicker";
+import ReminderPicker from "@/features/dashboard/ui/ReminderPicker";
 import CustomDatePicker from "@/features/CustomDatePicker/CustomDatePicker";
 
 interface InlineTaskFormProps {

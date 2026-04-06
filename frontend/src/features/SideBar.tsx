@@ -3,7 +3,7 @@ import { LogOut } from "lucide-react";
 import React, { createContext, useContext, useRef, useState } from "react";
 import { PanelLeft, Settings } from "lucide-react";
 import DropDown from "@/features/DropDown";
-import { SettingsModal } from "@/features/SettingsModal/SettingsModal";
+import { SettingsModal } from "@/features/settingsModal/SettingsModal";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Spinner } from "@/components/ui/spinner";

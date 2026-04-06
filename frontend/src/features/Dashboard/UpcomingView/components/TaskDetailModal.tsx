@@ -4,7 +4,7 @@ import type { Todo } from "@/types";
 import { MoreHorizontal, X } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
-import { useTaskDetail } from "@/features/Dashboard/UpcomingView/hooks/use-task-detail";
+import { useTaskDetail } from "@/features/dashboard/UpcomingView/hooks/use-task-detail";
 
 interface TaskDetailProps {
   modalOpen: boolean;
