@@ -1,9 +1,8 @@
 //needc to implement a overDue section
 import TaskDisplaySelector from "@/components/TaskDisplaySelector";
 import { useTaskDisplayContext } from "@/context/TaskDisplayContext";
-import BoardView from "@/features/today/components/BoardView";
-import ListView from "@/features/today/components/ListView";
-import { useTodayTodos } from "@/hooks/use-today-todos";
+import BoardView from "@/features/today/components/board/BoardView";
+import ListView from "@/features/today/components/list/ListView";
 import PageContentHeader from "@/layouts/PageContentHeader";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +18,7 @@ function Today({ className }: TodayProps) {
       {/* create compoent for header*/}
       <div className="bg-white h-full lg:rounded-xl">
         <PageContentHeader title="Today" controls={<TaskDisplaySelector />} />
+
         {viewMode === "list" && <ListView />}
         {viewMode === "board" && <BoardView />}
       </div>
