@@ -12,7 +12,7 @@ export interface User {
 }
 
 export interface Todo {
-  id?: number;
+  id: number;
   title: string;
   description: string;
   priority: "high" | "medium" | "low" | null;

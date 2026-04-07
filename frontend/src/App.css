@@ -65,6 +65,7 @@
   --shadow-2xl: 2px 2px 10.5px 2px hsl(240 4% 60% / 0.53);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
+  --shadow-card-hover: 0 8px 12px #222a350d, 0 32px 80px #2f30370f;
 }
 
 .dark {
@@ -158,6 +159,7 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --shadow-card-hover: var(--shadow-card-hover);
 
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);

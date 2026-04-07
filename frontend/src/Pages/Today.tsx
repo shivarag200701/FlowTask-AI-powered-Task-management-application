@@ -1,3 +1,4 @@
+//needc to implement a overDue section
 import TaskDisplaySelector from "@/components/TaskDisplaySelector";
 import { useTaskDisplayContext } from "@/context/TaskDisplayContext";
 import BoardView from "@/features/today/components/BoardView";
@@ -11,8 +12,6 @@ interface TodayProps {
 }
 
 function Today({ className }: TodayProps) {
-  const { data: todos } = useTodayTodos();
-
   const { viewMode } = useTaskDisplayContext();
 
   return (
