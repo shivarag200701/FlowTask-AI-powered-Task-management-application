@@ -18,7 +18,7 @@ function DroppableColumn({
   });
   return (
     <div ref={ref} className={cn("p-3 h-[200px]", className)}>
-      <div className="text-xs text-left">{id}</div>
+      <div className="text-sm font-bold text-left">{id}</div>
       {children}
     </div>
   );

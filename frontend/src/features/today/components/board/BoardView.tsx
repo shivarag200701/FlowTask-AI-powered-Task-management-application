@@ -1,6 +1,6 @@
 import { useTodayTodos } from "@/hooks/use-today-todos";
 import PageWidthWrapper from "@/layouts/PageWidthWrapper";
-import { DragDropProvider } from "@dnd-kit/react";
+import { DragDropProvider, DragOverlay } from "@dnd-kit/react";
 import { move } from "@dnd-kit/helpers";
 import { useState } from "react";
 import FormatDate from "@/utils/format-date";
@@ -49,6 +49,24 @@ function BoardView() {
             </DroppableColumn>
           ))}
         </div>
+        <DragOverlay>
+          {(source) => {
+            const todo = todos.find((todo) => todo.id === source.id);
+            if (!todo) return null;
+
+            return (
+              <div className="border border-border rounded-lg p-2.5 w-[260px] h-[70px] bg-white shadow-lg rotate-3">
+                <div className="flex gap-2">
+                  <div className="border border-border rounded-full h-5 w-5" />
+                  <div className="flex flex-col">
+                    <div className="text-md">{todo.title}</div>
+                    <div className="text-xs font-light">{todo.description}</div>
+                  </div>
+                </div>
+              </div>
+            );
+          }}
+        </DragOverlay>
       </DragDropProvider>
     </PageWidthWrapper>
   );
