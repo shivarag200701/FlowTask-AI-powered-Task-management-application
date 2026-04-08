@@ -2,6 +2,8 @@ import { api } from "@/utils/api";
 import type { changePreferencesSchema } from "@shiva200701/todotypes";
 import { z } from "zod";
 
+export type UserPreference = z.infer<typeof changePreferencesSchema>;
+
 export async function getCurrentUser() {
   const res = await api.get("/v1/user/profile");
   return res.data.user;
@@ -13,9 +15,7 @@ export async function saveUserProfile(formData: globalThis.FormData) {
   });
 }
 
-export async function getUserPreference(): Promise<
-  z.infer<typeof changePreferencesSchema>
-> {
+export async function getUserPreference(): Promise<UserPreference> {
   const res = await api.get("/v1/user/user-preferences");
   return res.data;
 }

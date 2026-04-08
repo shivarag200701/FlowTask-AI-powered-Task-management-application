@@ -1,5 +1,5 @@
 //todo:- check later to persist the changesd when the tab is closed
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Popover } from "./ui/popover";
 import { Button } from "./ui/button";
 import { useTaskDisplayContext } from "@/context/TaskDisplayContext";
@@ -19,18 +19,20 @@ import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import api from "@/utils/api";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { userPreferenceKeys } from "@/query-keys";
+import type { UserPreference } from "@/api/user";
 
 function TaskDisplaySelector() {
   const [isOpen, setIsOpen] = useState(false);
-  const [hasPendingLayoutChanges, setHasPendingLayoutChanges] = useState(false);
+
+  const { isDirty } = useTaskDisplayContext();
 
   return (
     <Popover
       openPopover={isOpen}
       setOpenPopover={setIsOpen}
-      content={
-        <DisplaySettingsDropdown setIsDirty={setHasPendingLayoutChanges} />
-      }
+      content={<DisplaySettingsDropdown />}
       sideOffset={4}
       popoverContentClassName="shadow-md"
     >
@@ -44,7 +46,7 @@ function TaskDisplaySelector() {
         <div className="flex w-full gap-2  items-center relative">
           <div className="relative shrink-0">
             <Settings2 />
-            {hasPendingLayoutChanges && (
+            {isDirty && (
               <div className="absolute -right-0.5 -top-0.5 size-2 rounded-full bg-blue-500">
                 <div className="h-full w-full animate-pulse rounded-full ring-2 ring-blue-500/40" />
               </div>
@@ -62,39 +64,34 @@ function TaskDisplaySelector() {
   );
 }
 
-function DisplaySettingsDropdown({
-  setIsDirty,
-}: {
-  setIsDirty: (v: boolean) => void;
-}) {
-  const { viewMode, setViewMode } = useTaskDisplayContext();
+type FormValues = {
+  viewMode: ViewMode;
+};
 
-  type FormValues = {
-    viewMode: ViewMode;
-  };
+function DisplaySettingsDropdown() {
+  const { viewMode, isDirty, setViewMode, persisted } = useTaskDisplayContext();
 
-  const {
-    reset,
-    control,
-    formState: { isDirty },
-    handleSubmit,
-  } = useForm<FormValues>({
+  const { reset, control, handleSubmit } = useForm<FormValues>({
     defaultValues: {
       viewMode: viewMode,
     },
   });
 
-  useEffect(() => {
-    setIsDirty(isDirty);
-  }, [isDirty, setIsDirty]);
+  const queryClient = useQueryClient();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    reset({ viewMode: data.viewMode });
-
     try {
       await api.put("/v1/user/user-preferences", {
         taskDisplayPreferences: { viewMode: data.viewMode },
       });
+      reset({ viewMode: data.viewMode });
+      queryClient.setQueryData<UserPreference>(
+        userPreferenceKeys.preferences,
+        (oldData) => ({
+          ...oldData,
+          taskDisplayPreferences: { viewMode: data.viewMode },
+        }),
+      );
     } catch (error) {
       if (error instanceof AxiosError) {
         const data = error.response?.data;
@@ -153,7 +150,8 @@ function DisplaySettingsDropdown({
                 Initial="Reset to default"
                 type="button"
                 onClick={() => {
-                  reset({ viewMode });
+                  reset({ viewMode: persisted });
+                  setViewMode(persisted);
                 }}
               />
               <Button

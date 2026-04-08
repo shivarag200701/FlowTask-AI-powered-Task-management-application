@@ -4,10 +4,11 @@ import { DragDropProvider, DragOverlay } from "@dnd-kit/react";
 import { move } from "@dnd-kit/helpers";
 import { useState } from "react";
 import FormatDate from "@/utils/format-date";
-import DroppableColumn from "./DroppableColumn";
+import DroppableColumn from "../../../../components/DroppableColumn";
 import { Feedback } from "@dnd-kit/dom";
 import DraggableTask from "@/components/DraggableTask";
 import { DateTime } from "luxon";
+import type { TodoWithCompleteAtDateTime } from "@/types";
 
 function BoardView() {
   const { data: todos } = useTodayTodos();
@@ -49,26 +50,32 @@ function BoardView() {
             </DroppableColumn>
           ))}
         </div>
-        <DragOverlay>
-          {(source) => {
-            const todo = todos.find((todo) => todo.id === source.id);
-            if (!todo) return null;
-
-            return (
-              <div className="border border-border rounded-lg p-2.5 w-[260px] h-[70px] bg-white shadow-lg rotate-3">
-                <div className="flex gap-2">
-                  <div className="border border-border rounded-full h-5 w-5" />
-                  <div className="flex flex-col">
-                    <div className="text-md">{todo.title}</div>
-                    <div className="text-xs font-light">{todo.description}</div>
-                  </div>
-                </div>
-              </div>
-            );
-          }}
-        </DragOverlay>
+        <Overlay todos={todos} />
       </DragDropProvider>
     </PageWidthWrapper>
+  );
+}
+
+function Overlay({ todos }: { todos: TodoWithCompleteAtDateTime[] }) {
+  return (
+    <DragOverlay>
+      {(source) => {
+        const todo = todos.find((todo) => todo.id === source.id);
+        if (!todo) return null;
+
+        return (
+          <div className="border border-border rounded-lg p-2.5 w-[260px] h-[70px] bg-white shadow-lg rotate-3">
+            <div className="flex gap-2">
+              <div className="border border-border rounded-full h-5 w-5" />
+              <div className="flex flex-col">
+                <div className="text-md">{todo.title}</div>
+                <div className="text-xs font-light">{todo.description}</div>
+              </div>
+            </div>
+          </div>
+        );
+      }}
+    </DragOverlay>
   );
 }
 

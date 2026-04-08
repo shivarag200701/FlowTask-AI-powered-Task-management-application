@@ -14,11 +14,15 @@ import {
 type TaskDisplayContext = {
   viewMode: ViewMode;
   setViewMode: Dispatch<SetStateAction<ViewMode>>;
+  isDirty: boolean;
+  persisted: ViewMode;
 };
 
 const taskDisplayContext = createContext<TaskDisplayContext>({
   viewMode: "list",
   setViewMode: () => {},
+  isDirty: false,
+  persisted: "list",
 });
 
 function TaskDisplayProvider({ children }: PropsWithChildren) {
@@ -28,12 +32,21 @@ function TaskDisplayProvider({ children }: PropsWithChildren) {
     staleTime: 60000,
   });
 
+  const persisted = preference?.taskDisplayPreferences?.viewMode ?? "list";
+
   const [viewMode, setViewMode] = useState<ViewMode>(
     () => preference?.taskDisplayPreferences?.viewMode ?? "list",
   );
 
+  console.log("view mode", viewMode);
+  console.log("persisted", persisted);
+
+  const isDirty = persisted !== viewMode;
+
   return (
-    <taskDisplayContext.Provider value={{ viewMode, setViewMode }}>
+    <taskDisplayContext.Provider
+      value={{ viewMode, setViewMode, isDirty, persisted }}
+    >
       {children}
     </taskDisplayContext.Provider>
   );
