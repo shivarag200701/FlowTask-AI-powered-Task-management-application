@@ -4,19 +4,21 @@ import type { TodoWithCompleteAtDateTime } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { DateTime } from "luxon";
 
-export function useTodayTodos() {
+function useOverDueTodos() {
   return useQuery({
     queryKey: todosQueryKeys.all,
     queryFn: fetchTodos,
     staleTime: 60000,
-    select: selectTodayTodos,
+    select: selectOverdueTodos,
   });
 }
 
-const selectTodayTodos = (todos: TodoWithCompleteAtDateTime[]) =>
-  todos.filter(
-    (t) =>
-      !t.completed &&
-      t.completeAt &&
-      t.completeAt.hasSame(DateTime.now(), "day"),
+function selectOverdueTodos(todos: TodoWithCompleteAtDateTime[]) {
+  return todos.filter(
+    (todo) =>
+      !todo.completed &&
+      todo.completeAt &&
+      todo.completeAt.startOf("day") < DateTime.now().startOf("day"),
   );
+}
+export default useOverDueTodos;

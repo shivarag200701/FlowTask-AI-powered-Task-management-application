@@ -38,9 +38,6 @@ function TaskDisplayProvider({ children }: PropsWithChildren) {
     () => preference?.taskDisplayPreferences?.viewMode ?? "list",
   );
 
-  console.log("view mode", viewMode);
-  console.log("persisted", persisted);
-
   const isDirty = persisted !== viewMode;
 
   return (

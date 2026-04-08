@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import type { TodoWithCompleteAtDateTime } from "@/types";
-import { DragOverlay } from "@dnd-kit/react";
 import { useSortable } from "@dnd-kit/react/sortable";
 
 function DraggableTask({
@@ -16,22 +15,25 @@ function DraggableTask({
   column: string;
   className?: string;
 }) {
-  const { ref, targetRef, isDragSource } = useSortable({
+  const { ref, isDragSource } = useSortable({
     id,
     index,
     transition: { duration: 200 },
     type: "item",
     accept: "item",
+    group: column,
   });
 
   if (isDragSource) {
-    return <div className="w-[260px] h-[70px] bg-accent rounded-lg"></div>;
+    return (
+      <div ref={ref} className="w-[260px] min-h-[70px] bg-accent rounded-lg" />
+    );
   }
   return (
     <>
       <div
         className={cn(
-          "border border-border rounded-lg p-2.5 w-[260px] h-[70px] bg-white hover:shadow-card-hover",
+          "border border-border rounded-lg p-2.5 w-[260px] min-h-[70px] bg-white hover:shadow-card-hover hover:cursor-pointer",
           className,
         )}
         ref={ref}
