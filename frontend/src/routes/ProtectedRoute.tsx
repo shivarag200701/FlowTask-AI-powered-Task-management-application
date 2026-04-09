@@ -16,6 +16,7 @@ const ProtectedRoute = () => {
   const { isAuthenticated, isLoading } = Auth();
   const location = useLocation();
 
+  //Todo replace with custom hook
   const { isLoading: userLoading, data: user } = useQuery({
     queryKey: authQueryKeys.users,
     queryFn: getCurrentUser,

@@ -1,6 +1,6 @@
 import PageWidthWrapper from "@/layouts/PageWidthWrapper";
 import EmptyState from "../EmptyState";
-import { useTodayTodos } from "@/hooks/use-today-todos";
+import { useTodayTodos } from "@/hooks/use-todos";
 import type { TodoWithCompleteAtDateTime } from "@/types";
 import { MoreVertical } from "lucide-react";
 import { DateTime } from "luxon";

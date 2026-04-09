@@ -1,6 +1,6 @@
 import TaskDisplaySelector from "@/components/TaskDisplaySelector";
 import { Button } from "@/components/ui/button";
-import { useTodayTodos } from "@/hooks/use-today-todos";
+import { useTodayTodos } from "@/hooks/use-todos";
 import PageContentHeader from "@/layouts/PageContentHeader";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";

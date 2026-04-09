@@ -25,7 +25,7 @@ function DroppableColumn({
     <div
       ref={ref}
       className={cn(
-        "p-3 w-[280px] h-[500px] overflow-x-hidden overflow-y-auto custom-scrollbar",
+        "p-3 w-[300px] h-[500px] overflow-x-hidden overflow-y-auto custom-scrollbar",
         className,
       )}
     >

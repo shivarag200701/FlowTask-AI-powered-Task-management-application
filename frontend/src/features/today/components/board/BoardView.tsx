@@ -1,4 +1,4 @@
-import { useTodayTodos } from "@/hooks/use-today-todos";
+import { useTodayTodos, useUpdateTodos } from "@/hooks/use-todos";
 import PageWidthWrapper from "@/layouts/PageWidthWrapper";
 import {
   DragDropProvider,
@@ -12,7 +12,7 @@ import DroppableColumn from "../../../../components/DroppableColumn";
 import DraggableTask from "@/components/DraggableTask";
 import { DateTime } from "luxon";
 import type { TodoWithCompleteAtDateTime } from "@/types";
-import useOverDueTodos from "@/hooks/use-overdue-todos";
+import { useOverDueTodos } from "@/hooks/use-todos";
 import { isSortable } from "@dnd-kit/react/sortable";
 import { type UniqueIdentifier } from "@dnd-kit/abstract";
 import api from "@/utils/api";
@@ -22,6 +22,7 @@ type DragEndPayload = Parameters<DragEndEvent>[0];
 function BoardView() {
   const { data: todayTodos } = useTodayTodos();
   const { data: overdueTodos } = useOverDueTodos();
+  const { mutate } = useUpdateTodos();
 
   if (!todayTodos || !overdueTodos) return;
   const [items, setItems] = useState({
@@ -34,7 +35,7 @@ function BoardView() {
 
   const todos = [...todayTodos, ...overdueTodos];
 
-  function handleDragEnd(event: DragEndPayload) {
+  async function handleDragEnd(event: DragEndPayload) {
     if (event.canceled) {
       setItems(snapshot.current);
       return;
@@ -50,10 +51,7 @@ function BoardView() {
       }
 
       setItems((items) => move(items, event));
-      api.put(`/v1/todo/${source.id}`, {
-        ...data,
-        completeAt: DateTime.now().startOf("day"),
-      });
+      mutate({ ...data, completeAt: DateTime.now().startOf("day") });
     }
   }
 

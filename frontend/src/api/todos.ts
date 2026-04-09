@@ -10,3 +10,15 @@ export async function fetchTodos(): Promise<TodoWithCompleteAtDateTime[]> {
     completeAt: DateTime.fromISO(todo.completeAt ?? ""),
   }));
 }
+
+export async function updateTodo(
+  data: TodoWithCompleteAtDateTime,
+): Promise<TodoWithCompleteAtDateTime> {
+  console.log("todo", data);
+
+  const res = await api.put(`/v1/todo/${data.id}`, {
+    ...data,
+  });
+
+  return res.data.todo;
+}
