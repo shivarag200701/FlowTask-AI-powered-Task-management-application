@@ -15,7 +15,7 @@ function DraggableTask({
   column: string;
   className?: string;
 }) {
-  const { ref, isDragSource } = useSortable({
+  const { ref, isDragging } = useSortable({
     id,
     index,
     transition: { duration: 200 },
@@ -24,7 +24,7 @@ function DraggableTask({
     group: column,
   });
 
-  if (isDragSource) {
+  if (isDragging) {
     return (
       <div ref={ref} className="w-[260px] min-h-[70px] bg-accent rounded-lg" />
     );
@@ -33,7 +33,7 @@ function DraggableTask({
     <>
       <div
         className={cn(
-          "border border-border rounded-lg p-2.5 w-[260px] min-h-[70px] bg-white hover:shadow-card-hover hover:cursor-pointer",
+          "border border-border rounded-lg p-2.5 w-[260px] min-h-[70px] bg-white shadow-xs hover:shadow-card-hover hover:cursor-pointer",
           className,
         )}
         ref={ref}

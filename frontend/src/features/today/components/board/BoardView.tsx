@@ -5,30 +5,27 @@ import { move } from "@dnd-kit/helpers";
 import { useRef, useState } from "react";
 import FormatDate from "@/utils/format-date";
 import DroppableColumn from "../../../../components/DroppableColumn";
-import { Feedback } from "@dnd-kit/dom";
 import DraggableTask from "@/components/DraggableTask";
 import { DateTime } from "luxon";
 import type { TodoWithCompleteAtDateTime } from "@/types";
-import useOverDueTodos from "@/hooks/use-overdue-todos";
+import { isSortable } from "@dnd-kit/react/sortable";
+import { type UniqueIdentifier } from "@dnd-kit/abstract";
 
 function BoardView() {
   const { data: todayTodos } = useTodayTodos();
-  const { data: overdueTodos } = useOverDueTodos();
 
-  if (!todayTodos || !overdueTodos) return;
+  if (!todayTodos) return;
   const [items, setItems] = useState({
-    "Over Due": overdueTodos,
     [FormatDate(DateTime.now())]: todayTodos,
   });
 
   const snapshot = useRef(structuredClone(items));
-
-  const todos = [...todayTodos, ...overdueTodos];
+  const dragInitialColumn = useRef<UniqueIdentifier | undefined>(undefined);
 
   return (
     <PageWidthWrapper className="pt-6 lg:pt-12 flex flex-col gap-6">
       <DragDropProvider
-        onDragStart={(event) => {
+        onDragStart={() => {
           snapshot.current = structuredClone(items);
         }}
         onDragOver={(event) => {
@@ -39,21 +36,23 @@ function BoardView() {
             setItems(snapshot.current);
             return;
           }
+          const { source } = event.operation;
+          if (isSortable(source)) {
+            const { group } = source;
+
+            if (
+              group === "Over Due" &&
+              dragInitialColumn.current !== "Over Due"
+            ) {
+              setItems(snapshot.current);
+              return;
+            }
+
+            setItems((items) => move(items, event));
+          }
           setItems((item) => move(item, event));
-          // const { source } = event.operation;
-          // if (isSortable(source)) {
-          //   const { group, initialGroup } = source;
-          //   console.log("current group", group);
-          //   console.log("initial group", initialGroup);
-          // }
+          //todo, change the actual state after dragging
         }}
-        plugins={(defaults) =>
-          defaults.map((plugin) =>
-            plugin === Feedback
-              ? Feedback.configure({ dropAnimation: null })
-              : plugin,
-          )
-        }
       >
         <div className="flex gap-10">
           {Object.entries(items).map(([column, items]) => (
@@ -75,7 +74,7 @@ function BoardView() {
             </DroppableColumn>
           ))}
         </div>
-        <Overlay todos={todos} />
+        <Overlay todos={todayTodos} />
       </DragDropProvider>
     </PageWidthWrapper>
   );
@@ -86,7 +85,6 @@ function Overlay({ todos }: { todos: TodoWithCompleteAtDateTime[] }) {
     <DragOverlay>
       {(source) => {
         const todo = todos.find((todo) => todo.id === source.id);
-
         if (!todo) {
           return null;
         }

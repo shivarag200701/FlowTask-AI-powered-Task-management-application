@@ -20,16 +20,19 @@ function DroppableColumn({
     accept: "item",
     collisionPriority: CollisionPriority.Low,
   });
+
   return (
     <div
       ref={ref}
       className={cn(
-        "p-3 h-[500px] overflow-y-auto custom-scrollbar",
+        "p-3 w-[280px] h-[500px] overflow-x-hidden overflow-y-auto custom-scrollbar",
         className,
       )}
     >
-      <div className="text-sm font-bold text-left">
-        {id} . {numberofTodos}
+      <div className="text-sm font-bold text-left flex items-center gap-1">
+        <span>{id}</span>
+        <div className="h-[3px] w-[3px] bg-black rounded-full" />
+        <div>{numberofTodos}</div>
       </div>
       {children}
     </div>
