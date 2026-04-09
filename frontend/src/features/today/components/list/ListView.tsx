@@ -9,10 +9,10 @@ import pluralize from "@/utils/pluralize";
 function ListView() {
   const { data: todos } = useTodayTodos();
   return (
-    <PageWidthWrapper className="grid gap-y-4 pt-6 lg:pt-12">
+    <PageWidthWrapper className="grid gap-y-4 pt-6 lg:pt-1">
       {todos ? (
         <>
-          <div>
+          <div className="overflow-y-auto hover:scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
             {todos.length} {pluralize("task", todos.length)}
           </div>
           {todos.map((todo) => (

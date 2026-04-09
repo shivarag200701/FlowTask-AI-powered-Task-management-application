@@ -20,7 +20,7 @@ const SignIn = () => {
     if (success === "google_sign_in") {
       // User successfully signed in with Google
       refreshAuth().then(() => {
-        navigate("/dashboard");
+        navigate("/app/today");
       });
     }
   }, [searchParams, navigate, refreshAuth]);

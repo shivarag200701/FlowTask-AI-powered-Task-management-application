@@ -50,7 +50,7 @@ export const Completed = () => {
           <Button
             Initial="Go to your dashboard"
             onClick={() => {
-              navigate("/dashboard");
+              navigate("/app/today");
             }}
           />
         </motion.div>

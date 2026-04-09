@@ -149,7 +149,7 @@ export const SettingsModal = ({ setShowSettingsModal }: SettingModalProps) => {
             className="absolute top-3 right-3 cursor-pointer z-10"
             onClick={() => {
               setShowSettingsModal(false);
-              navigate("/dashboard");
+              navigate("/app/today");
             }}
           >
             <X className="w-5 h-5 text-muted-foreground" />

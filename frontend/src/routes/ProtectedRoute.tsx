@@ -88,7 +88,7 @@ const ProtectedRoute = () => {
     location.pathname.startsWith("/onboarding") &&
     location.pathname !== "/onboarding/completed"
   ) {
-    return <Navigate to="/dashboard" state={{ from: location }} replace />;
+    return <Navigate to="/app/today" state={{ from: location }} replace />;
   }
   // user is authenticated and they try to go to onboarding given that either the onboarding is completed or the key is expried, then redirect to dashboard
   else if (
@@ -99,7 +99,7 @@ const ProtectedRoute = () => {
         Date.now() - ONBOARDING_WINDOW_SECONDS * 1000) &&
     location.pathname !== "/onboarding/completed"
   ) {
-    return <Navigate to="/dashboard" state={{ from: location }} replace />;
+    return <Navigate to="/app/today" state={{ from: location }} replace />;
   }
   return <Outlet />;
 };

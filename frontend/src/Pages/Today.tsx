@@ -14,7 +14,12 @@ function Today({ className }: TodayProps) {
   const { viewMode } = useTaskDisplayContext();
 
   return (
-    <div className={cn(`bg-neutral-200 w-full lg:py-2 lg:pr-2`, className)}>
+    <div
+      className={cn(
+        `bg-neutral-200 w-full lg:py-2 lg:pr-2 hover:scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent`,
+        className,
+      )}
+    >
       {/* create compoent for header*/}
       <div className="bg-white h-full lg:rounded-xl">
         <PageContentHeader title="Today" controls={<TaskDisplaySelector />} />

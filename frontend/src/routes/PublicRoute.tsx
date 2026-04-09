@@ -15,7 +15,7 @@ const PublicRoute = () => {
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/app/today" replace />;
   }
 
   return <Outlet />;
