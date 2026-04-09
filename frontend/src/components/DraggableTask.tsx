@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import type { TodoWithCompleteAtDateTime } from "@/types";
 import { useSortable } from "@dnd-kit/react/sortable";
+import { Feedback } from "@dnd-kit/dom";
 
 function DraggableTask({
   id,
@@ -22,6 +23,7 @@ function DraggableTask({
     type: "item",
     accept: "item",
     group: column,
+    data: todo,
   });
 
   if (isDragging) {

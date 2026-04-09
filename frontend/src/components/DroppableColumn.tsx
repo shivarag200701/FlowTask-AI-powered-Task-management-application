@@ -17,7 +17,7 @@ function DroppableColumn({
   const { ref } = useDroppable({
     id: id,
     type: "column",
-    accept: "item",
+    accept: ["item", "overdue-item"],
     collisionPriority: CollisionPriority.Low,
   });
 
