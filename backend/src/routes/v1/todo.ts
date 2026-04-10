@@ -44,7 +44,6 @@ todoRouter.post("/", requireLogin, async (req, res) => {
         dueOn: isAllDay ? completeAtDate : null,
         dueAt: !isAllDay ? completeAtDate : null,
         isAllDay,
-        category,
         sortKey: "",
         color: color ?? null,
         user: {
@@ -401,7 +400,6 @@ todoRouter.put("/:id", requireLogin, async (req, res) => {
         dueOn: isAllDay ? completeAtDate : null,
         dueAt: !isAllDay ? completeAtDate : null,
         isAllDay,
-        category,
         color: color ?? null,
       },
     });

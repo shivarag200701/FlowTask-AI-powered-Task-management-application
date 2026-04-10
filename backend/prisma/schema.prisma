@@ -113,13 +113,12 @@ model Todo {
   priority      String?    
   dueOn         DateTime? @db.Date
   dueAt         DateTime? @db.Timestamp(3)
-  category      String
   user          User        @relation(fields: [userId], references: [id])
   userId        Int    
   completed     Boolean     @default(false)
   completedAt   DateTime?
   color         String?
-  isAllDay      Boolean     @default(false)
+  isAllDay      Boolean     @default(true)
   sortKey       String
   
   createdAt DateTime @default(now())
