@@ -10,6 +10,7 @@ import {
 import { calculateNextOccurence } from "../utils/recurringTasks.js";
 import notificationService from "../services/notification/NotificationService.js";
 import { flags } from "../flags.js";
+import { log } from "console";
 
 const todoRouter = express();
 
@@ -41,6 +42,7 @@ todoRouter.post("/", requireLogin, async (req, res) => {
     color,
     isAllDay,
     reminder,
+    order,
   } = data;
   const completeAtDate = convertCompleteAtToDate(completeAt ?? undefined);
   try {
@@ -48,6 +50,7 @@ todoRouter.post("/", requireLogin, async (req, res) => {
       data: {
         title,
         description,
+        completed: false,
         priority: priority ?? null,
         dueOn: isAllDay ? completeAtDate : null,
         dueAt: !isAllDay ? completeAtDate : null,
@@ -172,8 +175,12 @@ todoRouter.get("/", requireLogin, async (req, res) => {
       },
     });
 
+    const sortedTodos = todos.sort(
+      (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime(),
+    );
+
     return res.status(200).json({
-      todos: todos.map((todo) => ({
+      todos: sortedTodos.map((todo) => ({
         ...todo,
         completeAt: todo.dueOn
           ? todo.dueOn.toISOString()
@@ -420,6 +427,7 @@ todoRouter.put("/:id", requireLogin, async (req, res) => {
     color,
     isAllDay,
     order,
+    completed,
   } = data;
 
   const completeAtDate = convertCompleteAtToDate(completeAt ?? undefined);
@@ -449,6 +457,7 @@ todoRouter.put("/:id", requireLogin, async (req, res) => {
       data: {
         title,
         description,
+        completed,
         priority: priority ?? null,
         dueOn: isAllDay ? completeAtDate : null,
         dueAt: !isAllDay ? completeAtDate : null,
