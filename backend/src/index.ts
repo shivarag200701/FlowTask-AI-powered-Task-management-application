@@ -4,15 +4,11 @@ dotenv.config();
 
 import express from "express";
 import cors from "cors";
-import userRouter from "./routes/user.js";
-import todoRouter from "./routes/todo.js";
+import appRouter from "./routes/index.js";
 import { createClient } from "redis";
 import { RedisStore } from "connect-redis";
 import session from "express-session";
-import { requireLogin } from "./middleware.js";
-import { processRecurringTasks } from "./utils/recurringTasks.js";
-import cron from "node-cron";
-import oauthRouter from "./routes/oauth.js";
+
 import QueueService from "./services/notification/QueueService.js";
 import { initRateLimiter } from "./services/rate-limiter/index.js";
 
@@ -119,9 +115,8 @@ app.get("/v1/auth-check", (req, res) => {
   }
 });
 
-app.use("/v1/user", userRouter);
-app.use("/v1/todo", todoRouter);
-app.use("/v1/oauth", oauthRouter);
+app.use("/api", appRouter);
+
 app.listen(PORT, () => {
   console.log(`running in port ${PORT}`);
   console.log("Queue service initialized");

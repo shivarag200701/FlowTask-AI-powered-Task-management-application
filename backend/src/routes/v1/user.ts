@@ -1,11 +1,9 @@
 import express from "express";
 import { z } from "zod";
 const userRouter = express();
-import prisma from "../db/index.js";
+import prisma from "../../db/index.js";
 import dotenv from "dotenv";
 import {
-  signUpSchema,
-  signInSchema,
   changePasswordSchema,
   ChangeNameSchema,
   changePreferencesSchema,
@@ -14,20 +12,23 @@ import {
   setOnboardingProgressSchema,
 } from "@shiva200701/todotypes";
 import crypto from "crypto";
-import { hashPassword, verifyPassword } from "../utils/auth/passwordHasher.js";
-import { requireLogin } from "../middleware.js";
-import generateOTP from "../utils/auth/otpGenerator.js";
-import { EMAIL_OTP_EXPIRY_IN } from "../utils/auth/constants.js";
-import { sendEmail } from "../services/email/EmailService.js";
-import { NODE_ENV, redisClient } from "../index.js";
+import {
+  hashPassword,
+  verifyPassword,
+} from "../../utils/auth/passwordHasher.js";
+import { requireLogin } from "../../middleware.js";
+import generateOTP from "../../utils/auth/otpGenerator.js";
+import { EMAIL_OTP_EXPIRY_IN } from "../../utils/auth/constants.js";
+import { sendEmail } from "../../services/email/EmailService.js";
+import { NODE_ENV, redisClient } from "../../index.js";
 import {
   getOnboardingProgress,
   setOnboardingProgress,
-} from "../utils/onboarding-step-cache.js";
+} from "../../utils/onboarding-step-cache.js";
 import multer from "multer";
 import { nanoid } from "nanoid";
-import { S3 } from "../services/s3/index.js";
-import { getOTPRateLimiter } from "../services/rate-limiter/index.js";
+import { S3 } from "../../services/s3/index.js";
+import { getOTPRateLimiter } from "../../services/rate-limiter/index.js";
 
 dotenv.config();
 

@@ -120,17 +120,11 @@ model Todo {
   completedAt   DateTime?
   color         String?
   isAllDay      Boolean     @default(false)
-  order         Int?
-
-  //Recurring tasks fields
-  isRecurring         Boolean     @default(false)
-  recurrencePattern String? // "daily", "weekly", "monthly", "yearly"
-  recurrenceInterval Int?         @default(1) // e.g. 7 for weekly, 30 for monthly
-  recurrenceEndDate DateTime?
-  parentRecurringId Int?
-  nextOccurrence DateTime?
+  sortKey       String
+  
   createdAt DateTime @default(now())
   updatedAt DateTime? @updatedAt
+  
 
   notifications Notifications[]
 }

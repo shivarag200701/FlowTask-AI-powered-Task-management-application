@@ -3,16 +3,16 @@ import {
   generateGoogleOAuthUrl,
   getGoogleTokens,
   refreshGoogleTokens,
-} from "../services/oauth/googleOAuth.js";
+} from "../../services/oauth/googleOAuth.js";
 import {
   setState,
   getState,
   deleteState,
   type StateData,
-} from "../services/oauth/stateStore.js";
-import prisma from "../db/index.js";
+} from "../../services/oauth/stateStore.js";
+import prisma from "../../db/index.js";
 import crypto from "crypto";
-import { requireLogin } from "../middleware.js";
+import { requireLogin } from "../../middleware.js";
 
 const oauthRouter = express();
 
