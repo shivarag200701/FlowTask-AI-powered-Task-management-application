@@ -48,12 +48,19 @@ export function useOverDueTodos() {
   });
 }
 
-export function useUpdateTodos() {
+export function useUpdateTodo() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (data: TodoWithCompleteAtDateTime) => updateTodo(data),
-    onSuccess: () => {
+    onSuccess: (data: TodoWithCompleteAtDateTime) => {
+      // queryClient.setQueryData<TodoWithCompleteAtDateTime[]>(
+      //   todosQueryKeys.all,
+      //   (oldData) => {
+      //     if (!oldData) return oldData;
+      //     return oldData.map((todo) => (todo.id === data.id ? data : todo));
+      //   },
+      // );
       queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
     },
   });

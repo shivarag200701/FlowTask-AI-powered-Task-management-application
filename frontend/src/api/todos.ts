@@ -14,8 +14,6 @@ export async function fetchTodos(): Promise<TodoWithCompleteAtDateTime[]> {
 export async function updateTodo(
   data: TodoWithCompleteAtDateTime,
 ): Promise<TodoWithCompleteAtDateTime> {
-  console.log("todo", data);
-
   const res = await api.put(`/v1/todo/${data.id}`, {
     ...data,
   });

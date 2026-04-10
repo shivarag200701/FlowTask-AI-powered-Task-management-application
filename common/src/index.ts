@@ -28,6 +28,7 @@ export const signInSchema = z.object({
 export const todoSchema = z.object({
   title: z.string(),
   description: z.string(),
+  completed: z.boolean(),
   priority: z.string().nullish(),
   completeAt: z.string().nullish(),
   isAllDay: z.boolean(),

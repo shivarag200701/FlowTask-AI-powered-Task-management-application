@@ -32,7 +32,7 @@ function DroppableColumn({
         <div className="h-[3px] w-[3px] bg-black rounded-full" />
         <div>{numberofTodos}</div>
       </div>
-      <div className="scrollbar-none overflow-x-hidden overflow-y-auto hover:scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent flex flex-col gap-2">
+      <div className="scrollbar-none overflow-x-hidden overflow-y-auto hover:scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent flex flex-col ">
         {children}
       </div>
     </div>

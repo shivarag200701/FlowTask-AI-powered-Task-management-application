@@ -1,6 +1,6 @@
 {
   "name": "@shiva200701/todotypes",
-  "version": "2.0.5",
+  "version": "2.0.8",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",

@@ -2,6 +2,9 @@ import { cn } from "@/lib/utils";
 import type { TodoWithCompleteAtDateTime } from "@/types";
 import { useSortable } from "@dnd-kit/react/sortable";
 import { Feedback } from "@dnd-kit/dom";
+import { Check } from "lucide-react";
+import { useUpdateTodo } from "@/hooks/use-todos";
+import { SortableKeyboardPlugin } from "@dnd-kit/dom/sortable";
 
 function DraggableTask({
   id,
@@ -16,6 +19,7 @@ function DraggableTask({
   column: string;
   className?: string;
 }) {
+  const { mutate } = useUpdateTodo();
   const { ref, isDragging } = useSortable({
     id,
     index,
@@ -28,20 +32,30 @@ function DraggableTask({
 
   if (isDragging) {
     return (
-      <div ref={ref} className="w-[260px] min-h-[70px] bg-accent rounded-lg" />
+      <div
+        ref={ref}
+        className="w-[260px] min-h-[70px] mb-2 bg-accent rounded-lg"
+      />
     );
   }
   return (
     <>
       <div
         className={cn(
-          "border border-border rounded-lg p-2.5 w-[260px] min-h-[70px] bg-white shadow-xs hover:shadow-card-hover hover:cursor-pointer",
+          "border border-border rounded-lg p-2.5 mb-2 w-[260px] min-h-[70px] bg-white shadow-2xs hover:shadow-card-hover hover:cursor-pointer",
           className,
         )}
         ref={ref}
       >
         <div className="flex gap-2">
-          <div className="border border-border rounded-full h-5 w-5" />
+          <button
+            className="border border-border rounded-full h-5 w-5 flex items-center justify-center group cursor-pointer"
+            onClick={() => {
+              mutate({ ...todo, completed: !todo.completed });
+            }}
+          >
+            <Check size={15} className="hidden group-hover:block" />
+          </button>
           <div className="flex flex-col">
             <div className="text-md">{todo.title}</div>
             <div className="text-xs font-light">{todo.description}</div>

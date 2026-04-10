@@ -13,6 +13,7 @@ export declare const signInSchema: z.ZodObject<{
 export declare const todoSchema: z.ZodObject<{
     title: z.ZodString;
     description: z.ZodString;
+    completed: z.ZodBoolean;
     priority: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     completeAt: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     isAllDay: z.ZodBoolean;
@@ -147,18 +148,18 @@ export declare const changePreferencesSchema: z.ZodObject<{
     }, z.core.$strip>>;
 }, z.core.$strip>;
 export declare const OnboardingStepSchema: z.ZodEnum<{
+    completed: "completed";
     welcome: "welcome";
     "user-profile": "user-profile";
     "user-preferences": "user-preferences";
-    completed: "completed";
 }>;
 export type OnboardingStep = z.infer<typeof OnboardingStepSchema>;
 export declare const setOnboardingProgressSchema: z.ZodObject<{
     step: z.ZodEnum<{
+        completed: "completed";
         welcome: "welcome";
         "user-profile": "user-profile";
         "user-preferences": "user-preferences";
-        completed: "completed";
     }>;
 }, z.core.$strip>;
 export declare const ONBOARDING_WINDOW_SECONDS: number;

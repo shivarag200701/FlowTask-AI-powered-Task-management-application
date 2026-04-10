@@ -1,4 +1,4 @@
-import { useTodayTodos, useUpdateTodos } from "@/hooks/use-todos";
+import { useTodayTodos, useUpdateTodo } from "@/hooks/use-todos";
 import PageWidthWrapper from "@/layouts/PageWidthWrapper";
 import {
   DragDropProvider,
@@ -6,7 +6,7 @@ import {
   type DragEndEvent,
 } from "@dnd-kit/react";
 import { move } from "@dnd-kit/helpers";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import FormatDate from "@/utils/format-date";
 import DroppableColumn from "../../../../components/DroppableColumn";
 import DraggableTask from "@/components/DraggableTask";
@@ -15,23 +15,37 @@ import type { TodoWithCompleteAtDateTime } from "@/types";
 import { useOverDueTodos } from "@/hooks/use-todos";
 import { isSortable } from "@dnd-kit/react/sortable";
 import { type UniqueIdentifier } from "@dnd-kit/abstract";
-import api from "@/utils/api";
+import { Spinner } from "@/components/ui/spinner";
+import EmptyState from "../EmptyState";
 
 type DragEndPayload = Parameters<DragEndEvent>[0];
 
 function BoardView() {
   const { data: todayTodos } = useTodayTodos();
   const { data: overdueTodos } = useOverDueTodos();
-  const { mutate } = useUpdateTodos();
+  const { mutate } = useUpdateTodo();
 
-  if (!todayTodos || !overdueTodos) return;
-  const [items, setItems] = useState({
-    Overdue: overdueTodos,
-    [FormatDate(DateTime.now())]: todayTodos,
+  const [items, setItems] = useState<
+    Record<string, TodoWithCompleteAtDateTime[]>
+  >({
+    Overdue: [],
+    [FormatDate(DateTime.now())]: [],
   });
 
   const snapshot = useRef(structuredClone(items));
   const dragInitialColumn = useRef<UniqueIdentifier | undefined>(undefined);
+
+  useEffect(() => {
+    if (!todayTodos || !overdueTodos) return;
+    setItems(() => {
+      return {
+        Overdue: overdueTodos,
+        [FormatDate(DateTime.now())]: todayTodos,
+      };
+    });
+  }, []);
+
+  if (todayTodos == null || overdueTodos == null) return <Spinner />;
 
   const todos = [...todayTodos, ...overdueTodos];
 
@@ -43,7 +57,9 @@ function BoardView() {
     const { source } = event.operation;
     const data = source?.data as TodoWithCompleteAtDateTime;
     if (source && isSortable(source)) {
-      const { group } = source;
+      const { group, initialIndex, index, initialGroup } = source;
+      console.log("source index", initialIndex);
+      console.log("target index", index);
 
       if (group === "Overdue" && dragInitialColumn.current !== "Overdue") {
         setItems(snapshot.current);
@@ -51,49 +67,63 @@ function BoardView() {
       }
 
       setItems((items) => move(items, event));
-      mutate({ ...data, completeAt: DateTime.now().startOf("day") });
+      // if(dragInitialColumn.current === group){}
+      const today = DateTime.now();
+      mutate({
+        ...data,
+        completeAt:
+          data.completeAt?.set({
+            year: today.year,
+            month: today.month,
+            day: today.day,
+          }) ?? null,
+      });
     }
   }
 
   return (
     <PageWidthWrapper className="pt-6 lg:pt-12 flex flex-col gap-6">
-      <DragDropProvider
-        onDragStart={(event) => {
-          snapshot.current = structuredClone(items);
-          if (isSortable(event.operation.source)) {
-            const { initialGroup } = event.operation.source;
-            dragInitialColumn.current = initialGroup;
-          }
-        }}
-        onDragOver={(event) => {
-          setItems((items) => move(items, event));
-        }}
-        onDragEnd={(event) => {
-          handleDragEnd(event);
-        }}
-      >
-        <div className="flex gap-10">
-          {Object.entries(items).map(([column, items]) => (
-            <DroppableColumn
-              key={column}
-              id={column}
-              className="flex flex-col gap-2.5"
-              numberofTodos={items.length}
-            >
-              {items.map((todo, index) => (
-                <DraggableTask
-                  key={todo.id}
-                  id={todo.id}
-                  index={index}
-                  column={column}
-                  todo={todo}
-                />
-              ))}
-            </DroppableColumn>
-          ))}
-        </div>
-        <Overlay todos={todos} />
-      </DragDropProvider>
+      {todos.length > 0 ? (
+        <DragDropProvider
+          onDragStart={(event) => {
+            snapshot.current = structuredClone(items);
+            if (isSortable(event.operation.source)) {
+              const { initialGroup } = event.operation.source;
+              dragInitialColumn.current = initialGroup;
+            }
+          }}
+          // onDragOver={(event) => {
+          //   setItems((items) => move(items, event));
+          // }}
+          onDragEnd={(event) => {
+            handleDragEnd(event);
+          }}
+        >
+          <div className="flex gap-10">
+            {Object.entries(items).map(([column, items]) => (
+              <DroppableColumn
+                key={column}
+                id={column}
+                className="flex flex-col gap-2.5"
+                numberofTodos={items.length}
+              >
+                {items.map((todo, index) => (
+                  <DraggableTask
+                    key={todo.id}
+                    id={todo.id}
+                    index={index}
+                    column={column}
+                    todo={todo}
+                  />
+                ))}
+              </DroppableColumn>
+            ))}
+          </div>
+          <Overlay todos={todos} />
+        </DragDropProvider>
+      ) : (
+        <EmptyState />
+      )}
     </PageWidthWrapper>
   );
 }
