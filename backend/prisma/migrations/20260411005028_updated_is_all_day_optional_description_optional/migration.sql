@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Todo" ALTER COLUMN "description" DROP NOT NULL,
+ALTER COLUMN "isAllDay" DROP NOT NULL;

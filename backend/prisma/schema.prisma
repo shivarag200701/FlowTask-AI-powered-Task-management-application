@@ -109,7 +109,7 @@ model Notifications {
 model Todo {
   id            Int         @id @default(autoincrement())
   title         String
-  description   String
+  description   String?
   priority      String?    
   dueOn         DateTime? @db.Date
   dueAt         DateTime? @db.Timestamp(3)
@@ -118,7 +118,7 @@ model Todo {
   completed     Boolean     @default(false)
   completedAt   DateTime?
   color         String?
-  isAllDay      Boolean     @default(true)
+  isAllDay      Boolean?     @default(true)
   sortKey       String
   
   createdAt DateTime @default(now())
