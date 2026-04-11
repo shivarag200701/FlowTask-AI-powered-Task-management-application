@@ -10,7 +10,7 @@ export function GoogleSignInButton() {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
-      const response = await api.get("/v1/oauth/google/connect");
+      const response = await api.get("/api/v1/oauth/google/connect");
       // Redirect to Google OAuth
       window.location.href = response.data.authUrl;
     } catch (error) {

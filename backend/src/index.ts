@@ -107,7 +107,7 @@ app.use(
 app.use(express.json());
 
 //routes
-app.get("/v1/auth-check", (req, res) => {
+app.get("/api/v1/auth-check", (req, res) => {
   if (req.session?.userId) {
     res.status(200).json({ isAuthenticated: true, email: req.session.email });
   } else {

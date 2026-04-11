@@ -16,25 +16,19 @@ export interface Todo {
   title: string;
   description: string;
   priority: "high" | "medium" | "low" | null;
-  completeAt: string | null;
   isAllDay: boolean;
+  due: string | null;
   category: string;
   completed: boolean;
   completedAt: string | null;
-  isRecurring?: boolean;
-  recurrencePattern?: "daily" | "weekly" | "monthly" | "yearly" | null;
-  recurrenceInterval?: number | null;
-  recurrenceEndDate?: string | null;
-  parentRecurringId?: number | null;
-  nextOccurrence?: string | null;
   color?: string | null;
   order?: number | null;
   createdAt: string | null;
   reminder?: boolean;
 }
 
-export type TodoWithCompleteAtDateTime = Omit<Todo, "completeAt"> & {
-  completeAt: DateTime | null;
+export type TodoWithCompleteAtDateTime = Omit<Todo, "due"> & {
+  due: DateTime | null;
 };
 
 export type ViewMode = "list" | "board" | "calendar";

@@ -51,7 +51,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     //check session in backend everytime
     setIsLoading(true);
     try {
-      const { data } = await api.get("/v1/auth-check");
+      const { data } = await api.get("/api/v1/auth-check");
       setIsAuthenticated(data.isAuthenticated);
       if (data.isAuthenticated) {
         setEmail(data.email);

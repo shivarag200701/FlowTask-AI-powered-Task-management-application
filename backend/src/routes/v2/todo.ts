@@ -25,7 +25,10 @@ todoRouter.get("/", requireLogin, async (req, res) => {
     });
 
     return res.status(200).json({
-      todos,
+      todos: todos.map(({ dueOn, dueAt, ...rest }) => ({
+        ...rest,
+        due: dueAt ?? dueOn ?? null,
+      })),
     });
   } catch (error) {
     console.error("Failed getting todos", error);
@@ -85,7 +88,10 @@ todoRouter.post("/", requireLogin, async (req, res) => {
       },
     });
 
-    return res.status(201).json({ msg: "todo added sucessfully", todo });
+    return res.status(201).json({
+      msg: "todo added sucessfully",
+      todo: { ...todo, completeAt },
+    });
   } catch {
     console.error("Error while adding todo", error);
     return res.status(500).json({

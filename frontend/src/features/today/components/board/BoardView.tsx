@@ -71,8 +71,8 @@ function BoardView() {
       const today = DateTime.now();
       mutate({
         ...data,
-        completeAt:
-          data.completeAt?.set({
+        due:
+          data.due?.set({
             year: today.year,
             month: today.month,
             day: today.day,

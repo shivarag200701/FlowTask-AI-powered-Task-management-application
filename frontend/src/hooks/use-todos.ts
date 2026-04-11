@@ -6,20 +6,20 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DateTime } from "luxon";
 
 const selectOverdueTodos = (todos: TodoWithCompleteAtDateTime[]) => {
-  return todos.filter(
-    (todo) =>
+  return todos.filter((todo) => {
+    console.log(todo.due?.toString());
+
+    return (
       !todo.completed &&
-      todo.completeAt &&
-      todo.completeAt.startOf("day") < DateTime.now().startOf("day"),
-  );
+      todo.due &&
+      todo.due.startOf("day") < DateTime.now().startOf("day")
+    );
+  });
 };
 
 const selectTodayTodos = (todos: TodoWithCompleteAtDateTime[]) =>
   todos.filter(
-    (t) =>
-      !t.completed &&
-      t.completeAt &&
-      t.completeAt.hasSame(DateTime.now(), "day"),
+    (t) => !t.completed && t.due && t.due.hasSame(DateTime.now(), "day"),
   );
 
 export function useTodos() {
