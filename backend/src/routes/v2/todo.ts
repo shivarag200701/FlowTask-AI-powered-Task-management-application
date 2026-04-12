@@ -4,6 +4,7 @@ import { requireLogin } from "../../middleware.js";
 import { generateSortKey } from "../../utils/todo-ordering.js";
 import prisma from "../../db/index.js";
 import { Prisma } from "@prisma/client";
+import constructPatchPayload from "../../utils/construct-patch-payload.js";
 
 const todoRouter = Router();
 
@@ -25,12 +26,7 @@ todoRouter.get("/", requireLogin, async (req, res) => {
       },
     });
 
-    return res.status(200).json({
-      todos: todos.map(({ dueDate, dueTime, ...rest }) => ({
-        ...rest,
-        due: dueTime ?? dueDate ?? null,
-      })),
-    });
+    return res.status(200).json({ todos });
   } catch (error) {
     console.error("Failed getting todos", error);
     return res.status(500).json({
@@ -73,6 +69,8 @@ todoRouter.post("/", requireLogin, async (req, res) => {
       orderBy: { sortKey: "desc" },
       select: { sortKey: true },
     });
+
+    console.log("last key", last?.sortKey);
 
     const sortKey = generateSortKey(last ? last.sortKey : null, null);
 
@@ -137,24 +135,9 @@ todoRouter.patch("/:id", requireLogin, async (req, res) => {
     }
 
     const patch = data;
-    const updateData: Prisma.TodoUpdateInput = {};
 
-    //Todo move this to seperate function
-    if (patch.title !== undefined) updateData.title = patch.title;
-    if (patch.description !== undefined)
-      updateData.description = patch.description;
-    if (patch.priority !== undefined) updateData.priority = patch.priority;
-    if (patch.color !== undefined) updateData.color = patch.color;
-    if (patch.isAllDay !== undefined) updateData.isAllDay = patch.isAllDay;
-    if (patch.dueDate !== undefined) updateData.dueDate = patch.dueDate;
-    if (patch.dueTime !== undefined) updateData.dueTime = patch.dueTime;
+    const updateData = constructPatchPayload(patch);
 
-    if (patch.prevIndex !== undefined || patch.nextIndex !== undefined) {
-      updateData.sortKey = generateSortKey(
-        patch.prevIndex ?? null,
-        patch.nextIndex ?? null,
-      );
-    }
     const updatedTodo = await prisma.todo.update({
       where: { id: parseInt(idParam), userId },
       data: updateData,

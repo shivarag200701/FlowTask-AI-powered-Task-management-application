@@ -79,10 +79,7 @@ function BoardView() {
       const today = DateTime.now();
       console.log("todos", await fetchTodos());
 
-      payload.dueDate =
-        data.dueDate
-          ?.set({ year: today.year, month: today.month, day: today.day })
-          .toLocaleString() ?? null;
+      payload.dueDate = DateTime.now().toFormat("yyyy-MM-dd");
 
       if (data.dueTime) {
         payload.dueTime =

@@ -1,4 +1,5 @@
 //@ts-nocheck
+//depcreated
 import express from "express";
 import { requireLogin } from "../../middleware.js";
 import prisma from "../../db/index.js";

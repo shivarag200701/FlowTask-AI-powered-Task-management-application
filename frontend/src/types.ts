@@ -28,9 +28,8 @@ export interface Todo {
   reminder?: boolean;
 }
 
-export type TodoWithCompleteAtDateTime = Omit<Todo, "dueTime" | "dueDate"> & {
+export type TodoWithCompleteAtDateTime = Omit<Todo, "dueTime"> & {
   dueTime: DateTime | null;
-  dueDate: DateTime | null;
 };
 
 export type ViewMode = "list" | "board" | "calendar";
