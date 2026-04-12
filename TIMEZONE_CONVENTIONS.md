@@ -10,4 +10,4 @@ every todo with a date fixed has this field be it a timed todo or an untimed one
 
 only timed todo has this field
 
-## continue from bug of nextIndex having the previous vlaue ionstead of the new one
+## continue from bug of nextIndex having the previous value instead of the new one

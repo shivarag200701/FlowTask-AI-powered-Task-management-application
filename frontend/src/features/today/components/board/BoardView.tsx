@@ -18,7 +18,6 @@ import { type UniqueIdentifier } from "@dnd-kit/abstract";
 import { Spinner } from "@/components/ui/spinner";
 import EmptyState from "../EmptyState";
 import type { UpdateTodo } from "@shiva200701/todotypes";
-import { fetchTodos } from "@/api";
 
 type DragEndPayload = Parameters<DragEndEvent>[0];
 
@@ -69,7 +68,11 @@ function BoardView() {
       const newItems = move(items, event);
       setItems(newItems);
 
-      const column = items[group as string] ?? [];
+      console.log("target index", index);
+      console.log("initial index", initialIndex);
+      console.log(items);
+
+      const column = newItems[group as string] ?? [];
 
       const prevIndex = column[(index as number) - 1]?.sortKey ?? null;
       const nextIndex = column[(index as number) + 1]?.sortKey ?? null;
@@ -77,7 +80,6 @@ function BoardView() {
       const payload: UpdateTodo = { prevIndex, nextIndex };
 
       const today = DateTime.now();
-      console.log("todos", await fetchTodos());
 
       payload.dueDate = DateTime.now().toFormat("yyyy-MM-dd");
 
