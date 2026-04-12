@@ -7,10 +7,17 @@ export const CreateTodoSchema = z.object({
     .min(1, "description must be atleast one character")
     .optional(),
   priority: z.enum(["high", "medium", "low"]).nullable(),
-  completeAt: z.string().nullable(), //no due date
+  dueDate: z.string().nullable(), //all todos with date will have this
+  dueTime: z.string().nullable(), //only timed todos have this
   color: z.string().nullish(),
   reminder: z.boolean().default(false),
   isAllDay: z.boolean().optional(), // send true only, if not sent, the database defaults to false
 });
 
+export const UpdateTodoSchema = CreateTodoSchema.partial().extend({
+  prevIndex: z.string().nullish(),
+  nextIndex: z.string().nullish(),
+});
+
 export type CreateTodo = z.infer<typeof CreateTodoSchema>;
+export type UpdateTodo = z.infer<typeof UpdateTodoSchema>;

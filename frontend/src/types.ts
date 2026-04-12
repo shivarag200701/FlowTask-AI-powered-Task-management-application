@@ -17,18 +17,20 @@ export interface Todo {
   description: string;
   priority: "high" | "medium" | "low" | null;
   isAllDay: boolean;
-  due: string | null;
+  dueDate: string | null;
+  dueTime: string | null;
   category: string;
   completed: boolean;
   completedAt: string | null;
   color?: string | null;
-  order?: number | null;
+  sortKey: string;
   createdAt: string | null;
   reminder?: boolean;
 }
 
-export type TodoWithCompleteAtDateTime = Omit<Todo, "due"> & {
-  due: DateTime | null;
+export type TodoWithCompleteAtDateTime = Omit<Todo, "dueTime" | "dueDate"> & {
+  dueTime: DateTime | null;
+  dueDate: DateTime | null;
 };
 
 export type ViewMode = "list" | "board" | "calendar";

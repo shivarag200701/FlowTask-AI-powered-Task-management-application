@@ -4,7 +4,6 @@ import { requireLogin } from "../../middleware.js";
 import { generateSortKey } from "../../utils/todo-ordering.js";
 import prisma from "../../db/index.js";
 import { Prisma } from "@prisma/client";
-import { log } from "console";
 
 const todoRouter = Router();
 
@@ -27,9 +26,9 @@ todoRouter.get("/", requireLogin, async (req, res) => {
     });
 
     return res.status(200).json({
-      todos: todos.map(({ dueOn, dueAt, ...rest }) => ({
+      todos: todos.map(({ dueDate, dueTime, ...rest }) => ({
         ...rest,
-        due: dueAt ?? dueOn ?? null,
+        due: dueTime ?? dueDate ?? null,
       })),
     });
   } catch (error) {
@@ -57,12 +56,21 @@ todoRouter.post("/", requireLogin, async (req, res) => {
     });
   }
 
-  const { title, description, priority, due, color, reminder, isAllDay } = data;
+  const {
+    title,
+    description,
+    priority,
+    dueDate,
+    dueTime,
+    color,
+    reminder,
+    isAllDay,
+  } = data;
 
   try {
     const last = await prisma.todo.findFirst({
-      where: { userId, dueOn: due },
-      orderBy: { sortKey: "asc" },
+      where: { userId, dueDate },
+      orderBy: { sortKey: "desc" },
       select: { sortKey: true },
     });
 
@@ -74,8 +82,8 @@ todoRouter.post("/", requireLogin, async (req, res) => {
         title,
         description: description ?? null,
         priority,
-        dueOn: isAllDay ? due : null,
-        dueAt: !isAllDay ? due : null,
+        dueDate,
+        dueTime: dueTime ?? null,
         color: color ?? null,
         sortKey,
         isAllDay: isAllDay ?? null,
@@ -84,7 +92,7 @@ todoRouter.post("/", requireLogin, async (req, res) => {
 
     return res.status(201).json({
       msg: "todo added sucessfully",
-      todo: { ...todo, due },
+      todo,
     });
   } catch {
     console.error("Error while adding todo", error);
@@ -138,17 +146,9 @@ todoRouter.patch("/:id", requireLogin, async (req, res) => {
     if (patch.priority !== undefined) updateData.priority = patch.priority;
     if (patch.color !== undefined) updateData.color = patch.color;
     if (patch.isAllDay !== undefined) updateData.isAllDay = patch.isAllDay;
-    if (patch.due !== undefined) {
-      if (patch.due === null) {
-        updateData.dueOn = null;
-        updateData.dueAt = null;
-      } else {
-        const allDay = patch.isAllDay ?? existing.isAllDay ?? true;
-        updateData.dueOn = allDay ? patch.due : null;
-        updateData.dueAt = allDay ? null : patch.due;
-        updateData.isAllDay = allDay;
-      }
-    }
+    if (patch.dueDate !== undefined) updateData.dueDate = patch.dueDate;
+    if (patch.dueTime !== undefined) updateData.dueTime = patch.dueTime;
+
     if (patch.prevIndex !== undefined || patch.nextIndex !== undefined) {
       updateData.sortKey = generateSortKey(
         patch.prevIndex ?? null,

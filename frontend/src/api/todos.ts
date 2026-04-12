@@ -1,20 +1,23 @@
 import { api } from "@/utils/api";
 import type { Todo, TodoWithCompleteAtDateTime } from "@/types";
 import { DateTime } from "luxon";
+import type { UpdateTodo } from "@shiva200701/todotypes";
 
 export async function fetchTodos(): Promise<TodoWithCompleteAtDateTime[]> {
   const { todos }: { todos: Todo[] } = (await api.get("/api/v2/todo")).data;
 
   return todos.map((todo) => ({
     ...todo,
-    due: DateTime.fromISO(todo.due ?? ""),
+    dueDate: DateTime.fromISO(todo.dueDate ?? ""),
+    dueTime: DateTime.fromISO(todo.dueTime ?? ""),
   }));
 }
 
 export async function updateTodo(
-  data: TodoWithCompleteAtDateTime,
+  data: UpdateTodo,
+  id: number,
 ): Promise<TodoWithCompleteAtDateTime> {
-  const res = await api.put(`/api/v1/todo/${data.id}`, {
+  const res = await api.patch(`/api/v2/todo/${id}`, {
     ...data,
   });
 

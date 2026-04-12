@@ -2,24 +2,24 @@ import { fetchTodos } from "@/api";
 import { updateTodo } from "@/api/todos";
 import { todosQueryKeys } from "@/query-keys";
 import type { TodoWithCompleteAtDateTime } from "@/types";
+import type { UpdateTodo } from "@shiva200701/todotypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DateTime } from "luxon";
 
 const selectOverdueTodos = (todos: TodoWithCompleteAtDateTime[]) => {
   return todos.filter((todo) => {
-    console.log(todo.due?.toString());
-
     return (
       !todo.completed &&
-      todo.due &&
-      todo.due.startOf("day") < DateTime.now().startOf("day")
+      todo.dueDate &&
+      todo.dueDate.startOf("day") < DateTime.now().startOf("day")
     );
   });
 };
 
 const selectTodayTodos = (todos: TodoWithCompleteAtDateTime[]) =>
   todos.filter(
-    (t) => !t.completed && t.due && t.due.hasSame(DateTime.now(), "day"),
+    (t) =>
+      !t.completed && t.dueDate && t.dueDate.hasSame(DateTime.now(), "day"),
   );
 
 export function useTodos() {
@@ -35,7 +35,15 @@ export function useTodayTodos() {
     queryKey: todosQueryKeys.all,
     queryFn: fetchTodos,
     staleTime: 60000,
-    select: selectTodayTodos,
+    select: (data) => {
+      const todoTodos = selectTodayTodos(data);
+
+      return todoTodos.sort((a, b) => {
+        if (a.sortKey < b.sortKey) return -1;
+        if (a.sortKey > b.sortKey) return 1;
+        return 0;
+      });
+    },
   });
 }
 
@@ -52,7 +60,8 @@ export function useUpdateTodo() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: TodoWithCompleteAtDateTime) => updateTodo(data),
+    mutationFn: ({ data, id }: { data: UpdateTodo; id: number }) =>
+      updateTodo(data, id),
     onSuccess: (data: TodoWithCompleteAtDateTime) => {
       // queryClient.setQueryData<TodoWithCompleteAtDateTime[]>(
       //   todosQueryKeys.all,

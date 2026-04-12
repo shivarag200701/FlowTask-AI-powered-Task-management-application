@@ -17,6 +17,8 @@ import { isSortable } from "@dnd-kit/react/sortable";
 import { type UniqueIdentifier } from "@dnd-kit/abstract";
 import { Spinner } from "@/components/ui/spinner";
 import EmptyState from "../EmptyState";
+import type { UpdateTodo } from "@shiva200701/todotypes";
+import { fetchTodos } from "@/api";
 
 type DragEndPayload = Parameters<DragEndEvent>[0];
 
@@ -57,27 +59,40 @@ function BoardView() {
     const { source } = event.operation;
     const data = source?.data as TodoWithCompleteAtDateTime;
     if (source && isSortable(source)) {
-      const { group, initialIndex, index, initialGroup } = source;
-      console.log("source index", initialIndex);
-      console.log("target index", index);
+      const { group, initialIndex, index } = source;
 
       if (group === "Overdue" && dragInitialColumn.current !== "Overdue") {
         setItems(snapshot.current);
         return;
       }
 
-      setItems((items) => move(items, event));
-      // if(dragInitialColumn.current === group){}
+      const newItems = move(items, event);
+      setItems(newItems);
+
+      const column = items[group as string] ?? [];
+
+      const prevIndex = column[(index as number) - 1]?.sortKey ?? null;
+      const nextIndex = column[(index as number) + 1]?.sortKey ?? null;
+
+      const payload: UpdateTodo = { prevIndex, nextIndex };
+
       const today = DateTime.now();
-      mutate({
-        ...data,
-        due:
-          data.due?.set({
-            year: today.year,
-            month: today.month,
-            day: today.day,
-          }) ?? null,
-      });
+      console.log("todos", await fetchTodos());
+
+      payload.dueDate =
+        data.dueDate
+          ?.set({ year: today.year, month: today.month, day: today.day })
+          .toLocaleString() ?? null;
+
+      if (data.dueTime) {
+        payload.dueTime =
+          data.dueTime
+            ?.set({ year: today.year, month: today.month, day: today.day })
+            .toUTC()
+            .toISO() ?? null;
+      }
+
+      mutate({ id: data.id, data: payload });
     }
   }
 

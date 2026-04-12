@@ -111,8 +111,8 @@ model Todo {
   title         String
   description   String?
   priority      String?    
-  dueOn         DateTime? @db.Date
-  dueAt         DateTime? @db.Timestamp(3)
+  dueDate         DateTime? @db.Date
+  dueTime         DateTime? @db.Timestamp(3)
   user          User        @relation(fields: [userId], references: [id])
   userId        Int    
   completed     Boolean     @default(false)
