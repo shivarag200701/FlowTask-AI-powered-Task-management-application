@@ -8,7 +8,7 @@ import {
 import { move } from "@dnd-kit/helpers";
 import { useEffect, useRef, useState } from "react";
 import FormatDate from "@/utils/format-date";
-import DroppableColumn from "../../../../components/DroppableColumn";
+import DroppableColumn from "@/components/DroppableColumn";
 import DraggableTask from "@/components/DraggableTask";
 import { DateTime } from "luxon";
 import type { TodoWithCompleteAtDateTime } from "@/types";
@@ -16,7 +16,7 @@ import { useOverDueTodos } from "@/hooks/use-todos";
 import { isSortable } from "@dnd-kit/react/sortable";
 import { type UniqueIdentifier } from "@dnd-kit/abstract";
 import { Spinner } from "@/components/ui/spinner";
-import EmptyState from "../EmptyState";
+import EmptyState from "@/features/today/components/EmptyState";
 import type { UpdateTodo } from "@shiva200701/todotypes";
 
 type DragEndPayload = Parameters<DragEndEvent>[0];
@@ -58,7 +58,7 @@ function BoardView() {
     const { source } = event.operation;
     const data = source?.data as TodoWithCompleteAtDateTime;
     if (source && isSortable(source)) {
-      const { group, initialIndex, index } = source;
+      const { group, index } = source;
 
       if (group === "Overdue" && dragInitialColumn.current !== "Overdue") {
         setItems(snapshot.current);
@@ -67,10 +67,6 @@ function BoardView() {
 
       const newItems = move(items, event);
       setItems(newItems);
-
-      console.log("target index", index);
-      console.log("initial index", initialIndex);
-      console.log(items);
 
       const column = newItems[group as string] ?? [];
 
@@ -106,9 +102,9 @@ function BoardView() {
               dragInitialColumn.current = initialGroup;
             }
           }}
-          // onDragOver={(event) => {
-          //   setItems((items) => move(items, event));
-          // }}
+          onDragOver={(event) => {
+            setItems((items) => move(items, event));
+          }}
           onDragEnd={(event) => {
             handleDragEnd(event);
           }}
@@ -120,6 +116,7 @@ function BoardView() {
                 id={column}
                 className="flex flex-col gap-2.5"
                 numberofTodos={items.length}
+                dateLabel="Today"
               >
                 {items.map((todo, index) => (
                   <DraggableTask

@@ -81,7 +81,7 @@ function DisplaySettingsDropdown() {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
-      await api.put("/v1/user/user-preferences", {
+      await api.put("/api/v1/user/user-preferences", {
         taskDisplayPreferences: { viewMode: data.viewMode },
       });
       reset({ viewMode: data.viewMode });
