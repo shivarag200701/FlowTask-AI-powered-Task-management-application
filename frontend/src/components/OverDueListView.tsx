@@ -6,8 +6,10 @@ import {
 } from "@/components/ui/accordion";
 import { useOverDueTodos } from "@/hooks/use-todos";
 import { ChevronRight } from "lucide-react";
+import TaskList from "./TaskList";
 
 function OverViewListView() {
+  const { data: overdueTasks } = useOverDueTodos();
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="overdue">
@@ -21,28 +23,11 @@ function OverViewListView() {
           </div>
         </AccordionTrigger>
         <AccordionContent>
-          <List />
+          {overdueTasks &&
+            overdueTasks.map((todo) => <TaskList key={todo.id} todo={todo} />)}
         </AccordionContent>
       </AccordionItem>
     </Accordion>
-  );
-}
-
-function List() {
-  const { data: overdueTasks } = useOverDueTodos();
-
-  return (
-    <div className="flex flex-col">
-      {overdueTasks?.map((todo) => (
-        <div className="py-2 border-b flex gap-2 items-start h-15">
-          <div className="h-4 w-4 rounded-full border" />
-          <div className="flex flex-col">
-            <div>{todo.title}</div>
-            <div className="text-xs">{todo.dueDate}</div>
-          </div>
-        </div>
-      ))}
-    </div>
   );
 }
 
