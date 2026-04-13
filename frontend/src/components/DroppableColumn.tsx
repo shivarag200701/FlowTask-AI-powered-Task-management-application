@@ -48,7 +48,7 @@ function DroppableColumn({
   };
 
   return (
-    <div ref={ref} className={cn("p-1 w-[300px] h-[500px]", className)}>
+    <div ref={ref} className={cn("p-1 w-[300px] h-[700px]", className)}>
       <div className="text-sm font-bold text-left flex items-center gap-1">
         <span>{id}</span>
         {id !== "Overdue" && (
@@ -63,7 +63,7 @@ function DroppableColumn({
       </div>
       <div
         className={cn(
-          "scrollbar-none overflow-x-hidden overflow-y-auto scrollbar-w-2 hover:scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent flex flex-col items-center justify-center transition-all duration-50",
+          "scrollbar-none overflow-x-hidden overflow-y-auto scrollbar-thin hover:scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent flex flex-col items-center  transition-all duration-50",
           {
             "border-t": !atTop,
             "border-b": !atBottom,
