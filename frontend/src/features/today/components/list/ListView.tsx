@@ -14,7 +14,7 @@ function ListView() {
       {overdueTodos && <OverDueListView />}
       {todos && (
         <>
-          <div className="overflow-y-auto hover:scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent my-3">
+          <div className="overflow-y-auto hover:scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent mt-10 mb-5">
             <div className="flex gap-1 items-center font-bold">
               <div>{formatDate(DateTime.now())}</div>
               <div className="h-[2.5px] w-[2.5px] rounded-full bg-black" />

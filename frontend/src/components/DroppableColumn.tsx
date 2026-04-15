@@ -52,7 +52,7 @@ function DroppableColumn({
       <div className="text-sm font-bold text-left flex items-center gap-1">
         <span>{id}</span>
         {id !== "Overdue" && (
-          <div>
+          <div className="flex items-center gap-1">
             <div className="h-[2.5px] w-[2.5px] bg-black rounded-full" />
             <div>{dateLabel}</div>
           </div>
