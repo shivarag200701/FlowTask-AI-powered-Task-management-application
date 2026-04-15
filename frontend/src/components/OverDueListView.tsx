@@ -17,7 +17,7 @@ function OverViewListView() {
           <div className="flex gap-2 items-center">
             <ChevronRight
               size={25}
-              className="group-data-[state=open]:rotate-90 hover:cursor-pointer p-1 hover:bg-accent rounded-md absolute top-4 -left-10"
+              className="group-data-[state=open]:rotate-90 hover:cursor-pointer p-1 hover:bg-accent rounded-md absolute top-4 -left-8"
             />
             <div className="font-bold">Overdue</div>
           </div>

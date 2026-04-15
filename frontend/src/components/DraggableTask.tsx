@@ -1,10 +1,8 @@
 import { cn } from "@/lib/utils";
 import type { TodoWithCompleteAtDateTime } from "@/types";
 import { useSortable } from "@dnd-kit/react/sortable";
-import { Feedback } from "@dnd-kit/dom";
 import { Check } from "lucide-react";
 import { useUpdateTodo } from "@/hooks/use-todos";
-import { SortableKeyboardPlugin } from "@dnd-kit/dom/sortable";
 
 function DraggableTask({
   id,
@@ -51,7 +49,7 @@ function DraggableTask({
           <button
             className="border border-border rounded-full h-5 w-5 flex items-center justify-center group cursor-pointer"
             onClick={() => {
-              mutate({ ...todo, completed: !todo.completed });
+              mutate({ id, data: { completed: !todo.completed } });
             }}
           >
             <Check size={15} className="hidden group-hover:block" />
@@ -59,6 +57,7 @@ function DraggableTask({
           <div className="flex flex-col">
             <div className="text-md">{todo.title}</div>
             <div className="text-xs font-light">{todo.description}</div>
+            <div className="text-xs">{todo.dueDate}</div>
           </div>
         </div>
       </div>

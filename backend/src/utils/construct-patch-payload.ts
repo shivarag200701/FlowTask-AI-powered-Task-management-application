@@ -13,6 +13,7 @@ function constructPatchPayload(patch: UpdateTodo) {
   if (patch.isAllDay !== undefined) updateData.isAllDay = patch.isAllDay;
   if (patch.dueDate !== undefined) updateData.dueDate = patch.dueDate;
   if (patch.dueTime !== undefined) updateData.dueTime = patch.dueTime;
+  if (patch.completed !== undefined) updateData.completed = patch.completed;
 
   if (patch.prevIndex !== undefined || patch.nextIndex !== undefined) {
     updateData.sortKey = generateSortKey(

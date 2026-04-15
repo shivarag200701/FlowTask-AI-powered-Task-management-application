@@ -44,7 +44,7 @@ function BoardView() {
         [FormatDate(DateTime.now())]: todayTodos,
       };
     });
-  }, []);
+  }, [todayTodos, overdueTodos]);
 
   if (todayTodos == null || overdueTodos == null) return <Spinner />;
 

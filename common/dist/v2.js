@@ -15,5 +15,6 @@ export const CreateTodoSchema = z.object({
 export const UpdateTodoSchema = CreateTodoSchema.partial().extend({
     prevIndex: z.string().nullish(),
     nextIndex: z.string().nullish(),
+    completed: z.boolean().optional(),
 });
 //# sourceMappingURL=v2.js.map
