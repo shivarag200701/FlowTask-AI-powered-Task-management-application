@@ -56,7 +56,7 @@ function DraggableTask({
           content={<MoreOptionsDropDown />}
           sideOffset={2}
         >
-          <div className="absolute top-2 right-2 hover:bg-accent rounded-sm data-[state=open]:bg-accent hidden group-hover:block data-[state=open]:block">
+          <div className="absolute top-2 right-2 hover:bg-accent rounded-sm data-[state=open]:bg-accent lg:hidden group-hover:block data-[state=open]:block">
             <MoreHorizontal color="#808080" />
           </div>
         </Popover>
