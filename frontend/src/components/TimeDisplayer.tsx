@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
-import type { TodoWithCompleteAtDateTime } from "@/types";
-import type { DateTime } from "luxon";
+import { Calendar } from "lucide-react";
+import { DateTime } from "luxon";
 
 function TimeDisplayer({
   className,
@@ -9,8 +9,21 @@ function TimeDisplayer({
   className?: string;
   dueTime: DateTime;
 }) {
+  const today = DateTime.now();
+
+  const sameDay = today.hasSame(dueTime, "day");
+
   const time = dueTime.toFormat("h:mm a");
-  return <div className={cn("", className)}>{time}</div>;
+  return (
+    <div
+      className={cn("flex gap-2 items-center", className, {
+        "text-green-500": sameDay,
+      })}
+    >
+      <Calendar size={13} />
+      {time}
+    </div>
+  );
 }
 
 export default TimeDisplayer;

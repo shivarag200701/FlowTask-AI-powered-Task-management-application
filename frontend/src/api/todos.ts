@@ -22,3 +22,7 @@ export async function updateTodo(
 
   return res.data.todo;
 }
+
+export async function deleteTodo(id: number) {
+  await api.delete(`/api/v2/todo/${id}`);
+}

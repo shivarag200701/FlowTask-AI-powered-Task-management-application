@@ -1,5 +1,4 @@
-import { fetchTodos } from "@/api";
-import { updateTodo } from "@/api/todos";
+import { deleteTodo, fetchTodos, updateTodo } from "@/api";
 import { todosQueryKeys } from "@/query-keys";
 import type { TodoWithCompleteAtDateTime } from "@/types";
 import type { UpdateTodo } from "@shiva200701/todotypes";
@@ -72,6 +71,17 @@ export function useUpdateTodo() {
       //     return oldData.map((todo) => (todo.id === data.id ? data : todo));
       //   },
       // );
+      queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
+    },
+  });
+}
+
+export function useDeleteTodo() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => deleteTodo(id),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
     },
   });

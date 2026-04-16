@@ -1,6 +1,6 @@
-import { useUpdateTodo } from "@/hooks/use-todos";
+import { useDeleteTodo, useUpdateTodo } from "@/hooks/use-todos";
 import type { TodoWithCompleteAtDateTime } from "@/types";
-import { Check, MoreVertical } from "lucide-react";
+import { AlarmClock, Check, MoreVertical } from "lucide-react";
 import { useState } from "react";
 import MoreOptionsDropDown from "./MoreOptionsDropDown";
 import { Popover } from "./ui/popover";
@@ -14,9 +14,9 @@ function TaskList({
   todo: TodoWithCompleteAtDateTime;
   className?: string;
 }) {
-  const { mutate } = useUpdateTodo();
+  const { mutate: updateTodo } = useUpdateTodo();
+  const { mutate: deleteTodo } = useDeleteTodo();
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
-  console.log("has time", todo.dueTime?.isValid);
 
   return (
     <div
@@ -30,23 +30,28 @@ function TaskList({
         <button
           className="h-5 w-5 border border-border/50 rounded-full bg-gradient-to-t from-neutral-100 hover:bg-none hover:cursor-pointer hover:border-border hover:ring-3 hover:ring-border/30 flex items-center justify-center group/circle"
           onClick={() => {
-            mutate({ id: todo.id, data: { completed: !todo.completed } });
+            updateTodo({ id: todo.id, data: { completed: !todo.completed } });
           }}
         >
           <Check size={15} className="group-hover/circle:block hidden" />
         </button>
-        <div className="flex flex-col gap-1">
-          <h3 className="text-md font-semibold">{todo.title}</h3>
-          <span className="text-xs">{todo.description}</span>
-          {todo.dueTime?.isValid && (
-            <TimeDisplayer className="text-xs" dueTime={todo.dueTime} />
-          )}
+        <div className="flex flex-col gap-[1.5px]">
+          <div className="text-md">{todo.title}</div>
+          <span className="text-[12px] font-light text-secondary-foreground">
+            {todo.description}
+          </span>
+          <div className="flex items-center gap-2">
+            {todo.dueTime?.isValid && (
+              <TimeDisplayer className="text-xs" dueTime={todo.dueTime} />
+            )}
+            {todo.dueTime?.isValid && <AlarmClock size={13} />}
+          </div>
         </div>
       </div>
       <Popover
         openPopover={isMoreOptionsOpen}
         setOpenPopover={setIsMoreOptionsOpen}
-        content={<MoreOptionsDropDown />}
+        content={<MoreOptionsDropDown onDelete={() => deleteTodo(todo.id)} />}
         sideOffset={2}
       >
         <div className="hover:bg-accent rounded-sm data-[state=open]:bg-accent lg:hidden group-hover:block data-[state=open]:block">

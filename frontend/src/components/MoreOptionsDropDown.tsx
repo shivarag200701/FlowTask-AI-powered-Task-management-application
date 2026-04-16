@@ -24,18 +24,24 @@ const Options: Option[] = [
   },
 ];
 
-function MoreOptionsDropDown() {
+function MoreOptionsDropDown({ onDelete }: { onDelete: () => void }) {
   const { isMobile } = useMediaQuery();
   useHotkeys("mod+backspace", () => {
-    window.alert("you pressed ⌘ + backspace");
+    onDelete();
   });
 
   return (
     <div className="w-full sm:w-[200px] flex flex-col text-sm sm:text-[13px] font-light">
       {Options.map((option) => (
-        <div
+        <button
           key={option.id}
           className="flex items-center justify-between border-b last:border-none px-3 py-2 hover:bg-accent hover:cursor-pointer"
+          type="button"
+          onClick={() => {
+            if (option.id === "delete") {
+              onDelete();
+            }
+          }}
         >
           <div
             className="flex gap-5 sm:gap-2 items-center"
@@ -51,7 +57,7 @@ function MoreOptionsDropDown() {
               <Kbd className="text-[10px]">{option.hotKey}</Kbd>
             )}
           </div>
-        </div>
+        </button>
       ))}
     </div>
   );
