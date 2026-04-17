@@ -4,6 +4,7 @@ import type { TodoWithCompleteAtDateTime } from "@/types";
 import type { UpdateTodo } from "@shiva200701/todotypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DateTime } from "luxon";
+import { toast } from "sonner";
 
 const selectOverdueTodos = (todos: TodoWithCompleteAtDateTime[]) => {
   return todos.filter((todo) => {
@@ -63,15 +64,9 @@ export function useUpdateTodo() {
   return useMutation({
     mutationFn: ({ data, id }: { data: UpdateTodo; id: number }) =>
       updateTodo(data, id),
-    onSuccess: (data: TodoWithCompleteAtDateTime) => {
-      // queryClient.setQueryData<TodoWithCompleteAtDateTime[]>(
-      //   todosQueryKeys.all,
-      //   (oldData) => {
-      //     if (!oldData) return oldData;
-      //     return oldData.map((todo) => (todo.id === data.id ? data : todo));
-      //   },
-      // );
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
+      toast.success("Todo updated");
     },
   });
 }
@@ -83,6 +78,7 @@ export function useDeleteTodo() {
     mutationFn: (id: number) => deleteTodo(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
+      toast.success("Todo deleted");
     },
   });
 }

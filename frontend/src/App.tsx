@@ -5,9 +5,8 @@ import Signup from "@/pages/Signup";
 import { AuthProvider } from "@/context/AuthContext";
 import ProtectedRoute from "@/routes/ProtectedRoute";
 import { SignupProvider } from "@/context/SingupContext";
-import Dashboard from "@/pages/Dashboard";
 import Landing from "@/pages/Landing";
-import { Toaster } from "sonner";
+import { Toaster } from "./components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { useEffect } from "react";
@@ -97,7 +96,7 @@ function App() {
               </SignupProvider>
             </AuthProvider>
           </BrowserRouter>
-          <Toaster />
+          <Toaster closeButton />
         </ThemeProvider>
       </QueryClientProvider>
     </div>

@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import type { TodoWithCompleteAtDateTime } from "@/types";
 import { useSortable } from "@dnd-kit/react/sortable";
 import { Check, MoreHorizontal } from "lucide-react";
-import { useUpdateTodo } from "@/hooks/use-todos";
+import { useDeleteTodo, useUpdateTodo } from "@/hooks/use-todos";
 import { Popover } from "./ui/popover";
 import { useState } from "react";
 import MoreOptionsDropDown from "./MoreOptionsDropDown";
@@ -22,7 +22,9 @@ function DraggableTask({
 }) {
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
 
-  const { mutate } = useUpdateTodo();
+  const { mutate: updateTodo } = useUpdateTodo();
+  const { mutate: deleteTodo } = useDeleteTodo();
+
   const { ref, isDragging } = useSortable({
     id,
     index,
@@ -53,7 +55,13 @@ function DraggableTask({
         <Popover
           openPopover={isMoreOptionsOpen}
           setOpenPopover={setIsMoreOptionsOpen}
-          content={<MoreOptionsDropDown />}
+          content={
+            <MoreOptionsDropDown
+              onDelete={() => {
+                deleteTodo(todo.id);
+              }}
+            />
+          }
           sideOffset={2}
         >
           <div className="absolute top-2 right-2 hover:bg-accent rounded-sm data-[state=open]:bg-accent lg:hidden group-hover:block data-[state=open]:block">
@@ -64,7 +72,7 @@ function DraggableTask({
           <button
             className="border border-border rounded-full h-5 w-5 flex items-center justify-center group/check-mark cursor-pointer"
             onClick={() => {
-              mutate({ id, data: { completed: !todo.completed } });
+              updateTodo({ id, data: { completed: !todo.completed } });
             }}
           >
             <Check size={15} className="hidden group-hover/check-mark:block" />

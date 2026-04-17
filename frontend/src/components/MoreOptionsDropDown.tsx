@@ -10,25 +10,27 @@ type Option = {
   iconColor?: string;
   label: string;
   hotKey?: string;
+  onClick?: () => void;
 };
-
-const Options: Option[] = [
-  { id: "edit", icon: <Edit3Icon />, label: "Edit", hotKey: "⌘ E" },
-  { id: "reminders", icon: <AlarmClock />, label: "Reminders" },
-  {
-    id: "delete",
-    icon: <Trash2 />,
-    iconColor: "#FF0000",
-    label: "Delete",
-    hotKey: "⌘ ⌫",
-  },
-];
 
 function MoreOptionsDropDown({ onDelete }: { onDelete: () => void }) {
   const { isMobile } = useMediaQuery();
-  useHotkeys("mod+backspace", () => {
-    onDelete();
-  });
+
+  const Options: Option[] = [
+    { id: "edit", icon: <Edit3Icon />, label: "Edit", hotKey: "⌘ E" },
+    { id: "reminders", icon: <AlarmClock />, label: "Reminders" },
+    {
+      id: "delete",
+      icon: <Trash2 />,
+      iconColor: "#FF0000",
+      label: "Delete",
+      hotKey: "⌘ ⌫",
+      onClick: onDelete,
+    },
+  ];
+
+  //move to a seprate hook for abstraction
+  useHotkeys("mod+backspace", onDelete);
 
   return (
     <div className="w-full sm:w-[200px] flex flex-col text-sm sm:text-[13px] font-light">
@@ -37,11 +39,7 @@ function MoreOptionsDropDown({ onDelete }: { onDelete: () => void }) {
           key={option.id}
           className="flex items-center justify-between border-b last:border-none px-3 py-2 hover:bg-accent hover:cursor-pointer"
           type="button"
-          onClick={() => {
-            if (option.id === "delete") {
-              onDelete();
-            }
-          }}
+          onClick={option.onClick}
         >
           <div
             className="flex gap-5 sm:gap-2 items-center"
