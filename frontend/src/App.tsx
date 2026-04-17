@@ -96,7 +96,14 @@ function App() {
               </SignupProvider>
             </AuthProvider>
           </BrowserRouter>
-          <Toaster closeButton />
+          <Toaster
+            closeButton
+            toastOptions={{
+              classNames: {
+                actionButton: "!bg-primary",
+              },
+            }}
+          />
         </ThemeProvider>
       </QueryClientProvider>
     </div>

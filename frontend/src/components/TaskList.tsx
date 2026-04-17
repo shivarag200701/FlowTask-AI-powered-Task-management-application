@@ -64,10 +64,12 @@ function TaskList({
             }}
           />
         }
-        sideOffset={2}
+        sideOffset={5}
+        side="bottom"
+        align="end"
       >
-        <div className="hover:bg-accent rounded-sm data-[state=open]:bg-accent lg:hidden group-hover:block data-[state=open]:block">
-          <MoreVertical color="#808080" />
+        <div className="hover:bg-accent border rounded-lg data-[state=open]:bg-accent data-[state=open]:border-neutral-500 lg:hidden group-hover:block data-[state=open]:block transition-all duration-200 data-[state=open]:ring-neutral-200 data-[state=open]:ring-4 p-1">
+          <MoreVertical color="#808080" strokeWidth={2.5} size={20} />
         </div>
       </Popover>
       {DeleteConfirmModal}

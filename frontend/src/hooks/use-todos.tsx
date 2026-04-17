@@ -1,10 +1,15 @@
 import { deleteTodo, fetchTodos, updateTodo } from "@/api";
 import { todosQueryKeys } from "@/query-keys";
-import type { TodoWithCompleteAtDateTime } from "@/types";
+import {
+  toastMessages,
+  type moveTodo,
+  type TodoWithCompleteAtDateTime,
+} from "@/types";
 import type { UpdateTodo } from "@shiva200701/todotypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DateTime } from "luxon";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 const selectOverdueTodos = (todos: TodoWithCompleteAtDateTime[]) => {
   return todos.filter((todo) => {
@@ -62,11 +67,25 @@ export function useUpdateTodo() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ data, id }: { data: UpdateTodo; id: number }) =>
-      updateTodo(data, id),
-    onSuccess: () => {
+    mutationFn: ({
+      data,
+      id,
+    }: {
+      data: UpdateTodo;
+      id: number;
+      type?: moveTodo;
+    }) => updateTodo(data, id),
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
-      toast.success("Todo updated");
+
+      if (variables.type) {
+        toast.message(toastMessages[variables.type], {
+          action: {
+            label: "Undo",
+            onClick: () => console.log("undo"),
+          },
+        });
+      }
     },
   });
 }

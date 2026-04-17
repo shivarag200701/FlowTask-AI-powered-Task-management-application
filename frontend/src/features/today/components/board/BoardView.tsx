@@ -87,7 +87,12 @@ function BoardView() {
             .toISO() ?? null;
       }
 
-      mutate({ id: data.id, data: payload });
+      if (group === dragInitialColumn.current) {
+        mutate({ id: data.id, data: payload, type: "updateOrder" });
+        return;
+      }
+
+      mutate({ id: data.id, data: payload, type: "updateDate" });
     }
   }
 

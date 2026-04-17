@@ -32,4 +32,11 @@ export type TodoWithCompleteAtDateTime = Omit<Todo, "dueTime"> & {
   dueTime: DateTime | null;
 };
 
+export type moveTodo = "updateDate" | "updateOrder";
+
+export const toastMessages: Record<moveTodo, string> = {
+  updateOrder: "Order Changed",
+  updateDate: "Date updated",
+};
+
 export type ViewMode = "list" | "board" | "calendar";
