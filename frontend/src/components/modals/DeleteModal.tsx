@@ -1,3 +1,4 @@
+//This is a mockup global modal used as a reference , can be deleted later when mock up is not needed
 import {
   useCallback,
   useMemo,

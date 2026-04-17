@@ -1,5 +1,5 @@
 //needc to implement a overDue section
-import { ModalContext } from "@/components/modals/ModalProvider";
+import { useConfirmModal } from "@/components/modals/ConfirmModal";
 import TaskDisplaySelector from "@/components/TaskDisplaySelector";
 import { Button } from "@/components/ui/button";
 import { useTaskDisplayContext } from "@/context/TaskDisplayContext";
@@ -17,7 +17,20 @@ interface TodayProps {
 function Today({ className }: TodayProps) {
   const { viewMode } = useTaskDisplayContext();
 
-  const { setShowDeleteTodoModal } = useContext(ModalContext);
+  const {
+    setShowConfirmModal: setShowDeleteConfirmModal,
+    confirmModal: DeleteConfirmModal,
+  } = useConfirmModal({
+    title: "Delete this Modal",
+    onConfirm() {
+      throw new Error("there is an error");
+      return new Promise((r) => setTimeout(r, 2000));
+    },
+    onCancel() {
+      setShowDeleteConfirmModal(false);
+    },
+    variant: "destructive",
+  });
 
   return (
     <div
@@ -31,7 +44,7 @@ function Today({ className }: TodayProps) {
         <PageContentHeader title="Today" controls={<TaskDisplaySelector />} />
         <Button
           onClick={() => {
-            setShowDeleteTodoModal(true);
+            setShowDeleteConfirmModal(true);
           }}
         >
           Toast
@@ -40,6 +53,7 @@ function Today({ className }: TodayProps) {
         {viewMode === "list" && <ListView />}
         {viewMode === "board" && <BoardView />}
       </div>
+      {DeleteConfirmModal}
     </div>
   );
 }
