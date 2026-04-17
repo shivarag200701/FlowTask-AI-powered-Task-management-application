@@ -14,7 +14,7 @@ type ConfirmModalProps = {
   cancelText?: string;
   confirmText?: string;
   onConfirm: () => Promise<void> | void;
-  onCancel: () => void;
+  onCancel?: () => void;
   variant: "secondary" | "destructive";
 };
 
@@ -49,13 +49,16 @@ function ConfirmModal({
 
   return (
     <Modal showModal={showConfirmModal} setShowModal={setShowConfirmModal}>
-      <div className="p-4">
-        <div>{title}</div>
+      <div className="p-4 flex  flex-col items-start justify-center gap-1">
+        <div className="text-lg font-semibold">{title}</div>
         <div>{description}</div>
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-end gap-2 w-full mt-4">
           <Button
             variant="secondary"
-            onClick={onCancel}
+            onClick={() => {
+              onCancel?.();
+              setShowConfirmModal(false);
+            }}
             className="w-fit"
             Initial={cancelText}
           />

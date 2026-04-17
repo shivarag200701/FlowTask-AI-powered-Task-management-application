@@ -1,4 +1,4 @@
-import { useDeleteTodo, useUpdateTodo } from "@/hooks/use-todos";
+import { useUpdateTodo } from "@/hooks/use-todos";
 import type { TodoWithCompleteAtDateTime } from "@/types";
 import { AlarmClock, Check, MoreVertical } from "lucide-react";
 import { useState } from "react";
@@ -6,6 +6,7 @@ import MoreOptionsDropDown from "./MoreOptionsDropDown";
 import { Popover } from "./ui/popover";
 import { cn } from "@/lib/utils";
 import TimeDisplayer from "./TimeDisplayer";
+import { useDeleteTodoConfirmModal } from "@/hooks/use-delete-todo-confirm-modal";
 
 function TaskList({
   todo,
@@ -15,8 +16,12 @@ function TaskList({
   className?: string;
 }) {
   const { mutate: updateTodo } = useUpdateTodo();
-  const { mutate: deleteTodo } = useDeleteTodo();
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
+
+  const {
+    setShowConfirmModal: setShowDeleteConfirmModal,
+    confirmModal: DeleteConfirmModal,
+  } = useDeleteTodoConfirmModal(todo);
 
   return (
     <div
@@ -28,7 +33,7 @@ function TaskList({
     >
       <div className="flex gap-4 items-start justify-start">
         <button
-          className="h-5 w-5 border border-border/50 rounded-full bg-gradient-to-t from-neutral-100 hover:bg-none hover:cursor-pointer hover:border-border hover:ring-3 hover:ring-border/30 flex items-center justify-center group/circle"
+          className="h-5 w-5 border border-border/50 rounded-full bg-linear-to-t from-neutral-100 hover:bg-none hover:cursor-pointer hover:border-border hover:ring-3 hover:ring-border/30 flex items-center justify-center group/circle"
           onClick={() => {
             updateTodo({ id: todo.id, data: { completed: !todo.completed } });
           }}
@@ -51,13 +56,21 @@ function TaskList({
       <Popover
         openPopover={isMoreOptionsOpen}
         setOpenPopover={setIsMoreOptionsOpen}
-        content={<MoreOptionsDropDown onDelete={() => deleteTodo(todo.id)} />}
+        content={
+          <MoreOptionsDropDown
+            onDelete={() => {
+              setIsMoreOptionsOpen(false);
+              setShowDeleteConfirmModal(true);
+            }}
+          />
+        }
         sideOffset={2}
       >
         <div className="hover:bg-accent rounded-sm data-[state=open]:bg-accent lg:hidden group-hover:block data-[state=open]:block">
           <MoreVertical color="#808080" />
         </div>
       </Popover>
+      {DeleteConfirmModal}
     </div>
   );
 }

@@ -2,10 +2,11 @@ import { cn } from "@/lib/utils";
 import type { TodoWithCompleteAtDateTime } from "@/types";
 import { useSortable } from "@dnd-kit/react/sortable";
 import { Check, MoreHorizontal } from "lucide-react";
-import { useDeleteTodo, useUpdateTodo } from "@/hooks/use-todos";
+import { useUpdateTodo } from "@/hooks/use-todos";
 import { Popover } from "./ui/popover";
 import { useState } from "react";
 import MoreOptionsDropDown from "./MoreOptionsDropDown";
+import { useDeleteTodoConfirmModal } from "@/hooks/use-delete-todo-confirm-modal";
 
 function DraggableTask({
   id,
@@ -23,7 +24,11 @@ function DraggableTask({
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
 
   const { mutate: updateTodo } = useUpdateTodo();
-  const { mutate: deleteTodo } = useDeleteTodo();
+
+  const {
+    setShowConfirmModal: setShowDeleteConfirmModal,
+    confirmModal: DeleteConfirmModal,
+  } = useDeleteTodoConfirmModal(todo);
 
   const { ref, isDragging } = useSortable({
     id,
@@ -58,7 +63,8 @@ function DraggableTask({
           content={
             <MoreOptionsDropDown
               onDelete={() => {
-                deleteTodo(todo.id);
+                setIsMoreOptionsOpen(false);
+                setShowDeleteConfirmModal(true);
               }}
             />
           }
@@ -83,6 +89,7 @@ function DraggableTask({
             <div className="text-xs">{todo.dueDate}</div>
           </div>
         </div>
+        {DeleteConfirmModal}
       </div>
     </>
   );
