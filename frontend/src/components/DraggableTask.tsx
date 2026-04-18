@@ -1,12 +1,14 @@
 import { cn } from "@/lib/utils";
 import type { TodoWithCompleteAtDateTime } from "@/types";
 import { useSortable } from "@dnd-kit/react/sortable";
-import { Check, MoreHorizontal } from "lucide-react";
+import { AlarmClock, Check, MoreHorizontal } from "lucide-react";
 import { useUpdateTodo } from "@/hooks/use-todos";
 import { Popover } from "./ui/popover";
 import { useState } from "react";
 import MoreOptionsDropDown from "./MoreOptionsDropDown";
 import { useDeleteTodoConfirmModal } from "@/hooks/use-delete-todo-confirm-modal";
+import TimeDisplayer from "./TimeDisplayer";
+import completed from "@/assets/completed.mp3";
 
 function DraggableTask({
   id,
@@ -78,6 +80,7 @@ function DraggableTask({
           <button
             className="border border-border rounded-full h-5 w-5 flex items-center justify-center group/check-mark cursor-pointer"
             onClick={() => {
+              new Audio(completed).play();
               updateTodo({ id, data: { completed: !todo.completed } });
             }}
           >
@@ -86,7 +89,12 @@ function DraggableTask({
           <div className="flex flex-col">
             <div className="text-md">{todo.title}</div>
             <div className="text-xs font-light">{todo.description}</div>
-            <div className="text-xs">{todo.dueDate}</div>
+            <div className="flex items-center gap-2 pt-2">
+              {todo.dueTime?.isValid && (
+                <TimeDisplayer className="text-xs" dueTime={todo.dueTime} />
+              )}
+              {todo.dueTime?.isValid && <AlarmClock size={13} />}
+            </div>
           </div>
         </div>
         {DeleteConfirmModal}

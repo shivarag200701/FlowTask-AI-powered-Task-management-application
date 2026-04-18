@@ -18,6 +18,8 @@ import { type UniqueIdentifier } from "@dnd-kit/abstract";
 import { Spinner } from "@/components/ui/spinner";
 import EmptyState from "@/features/today/components/EmptyState";
 import type { UpdateTodo } from "@shiva200701/todotypes";
+import TimeDisplayer from "@/components/TimeDisplayer";
+import { AlarmClock } from "lucide-react";
 
 type DragEndPayload = Parameters<DragEndEvent>[0];
 
@@ -160,6 +162,12 @@ function Overlay({ todos }: { todos: TodoWithCompleteAtDateTime[] }) {
               <div className="flex flex-col">
                 <div className="text-md">{todo.title}</div>
                 <div className="text-xs font-light">{todo.description}</div>
+                <div className="flex items-center gap-2 pt-2">
+                  {todo.dueTime?.isValid && (
+                    <TimeDisplayer className="text-xs" dueTime={todo.dueTime} />
+                  )}
+                  {todo.dueTime?.isValid && <AlarmClock size={13} />}
+                </div>
               </div>
             </div>
           </div>
