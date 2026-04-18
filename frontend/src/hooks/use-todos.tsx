@@ -75,17 +75,45 @@ export function useUpdateTodo() {
       id: number;
       type?: moveTodo;
     }) => updateTodo(data, id),
-    onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
+    onMutate: async (newTodo) => {
+      await queryClient.cancelQueries({ queryKey: todosQueryKeys.all });
+      const previousTodos: TodoWithCompleteAtDateTime[] | undefined =
+        queryClient.getQueryData(todosQueryKeys.all);
 
-      if (variables.type) {
-        toast.message(toastMessages[variables.type], {
+      const oldTodo = previousTodos?.find((t) => t.id === newTodo.id);
+
+      queryClient.setQueryData(todosQueryKeys.all, newTodo.data);
+
+      if (newTodo.type) {
+        toast.success(toastMessages[newTodo.type], {
           action: {
             label: "Undo",
-            onClick: () => console.log("undo"),
+            onClick: () => {
+              queryClient.setQueryData(todosQueryKeys.all, previousTodos);
+              updateTodo(
+                {
+                  sortKey: oldTodo?.sortKey,
+                  dueDate: oldTodo?.dueDate,
+                },
+                newTodo.id,
+              );
+            },
           },
         });
       }
+      return { previousTodos };
+    },
+    onSettled: (_data, _variables) => {
+      queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
+
+      // if (variables.type) {
+      //   toast.success(toastMessages[variables.type], {
+      //     action: {
+      //       label: "Undo",
+      //       onClick: () => console.log("undo"),
+      //     },
+      //   });
+      // }
     },
   });
 }

@@ -29,6 +29,7 @@ export declare const UpdateTodoSchema: z.ZodObject<{
     prevIndex: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     nextIndex: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     completed: z.ZodOptional<z.ZodBoolean>;
+    sortKey: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 export type CreateTodo = z.infer<typeof CreateTodoSchema>;
 export type UpdateTodo = z.infer<typeof UpdateTodoSchema>;

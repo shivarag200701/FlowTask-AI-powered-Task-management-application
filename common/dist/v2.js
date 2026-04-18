@@ -16,5 +16,6 @@ export const UpdateTodoSchema = CreateTodoSchema.partial().extend({
     prevIndex: z.string().nullish(),
     nextIndex: z.string().nullish(),
     completed: z.boolean().optional(),
+    sortKey: z.string().optional(),
 });
 //# sourceMappingURL=v2.js.map

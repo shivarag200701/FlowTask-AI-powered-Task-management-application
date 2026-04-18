@@ -1,6 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import { type UpdateTodo } from "@shiva200701/todotypes";
 import { generateSortKey } from "./todo-ordering.js";
+import path from "path";
 
 function constructPatchPayload(patch: UpdateTodo) {
   const updateData: Prisma.TodoUpdateInput = {};
@@ -15,7 +16,9 @@ function constructPatchPayload(patch: UpdateTodo) {
   if (patch.dueTime !== undefined) updateData.dueTime = patch.dueTime;
   if (patch.completed !== undefined) updateData.completed = patch.completed;
 
-  if (patch.prevIndex !== undefined || patch.nextIndex !== undefined) {
+  if (patch.sortKey !== undefined) {
+    updateData.sortKey = patch.sortKey;
+  } else if (patch.prevIndex !== undefined || patch.nextIndex !== undefined) {
     updateData.sortKey = generateSortKey(
       patch.prevIndex ?? null,
       patch.nextIndex ?? null,
