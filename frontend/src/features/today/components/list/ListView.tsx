@@ -5,10 +5,16 @@ import { DateTime } from "luxon";
 import formatDate from "@/utils/format-date";
 import OverDueListView from "@/components/OverDueListView";
 import TaskList from "@/components/TaskList";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { CirclePlus } from "lucide-react";
+import InlineTaskForm from "@/components/InlineTaskForm";
 
 function ListView() {
   const { data: todos } = useTodayTodos();
   const { data: overdueTodos } = useOverDueTodos();
+  const [isAddTodoOpen, setIsAddTodo] = useState(false);
+
   return (
     <PageWidthWrapper className="grid pt-6 lg:pt-1">
       {overdueTodos && <OverDueListView />}
@@ -26,6 +32,22 @@ function ListView() {
           {todos.map((todo) => (
             <TaskList key={todo.id} todo={todo} />
           ))}
+          <div className="mt-5">
+            {!isAddTodoOpen ? (
+              <Button
+                variant="outline"
+                className="flex justify-start border-none shadow-none hover:text-primary"
+                onClick={() => {
+                  setIsAddTodo(true);
+                }}
+              >
+                <CirclePlus />
+                Add Task
+              </Button>
+            ) : (
+              <InlineTaskForm />
+            )}
+          </div>
         </>
       )}
       {!todos && !overdueTodos && <EmptyState />}

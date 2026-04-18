@@ -78,13 +78,13 @@ function DraggableTask({
         </Popover>
         <div className="flex gap-2">
           <button
-            className="border border-border rounded-full h-5 w-5 flex items-center justify-center group/check-mark cursor-pointer"
+            className="h-5 w-5 border border-border/50 rounded-full bg-linear-to-t from-neutral-100 hover:bg-none hover:cursor-pointer hover:border-border hover:ring-3 hover:ring-border/30 flex items-center justify-center group/circle"
             onClick={() => {
               new Audio(completed).play();
               updateTodo({ id, data: { completed: !todo.completed } });
             }}
           >
-            <Check size={15} className="hidden group-hover/check-mark:block" />
+            <Check size={15} className="hidden group-hover/circle:block" />
           </button>
           <div className="flex flex-col">
             <div className="text-md">{todo.title}</div>

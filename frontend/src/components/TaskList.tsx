@@ -7,6 +7,8 @@ import { Popover } from "./ui/popover";
 import { cn } from "@/lib/utils";
 import TimeDisplayer from "./TimeDisplayer";
 import { useDeleteTodoConfirmModal } from "@/hooks/use-delete-todo-confirm-modal";
+import completed from "@/assets/completed.mp3";
+import { Button } from "./ui/button";
 
 function TaskList({
   todo,
@@ -35,6 +37,7 @@ function TaskList({
         <button
           className="h-5 w-5 border border-border/50 rounded-full bg-linear-to-t from-neutral-100 hover:bg-none hover:cursor-pointer hover:border-border hover:ring-3 hover:ring-border/30 flex items-center justify-center group/circle"
           onClick={() => {
+            new Audio(completed).play();
             updateTodo({ id: todo.id, data: { completed: !todo.completed } });
           }}
         >
@@ -68,9 +71,9 @@ function TaskList({
         side="bottom"
         align="end"
       >
-        <div className="hover:bg-accent border rounded-lg data-[state=open]:bg-accent data-[state=open]:border-neutral-500 lg:hidden group-hover:block data-[state=open]:block transition-all duration-200 data-[state=open]:ring-neutral-200 data-[state=open]:ring-4 p-1">
+        <Button variant="custom" className="w-fit">
           <MoreVertical color="#808080" strokeWidth={2.5} size={20} />
-        </div>
+        </Button>
       </Popover>
       {DeleteConfirmModal}
     </div>
