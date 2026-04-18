@@ -9,7 +9,6 @@ import type { UpdateTodo } from "@shiva200701/todotypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DateTime } from "luxon";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 
 const selectOverdueTodos = (todos: TodoWithCompleteAtDateTime[]) => {
   return todos.filter((todo) => {
@@ -94,6 +93,7 @@ export function useUpdateTodo() {
                 {
                   sortKey: oldTodo?.sortKey,
                   dueDate: oldTodo?.dueDate,
+                  dueTime: oldTodo?.dueTime?.toISO(),
                 },
                 newTodo.id,
               );
@@ -103,17 +103,14 @@ export function useUpdateTodo() {
       }
       return { previousTodos };
     },
-    onSettled: (_data, _variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
+    },
 
-      // if (variables.type) {
-      //   toast.success(toastMessages[variables.type], {
-      //     action: {
-      //       label: "Undo",
-      //       onClick: () => console.log("undo"),
-      //     },
-      //   });
-      // }
+    onError: (_err, _newTodo, context) => {
+      const queryClient = useQueryClient();
+      toast.error("Error updating the todo");
+      queryClient.setQueryData(todosQueryKeys.all, context?.previousTodos);
     },
   });
 }
