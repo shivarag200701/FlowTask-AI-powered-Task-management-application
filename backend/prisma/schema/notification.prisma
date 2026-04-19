@@ -1,0 +1,30 @@
+model Notifications {
+  id            String      @id @default(cuid())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String      
+
+  type          String  //"for now only task_remainder"
+  title         String
+  message       String
+
+  //Related entites
+  todoId        String?
+  todo          Todo?    @relation(fields: [todoId],references: [id],onDelete: Cascade)
+
+  // Delivery status
+  channels        String[] // ["EMAIL", "PUSH", "IN_APP"]
+  status          String   @default("SCHEDULED") // SCHEDULED,SENT,FAILED
+  sentAt          DateTime?
+  readAt          DateTime?
+  schedulesFor    DateTime?   // For redundance
+  
+  // Metadata
+  metadata        Json?    // Additional data
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+
+  @@index([userId,readAt])      //useful for geting all unread notifications for a user
+  @@index([status])             //useful for the pending notification jobs to be added in the queue
+}

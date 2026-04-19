@@ -10,7 +10,7 @@ import {
 } from "react";
 import PriorityDisplayer from "@/components/pill-buttons/PriorityDisplay";
 import ReminderDisplayer from "@/components/pill-buttons/ReminderDisplayer";
-import TagsDisplayer from "@/components/pill-buttons/TagsDisplayer";
+import TagsSelector from "@/components/pill-buttons/TagsSelector";
 
 type Inputs = {
   taskName: string;
@@ -86,7 +86,7 @@ function InlineTaskForm({
               content={<div>Reminder</div>}
             >
               <div>
-                <TagsDisplayer />
+                <TagsSelector />
               </div>
             </Popover>
           </div>

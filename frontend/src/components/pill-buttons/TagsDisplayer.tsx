@@ -5,7 +5,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { ReactNode } from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 //add tags and colour code them
 function TagsDisplayer() {
@@ -27,7 +27,7 @@ function TagsToolTip({
     <div>
       {tags.length > 1 ? (
         <Tooltip>
-          <TooltipTrigger>{children}</TooltipTrigger>
+          <TooltipTrigger asChild>{children}</TooltipTrigger>
           <TooltipContent sideOffset={8}>
             <div className="flex flex-wrap gap-1.5 p-2">
               {tags.map((tag) => (
@@ -43,7 +43,11 @@ function TagsToolTip({
   );
 }
 
-function TagButton({ tag, plus }: { tag: string; plus?: number }) {
+function TagButton({
+  tag,
+  plus,
+  ...props
+}: { tag: string; plus?: number } & ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <Button
       variant="outline"
@@ -51,6 +55,7 @@ function TagButton({ tag, plus }: { tag: string; plus?: number }) {
       icon={<Tag />}
       size="sm"
       type="button"
+      {...props}
     >
       {tag}
     </Button>

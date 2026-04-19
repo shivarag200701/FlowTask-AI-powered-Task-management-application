@@ -1,0 +1,21 @@
+model Todo {
+  id            String         @id @default(cuid())
+  title         String
+  description   String?
+  priority      String?    
+  dueDate       String?
+  dueTime         DateTime? @db.Timestamp(3)
+  user          User        @relation(fields: [userId], references: [id])
+  userId        String    
+  completed     Boolean     @default(false)
+  completedAt   DateTime?
+  color         String?
+  isAllDay      Boolean?     @default(true)
+  sortKey       String
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime? @updatedAt
+  
+
+  notifications Notifications[]
+}

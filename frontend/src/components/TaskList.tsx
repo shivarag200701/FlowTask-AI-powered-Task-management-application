@@ -9,6 +9,7 @@ import TimeDisplayer from "./TimeDisplayer";
 import { useDeleteTodoConfirmModal } from "@/hooks/use-delete-todo-confirm-modal";
 import completed from "@/assets/completed.mp3";
 import { Button } from "./ui/button";
+import TagsDisplayer from "./pill-buttons/TagsDisplayer";
 
 function TaskList({
   todo,
@@ -56,27 +57,31 @@ function TaskList({
           </div>
         </div>
       </div>
-      <Popover
-        openPopover={isMoreOptionsOpen}
-        setOpenPopover={setIsMoreOptionsOpen}
-        content={
-          <MoreOptionsDropDown
-            onDelete={() => {
-              setIsMoreOptionsOpen(false);
-              setShowDeleteConfirmModal(true);
-            }}
+      <div className="flex gap-2">
+        <TagsDisplayer />
+        <Popover
+          openPopover={isMoreOptionsOpen}
+          setOpenPopover={setIsMoreOptionsOpen}
+          content={
+            <MoreOptionsDropDown
+              onDelete={() => {
+                setIsMoreOptionsOpen(false);
+                setShowDeleteConfirmModal(true);
+              }}
+            />
+          }
+          sideOffset={5}
+          side="bottom"
+          align="end"
+        >
+          <Button
+            variant="outline"
+            className="w-fit"
+            icon={<MoreVertical color="#808080" strokeWidth={2.5} />}
+            size="sm"
           />
-        }
-        sideOffset={5}
-        side="bottom"
-        align="end"
-      >
-        <Button
-          variant="custom"
-          className="w-fit"
-          icon={<MoreVertical color="#808080" strokeWidth={2.5} />}
-        />
-      </Popover>
+        </Popover>
+      </div>
       {DeleteConfirmModal}
     </div>
   );
