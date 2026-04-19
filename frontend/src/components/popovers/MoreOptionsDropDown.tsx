@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Kbd } from "../ui/kbd";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { cn } from "@/utils/cn";
 
 type Option = {
   id: string;
@@ -13,7 +14,13 @@ type Option = {
   onClick?: () => void;
 };
 
-function MoreOptionsDropDown({ onDelete }: { onDelete: () => void }) {
+function MoreOptionsDropDown({
+  onDelete,
+  className,
+}: {
+  onDelete: () => void;
+  className?: string;
+}) {
   const { isMobile } = useMediaQuery();
 
   const editOptions: Option[] = [
@@ -36,7 +43,12 @@ function MoreOptionsDropDown({ onDelete }: { onDelete: () => void }) {
   useHotkeys("mod+backspace", onDelete);
 
   return (
-    <div className="w-full sm:w-[200px] flex flex-col text-sm sm:text-[13px] font-light">
+    <div
+      className={cn(
+        `w-full sm:w-[200px] flex flex-col text-sm sm:text-[13px] font-light`,
+        className,
+      )}
+    >
       <div className="p-2 w-full flex flex-col border-b">
         {editOptions.map((option) => (
           <button
@@ -66,13 +78,13 @@ function MoreOptionsDropDown({ onDelete }: { onDelete: () => void }) {
         {taskOptions.map((option) => (
           <button
             key={option.id}
-            className="flex items-center justify-between  px-3 py-2 hover:bg-accent hover:cursor-pointer rounded-md tranistion-all duration-100"
+            className={`flex items-center justify-between  px-3 py-2 ${option.id === "delete" ? "hover:bg-red-500 hover:text-white" : "hover:bg-accent"}  hover:cursor-pointer rounded-md tranistion-all duration-100 group`}
             type="button"
             onClick={option.onClick}
           >
             <div
-              className="flex gap-5 sm:gap-2 items-center"
-              style={{ color: option.iconColor }}
+              className={`flex gap-5 sm:gap-2 items-center text-red-500 ${option.id === "delete" ? "group-hover:text-white" : ""}`}
+              // style={{ color: option.iconColor }}
             >
               <div className="[&_svg]:size-5 sm:[&_svg]:size-4">
                 {option.icon}

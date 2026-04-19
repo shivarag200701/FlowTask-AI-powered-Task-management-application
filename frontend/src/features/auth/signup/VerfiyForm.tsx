@@ -24,7 +24,7 @@ const VerfiyForm = () => {
     setPending(true);
 
     try {
-      await api.post("v1/user/signup/verify", {
+      await api.post("/api/v1/user/signup/verify", {
         email,
         password,
         code,

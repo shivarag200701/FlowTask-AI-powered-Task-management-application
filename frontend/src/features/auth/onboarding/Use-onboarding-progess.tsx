@@ -14,7 +14,7 @@ const UseOnboardingProgess = () => {
   });
 
   const saveStep = async (step: OnboardingStep) => {
-    await api.post("/v1/user/onboarding/progess", {
+    await api.post("/api/v1/user/onboarding/progess", {
       step,
     });
   };

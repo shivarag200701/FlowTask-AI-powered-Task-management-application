@@ -40,7 +40,7 @@ const SignUpForm = () => {
         return;
       }
       try {
-        await api.post("/v1/user/signup/send-otp", data);
+        await api.post("/api/v1/user/signup/send-otp", data);
         setEmail(getValues("email"));
         setPassword(getValues("password"));
         setStep("verify");

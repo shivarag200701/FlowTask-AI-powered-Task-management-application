@@ -26,7 +26,7 @@ const SignedInHint = () => {
 
   const logout = async () => {
     setLoading(true);
-    await api.post("/v1/user/logout");
+    await api.post("/api/v1/user/logout");
   };
 
   return (
