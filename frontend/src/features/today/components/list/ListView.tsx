@@ -13,7 +13,7 @@ import InlineTaskForm from "@/components/InlineTaskForm";
 function ListView() {
   const { data: todos } = useTodayTodos();
   const { data: overdueTodos } = useOverDueTodos();
-  const [isAddTodoOpen, setIsAddTodo] = useState(false);
+  const [isAddTodoOpen, setIsAddTodoOpen] = useState(false);
 
   return (
     <PageWidthWrapper className="grid pt-6 lg:pt-1">
@@ -38,14 +38,14 @@ function ListView() {
                 variant="outline"
                 className="flex justify-start border-none shadow-none hover:text-primary"
                 onClick={() => {
-                  setIsAddTodo(true);
+                  setIsAddTodoOpen(true);
                 }}
               >
                 <CirclePlus />
                 Add Task
               </Button>
             ) : (
-              <InlineTaskForm />
+              <InlineTaskForm setIsOpen={setIsAddTodoOpen} />
             )}
           </div>
         </>

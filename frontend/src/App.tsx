@@ -18,6 +18,7 @@ import PublicRoute from "@/routes/PublicRoute";
 import AppLayout from "./layouts/AppLayout";
 import Today from "./pages/Today";
 import Upcoming from "./pages/Upcoming";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const queryClient = new QueryClient();
 
@@ -68,34 +69,36 @@ function App() {
           defaultTheme="dark"
           themes={["dark", "light"]}
         >
-          <BrowserRouter>
-            <AuthProvider>
-              <SignupProvider>
-                <Routes>
-                  <Route element={<PublicRoute />}>
-                    <Route path="/" element={<Landing />} />
-                    <Route path="/signin" element={<SignIn />} />
-                    <Route path="/signup" element={<Signup />} />
-                  </Route>
-                  <Route element={<ProtectedRoute />}>
-                    <Route path="/onboarding/welcome" element={<Welcome />} />
-                    <Route
-                      path="/onboarding/user-profile"
-                      element={<UserProfile />}
-                    />
-                    <Route
-                      path="/onboarding/completed"
-                      element={<Completed />}
-                    />
-                    <Route element={<AppLayout />}>
-                      <Route path="/app/today" element={<Today />} />
-                      <Route path="/app/upcoming" element={<Upcoming />} />
+          <TooltipProvider>
+            <BrowserRouter>
+              <AuthProvider>
+                <SignupProvider>
+                  <Routes>
+                    <Route element={<PublicRoute />}>
+                      <Route path="/" element={<Landing />} />
+                      <Route path="/signin" element={<SignIn />} />
+                      <Route path="/signup" element={<Signup />} />
                     </Route>
-                  </Route>
-                </Routes>
-              </SignupProvider>
-            </AuthProvider>
-          </BrowserRouter>
+                    <Route element={<ProtectedRoute />}>
+                      <Route path="/onboarding/welcome" element={<Welcome />} />
+                      <Route
+                        path="/onboarding/user-profile"
+                        element={<UserProfile />}
+                      />
+                      <Route
+                        path="/onboarding/completed"
+                        element={<Completed />}
+                      />
+                      <Route element={<AppLayout />}>
+                        <Route path="/app/today" element={<Today />} />
+                        <Route path="/app/upcoming" element={<Upcoming />} />
+                      </Route>
+                    </Route>
+                  </Routes>
+                </SignupProvider>
+              </AuthProvider>
+            </BrowserRouter>
+          </TooltipProvider>
           <Toaster
             closeButton
             toastOptions={{

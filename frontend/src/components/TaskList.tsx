@@ -2,7 +2,7 @@ import { useUpdateTodo } from "@/hooks/use-todos";
 import type { TodoWithCompleteAtDateTime } from "@/types";
 import { AlarmClock, Check, MoreVertical } from "lucide-react";
 import { useState } from "react";
-import MoreOptionsDropDown from "./MoreOptionsDropDown";
+import MoreOptionsDropDown from "./popovers/MoreOptionsDropDown";
 import { Popover } from "./ui/popover";
 import { cn } from "@/lib/utils";
 import TimeDisplayer from "./TimeDisplayer";
@@ -71,9 +71,11 @@ function TaskList({
         side="bottom"
         align="end"
       >
-        <Button variant="custom" className="w-fit">
-          <MoreVertical color="#808080" strokeWidth={2.5} size={20} />
-        </Button>
+        <Button
+          variant="custom"
+          className="w-fit"
+          icon={<MoreVertical color="#808080" strokeWidth={2.5} />}
+        />
       </Popover>
       {DeleteConfirmModal}
     </div>

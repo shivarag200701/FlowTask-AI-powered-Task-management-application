@@ -1,13 +1,29 @@
 import type { TodoWithCompleteAtDateTime } from "@/types";
-import { useForm } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { Button } from "./ui/button";
+import { Popover } from "./ui/popover";
+import {
+  useCallback,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
+import PriorityDisplayer from "@/components/pill-buttons/PriorityDisplay";
+import ReminderDisplayer from "@/components/pill-buttons/ReminderDisplayer";
+import TagsDisplayer from "@/components/pill-buttons/TagsDisplayer";
 
 type Inputs = {
   taskName: string;
   description?: string;
 };
 
-function InlineTaskForm({ todo }: { todo?: TodoWithCompleteAtDateTime }) {
+function InlineTaskForm({
+  todo,
+  setIsOpen,
+}: {
+  todo?: TodoWithCompleteAtDateTime;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
+}) {
   const {
     register,
     handleSubmit,
@@ -19,10 +35,18 @@ function InlineTaskForm({ todo }: { todo?: TodoWithCompleteAtDateTime }) {
     },
   });
 
+  const [isPriorityDropDownOpen, setIsPriorityDropDownOpen] = useState(false);
+  const [isReminderDropDownOpen, setIsReminderDropDownOpen] = useState(false);
+  const [isTagsDropDownOpen, setIsTagsDropDownOpen] = useState(false);
+
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    console.log(data);
+  };
+
   return (
     <div className="rounded-lg border border-border  min-h-15">
-      <div className="border-b border-border/50  px-3 py-2">
-        <form>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="border-b border-border/50  px-3 py-2">
           <input
             className="font-semibold w-full border-none focus:outline-none"
             style={{ fontSize: "14px" }}
@@ -37,17 +61,55 @@ function InlineTaskForm({ todo }: { todo?: TodoWithCompleteAtDateTime }) {
             placeholder="Description"
             {...register("description")}
           />
-        </form>
-      </div>
-      <div className="w-full p-3 flex justify-end gap-2">
-        <Button variant="secondary" className="w-fit" Initial="Cancel" />
-        <Button
-          variant="default"
-          className="w-fit"
-          Initial="Add Task"
-          disabled={!isValid}
-        />
-      </div>
+          <div className="flex gap-4 mt-4">
+            <Popover
+              openPopover={isPriorityDropDownOpen}
+              setOpenPopover={setIsPriorityDropDownOpen}
+              content={<div>HI there fools</div>}
+            >
+              <div>
+                <PriorityDisplayer priority={todo?.priority ?? null} />
+              </div>
+            </Popover>
+            <Popover
+              openPopover={isReminderDropDownOpen}
+              setOpenPopover={setIsReminderDropDownOpen}
+              content={<div>Reminder</div>}
+            >
+              <div>
+                <ReminderDisplayer remimder={todo?.reminder} />
+              </div>
+            </Popover>
+            <Popover
+              openPopover={isTagsDropDownOpen}
+              setOpenPopover={setIsTagsDropDownOpen}
+              content={<div>Reminder</div>}
+            >
+              <div>
+                <TagsDisplayer />
+              </div>
+            </Popover>
+          </div>
+        </div>
+        <div className="w-full p-3 flex justify-end gap-2">
+          <Button
+            variant="secondary"
+            className="w-fit"
+            Initial="Cancel"
+            onClick={() => {
+              setIsOpen(false);
+            }}
+            type="button"
+          />
+          <Button
+            variant="default"
+            className="w-fit"
+            Initial="Add Task"
+            disabled={!isValid}
+            type="submit"
+          />
+        </div>
+      </form>
     </div>
   );
 }

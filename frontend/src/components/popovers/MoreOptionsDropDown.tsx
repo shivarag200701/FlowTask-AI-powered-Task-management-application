@@ -1,7 +1,7 @@
 import { AlarmClock, Edit3Icon, LucideTrash } from "lucide-react";
 import type { ReactNode } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
-import { Kbd } from "./ui/kbd";
+import { Kbd } from "../ui/kbd";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
 type Option = {

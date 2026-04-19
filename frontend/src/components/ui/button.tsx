@@ -1,6 +1,6 @@
 import { cn } from "@/utils/cn";
 import { Spinner } from "@/components/ui/spinner";
-import type { ReactNode } from "react";
+import type { ReactNode, Ref } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 const buttonVariants = cva(
@@ -18,7 +18,7 @@ const buttonVariants = cva(
         ghost: "hover:bg-neutral-300 ",
         link: "text-primary underline-offset-4 hover:underline",
         custom:
-          "hover:bg-accent border rounded-lg data-[state=open]:bg-accent data-[state=open]:border-neutral-500 lg:hidden group-hover:block data-[state=open]:block transition-all duration-200 data-[state=open]:ring-neutral-200 data-[state=open]:ring-4 p-2!",
+          "hover:bg-accent border rounded-lg data-[state=open]:bg-accent data-[state=open]:border-neutral-500 lg:hidden group-hover:block data-[state=open]:block transition-all duration-200 data-[state=open]:ring-neutral-200 data-[state=open]:ring-4 p-2! ",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
