@@ -56,6 +56,7 @@ export const CreateTodoSchema = z.object({
   color: z.string().nullish(),
   reminder: z.boolean().default(false),
   isAllDay: z.boolean().optional(), // send true only, if not sent, the database defaults to false
+  tags: z.array(z.string()).optional(),
 });
 
 export const UpdateTodoSchema = CreateTodoSchema.partial().extend({

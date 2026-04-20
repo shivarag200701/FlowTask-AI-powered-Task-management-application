@@ -69,6 +69,7 @@ export declare const CreateTodoSchema: z.ZodObject<{
     color: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     reminder: z.ZodDefault<z.ZodBoolean>;
     isAllDay: z.ZodOptional<z.ZodBoolean>;
+    tags: z.ZodOptional<z.ZodArray<z.ZodString>>;
 }, z.core.$strip>;
 export declare const UpdateTodoSchema: z.ZodObject<{
     title: z.ZodOptional<z.ZodString>;
@@ -83,6 +84,7 @@ export declare const UpdateTodoSchema: z.ZodObject<{
     color: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
     reminder: z.ZodOptional<z.ZodDefault<z.ZodBoolean>>;
     isAllDay: z.ZodOptional<z.ZodOptional<z.ZodBoolean>>;
+    tags: z.ZodOptional<z.ZodOptional<z.ZodArray<z.ZodString>>>;
     prevIndex: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     nextIndex: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     completed: z.ZodOptional<z.ZodBoolean>;
