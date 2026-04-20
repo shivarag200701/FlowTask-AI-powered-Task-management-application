@@ -3,7 +3,6 @@ import { CreateTodoSchema, UpdateTodoSchema } from "@shiva200701/todotypes";
 import { requireLogin } from "../../middleware.js";
 import { generateSortKey } from "../../utils/todo-ordering.js";
 import prisma from "../../db/index.js";
-import { Prisma } from "@prisma/client";
 import constructPatchPayload from "../../utils/construct-patch-payload.js";
 
 const todoRouter = Router();
@@ -61,6 +60,7 @@ todoRouter.post("/", requireLogin, async (req, res) => {
     color,
     reminder,
     isAllDay,
+    tags,
   } = data;
 
   try {
@@ -85,6 +85,14 @@ todoRouter.post("/", requireLogin, async (req, res) => {
         color: color ?? null,
         sortKey,
         isAllDay: isAllDay ?? null,
+        tags: {
+          create:
+            tags?.map((tagId) => ({
+              tag: {
+                connect: { id: tagId },
+              },
+            })) ?? [],
+        },
       },
     });
 
@@ -100,6 +108,7 @@ todoRouter.post("/", requireLogin, async (req, res) => {
   }
 });
 
+//fix string id for todo
 todoRouter.patch("/:id", requireLogin, async (req, res) => {
   const userId = req.session.userId;
   if (!userId) {
@@ -118,7 +127,7 @@ todoRouter.patch("/:id", requireLogin, async (req, res) => {
   }
   try {
     const existing = await prisma.todo.findFirst({
-      where: { id: parseInt(idParam), userId },
+      where: { id: idParam, userId },
     });
 
     if (!existing) {
@@ -139,8 +148,18 @@ todoRouter.patch("/:id", requireLogin, async (req, res) => {
     const updateData = constructPatchPayload(patch);
 
     const updatedTodo = await prisma.todo.update({
-      where: { id: parseInt(idParam), userId },
-      data: updateData,
+      where: { id: idParam, userId },
+      data: {
+        ...updateData,
+        ...(patch.tags !== undefined && {
+          tags: {
+            deleteMany: {},
+            create: patch.tags.map((tagId) => ({
+              tag: { connect: { id: tagId } },
+            })),
+          },
+        }),
+      },
     });
 
     return res.status(200).json({
@@ -175,7 +194,7 @@ todoRouter.delete("/:id", requireLogin, async (req, res) => {
 
   try {
     await prisma.todo.delete({
-      where: { id: parseInt(idParam) },
+      where: { id: idParam },
     });
 
     return res.status(200).json({

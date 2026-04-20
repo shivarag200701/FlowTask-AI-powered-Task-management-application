@@ -12,6 +12,7 @@ import {
   PieChart,
   Settings2,
   SquareTerminal,
+  Tag,
 } from "lucide-react";
 
 import { NavMain } from "@/components/app-sidebar/NavMain";
@@ -24,6 +25,8 @@ import {
   SidebarFooter,
   SidebarHeader,
 } from "@/components/ui/sidebar";
+import { Button } from "../ui/button";
+import { useNavigate } from "react-router-dom";
 
 // This is sample data.
 const data = {
@@ -156,12 +159,25 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const navigate = useNavigate();
   return (
     <Sidebar collapsible="offcanvas" {...props} className="p-2 bg-neutral-200">
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
-      <SidebarContent></SidebarContent>
+      <SidebarContent>
+        <div className="p-2">
+          <Button
+            Initial="Tags"
+            icon={<Tag />}
+            variant="ghost"
+            className="flex justify-start"
+            onClick={() => {
+              navigate("app/tags");
+            }}
+          />
+        </div>
+      </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
       </SidebarFooter>

@@ -1,7 +1,7 @@
 import type { DateTime } from "luxon";
 
 export interface User {
-  id: number;
+  id: string;
   name: string | null;
   email: string | null;
   isPasswordSet: boolean;
@@ -12,7 +12,7 @@ export interface User {
 }
 
 export interface Todo {
-  id: number;
+  id: string;
   title: string;
   description: string;
   priority: "high" | "medium" | "low" | null;

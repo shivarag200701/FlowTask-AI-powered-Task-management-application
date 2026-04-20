@@ -19,6 +19,7 @@ import AppLayout from "./layouts/AppLayout";
 import Today from "./pages/Today";
 import Upcoming from "./pages/Upcoming";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import Tags from "./pages/Tags";
 
 const queryClient = new QueryClient();
 
@@ -92,6 +93,7 @@ function App() {
                       <Route element={<AppLayout />}>
                         <Route path="/app/today" element={<Today />} />
                         <Route path="/app/upcoming" element={<Upcoming />} />
+                        <Route path="/app/tags" element={<Tags />} />
                       </Route>
                     </Route>
                   </Routes>
