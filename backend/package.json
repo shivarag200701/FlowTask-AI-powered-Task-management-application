@@ -8,7 +8,8 @@
     "migrate": "prisma migrate deploy",
     "build": "prisma migrate deploy && npx prisma generate --schema=./prisma/schema.prisma && tsc -b",
     "start": "node dist/index.js",
-    "email:preview": "email dev --dir src/services/email/templates --port 3001"
+    "email:preview": "email dev --dir src/services/email/templates --port 3001",
+    "dev": "nodemon"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +21,7 @@
     "@prisma/client": "^6.19.0",
     "@react-email/components": "1.0.8",
     "@react-email/render": "2.0.4",
-    "@shiva200701/todotypes": "^3.0.9",
+    "@shiva200701/todotypes": "^3.0.11",
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
@@ -58,6 +59,8 @@
     "@types/node-cron": "^3.0.11",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "react-email": "^5.2.9"
+    "nodemon": "^3.1.14",
+    "react-email": "^5.2.9",
+    "tsx": "^4.21.0"
   }
 }

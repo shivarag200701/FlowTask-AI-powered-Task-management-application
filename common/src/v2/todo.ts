@@ -1,0 +1,34 @@
+import z from "zod";
+
+export const CreateTodoSchema = z.object({
+  title: z.string().min(1, "title must be atleast one character"),
+  description: z
+    .string()
+    .min(1, "description must be atleast one character")
+    .optional(),
+  priority: z.enum(["high", "medium", "low"]).nullable(),
+  dueDate: z.string().nullable(), //all todos with date will have this
+  dueTime: z.string().nullable(), //only timed todos have this
+  color: z.string().nullish(),
+  reminder: z.boolean().default(false),
+  isAllDay: z.boolean().optional(), // send true only, if not sent, the database defaults to false
+  tags: z
+    .union([z.string(), z.array(z.string())])
+    .transform((v) => (Array.isArray(v) ? v : v.split(",")))
+    .optional()
+    .meta({
+      id: "todo_tag_ids",
+      title: "tag ids",
+      description: "ids of tags associated with the todo",
+    }),
+});
+
+export const UpdateTodoSchema = CreateTodoSchema.partial().extend({
+  prevIndex: z.string().nullish(),
+  nextIndex: z.string().nullish(),
+  completed: z.boolean().optional(),
+  sortKey: z.string().optional(),
+});
+
+export type CreateTodo = z.infer<typeof CreateTodoSchema>;
+export type UpdateTodo = z.infer<typeof UpdateTodoSchema>;

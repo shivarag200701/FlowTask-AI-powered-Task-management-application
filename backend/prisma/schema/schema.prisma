@@ -29,6 +29,7 @@ model User {
   oauthAccounts   OAuthAccount[]
   preference      UserPrefrence?
   notfications    Notifications[]
+  tags            Tag[]
   
   
 }

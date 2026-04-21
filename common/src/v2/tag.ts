@@ -44,27 +44,20 @@ export const CreateTagSchema = z.object({
 
 export const UpdateTagSchema = CreateTagSchema.partial();
 
-export const CreateTodoSchema = z.object({
-  title: z.string().min(1, "title must be atleast one character"),
-  description: z
-    .string()
-    .min(1, "description must be atleast one character")
-    .optional(),
-  priority: z.enum(["high", "medium", "low"]).nullable(),
-  dueDate: z.string().nullable(), //all todos with date will have this
-  dueTime: z.string().nullable(), //only timed todos have this
-  color: z.string().nullish(),
-  reminder: z.boolean().default(false),
-  isAllDay: z.boolean().optional(), // send true only, if not sent, the database defaults to false
-  tags: z.array(z.string()).optional(),
+//todo add sortOrder and orderBy
+export const GetTagQuerySchema = z.object({
+  search: z.string().optional().meta({
+    id: "search_filter",
+    title: "Search filter",
+    description: "The search term to filter the tags by.",
+  }),
+  ids: z
+    .union([z.string(), z.array(z.string())])
+    .transform((v) => (Array.isArray(v) ? v : v.split(",")))
+    .optional()
+    .meta({
+      id: "tag_ids_filter",
+      title: "tag ids",
+      description: "ids of tags associated with the todo",
+    }),
 });
-
-export const UpdateTodoSchema = CreateTodoSchema.partial().extend({
-  prevIndex: z.string().nullish(),
-  nextIndex: z.string().nullish(),
-  completed: z.boolean().optional(),
-  sortKey: z.string().optional(),
-});
-
-export type CreateTodo = z.infer<typeof CreateTodoSchema>;
-export type UpdateTodo = z.infer<typeof UpdateTodoSchema>;
