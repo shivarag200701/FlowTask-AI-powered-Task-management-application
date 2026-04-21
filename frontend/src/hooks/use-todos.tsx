@@ -71,7 +71,7 @@ export function useUpdateTodo() {
       id,
     }: {
       data: UpdateTodo;
-      id: number;
+      id: string;
       type?: moveTodo;
     }) => updateTodo(data, id),
     onMutate: async (newTodo) => {

@@ -37,7 +37,7 @@ export const CreateTagSchema = z.object({
 });
 export const UpdateTagSchema = CreateTagSchema.partial();
 //todo add sortOrder and orderBy
-export const GetTagQuerySchema = z.object({
+export const GetTagsQuerySchema = z.object({
     search: z.string().optional().meta({
         id: "search_filter",
         title: "Search filter",

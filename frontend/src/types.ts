@@ -1,4 +1,9 @@
+import {
+  GetTagQuerySchema,
+  type ResourceColorsEnum,
+} from "@shiva200701/todotypes";
 import type { DateTime } from "luxon";
+import type z from "zod";
 
 export interface User {
   id: string;
@@ -27,6 +32,15 @@ export interface Todo {
   createdAt: string | null;
   reminder?: boolean;
 }
+
+export interface Tag {
+  id: string;
+  name: string;
+  color: ResourceColorsEnum;
+  _count: { todos: number };
+}
+
+export type TagsQuery = z.infer<typeof GetTagQuerySchema>;
 
 export type TodoWithCompleteAtDateTime = Omit<Todo, "dueTime"> & {
   dueTime: DateTime | null;

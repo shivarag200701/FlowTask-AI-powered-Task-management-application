@@ -56,7 +56,7 @@ export declare const UpdateTagSchema: z.ZodObject<{
         gray: "gray";
     }>>>;
 }, z.core.$strip>;
-export declare const GetTagQuerySchema: z.ZodObject<{
+export declare const GetTagsQuerySchema: z.ZodObject<{
     search: z.ZodOptional<z.ZodString>;
     ids: z.ZodOptional<z.ZodPipe<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>, z.ZodTransform<string[], string | string[]>>>;
 }, z.core.$strip>;

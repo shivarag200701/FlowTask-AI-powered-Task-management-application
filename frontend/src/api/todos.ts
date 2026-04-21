@@ -14,7 +14,7 @@ export async function fetchTodos(): Promise<TodoWithCompleteAtDateTime[]> {
 
 export async function updateTodo(
   data: UpdateTodo,
-  id: number,
+  id: string,
 ): Promise<TodoWithCompleteAtDateTime> {
   const res = await api.patch(`/api/v2/todo/${id}`, {
     ...data,

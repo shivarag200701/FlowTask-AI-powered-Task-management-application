@@ -3,7 +3,7 @@ import { requireLogin } from "../../middleware.js";
 import { createId } from "../../utils/create-id.js";
 import {
   CreateTagSchema,
-  GetTagQuerySchema,
+  GetTagsQuerySchema,
   RESOURCE_COLORS,
 } from "@shiva200701/todotypes";
 import randomValue from "../../utils/random-value.js";
@@ -21,7 +21,7 @@ tagRouter.get("/", requireLogin, async (req, res) => {
     });
   }
 
-  const { data, success, error } = GetTagQuerySchema.safeParse(req.query);
+  const { data, success, error } = GetTagsQuerySchema.safeParse(req.query);
 
   if (!success) {
     return res.status(400).json({
