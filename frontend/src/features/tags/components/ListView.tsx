@@ -1,9 +1,7 @@
 import PageWidthWrapper from "@/layouts/PageWidthWrapper";
 import TagCard from "./TagCard";
 import { useSearchParams } from "react-router-dom";
-import { useEffect, useState } from "react";
 import { useTags } from "@/hooks/use-tags";
-import InputBox from "@/features/InputBox";
 import { SearchBoxPersisted } from "@/components/SearchBox";
 
 function ListView() {
@@ -14,15 +12,17 @@ function ListView() {
   return (
     <PageWidthWrapper className="grid pt-6">
       <SearchBoxPersisted />
-      {tags &&
-        tags.map((tag) => (
-          <div
-            className="flex flex-col border-t border-l border-r border-border/70  first:rounded-t-xl last:border-b last:rounded-b-xl"
-            key={tag.id}
-          >
-            <TagCard tag={tag} />
-          </div>
-        ))}
+      <div>
+        {tags &&
+          tags.map((tag) => (
+            <div
+              className="flex flex-col first:border-t border-b border-x border-border/70  first:rounded-t-xl  last:rounded-b-xl"
+              key={tag.id}
+            >
+              <TagCard tag={tag} />
+            </div>
+          ))}
+      </div>
     </PageWidthWrapper>
   );
 }

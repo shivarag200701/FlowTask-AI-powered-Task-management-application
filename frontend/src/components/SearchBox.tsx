@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { CircleXIcon, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useSearchParams } from "react-router-dom";
@@ -29,14 +29,11 @@ export function SearchBox({
 
   useHotkeys(
     ["slash", "escape"],
-    (e, handler) => {
+    (_, handler) => {
       if (inputRef.current) {
-        const target = e.target as HTMLElement;
-
         switch (handler.keys?.join("")) {
           case "slash":
-            if (target.tagName !== "INPUT" && target.tagName !== "TEXTAREA")
-              inputRef.current.focus();
+            inputRef.current.focus();
             break;
           case "escape":
             console.log("esacpe here");
@@ -48,17 +45,28 @@ export function SearchBox({
     { preventDefault: true, enableOnFormTags: true },
   );
   return (
-    <div className="relative mb-5">
+    <div className="relative mb-5 w-[250px]">
       <div className="absolute inset-y-0 pl-4 flex items-center">
         <Search className="w-4 h-5 text-neutral-400" strokeWidth={1} />
       </div>
+      {value && (
+        <div
+          className="absolute inset-y-0 right-4 flex items-center cursor-pointer"
+          onClick={() => {
+            setValue("");
+            onChangeDebounced?.("");
+          }}
+        >
+          <CircleXIcon className="w-4 h-4 text-neutral-900" strokeWidth={2} />
+        </div>
+      )}
       <input
         onChange={(e) => {
           debounce(e.target.value);
           setValue(e.target.value);
         }}
         value={value}
-        className="border border-border p-2 rounded-md px-10 placeholder:text-neutral-400 w-full sm:text-sm focuse:border-none focus:ring-4 focus:border-neutral-500 focus:ring-neutral-200 transition-all"
+        className="border border-border p-2 rounded-md px-10 placeholder:text-neutral-400 w-full sm:text-sm focuse:border-none focus:ring-4 focus:border-neutral-500 focus:ring-neutral-200 transition-all outline-none"
         placeholder="search..."
         ref={inputRef}
       />
