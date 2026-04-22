@@ -1,10 +1,13 @@
-import ListView from "@/features/tags/components/ListView";
+import { useAddEditTagModal } from "@/components/modals/AddEditTagModal";
+import ListView, {
+  TagsPageControls,
+} from "@/features/tags/components/ListView";
 import PageContentHeader from "@/layouts/PageContentHeader";
 
 function Tags() {
   return (
     <div>
-      <PageContentHeader title="Tags" controls={<div>Hi there</div>} />
+      <PageContentHeader title="Tags" controls={<TagsPageControls />} />
       <ListView />
     </div>
   );

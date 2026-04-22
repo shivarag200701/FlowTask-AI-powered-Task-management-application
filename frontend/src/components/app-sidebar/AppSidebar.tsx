@@ -15,8 +15,6 @@ import {
   Tag,
 } from "lucide-react";
 
-import { NavMain } from "@/components/app-sidebar/NavMain";
-import { NavProjects } from "@/components/app-sidebar/NavProjects";
 import { NavUser } from "@/components/app-sidebar/nav-user";
 import { TeamSwitcher } from "@/components/app-sidebar/team-switcher";
 import {
@@ -27,6 +25,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
+import TodayCalendarIcon from "../TodayCalendarIcon";
 
 // This is sample data.
 const data = {
@@ -169,11 +168,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <div className="p-2">
           <Button
             Initial="Tags"
-            icon={<Tag />}
+            icon={<Tag strokeWidth={1.5} />}
             variant="ghost"
             className="flex justify-start"
             onClick={() => {
               navigate("app/tags");
+            }}
+          />
+          <Button
+            Initial="Today"
+            variant="ghost"
+            icon={<TodayCalendarIcon />}
+            className="flex justify-start"
+            onClick={() => {
+              navigate("app/today");
             }}
           />
         </div>

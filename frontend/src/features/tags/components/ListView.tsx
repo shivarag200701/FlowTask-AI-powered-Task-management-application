@@ -3,6 +3,7 @@ import TagCard from "./TagCard";
 import { useSearchParams } from "react-router-dom";
 import { useTags } from "@/hooks/use-tags";
 import { SearchBoxPersisted } from "@/components/SearchBox";
+import { useAddEditTagModal } from "@/components/modals/AddEditTagModal";
 
 function ListView() {
   const [searchParams] = useSearchParams();
@@ -24,6 +25,17 @@ function ListView() {
           ))}
       </div>
     </PageWidthWrapper>
+  );
+}
+
+export function TagsPageControls() {
+  const { CreateTagButton, AddEditTagModal } = useAddEditTagModal();
+
+  return (
+    <>
+      <AddEditTagModal />
+      <CreateTagButton />
+    </>
   );
 }
 

@@ -1,9 +1,11 @@
 import TagBadge from "@/components/TagBadge";
 import { Button } from "@/components/ui/button";
 import type { Tag } from "@/types";
-import { MoreVerticalIcon } from "lucide-react";
+import pluralize from "@/utils/pluralize";
+import { ListTodo, MoreVerticalIcon } from "lucide-react";
 
 function TagCard({ tag }: { tag: Tag }) {
+  const todoCount = tag._count?.todos;
   return (
     <div className="flex justify-between items-center py-2.5 px-4">
       <div className="flex gap-3 text-sm items-center">
@@ -11,7 +13,15 @@ function TagCard({ tag }: { tag: Tag }) {
         {tag.name}
       </div>
       <div className="flex gap-10 items-center">
-        <Button variant="outline" Initial="link" size="sm" className="w-fit" />
+        <Button
+          variant="outline"
+          Initial={`${pluralize("task", todoCount)}`}
+          size="sm"
+          className="w-fit"
+          icon={<ListTodo />}
+        >
+          {tag._count.todos}
+        </Button>
         <MoreVerticalIcon className="w-5 h-5" strokeWidth={1.5} />
       </div>
     </div>
