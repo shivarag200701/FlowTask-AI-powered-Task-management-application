@@ -16,14 +16,34 @@ todoRouter.get("/", requireLogin, async (req, res) => {
     });
   }
   try {
-    const todos = await prisma.todo.findMany({
+    const rawTodos = await prisma.todo.findMany({
       where: {
         userId,
       },
       include: {
         notifications: true,
+        tags: {
+          select: {
+            tag: {
+              select: {
+                name: true,
+                id: true,
+                color: true,
+              },
+            },
+          },
+        },
       },
     });
+
+    const todos = rawTodos.map((todo) => ({
+      ...todo,
+      tags: todo.tags.map(({ tag }) => ({
+        name: tag.name,
+        id: tag.id,
+        color: tag.color,
+      })),
+    }));
 
     return res.status(200).json({ todos });
   } catch (error) {

@@ -20,7 +20,7 @@ function TagBadge({
   return (
     <div
       className={cn(
-        "my-auto block whitespace-nowrap rounded-md px-2 py-0.5 text-sm",
+        "my-auto block whitespace-nowrap rounded-md px-2 py-0.5 text-sm cursor-pointer",
         (withIcon || plus) &&
           "flex items-center gap-x-1.5 p-1.5 sm:rounded-md border",
         color === "red" && "border-red-300 bg-red-100 text-red-600",

@@ -64,7 +64,9 @@ function MoreOptionsDropDown({
               <div className="[&_svg]:size-5 sm:[&_svg]:size-4">
                 {option.icon}
               </div>
-              <span className="font-semibold">{option.label}</span>
+              <span className="font-semibold flex items-center">
+                {option.label}
+              </span>
             </div>
             <div>
               {option.hotKey && !isMobile && (

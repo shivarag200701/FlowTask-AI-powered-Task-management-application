@@ -31,7 +31,10 @@ export interface Todo {
   sortKey: string;
   createdAt: string | null;
   reminder?: boolean;
+  tags?: TodoTag[];
 }
+
+export type TodoTag = Omit<Tag, "_count">;
 
 export interface Tag {
   id: string;

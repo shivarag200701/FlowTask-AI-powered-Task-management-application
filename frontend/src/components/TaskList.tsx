@@ -1,7 +1,7 @@
 import { useUpdateTodo } from "@/hooks/use-todos";
-import type { TodoWithCompleteAtDateTime } from "@/types";
+import type { TodoTag, TodoWithCompleteAtDateTime } from "@/types";
 import { AlarmClock, Check, MoreVertical } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import MoreOptionsDropDown from "./popovers/MoreOptionsDropDown";
 import { Popover } from "./ui/popover";
 import { cn } from "@/lib/utils";
@@ -9,7 +9,10 @@ import TimeDisplayer from "./TimeDisplayer";
 import { useDeleteTodoConfirmModal } from "@/hooks/use-delete-todo-confirm-modal";
 import completed from "@/assets/completed.mp3";
 import { Button } from "./ui/button";
-import TagsDisplayer from "./pill-buttons/TagsDisplayer";
+import TagBadge from "./TagBadge";
+import { useSearchParams } from "react-router-dom";
+import { Tooltip, TooltipContent } from "./ui/tooltip";
+import { TooltipTrigger } from "@radix-ui/react-tooltip";
 
 function TaskList({
   todo,
@@ -26,10 +29,17 @@ function TaskList({
     confirmModal: DeleteConfirmModal,
   } = useDeleteTodoConfirmModal(todo);
 
+  const { tags } = todo;
+
+  const { primaryTag, secondaryTag } = useMemo(() => {
+    //implement sorting of tags  suppose a filter is applied in the url to make that as the primary tag
+    return { primaryTag: tags?.[0], secondaryTag: tags?.slice(1) };
+  }, []);
+
   return (
     <div
       className={cn(
-        "flex justify-between items-center  border-b border-border  px-4 py-2.5 min-h-15 hover:shadow-card-hover group cursor-pointer",
+        "flex justify-between items-center  border-b border-border  px-4 py-2.5 min-h-15 hover:shadow-xs group cursor-pointer",
         className,
         { "shadow-card-hover": isMoreOptionsOpen },
       )}
@@ -45,7 +55,7 @@ function TaskList({
           <Check size={15} className="group-hover/circle:block hidden" />
         </button>
         <div className="flex flex-col gap-[1.5px]">
-          <div className="text-md">{todo.title}</div>
+          <div className="text-sm">{todo.title}</div>
           <span className="text-[12px] font-light text-secondary-foreground">
             {todo.description}
           </span>
@@ -58,7 +68,14 @@ function TaskList({
         </div>
       </div>
       <div className="flex gap-2">
-        <TagsDisplayer />
+        <TagsToolTip secondaryTags={secondaryTag ?? []}>
+          <TagBadge
+            color={primaryTag?.color ?? "blue"}
+            withIcon
+            name={primaryTag?.name}
+            plus={secondaryTag?.length}
+          />
+        </TagsToolTip>
         <Popover
           openPopover={isMoreOptionsOpen}
           setOpenPopover={setIsMoreOptionsOpen}
@@ -75,7 +92,7 @@ function TaskList({
           align="end"
         >
           <Button
-            variant="outline"
+            variant="ghost"
             className="w-fit"
             icon={<MoreVertical color="#808080" strokeWidth={2.5} />}
             size="sm"
@@ -83,6 +100,33 @@ function TaskList({
         </Popover>
       </div>
       {DeleteConfirmModal}
+    </div>
+  );
+}
+
+function TagsToolTip({
+  secondaryTags,
+  children,
+}: {
+  secondaryTags: TodoTag[];
+  children: ReactNode;
+}) {
+  return (
+    <div>
+      {!!secondaryTags.length ? (
+        <Tooltip>
+          <TooltipTrigger>{children}</TooltipTrigger>
+          <TooltipContent sideOffset={8}>
+            <div className="flex gap-1">
+              {secondaryTags.map((tag) => (
+                <TagBadge color={tag.color} name={tag.name} withIcon />
+              ))}
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      ) : (
+        children
+      )}
     </div>
   );
 }

@@ -17,7 +17,7 @@ function DraggableTask({
   column,
   className,
 }: {
-  id: number;
+  id: string;
   index: number;
   todo: TodoWithCompleteAtDateTime;
   column: string;
@@ -87,7 +87,7 @@ function DraggableTask({
             <Check size={15} className="hidden group-hover/circle:block" />
           </button>
           <div className="flex flex-col">
-            <div className="text-md">{todo.title}</div>
+            <div className="text-sm">{todo.title}</div>
             <div className="text-xs font-light">{todo.description}</div>
             <div className="flex items-center gap-2 pt-2">
               {todo.dueTime?.isValid && (
