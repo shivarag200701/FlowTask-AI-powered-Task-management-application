@@ -1,4 +1,4 @@
-import { cn } from "@/utils/cn";
+import { cn } from "@/utils/functions/cn";
 import { Calendar } from "lucide-react";
 import { DateTime } from "luxon";
 

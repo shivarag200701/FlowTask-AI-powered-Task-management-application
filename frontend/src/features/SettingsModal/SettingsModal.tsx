@@ -6,7 +6,7 @@ import GeneralSettings from "@/features/settingsModal/GeneralSettings";
 import NotificationsSettings from "@/features/settingsModal/NotificationsSettings";
 import { AddPassword, ChangePassword } from "@/features/settingsModal/Password";
 import { useQuery } from "@tanstack/react-query";
-import api from "@/utils/api";
+import api from "@/utils/functions/api";
 import { useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import ReminderSettings from "@/features/settingsModal/ReminderSettings";

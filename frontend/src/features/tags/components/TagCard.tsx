@@ -1,7 +1,7 @@
 import TagBadge from "@/components/TagBadge";
 import { Button } from "@/components/ui/button";
 import type { Tag } from "@/types";
-import pluralize from "@/utils/pluralize";
+import pluralize from "@/utils/functions/pluralize";
 import { ListTodo, MoreVerticalIcon } from "lucide-react";
 
 function TagCard({ tag }: { tag: Tag }) {

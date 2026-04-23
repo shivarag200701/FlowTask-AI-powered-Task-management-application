@@ -1,4 +1,4 @@
-import { api } from "@/utils/api";
+import { api } from "@/utils/functions/api";
 import type { OnboardingStep } from "@shiva200701/todotypes";
 export async function getOnboardingProgress(): Promise<OnboardingStep> {
   const res = await api.get("/api/v1/user/onboarding/progess");

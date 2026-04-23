@@ -1,5 +1,5 @@
 import type { TagProps, TagsQuery } from "@/types";
-import api from "@/utils/api";
+import api from "@/utils/functions/api";
 
 export async function getFilteredTags({ query }: { query: TagsQuery }) {
   const searchParams = new URLSearchParams({ ...query } as Record<

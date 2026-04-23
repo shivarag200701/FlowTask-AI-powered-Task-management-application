@@ -7,7 +7,7 @@ import {
   useCallback,
   type PropsWithChildren,
 } from "react";
-import api from "@/utils/api";
+import api from "@/utils/functions/api";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 export const authMethods = ["google", "email"] as const;

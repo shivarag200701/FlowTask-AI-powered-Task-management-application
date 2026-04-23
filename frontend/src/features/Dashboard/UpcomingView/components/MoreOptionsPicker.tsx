@@ -7,7 +7,7 @@ import {
   PencilLine,
   Trash2,
 } from "lucide-react";
-import { PriorityColors } from "@/utils/themes";
+import { PriorityColors } from "@/utils/constants/themes";
 
 interface MoreOptionsPickerProps {
   todoId: number | string | null;

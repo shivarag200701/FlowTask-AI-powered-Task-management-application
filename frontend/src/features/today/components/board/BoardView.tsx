@@ -7,7 +7,7 @@ import {
 } from "@dnd-kit/react";
 import { move } from "@dnd-kit/helpers";
 import { useEffect, useRef, useState } from "react";
-import FormatDate from "@/utils/format-date";
+import FormatDate from "@/utils/functions/format-date";
 import DroppableColumn from "@/components/DroppableColumn";
 import DraggableTask from "@/components/DraggableTask";
 import { DateTime } from "luxon";

@@ -1,4 +1,4 @@
-import api from "@/utils/api";
+import api from "@/utils/functions/api";
 import { useEffect, useState, useMemo } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { useQuery } from "@tanstack/react-query";

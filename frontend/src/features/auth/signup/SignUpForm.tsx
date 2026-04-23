@@ -5,7 +5,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import api from "@/utils/api";
+import api from "@/utils/functions/api";
 import { GoogleSignInButton } from "@/features/GoogleSignInButton";
 import { PasswordRequirements } from "@/features/auth/signup/PasswordRequirements";
 import { toast } from "sonner";

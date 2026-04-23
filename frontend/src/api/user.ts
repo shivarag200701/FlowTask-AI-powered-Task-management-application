@@ -1,4 +1,4 @@
-import { api } from "@/utils/api";
+import { api } from "@/utils/functions/api";
 import type { changePreferencesSchema } from "@shiva200701/todotypes";
 import { z } from "zod";
 

@@ -1,4 +1,4 @@
-import { cn } from "@/utils/cn";
+import { cn } from "@/utils/functions/cn";
 import { Spinner } from "@/components/ui/spinner";
 import type { ReactNode, Ref } from "react";
 import { cva, type VariantProps } from "class-variance-authority";

@@ -2,13 +2,14 @@ import PageWidthWrapper from "@/layouts/PageWidthWrapper";
 import EmptyState from "../EmptyState";
 import { useOverDueTodos, useTodayTodos } from "@/hooks/use-todos";
 import { DateTime } from "luxon";
-import formatDate from "@/utils/format-date";
+import formatDate from "@/utils/functions/format-date";
 import OverDueListView from "@/components/OverDueListView";
 import TaskList from "@/components/TaskList";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CirclePlus } from "lucide-react";
 import InlineTaskForm from "@/components/InlineTaskForm";
+import TaskBuilderProvider from "@/components/task-builder-provider";
 
 function ListView() {
   const { data: todos } = useTodayTodos();
@@ -45,7 +46,9 @@ function ListView() {
                 Add Task
               </Button>
             ) : (
-              <InlineTaskForm setIsOpen={setIsAddTodoOpen} />
+              <TaskBuilderProvider>
+                <InlineTaskForm setIsOpen={setIsAddTodoOpen} todo={todos[0]} />
+              </TaskBuilderProvider>
             )}
           </div>
         </>

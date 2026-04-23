@@ -16,7 +16,7 @@ import { outlinePopoverTriggerClasses } from "@/lib/constants";
 import type { ViewMode } from "@/types";
 import { AnimatePresence, motion } from "motion/react";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
-import api from "@/utils/api";
+import api from "@/utils/functions/api";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";

@@ -1,6 +1,6 @@
-import { useTheme as useNextTheme } from 'next-themes';
-import { themes, type ThemeId } from '@/utils/themes';
-import { useEffect, useState } from 'react';
+import { useTheme as useNextTheme } from "next-themes";
+import { themes, type ThemeId } from "@/utils/constants/themes";
+import { useEffect, useState } from "react";
 
 export const useAppTheme = () => {
   const { theme, setTheme } = useNextTheme();
@@ -10,7 +10,7 @@ export const useAppTheme = () => {
     setMounted(true);
   }, []);
 
-  const currentThemeId = (theme as ThemeId) || 'dark';
+  const currentThemeId = (theme as ThemeId) || "dark";
   const currentTheme = themes[currentThemeId];
 
   return {
@@ -20,4 +20,3 @@ export const useAppTheme = () => {
     mounted,
   };
 };
-

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "@/utils/api";
+import api from "@/utils/functions/api";
 import { Auth } from "@/context/AuthContext";
 import { Google } from "@/components/ui/google";
 import { Button } from "@/components/ui/button";

@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import api from "@/utils/api";
+import api from "@/utils/functions/api";
 import { Auth, type AuthMethod } from "@/context/AuthContext";
 import { GoogleSignInButton } from "@/features/GoogleSignInButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";

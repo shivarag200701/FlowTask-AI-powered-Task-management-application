@@ -2,7 +2,7 @@ import { Mail, Bell, Smartphone, MessageSquare } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import api from "@/utils/api";
+import api from "@/utils/functions/api";
 import { UnsavedModal } from "@/features/settingsModal/SettingsModal";
 
 interface ReminderSettingProps {

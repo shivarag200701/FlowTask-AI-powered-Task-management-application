@@ -1,5 +1,5 @@
 //todo-implement tags later for the whole application
-import { cn } from "@/utils/cn";
+import { cn } from "@/utils/functions/cn";
 import { useForm } from "react-hook-form";
 import InputBox from "@/features/InputBox";
 import type { Todo } from "@/types";

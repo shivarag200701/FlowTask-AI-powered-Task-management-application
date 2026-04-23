@@ -1,7 +1,7 @@
 import { Calendar } from "lucide-react";
 import * as chrono from "chrono-node";
 import { useEffect, useState } from "react";
-import { toLuxonDate } from "@/utils/datetime";
+import { toLuxonDate } from "@/utils/functions/datetime";
 
 export default function NLPDateParser() {
   const [nlpInput, setNlpInput] = useState("");

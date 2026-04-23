@@ -2,16 +2,18 @@ import { Command } from "cmdk";
 import { Kbd } from "./ui/kbd";
 import { Popover } from "./ui/popover";
 import { Button } from "./ui/button";
-import { Tag, type IconNode } from "lucide-react";
+import { Tag, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { outlinePopoverTriggerClasses } from "@/lib/constants";
-import { useState, type ReactNode } from "react";
+import { isValidElement, useState, type ReactNode } from "react";
+import { Checkbox } from "./ui/checkbox";
+import { getResourceColors } from "@/utils/constants/tagColors";
 
 export type ComboBoxOptions<TMeta = any> = {
   value: string;
   label: string;
   meta?: TMeta;
-  icon: IconNode | ReactNode;
+  icon: LucideIcon | ReactNode;
 };
 
 export type ComboBoxProps<TMeta extends any> = {
@@ -20,6 +22,7 @@ export type ComboBoxProps<TMeta extends any> = {
   placeholder?: string;
   children?: ReactNode;
   options?: ComboBoxOptions<TMeta>[];
+  selectedTags?: ComboBoxOptions<TMeta>[];
 };
 
 function ComboBox({
@@ -28,10 +31,11 @@ function ComboBox({
   placeholder = "search...",
   children,
   options,
+  selectedTags,
 }: ComboBoxProps<any>) {
-  const [selected, setSelected] = useState<string[]>([]);
-  console.log(selected);
-
+  const handleSelect = (option: ComboBoxOptions<any>) => {
+    console.log(option);
+  };
   return (
     <Popover
       openPopover={open}
@@ -48,15 +52,14 @@ function ComboBox({
           <Command.Separator className="border-t border-border" alwaysRender />
           <Command.List className="p-1">
             {options?.map((option) => (
-              <Command.Item
-                onSelect={(value) => setSelected((prev) => [...prev, value])}
-                className="hover:cursor-pointer px-3 py-2 hover:bg-accent rounded-md text-sm flex gap-2 items-center"
-              >
-                <div className="flex gap-2 items-center">
-                  {option.icon}
-                  {option.label}
-                </div>
-              </Command.Item>
+              <Option
+                selected={
+                  selectedTags?.some(({ value }) => option.value === value) ??
+                  false
+                }
+                option={option}
+                onSelect={() => handleSelect(option)}
+              />
             ))}
             <Command.Empty>No results found.</Command.Empty>
           </Command.List>
@@ -73,6 +76,37 @@ function ComboBox({
         icon={<Tag />}
       />
     </Popover>
+  );
+}
+
+type OptionsProps = {
+  option: ComboBoxOptions;
+  selected: boolean;
+  onSelect: () => void;
+};
+
+function Option({ option, selected, onSelect }: OptionsProps) {
+  return (
+    <Command.Item
+      className="hover:cursor-pointer px-3 py-2 hover:bg-accent rounded-md text-sm flex gap-4 items-center"
+      value={option.value + option.label}
+      onSelect={onSelect}
+    >
+      <Checkbox
+        className="size-3 rounded-xs border-border cursor-pointer"
+        checked={selected}
+      />
+      <div className="flex gap-4 items-center">
+        <div
+          className={`bg-${getResourceColors({ color: option.meta.color })?.tagVariants}`}
+        >
+          {option.icon && (
+            <span>{isValidElement(option.icon) && option.icon}</span>
+          )}
+        </div>
+        <span>{option.label}</span>
+      </div>
+    </Command.Item>
   );
 }
 

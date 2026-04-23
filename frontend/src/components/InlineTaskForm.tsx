@@ -1,18 +1,11 @@
 import type { TodoWithCompleteAtDateTime } from "@/types";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { useFormContext, useWatch, type SubmitHandler } from "react-hook-form";
 import { Button } from "./ui/button";
 import { Popover } from "./ui/popover";
-import {
-  useCallback,
-  useState,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import PriorityDisplayer from "@/components/pill-buttons/PriorityDisplay";
 import ReminderDisplayer from "@/components/pill-buttons/ReminderDisplayer";
 import TagsSelector from "@/components/pill-buttons/TagsSelector";
-import TagDropDown from "./popovers/TagDropDown";
-import ComboBox from "./ComboBox";
 import { useHotkeys } from "react-hotkeys-hook";
 
 type Inputs = {
@@ -28,14 +21,15 @@ function InlineTaskForm({
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }) {
   const {
+    control,
+    setValue,
     register,
+    formState: { isDirty, isValid },
     handleSubmit,
-    formState: { errors, isDirty, isSubmitting, isValid },
-  } = useForm<Inputs>({
-    defaultValues: {
-      taskName: todo ? todo.title : "",
-      description: todo ? todo.description : "",
-    },
+  } = useFormContext();
+  const [tags, taskName, description] = useWatch({
+    control,
+    name: ["tags", "taskName", "description"],
   });
 
   useHotkeys(
@@ -50,13 +44,13 @@ function InlineTaskForm({
   const [isReminderDropDownOpen, setIsReminderDropDownOpen] = useState(false);
   const [isTagsDropDownOpen, setIsTagsDropDownOpen] = useState(false);
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
-  };
+  // const onSubmit: SubmitHandler<Inputs> = (data) => {
+  //   console.log(data);
+  // };
 
   return (
     <div className="rounded-lg border border-border  min-h-15">
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form>
         <div className="border-b border-border/50  px-3 py-2">
           <input
             className="font-semibold w-full border-none focus:outline-none"
@@ -97,6 +91,7 @@ function InlineTaskForm({
             <TagsSelector
               open={isTagsDropDownOpen}
               setOpen={setIsTagsDropDownOpen}
+              tags={tags}
             />
           </div>
         </div>

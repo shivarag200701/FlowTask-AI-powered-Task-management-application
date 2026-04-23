@@ -1,4 +1,4 @@
-import api from "@/utils/api";
+import api from "@/utils/functions/api";
 import { LogOut } from "lucide-react";
 import React, { createContext, useContext, useRef, useState } from "react";
 import { PanelLeft, Settings } from "lucide-react";

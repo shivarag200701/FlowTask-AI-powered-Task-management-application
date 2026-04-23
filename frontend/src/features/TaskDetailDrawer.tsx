@@ -20,7 +20,7 @@ import {
   Flag,
 } from "lucide-react";
 import { formatCompleteAt } from "@shiva200701/todotypes";
-import api from "@/utils/api";
+import api from "@/utils/functions/api";
 import AddTaskCalender from "@/features/AddTaskCalender";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";

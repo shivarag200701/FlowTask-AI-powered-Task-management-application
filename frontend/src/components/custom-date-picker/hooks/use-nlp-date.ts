@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { ParsedDateResult } from "@/features/CustomDatePicker/types";
-import { parseNaturalLanguageDate } from "@/utils/nlpDateParser";
+import { parseNaturalLanguageDate } from "@/utils/functions/nlpDateParser";
 
 function useNLPDate(delayMs: number) {
   const [nlpInput, setNlpInput] = useState("");

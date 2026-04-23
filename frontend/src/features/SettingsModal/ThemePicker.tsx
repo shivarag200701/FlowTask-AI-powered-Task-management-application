@@ -1,6 +1,6 @@
 import { useTheme } from "next-themes";
 import { useEffect, useState, useRef, useCallback } from "react";
-import { themes, type ThemeId } from "@/utils/themes";
+import { themes, type ThemeId } from "@/utils/constants/themes";
 import { Check } from "lucide-react";
 import { flushSync } from "react-dom";
 

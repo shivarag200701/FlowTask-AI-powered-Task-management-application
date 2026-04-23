@@ -1,4 +1,4 @@
-import { api } from "@/utils/api";
+import { api } from "@/utils/functions/api";
 import type { Todo, TodoWithCompleteAtDateTime } from "@/types";
 import { DateTime } from "luxon";
 import type { UpdateTodo } from "@shiva200701/todotypes";

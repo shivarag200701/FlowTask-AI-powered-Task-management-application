@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Kbd } from "../ui/kbd";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { cn } from "@/utils/cn";
+import { cn } from "@/utils/functions/cn";
 
 type Option = {
   id: string;

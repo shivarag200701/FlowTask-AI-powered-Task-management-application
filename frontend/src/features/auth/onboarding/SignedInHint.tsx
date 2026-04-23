@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Auth } from "@/context/AuthContext";
 import { useMutation } from "@tanstack/react-query";
-import api from "@/utils/api";
+import api from "@/utils/functions/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
