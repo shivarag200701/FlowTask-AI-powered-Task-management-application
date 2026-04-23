@@ -20,7 +20,7 @@ function TagBadge({
   return (
     <div
       className={cn(
-        "my-auto block whitespace-nowrap rounded-md px-2 py-0.5 text-sm cursor-pointer",
+        "my-auto block whitespace-nowrap rounded-md px-2 py-0.5 text-sm cursor-pointer border",
         (withIcon || plus) &&
           "flex items-center gap-x-1.5 p-1.5 sm:rounded-md border",
         color === "red" && "border-red-300 bg-red-100 text-red-600",
@@ -33,7 +33,7 @@ function TagBadge({
         className,
       )}
     >
-      {withIcon && <Tag className="h-3 w-3 shrink-0" />}
+      {withIcon && <Tag className="size-3 shrink-0" />}
       {name && (
         <p {...(withIcon && { className: "hidden sm:inline-block" })}>{name}</p>
       )}

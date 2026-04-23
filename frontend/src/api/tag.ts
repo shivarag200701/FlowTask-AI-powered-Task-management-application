@@ -1,4 +1,4 @@
-import type { Tag, TagsQuery } from "@/types";
+import type { TagProps, TagsQuery } from "@/types";
 import api from "@/utils/api";
 
 export async function getFilteredTags({ query }: { query: TagsQuery }) {
@@ -8,7 +8,7 @@ export async function getFilteredTags({ query }: { query: TagsQuery }) {
   >).toString();
   console.log(searchParams);
 
-  const { tags }: { tags: Tag[] } = (
+  const { tags }: { tags: TagProps[] } = (
     await api.get(`/api/v2/tag?${searchParams}`)
   ).data;
 

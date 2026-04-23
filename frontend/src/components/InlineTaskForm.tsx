@@ -11,6 +11,9 @@ import {
 import PriorityDisplayer from "@/components/pill-buttons/PriorityDisplay";
 import ReminderDisplayer from "@/components/pill-buttons/ReminderDisplayer";
 import TagsSelector from "@/components/pill-buttons/TagsSelector";
+import TagDropDown from "./popovers/TagDropDown";
+import ComboBox from "./ComboBox";
+import { useHotkeys } from "react-hotkeys-hook";
 
 type Inputs = {
   taskName: string;
@@ -34,6 +37,14 @@ function InlineTaskForm({
       description: todo ? todo.description : "",
     },
   });
+
+  useHotkeys(
+    "t",
+    () => {
+      setIsTagsDropDownOpen(true);
+    },
+    { preventDefault: true },
+  );
 
   const [isPriorityDropDownOpen, setIsPriorityDropDownOpen] = useState(false);
   const [isReminderDropDownOpen, setIsReminderDropDownOpen] = useState(false);
@@ -61,34 +72,32 @@ function InlineTaskForm({
             placeholder="Description"
             {...register("description")}
           />
-          <div className="flex gap-4 mt-4">
+          <div className="flex gap-2 mt-4">
             <Popover
               openPopover={isPriorityDropDownOpen}
               setOpenPopover={setIsPriorityDropDownOpen}
               content={<div>HI there fools</div>}
             >
-              <div>
-                <PriorityDisplayer priority={todo?.priority ?? null} />
-              </div>
+              <PriorityDisplayer priority={todo?.priority ?? null} />
             </Popover>
             <Popover
               openPopover={isReminderDropDownOpen}
               setOpenPopover={setIsReminderDropDownOpen}
               content={<div>Reminder</div>}
             >
-              <div>
-                <ReminderDisplayer remimder={todo?.reminder} />
-              </div>
+              <ReminderDisplayer remimder={todo?.reminder} />
             </Popover>
-            <Popover
+            {/* <Popover
               openPopover={isTagsDropDownOpen}
               setOpenPopover={setIsTagsDropDownOpen}
-              content={<div>Reminder</div>}
+              content={<TagDropDown />}
             >
-              <div>
-                <TagsSelector />
-              </div>
-            </Popover>
+              <TagsSelector />
+            </Popover> */}
+            <TagsSelector
+              open={isTagsDropDownOpen}
+              setOpen={setIsTagsDropDownOpen}
+            />
           </div>
         </div>
         <div className="w-full p-3 flex justify-end gap-2">

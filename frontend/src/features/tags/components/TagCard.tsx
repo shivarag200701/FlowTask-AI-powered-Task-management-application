@@ -15,13 +15,11 @@ function TagCard({ tag }: { tag: Tag }) {
       <div className="flex gap-10 items-center">
         <Button
           variant="outline"
-          Initial={`${pluralize("task", todoCount)}`}
+          Initial={`${tag._count.todos} ${pluralize("task", todoCount)}`}
           size="sm"
-          className="w-fit"
+          className="w-[80px] bg-accent/50"
           icon={<ListTodo />}
-        >
-          {tag._count.todos}
-        </Button>
+        />
         <MoreVerticalIcon className="w-5 h-5" strokeWidth={1.5} />
       </div>
     </div>

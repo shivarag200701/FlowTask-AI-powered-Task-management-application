@@ -34,9 +34,9 @@ export interface Todo {
   tags?: TodoTag[];
 }
 
-export type TodoTag = Omit<Tag, "_count">;
+export type TodoTag = Omit<TagProps, "_count">;
 
-export interface Tag {
+export interface TagProps {
   id: string;
   name: string;
   color: ResourceColorsEnum;

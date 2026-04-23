@@ -1,18 +1,24 @@
 import { AlarmClock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { TodoWithCompleteAtDateTime } from "@/types";
+import { cn } from "@/lib/utils";
+import { outlinePopoverTriggerClasses } from "@/lib/constants";
+import type { ComponentProps } from "react";
 
 function ReminderDisplayer({
+  ref,
   reminder,
+  ...props
 }: {
   remimder: TodoWithCompleteAtDateTime["reminder"];
-}) {
+} & ComponentProps<typeof Button>) {
   return (
     <Button
+      ref={ref}
+      {...props}
       variant="outline"
-      className="w-fit text-xs"
+      className={cn("w-fit text-sm", outlinePopoverTriggerClasses)}
       icon={<AlarmClock />}
-      size="sm"
       type="button"
     >
       reminder

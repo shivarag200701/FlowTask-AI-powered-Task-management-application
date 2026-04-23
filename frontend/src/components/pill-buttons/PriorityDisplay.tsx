@@ -1,18 +1,24 @@
 import type { TodoWithCompleteAtDateTime } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Flag } from "lucide-react";
+import type { ComponentProps } from "react";
+import { cn } from "@/lib/utils";
+import { outlinePopoverTriggerClasses } from "@/lib/constants";
 
 function PriorityDisplayer({
+  ref,
   priority,
+  ...props
 }: {
   priority: TodoWithCompleteAtDateTime["priority"];
-}) {
+} & ComponentProps<typeof Button>) {
   return (
     <Button
+      ref={ref}
+      {...props}
       variant="outline"
-      className="w-fit text-xs"
+      className={cn("w-fit text-sm", outlinePopoverTriggerClasses)}
       icon={<Flag />}
-      size="sm"
       type="button"
     >
       {priority ? priority : "Priority"}
