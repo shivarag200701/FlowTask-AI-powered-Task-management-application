@@ -9,6 +9,7 @@ import { isValidElement, useState, type ReactNode } from "react";
 import { Checkbox } from "./ui/checkbox";
 import { getResourceColors } from "@/utils/constants/tagColors";
 import AnimatedSizeContainer from "./ui/animated-size-container";
+import ScrollContainer from "./ui/scroll-container";
 
 export type ComboBoxOptions<TMeta = any> = {
   value: string;
@@ -40,16 +41,15 @@ function ComboBox({
     setSelectedTags?.(option);
   };
 
+  //Currenlty all the filtering is in client side, we need to implement a server side filtering
   const [searchValue, setSearchValue] = useState("");
-
-  console.log("search value", searchValue.length > 0);
 
   return (
     <Popover
       openPopover={open}
       setOpenPopover={onOpenChange}
       content={
-        <AnimatedSizeContainer>
+        <AnimatedSizeContainer height>
           <Command label="Command Menu" className="w-[390px]">
             <div className="relative flex items-center">
               <Command.Input
@@ -64,22 +64,25 @@ function ComboBox({
               className="border-t border-border"
               alwaysRender
             />
-            <Command.List className="p-1">
-              {searchValue.length > 0 && (
-                <NewOption searchValue={searchValue} />
-              )}
-              {options?.map((option) => (
-                <Option
-                  selected={
-                    selectedTags?.some(({ value }) => option.value === value) ??
-                    false
-                  }
-                  option={option}
-                  onSelect={() => handleSelect(option)}
-                  key={option.value}
-                />
-              ))}
-            </Command.List>
+            <ScrollContainer className="max-h-[300px]">
+              <Command.List className="p-1">
+                {searchValue.length > 0 && (
+                  <NewOption searchValue={searchValue} />
+                )}
+                {options?.map((option) => (
+                  <Option
+                    selected={
+                      selectedTags?.some(
+                        ({ value }) => option.value === value,
+                      ) ?? false
+                    }
+                    option={option}
+                    onSelect={() => handleSelect(option)}
+                    key={option.value}
+                  />
+                ))}
+              </Command.List>
+            </ScrollContainer>
           </Command>
         </AnimatedSizeContainer>
       }
