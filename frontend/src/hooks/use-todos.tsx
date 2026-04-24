@@ -119,7 +119,7 @@ export function useDeleteTodo() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: number) => deleteTodo(id),
+    mutationFn: (id: string) => deleteTodo(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
       toast.success("Todo deleted");

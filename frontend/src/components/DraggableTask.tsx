@@ -5,7 +5,7 @@ import { AlarmClock, Check, MoreHorizontal } from "lucide-react";
 import { useUpdateTodo } from "@/hooks/use-todos";
 import { Popover } from "./ui/popover";
 import { useState } from "react";
-import MoreOptionsDropDown from "./popovers/MoreOptionsDropDown";
+import MoreOptionsDropDown from "./popovers/MoreTodoOptionsDropDown";
 import { useDeleteTodoConfirmModal } from "@/hooks/use-delete-todo-confirm-modal";
 import TimeDisplayer from "./TimeDisplayer";
 import completed from "@/assets/completed.mp3";

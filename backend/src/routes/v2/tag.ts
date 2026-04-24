@@ -8,6 +8,7 @@ import {
 } from "@shiva200701/todotypes";
 import randomValue from "../../utils/random-value.js";
 import prisma from "../../db/index.js";
+import type { Prisma } from "@prisma/client";
 
 const tagRouter = Router();
 
@@ -113,6 +114,66 @@ tagRouter.post("/", requireLogin, async (req, res) => {
     return res.status(201).json({
       msg: "todo added sucessfully",
       tag,
+    });
+  } catch (error) {
+    console.error("Error while adding todo", error);
+    return res.status(500).json({
+      msg: "internal Server Error",
+    });
+  }
+});
+
+tagRouter.patch("/:id", requireLogin, async (req, res) => {
+  const userId = req.session.userId;
+
+  if (!userId) {
+    return res.status(401).json({
+      msg: "unauthorized",
+    });
+  }
+
+  const idParam = Array.isArray(req.params.id)
+    ? req.params.id[0]
+    : req.params.id;
+  if (!idParam) {
+    return res.status(400).json({
+      msg: "No todo id found in path",
+    });
+  }
+
+  try {
+    const existing = prisma.tag.findFirst({
+      where: { id: idParam, userId },
+    });
+    if (!existing) {
+      return res.status(404).json({ msg: "Tag not found" });
+    }
+
+    const { data, success, error } = CreateTagSchema.partial().safeParse(
+      req.body,
+    );
+    if (!success) {
+      return res.status(400).json({
+        msg: "Send proper data",
+        error,
+      });
+    }
+
+    const { color, name } = data;
+
+    let updateData: Prisma.TagUpdateInput = {};
+
+    if (color !== undefined) updateData.color = color;
+    if (name !== undefined) updateData.name = name;
+
+    const updatedTag = await prisma.tag.update({
+      where: { id: idParam, userId },
+      data: {
+        ...updateData,
+      },
+    });
+    return res.status(200).json({
+      tag: updatedTag,
     });
   } catch (error) {
     console.error("Error while adding todo", error);

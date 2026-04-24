@@ -1,11 +1,21 @@
+import MoreTagOptionsDropDown from "@/components/popovers/MoreTagOptionsDropDown";
 import TagBadge from "@/components/TagBadge";
 import { Button } from "@/components/ui/button";
-import type { Tag } from "@/types";
+import { Popover } from "@/components/ui/popover";
+import type { TagProps } from "@/types";
 import pluralize from "@/utils/functions/pluralize";
-import { ListTodo, MoreVerticalIcon } from "lucide-react";
+import { ListTodo, MoreVertical } from "lucide-react";
+import { useState } from "react";
 
-function TagCard({ tag }: { tag: Tag }) {
+function TagCard({
+  tag,
+  onEdit,
+}: {
+  tag: TagProps;
+  onEdit: (tag: TagProps) => void;
+}) {
   const todoCount = tag._count?.todos;
+  const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
   return (
     <div className="flex justify-between items-center py-2.5 px-4">
       <div className="flex gap-3 text-sm items-center">
@@ -20,7 +30,31 @@ function TagCard({ tag }: { tag: Tag }) {
           className="w-[80px] bg-accent/50"
           icon={<ListTodo />}
         />
-        <MoreVerticalIcon className="w-5 h-5" strokeWidth={1.5} />
+        <Popover
+          openPopover={isMoreOptionsOpen}
+          setOpenPopover={setIsMoreOptionsOpen}
+          content={
+            <MoreTagOptionsDropDown
+              onDelete={() => {
+                setIsMoreOptionsOpen(false);
+              }}
+              onEdit={() => {
+                setIsMoreOptionsOpen(false);
+                onEdit(tag);
+              }}
+            />
+          }
+          sideOffset={5}
+          side="bottom"
+          align="end"
+        >
+          <Button
+            variant="custom"
+            className="w-fit"
+            icon={<MoreVertical color="#808080" strokeWidth={2.5} />}
+            size="icon-sm"
+          />
+        </Popover>
       </div>
     </div>
   );

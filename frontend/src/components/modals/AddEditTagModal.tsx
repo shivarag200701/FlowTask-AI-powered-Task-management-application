@@ -17,7 +17,8 @@ import {
 import TagBadge from "../TagBadge";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { cn } from "@/lib/utils";
-import { useCreateTags } from "@/hooks/use-tags";
+import { useCreateTags, useUpdateTags } from "@/hooks/use-tags";
+import type { TagProps, TodoTag } from "@/types";
 
 type FormValues = {
   name: string;
@@ -27,32 +28,46 @@ type FormValues = {
 function AddEditTagModal({
   show,
   setShow,
+  tag,
 }: {
   show: boolean;
   setShow: Dispatch<SetStateAction<boolean>>;
+  tag?: TodoTag;
 }) {
   const {
     register,
     control,
     handleSubmit,
-    formState: { isValid, isSubmitting },
+    formState: { isValid, isSubmitting, isDirty },
   } = useForm<FormValues>({
     defaultValues: {
-      name: "",
-      color: RESOURCE_COLORS[0],
+      name: tag ? tag.name : "",
+      color: tag ? tag.color : RESOURCE_COLORS[0],
     },
   });
 
-  const { mutateAsync } = useCreateTags();
+  const { mutateAsync: CreateTag } = useCreateTags();
+  const { mutateAsync: updatedTag } = useUpdateTags();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    await new Promise((r) => setTimeout(r, 3000));
-    await mutateAsync(data, {
-      onSuccess: () => {
-        setShow(false);
-      },
-    });
+    if (!isEditing) {
+      await CreateTag(data, {
+        onSuccess: () => {
+          setShow(false);
+        },
+      });
+      return;
+    }
+    if (tag?.id) await updatedTag({ id: tag?.id, tag: data });
   };
+
+  const isEditing = useMemo(() => {
+    if (tag && tag.id) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [tag?.id]);
 
   return (
     <Modal showModal={show} setShowModal={setShow} className="">
@@ -99,9 +114,9 @@ function AddEditTagModal({
             />
           </div>
           <Button
-            Initial="Create Tag"
+            Initial={`${tag ? "Save Changes" : "Create Tag"}`}
             size="lg"
-            disabled={!isValid}
+            disabled={!!tag ? !isValid || !isDirty : !isValid}
             isSubmitting={isSubmitting}
             Loading="Create Tag"
           />
@@ -132,12 +147,10 @@ function CreateTagButton({
   );
 }
 
-export function useAddEditTagModal() {
+export function useAddEditTagModal(tag?: TagProps) {
   const [show, setShow] = useState(false);
-  console.log("show", show);
-
   const AddEditTagModalCallback = useCallback(() => {
-    return <AddEditTagModal show={show} setShow={setShow} />;
+    return <AddEditTagModal show={show} setShow={setShow} tag={tag} />;
   }, [show, setShow]);
 
   const CreateTagButtonCallback = useCallback(() => {

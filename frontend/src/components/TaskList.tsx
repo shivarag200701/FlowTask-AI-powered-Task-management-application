@@ -2,7 +2,7 @@ import { useUpdateTodo } from "@/hooks/use-todos";
 import type { TodoTag, TodoWithCompleteAtDateTime } from "@/types";
 import { AlarmClock, Check, MoreVertical } from "lucide-react";
 import { useMemo, useState, type ReactNode } from "react";
-import MoreOptionsDropDown from "./popovers/MoreOptionsDropDown";
+import MoreOptionsTodoDropDown from "./popovers/MoreTodoOptionsDropDown";
 import { Popover } from "./ui/popover";
 import { cn } from "@/lib/utils";
 import TimeDisplayer from "./TimeDisplayer";
@@ -10,7 +10,6 @@ import { useDeleteTodoConfirmModal } from "@/hooks/use-delete-todo-confirm-modal
 import completed from "@/assets/completed.mp3";
 import { Button } from "./ui/button";
 import TagBadge from "./TagBadge";
-import { useSearchParams } from "react-router-dom";
 import { Tooltip, TooltipContent } from "./ui/tooltip";
 import { TooltipTrigger } from "@radix-ui/react-tooltip";
 
@@ -67,7 +66,7 @@ function TaskList({
           </div>
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-10">
         <TagsToolTip secondaryTags={secondaryTag ?? []}>
           <TagBadge
             color={primaryTag?.color ?? "blue"}
@@ -80,7 +79,7 @@ function TaskList({
           openPopover={isMoreOptionsOpen}
           setOpenPopover={setIsMoreOptionsOpen}
           content={
-            <MoreOptionsDropDown
+            <MoreOptionsTodoDropDown
               onDelete={() => {
                 setIsMoreOptionsOpen(false);
                 setShowDeleteConfirmModal(true);
@@ -92,10 +91,10 @@ function TaskList({
           align="end"
         >
           <Button
-            variant="ghost"
+            variant="custom"
             className="w-fit"
             icon={<MoreVertical color="#808080" strokeWidth={2.5} />}
-            size="sm"
+            size="icon-sm"
           />
         </Popover>
       </div>

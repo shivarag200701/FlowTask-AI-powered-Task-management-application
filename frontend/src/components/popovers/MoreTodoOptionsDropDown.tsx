@@ -14,7 +14,7 @@ type Option = {
   onClick?: () => void;
 };
 
-function MoreOptionsDropDown({
+function MoreTodoOptionsDropDown({
   onDelete,
   className,
 }: {
@@ -105,4 +105,4 @@ function MoreOptionsDropDown({
   );
 }
 
-export default MoreOptionsDropDown;
+export default MoreTodoOptionsDropDown;

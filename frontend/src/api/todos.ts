@@ -23,6 +23,6 @@ export async function updateTodo(
   return res.data.todo;
 }
 
-export async function deleteTodo(id: number) {
+export async function deleteTodo(id: string) {
   await api.delete(`/api/v2/todo/${id}`);
 }

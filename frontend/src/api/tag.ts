@@ -25,3 +25,20 @@ export async function createTag(tag: {
     throw error;
   }
 }
+
+export async function updateTag({
+  id,
+  tag,
+}: {
+  id: string;
+  tag: {
+    name: string | undefined;
+    color: ResourceColorsEnum | undefined;
+  };
+}) {
+  try {
+    await api.patch(`/api/v2/tag/${id}`, tag);
+  } catch (error) {
+    throw error;
+  }
+}
