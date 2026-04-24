@@ -61,28 +61,29 @@ const Button = ({
   ref,
   ...props
 }: ButtonProps & { ref?: Ref<HTMLButtonElement> }) => {
+  const { disabled } = props;
   return (
     <button
+      {...props}
+      disabled={isSubmitting || disabled}
       type="submit"
-      disabled={isSubmitting}
       className={cn(
         "hover:cursor-pointer",
         buttonVariants({ variant, size }),
         className,
       )}
       onClick={onClick}
-      {...props}
       ref={ref}
     >
       {isSubmitting ? (
         <div className="flex gap-2 justify-center">
           <Spinner className="text-gray-300" />
-          <span>{Loading}</span>
+          <p>{Loading}</p>
         </div>
       ) : (
         <div className="flex gap-2 justify-center items-center">
-          {icon}
-          {Initial}
+          <p>{icon}</p>
+          <p>{Initial}</p>
         </div>
       )}
       {children}

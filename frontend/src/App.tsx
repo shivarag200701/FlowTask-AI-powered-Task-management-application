@@ -20,6 +20,7 @@ import Today from "./pages/Today";
 import Upcoming from "./pages/Upcoming";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Tags from "./pages/Tags";
+import SuccessIcon from "./components/icons/success-icon";
 
 const queryClient = new QueryClient();
 
@@ -107,6 +108,9 @@ function App() {
               classNames: {
                 actionButton: "!bg-primary",
               },
+            }}
+            icons={{
+              success: <SuccessIcon />,
             }}
           />
         </ThemeProvider>

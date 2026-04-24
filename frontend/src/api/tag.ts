@@ -1,6 +1,7 @@
 import type { TagProps, TagsQuery } from "@/types";
 import api from "@/utils/functions/api";
 import type { ResourceColorsEnum } from "@shiva200701/todotypes";
+import { isAxiosError } from "axios";
 
 export async function getFilteredTags({ query }: { query: TagsQuery }) {
   const searchParams = new URLSearchParams({ ...query } as Record<
@@ -18,5 +19,9 @@ export async function createTag(tag: {
   name: string;
   color: ResourceColorsEnum;
 }) {
-  const response = await api.post("/api/v2/tag", tag);
+  try {
+    await api.post("/api/v2/tag", tag);
+  } catch (error) {
+    throw error;
+  }
 }

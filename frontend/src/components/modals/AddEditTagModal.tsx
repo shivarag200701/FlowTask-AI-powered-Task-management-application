@@ -43,10 +43,15 @@ function AddEditTagModal({
     },
   });
 
-  const { mutate } = useCreateTags();
+  const { mutateAsync } = useCreateTags();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    mutate(data);
+    await new Promise((r) => setTimeout(r, 3000));
+    await mutateAsync(data, {
+      onSuccess: () => {
+        setShow(false);
+      },
+    });
   };
 
   return (
@@ -98,6 +103,7 @@ function AddEditTagModal({
             size="lg"
             disabled={!isValid}
             isSubmitting={isSubmitting}
+            Loading="Create Tag"
           />
         </form>
       </div>
