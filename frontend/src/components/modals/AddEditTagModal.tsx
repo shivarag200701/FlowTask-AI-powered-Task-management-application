@@ -9,6 +9,20 @@ import { Modal } from "../ui/modal";
 import { Button } from "../ui/button";
 import { Kbd } from "../ui/kbd";
 import { useHotkeys } from "react-hotkeys-hook";
+import { Input } from "../ui/input";
+import {
+  RESOURCE_COLORS,
+  type ResourceColorsEnum,
+} from "@shiva200701/todotypes";
+import TagBadge from "../TagBadge";
+import { Controller, useForm, type SubmitHandler } from "react-hook-form";
+import { cn } from "@/lib/utils";
+import { useCreateTags } from "@/hooks/use-tags";
+
+type FormValues = {
+  name: string;
+  color: ResourceColorsEnum;
+};
 
 function AddEditTagModal({
   show,
@@ -17,9 +31,76 @@ function AddEditTagModal({
   show: boolean;
   setShow: Dispatch<SetStateAction<boolean>>;
 }) {
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { isValid, isSubmitting },
+  } = useForm<FormValues>({
+    defaultValues: {
+      name: "",
+      color: RESOURCE_COLORS[0],
+    },
+  });
+
+  const { mutate } = useCreateTags();
+
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    mutate(data);
+  };
+
   return (
-    <Modal showModal={show} setShowModal={setShow}>
-      this is a modal
+    <Modal showModal={show} setShowModal={setShow} className="">
+      <div className="flex flex-col items-center justify-center space-y-4 border-b border-border">
+        <div className="flex flex-col space-y-1 items-center justify-center px-16 pt-8 pb-4 w-full">
+          <img src="/logo.png" className="size-15" />
+          <h3 className="font-medium text-lg">Create tag</h3>
+          <p className="text-neutral-500 text-sm">
+            Use tags to organize your links
+          </p>
+        </div>
+      </div>
+      <div className="bg-accent/50 flex flex-col gap-y-4 px-16 py-8 items-center justify-center">
+        <form
+          className="flex flex-col space-y-6 w-full"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <div className="flex flex-col space-y-2">
+            <p className="text-sm font-medium">Tag name</p>
+            <Input
+              placeholder="New Tag"
+              {...register("name", { required: "tag name is required" })}
+            />
+          </div>
+          <div className="flex flex-col space-y-2">
+            <p className="text-sm font-medium">Tag color</p>
+            <Controller
+              name="color"
+              control={control}
+              render={({ field }) => (
+                <div className="flex flex-wrap gap-2">
+                  {RESOURCE_COLORS.map((color) => (
+                    <div onClick={() => field.onChange(color)}>
+                      <TagBadge
+                        color={color}
+                        key={color}
+                        name={color}
+                        className={cn(field.value === color && "ring-2")}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            />
+          </div>
+          <Button
+            Initial="Create Tag"
+            size="lg"
+            disabled={!isValid}
+            isSubmitting={isSubmitting}
+          />
+        </form>
+      </div>
     </Modal>
   );
 }

@@ -32,7 +32,7 @@ function TagBadge({
         color === "green" && "border-green-300 bg-green-100 text-green-600",
         color === "blue" && "border-blue-300 bg-blue-100 text-blue-600",
         color === "purple" && "border-purple-300 bg-purple-100 text-purple-600",
-        color === "brown" && "border-brown-300 bg-brown-100 text-brown-600",
+        color === "brown" && "border-stone-300 bg-stone-100 text-stone-600",
         name && !isMobile && "sm:px-2 py-0.5",
         className,
       )}

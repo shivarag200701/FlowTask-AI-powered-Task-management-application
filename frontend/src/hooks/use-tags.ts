@@ -1,7 +1,8 @@
-import { getFilteredTags } from "@/api/tag";
+import { createTag, getFilteredTags } from "@/api/tag";
 import { tagsQueryKeys } from "@/query-keys";
 import type { TagsQuery } from "@/types";
-import { useQuery } from "@tanstack/react-query";
+import type { ResourceColorsEnum } from "@shiva200701/todotypes";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function useTags({
   query,
@@ -14,5 +15,14 @@ export function useTags({
     queryKey: tagsQueryKeys.filtered(query),
     enabled,
     queryFn: () => getFilteredTags({ query }),
+  });
+}
+
+export function useCreateTags() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (tag: { tagName: string; color: ResourceColorsEnum }) => {
+      createTag(tag);
+    },
   });
 }
