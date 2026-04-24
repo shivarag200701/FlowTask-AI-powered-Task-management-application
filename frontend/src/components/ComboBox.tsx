@@ -2,7 +2,7 @@ import { Command } from "cmdk";
 import { Kbd } from "./ui/kbd";
 import { Popover } from "./ui/popover";
 import { Button } from "./ui/button";
-import { Tag, type LucideIcon } from "lucide-react";
+import { Plus, Tag, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { outlinePopoverTriggerClasses } from "@/lib/constants";
 import { isValidElement, useState, type ReactNode } from "react";
@@ -39,6 +39,11 @@ function ComboBox({
   const handleSelect = (option: ComboBoxOptions<any>) => {
     setSelectedTags?.(option);
   };
+
+  const [searchValue, setSearchValue] = useState("");
+
+  console.log("search value", searchValue.length > 0);
+
   return (
     <Popover
       openPopover={open}
@@ -50,6 +55,8 @@ function ComboBox({
               <Command.Input
                 className=" pl-4 py-3 focus:outline-none text-sm "
                 placeholder="search or add tags..."
+                value={searchValue}
+                onValueChange={setSearchValue}
               />
               <Kbd className="absolute right-2">T</Kbd>
             </div>
@@ -58,6 +65,9 @@ function ComboBox({
               alwaysRender
             />
             <Command.List className="p-1">
+              {searchValue.length > 0 && (
+                <NewOption searchValue={searchValue} />
+              )}
               {options?.map((option) => (
                 <Option
                   selected={
@@ -69,7 +79,6 @@ function ComboBox({
                   key={option.value}
                 />
               ))}
-              <Command.Empty>No results found.</Command.Empty>
             </Command.List>
           </Command>
         </AnimatedSizeContainer>
@@ -93,6 +102,18 @@ type OptionsProps = {
   selected: boolean;
   onSelect: () => void;
 };
+
+function NewOption({ searchValue }: { searchValue: string }) {
+  return (
+    <Command.Item
+      className="hover:cursor-pointer px-3 py-2 hover:bg-accent rounded-md text-sm flex gap-4 items-center"
+      forceMount
+    >
+      <Plus className="w-4 h-4 text-neutral-500" />
+      <span>{searchValue ? `Create "${searchValue}"` : "...new option"}</span>
+    </Command.Item>
+  );
+}
 
 function Option({ option, selected, onSelect }: OptionsProps) {
   return (
