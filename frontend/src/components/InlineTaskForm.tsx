@@ -27,9 +27,9 @@ function InlineTaskForm({
     formState: { isDirty, isValid },
     handleSubmit,
   } = useFormContext();
-  const [tags, taskName, description] = useWatch({
+  const [tags, title, description] = useWatch({
     control,
-    name: ["tags", "taskName", "description"],
+    name: ["tags", "title", "description"],
   });
 
   useHotkeys(
@@ -56,7 +56,7 @@ function InlineTaskForm({
             className="font-semibold w-full border-none focus:outline-none"
             style={{ fontSize: "14px" }}
             placeholder="Task name"
-            {...register("taskName", {
+            {...register("title", {
               required: "title is required",
             })}
           />
@@ -81,17 +81,9 @@ function InlineTaskForm({
             >
               <ReminderDisplayer remimder={todo?.reminder} />
             </Popover>
-            {/* <Popover
-              openPopover={isTagsDropDownOpen}
-              setOpenPopover={setIsTagsDropDownOpen}
-              content={<TagDropDown />}
-            >
-              <TagsSelector />
-            </Popover> */}
             <TagsSelector
               open={isTagsDropDownOpen}
               setOpen={setIsTagsDropDownOpen}
-              tags={tags}
             />
           </div>
         </div>

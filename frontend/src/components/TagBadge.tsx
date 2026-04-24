@@ -2,6 +2,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import type { ResourceColorsEnum } from "@shiva200701/todotypes";
 import { Tag } from "lucide-react";
+import { motion } from "framer-motion";
 
 function TagBadge({
   name,
@@ -18,7 +19,10 @@ function TagBadge({
 }) {
   const { isMobile } = useMediaQuery();
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.1 }}
       className={cn(
         "my-auto block whitespace-nowrap rounded-md px-2 py-0.5 text-sm cursor-pointer border",
         (withIcon || plus) &&
@@ -42,7 +46,7 @@ function TagBadge({
           <span className="pr-1.5 opacity-30 md:pl-1 md:pr-2.5">|</span>+{plus}
         </span>
       )}
-    </div>
+    </motion.div>
   );
 }
 

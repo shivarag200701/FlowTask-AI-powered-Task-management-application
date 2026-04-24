@@ -47,7 +47,7 @@ function ListView() {
               </Button>
             ) : (
               <TaskBuilderProvider>
-                <InlineTaskForm setIsOpen={setIsAddTodoOpen} todo={todos[0]} />
+                <InlineTaskForm setIsOpen={setIsAddTodoOpen} />
               </TaskBuilderProvider>
             )}
           </div>

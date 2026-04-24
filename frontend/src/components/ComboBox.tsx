@@ -8,6 +8,7 @@ import { outlinePopoverTriggerClasses } from "@/lib/constants";
 import { isValidElement, useState, type ReactNode } from "react";
 import { Checkbox } from "./ui/checkbox";
 import { getResourceColors } from "@/utils/constants/tagColors";
+import AnimatedSizeContainer from "./ui/animated-size-container";
 
 export type ComboBoxOptions<TMeta = any> = {
   value: string;
@@ -23,6 +24,7 @@ export type ComboBoxProps<TMeta extends any> = {
   children?: ReactNode;
   options?: ComboBoxOptions<TMeta>[];
   selectedTags?: ComboBoxOptions<TMeta>[];
+  setSelectedTags?: (value: ComboBoxOptions<any>) => void;
 };
 
 function ComboBox({
@@ -32,38 +34,45 @@ function ComboBox({
   children,
   options,
   selectedTags,
+  setSelectedTags,
 }: ComboBoxProps<any>) {
   const handleSelect = (option: ComboBoxOptions<any>) => {
-    console.log(option);
+    setSelectedTags?.(option);
   };
   return (
     <Popover
       openPopover={open}
       setOpenPopover={onOpenChange}
       content={
-        <Command label="Command Menu" className="w-[390px]">
-          <div className="relative flex items-center">
-            <Command.Input
-              className=" pl-4 py-3 focus:outline-none text-sm "
-              placeholder="search or add tags..."
-            />
-            <Kbd className="absolute right-2">T</Kbd>
-          </div>
-          <Command.Separator className="border-t border-border" alwaysRender />
-          <Command.List className="p-1">
-            {options?.map((option) => (
-              <Option
-                selected={
-                  selectedTags?.some(({ value }) => option.value === value) ??
-                  false
-                }
-                option={option}
-                onSelect={() => handleSelect(option)}
+        <AnimatedSizeContainer>
+          <Command label="Command Menu" className="w-[390px]">
+            <div className="relative flex items-center">
+              <Command.Input
+                className=" pl-4 py-3 focus:outline-none text-sm "
+                placeholder="search or add tags..."
               />
-            ))}
-            <Command.Empty>No results found.</Command.Empty>
-          </Command.List>
-        </Command>
+              <Kbd className="absolute right-2">T</Kbd>
+            </div>
+            <Command.Separator
+              className="border-t border-border"
+              alwaysRender
+            />
+            <Command.List className="p-1">
+              {options?.map((option) => (
+                <Option
+                  selected={
+                    selectedTags?.some(({ value }) => option.value === value) ??
+                    false
+                  }
+                  option={option}
+                  onSelect={() => handleSelect(option)}
+                  key={option.value}
+                />
+              ))}
+              <Command.Empty>No results found.</Command.Empty>
+            </Command.List>
+          </Command>
+        </AnimatedSizeContainer>
       }
     >
       <Button
