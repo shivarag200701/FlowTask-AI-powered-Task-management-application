@@ -11,11 +11,6 @@ interface SerachBoxProps {
   setValue: (value: string) => void;
 }
 
-const HOTKEYS = {
-  focus: "slash",
-  blur: "escape",
-};
-
 export function SearchBox({
   onChangeDebounced,
   debounceTimeoutMs = 500,

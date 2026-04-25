@@ -22,4 +22,5 @@ export const userPreferenceKeys = {
 export const tagsQueryKeys = {
   all: ["tags"] as const,
   filtered: ({ search }: TagsQuery) => ["tags", "filtered", search] as const,
+  count: ["tagCount"] as const,
 };

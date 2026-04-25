@@ -2,7 +2,7 @@ import type { Todo } from "@/types";
 import { Tag, Calendar, Trash, Pencil, Repeat } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatCompleteAt } from "@shiva200701/todotypes";
-import WarningModal from "@/features/WarningModal";
+import WarningModal from "@/features/_legacy/WarningModal";
 import { useState } from "react";
 
 const priorityColors = {

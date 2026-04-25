@@ -1,4 +1,4 @@
-import { createTag, getFilteredTags, updateTag } from "@/api/tag";
+import { createTag, getFilteredTags, getTagCount, updateTag } from "@/api/tag";
 import { tagsQueryKeys } from "@/query-keys";
 import type { TagsQuery } from "@/types";
 import type { ResourceColorsEnum } from "@shiva200701/todotypes";
@@ -68,5 +68,13 @@ export function useUpdateTags() {
       }
       toast.error("something went wrong");
     },
+  });
+}
+
+export function useTagCount(enabled = true) {
+  return useQuery({
+    queryKey: tagsQueryKeys.count,
+    queryFn: getTagCount,
+    enabled,
   });
 }

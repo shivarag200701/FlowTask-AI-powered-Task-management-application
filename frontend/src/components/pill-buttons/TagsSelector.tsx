@@ -1,10 +1,11 @@
-import { useTags } from "@/hooks/use-tags";
+import { useTagCount, useTags } from "@/hooks/use-tags";
 import ComboBox from "../ComboBox";
 import TagBadge from "../TagBadge";
 import { Tag } from "lucide-react";
 import type { TodoTag } from "@/types";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
+import { MAX_TAGS_PER_PAGE } from "@/utils/constants/tags";
 
 function TagsSelector({
   open,
@@ -13,9 +14,8 @@ function TagsSelector({
   open: boolean;
   setOpen: (open: boolean) => void;
 }) {
-  const { data: availableTags, isLoading: tagsLoading } = useTags({
-    query: { search: "" },
-  });
+  const [searchValue, setSearchValue] = useState("");
+
   function getTagOption(tag: TodoTag) {
     return {
       value: tag.id,
@@ -27,15 +27,19 @@ function TagsSelector({
     };
   }
 
-  const {
-    control,
-    setValue,
-    formState: { isDirty },
-  } = useFormContext();
+  const { control, setValue } = useFormContext();
   const [tags] = useWatch({
     control,
     name: ["tags"],
   }) as [TodoTag[]]; // need to fix this to give type to useFormContext
+
+  const { data: tagCount } = useTagCount();
+
+  const asyncSearch = tagCount > MAX_TAGS_PER_PAGE;
+
+  const { data: availableTags, isLoading: tagsLoading } = useTags({
+    query: { search: asyncSearch ? searchValue : "" },
+  });
 
   const options = useMemo(
     () => availableTags?.map((tag) => getTagOption(tag)),
@@ -54,6 +58,8 @@ function TagsSelector({
       options={tagsLoading ? undefined : options}
       placeholder="Select tags..."
       selectedTags={selectedTags}
+      searchValue={searchValue}
+      setSearchValue={setSearchValue}
       setSelectedTags={(option) => {
         //need to change for case where we add a new Tag
         const id = option.value;

@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { useDroppable } from "@dnd-kit/react";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { CollisionPriority } from "@dnd-kit/abstract";
 
 function DroppableColumn({

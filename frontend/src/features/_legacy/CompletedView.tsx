@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 import { CheckCircle2 } from "lucide-react";
 import type { Todo } from "@/types";
-import TaskCard from "@/features/TaskCard";
-import Day from "@/features/Day";
-import NoTodo from "@/features/NoTodo";
-import LoadingSkeleton from "@/features/LoadingSkeleton";
+import TaskCard from "@/features/_legacy/TaskCard";
+import Day from "@/features/_legacy/Day";
+import NoTodo from "@/features/_legacy/NoTodo";
+import LoadingSkeleton from "@/features/_legacy/LoadingSkeleton";
 
 interface CompletedViewProps {
   todos: Todo[];

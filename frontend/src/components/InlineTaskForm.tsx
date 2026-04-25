@@ -1,5 +1,5 @@
 import type { TodoWithCompleteAtDateTime } from "@/types";
-import { useFormContext, useWatch, type SubmitHandler } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { Button } from "./ui/button";
 import { Popover } from "./ui/popover";
 import { useState, type Dispatch, type SetStateAction } from "react";
@@ -7,11 +7,6 @@ import PriorityDisplayer from "@/components/pill-buttons/PriorityDisplay";
 import ReminderDisplayer from "@/components/pill-buttons/ReminderDisplayer";
 import TagsSelector from "@/components/pill-buttons/TagsSelector";
 import { useHotkeys } from "react-hotkeys-hook";
-
-type Inputs = {
-  taskName: string;
-  description?: string;
-};
 
 function InlineTaskForm({
   todo,
@@ -21,16 +16,16 @@ function InlineTaskForm({
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }) {
   const {
-    control,
-    setValue,
+    // control,
+    // setValue,
     register,
-    formState: { isDirty, isValid },
-    handleSubmit,
+    formState: { isValid },
+    // handleSubmit
   } = useFormContext();
-  const [tags, title, description] = useWatch({
-    control,
-    name: ["tags", "title", "description"],
-  });
+  // const [tags, title, description] = useWatch({
+  //   control,
+  //   name: ["tags", "title", "description"],
+  // });
 
   useHotkeys(
     "t",

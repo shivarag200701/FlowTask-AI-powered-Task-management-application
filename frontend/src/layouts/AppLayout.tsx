@@ -2,7 +2,6 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { ModalProvider } from "@/components/modals/ModalProvider";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { TaskDisplayProvider } from "@/context/TaskDisplayContext";
-import { cn } from "@/lib/utils";
 import { Outlet } from "react-router-dom";
 
 function AppLayout() {

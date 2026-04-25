@@ -1,4 +1,4 @@
-import InputBox from "@/features/InputBox";
+import InputBox from "@/features/_legacy/InputBox";
 import ProfileUpload from "@/features/auth/onboarding/ProfileUpload";
 import Onboarding from "@/features/auth/onboarding/Onboarding";
 import { motion } from "motion/react";

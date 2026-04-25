@@ -29,7 +29,7 @@ import {
   roundToNearest15Minutes,
   getTimeFromDate,
 } from "@/features/dashboard/UpcomingView/components/InlineTaskForm";
-import PriorityPicker from "@/features/PriorityPicker";
+import PriorityPicker from "@/features/_legacy/PriorityPicker";
 import {
   Tooltip,
   TooltipContent,

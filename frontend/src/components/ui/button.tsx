@@ -66,7 +66,6 @@ const Button = ({
     <button
       {...props}
       disabled={isSubmitting || disabled}
-      type="submit"
       className={cn(
         "hover:cursor-pointer",
         buttonVariants({ variant, size }),

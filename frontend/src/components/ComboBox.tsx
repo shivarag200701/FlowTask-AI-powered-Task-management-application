@@ -5,11 +5,12 @@ import { Button } from "./ui/button";
 import { Plus, Tag, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { outlinePopoverTriggerClasses } from "@/lib/constants";
-import { isValidElement, useState, type ReactNode } from "react";
+import { isValidElement, useEffect, useState, type ReactNode } from "react";
 import { Checkbox } from "./ui/checkbox";
-import { getResourceColors } from "@/utils/constants/tagColors";
+import { getResourceColors } from "@/utils/functions/getTagColors";
 import AnimatedSizeContainer from "./ui/animated-size-container";
 import ScrollContainer from "./ui/scroll-container";
+import { useHotkeys } from "react-hotkeys-hook";
 
 export type ComboBoxOptions<TMeta = any> = {
   value: string;
@@ -26,6 +27,9 @@ export type ComboBoxProps<TMeta extends any> = {
   options?: ComboBoxOptions<TMeta>[];
   selectedTags?: ComboBoxOptions<TMeta>[];
   setSelectedTags?: (value: ComboBoxOptions<any>) => void;
+  shouldFilter?: boolean;
+  searchValue: string;
+  setSearchValue: (serach: string) => void;
 };
 
 function ComboBox({
@@ -36,13 +40,40 @@ function ComboBox({
   options,
   selectedTags,
   setSelectedTags,
+  shouldFilter = true,
+  searchValue,
+  setSearchValue,
 }: ComboBoxProps<any>) {
   const handleSelect = (option: ComboBoxOptions<any>) => {
     setSelectedTags?.(option);
   };
 
   //Currenlty all the filtering is in client side, we need to implement a server side filtering
-  const [searchValue, setSearchValue] = useState("");
+
+  const [hoveredIndex, setHoveredIndex] = useState(0);
+
+  useHotkeys(
+    "down",
+    () => {
+      if (options && hoveredIndex + 1 > options?.length - 1) return;
+      setHoveredIndex((prev) => prev + 1);
+    },
+    { enableOnFormTags: true },
+  );
+  useHotkeys(
+    "up",
+    () => {
+      if (hoveredIndex - 1 < 0) return;
+      setHoveredIndex((prev) => prev - 1);
+    },
+    { enableOnFormTags: true },
+  );
+
+  useEffect(() => {
+    setHoveredIndex(0);
+  }, [searchValue]);
+
+  const hoveredItem = options?.[hoveredIndex]?.value;
 
   return (
     <Popover
@@ -50,7 +81,18 @@ function ComboBox({
       setOpenPopover={onOpenChange}
       content={
         <AnimatedSizeContainer height>
-          <Command label="Command Menu" className="w-[390px]">
+          <Command
+            label="Command Menu"
+            className="w-[390px]"
+            loop
+            shouldFilter={shouldFilter}
+            filter={(value, serach) => {
+              console.log(serach);
+
+              if (value.includes(serach)) return 1;
+              return 0;
+            }}
+          >
             <div className="relative flex items-center">
               <Command.Input
                 className=" pl-4 py-3 focus:outline-none text-sm "
@@ -79,6 +121,7 @@ function ComboBox({
                     option={option}
                     onSelect={() => handleSelect(option)}
                     key={option.value}
+                    hoveredItem={hoveredItem}
                   />
                 ))}
               </Command.List>
@@ -95,6 +138,7 @@ function ComboBox({
           outlinePopoverTriggerClasses,
         )}
         icon={<Tag />}
+        type="button"
       />
     </Popover>
   );
@@ -104,6 +148,7 @@ type OptionsProps = {
   option: ComboBoxOptions;
   selected: boolean;
   onSelect: () => void;
+  hoveredItem: string | undefined;
 };
 
 function NewOption({ searchValue }: { searchValue: string }) {
@@ -118,10 +163,13 @@ function NewOption({ searchValue }: { searchValue: string }) {
   );
 }
 
-function Option({ option, selected, onSelect }: OptionsProps) {
+function Option({ option, selected, onSelect, hoveredItem }: OptionsProps) {
   return (
     <Command.Item
-      className="hover:cursor-pointer px-3 py-2 hover:bg-accent rounded-md text-sm flex gap-4 items-center"
+      className={cn(
+        "hover:cursor-pointer px-3 py-2 hover:bg-accent rounded-md text-sm flex gap-4 items-center",
+        hoveredItem === option.value && "bg-accent",
+      )}
       value={option.value + option.label}
       onSelect={onSelect}
     >

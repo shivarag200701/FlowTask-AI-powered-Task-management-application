@@ -8,7 +8,7 @@ import {
 } from "@shiva200701/todotypes";
 import randomValue from "../../utils/random-value.js";
 import prisma from "../../db/index.js";
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 const tagRouter = Router();
 
@@ -181,6 +181,26 @@ tagRouter.patch("/:id", requireLogin, async (req, res) => {
       msg: "internal Server Error",
     });
   }
+});
+
+tagRouter.get("/count", requireLogin, async (req, res) => {
+  const userId = req.session.userId;
+
+  if (!userId) {
+    return res.status(401).json({
+      msg: "unauthorized",
+    });
+  }
+
+  try {
+    const count = await prisma.tag.count({
+      where: { userId },
+    });
+
+    return res.status(200).json({
+      count,
+    });
+  } catch (error) {}
 });
 
 export default tagRouter;

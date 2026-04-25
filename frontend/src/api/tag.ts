@@ -1,7 +1,6 @@
 import type { TagProps, TagsQuery } from "@/types";
 import api from "@/utils/functions/api";
 import type { ResourceColorsEnum } from "@shiva200701/todotypes";
-import { isAxiosError } from "axios";
 
 export async function getFilteredTags({ query }: { query: TagsQuery }) {
   const searchParams = new URLSearchParams({ ...query } as Record<
@@ -38,6 +37,15 @@ export async function updateTag({
 }) {
   try {
     await api.patch(`/api/v2/tag/${id}`, tag);
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getTagCount() {
+  try {
+    const { count } = (await api.get("/api/v2/tag/count")).data;
+    return count;
   } catch (error) {
     throw error;
   }

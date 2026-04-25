@@ -1,32 +1,32 @@
-import { useEffect, useState } from "react";
-import type { ParsedDateResult } from "@/features/CustomDatePicker/types";
-import { parseNaturalLanguageDate } from "@/utils/functions/nlpDateParser";
+// import { useEffect, useState } from "react";
+// import type { ParsedDateResult } from "@/features/CustomDatePicker/types";
+// import { parseNaturalLanguageDate } from "@/utils/functions/nlpDateParser";
 
-function useNLPDate(delayMs: number) {
-  const [nlpInput, setNlpInput] = useState("");
-  const [parsedResult, setParsedResult] = useState<ParsedDateResult | null>(
-    null,
-  );
+// function useNLPDate(delayMs: number) {
+//   const [nlpInput, setNlpInput] = useState("");
+//   const [parsedResult, setParsedResult] = useState<ParsedDateResult | null>(
+//     null,
+//   );
 
-  useEffect(() => {
-    if (!nlpInput.trim()) {
-      setParsedResult(null);
-      return;
-    }
+//   useEffect(() => {
+//     if (!nlpInput.trim()) {
+//       setParsedResult(null);
+//       return;
+//     }
 
-    const id = setTimeout(() => {
-      setParsedResult(parseNaturalLanguageDate(nlpInput));
-    }, delayMs);
+//     const id = setTimeout(() => {
+//       setParsedResult(parseNaturalLanguageDate(nlpInput));
+//     }, delayMs);
 
-    return () => {
-      clearTimeout(id);
-    };
-  }, [nlpInput]);
+//     return () => {
+//       clearTimeout(id);
+//     };
+//   }, [nlpInput]);
 
-  return {
-    nlpInput,
-    setNlpInput,
-    parsedResult,
-  };
-}
-export default useNLPDate;
+//   return {
+//     nlpInput,
+//     setNlpInput,
+//     parsedResult,
+//   };
+// }
+// export default useNLPDate;

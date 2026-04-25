@@ -2,7 +2,7 @@ import api from "@/utils/functions/api";
 import { LogOut } from "lucide-react";
 import React, { createContext, useContext, useRef, useState } from "react";
 import { PanelLeft, Settings } from "lucide-react";
-import DropDown from "@/features/DropDown";
+import DropDown from "@/features/_legacy/DropDown";
 import { SettingsModal } from "@/features/settingsModal/SettingsModal";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";

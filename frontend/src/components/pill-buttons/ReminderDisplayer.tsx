@@ -7,7 +7,6 @@ import type { ComponentProps } from "react";
 
 function ReminderDisplayer({
   ref,
-  reminder,
   ...props
 }: {
   remimder: TodoWithCompleteAtDateTime["reminder"];

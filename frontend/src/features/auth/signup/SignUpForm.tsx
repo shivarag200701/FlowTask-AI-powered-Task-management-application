@@ -1,12 +1,12 @@
 import { isAxiosError } from "axios";
 import { useCallback, useState } from "react";
-import InputBox from "@/features/InputBox";
+import InputBox from "@/features/_legacy/InputBox";
 import { useForm, FormProvider } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import api from "@/utils/functions/api";
-import { GoogleSignInButton } from "@/features/GoogleSignInButton";
+import { GoogleSignInButton } from "@/features/_legacy/GoogleSignInButton";
 import { PasswordRequirements } from "@/features/auth/signup/PasswordRequirements";
 import { toast } from "sonner";
 import { useSignupContext } from "@/context/SingupContext";

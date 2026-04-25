@@ -1,6 +1,6 @@
 import { SignupProvider, useSignupContext } from "@/context/SingupContext";
 import SignUpForm from "@/features/auth/signup/SignUpForm";
-import LogoCard from "@/features/LogoCard";
+import LogoCard from "@/features/_legacy/LogoCard";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import VerfiyForm from "@/features/auth/signup/VerfiyForm";
