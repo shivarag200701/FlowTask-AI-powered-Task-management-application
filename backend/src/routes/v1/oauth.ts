@@ -288,9 +288,6 @@ oauthRouter.delete("/accounts/:id", requireLogin, async (req, res) => {
   }
 
   const accountId = idParam;
-  if (isNaN(accountId)) {
-    return res.status(400).json({ msg: "Account id is required" });
-  }
 
   try {
     const account = await prisma.oAuthAccount.findFirst({
