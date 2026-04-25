@@ -79,10 +79,12 @@ function TagsSelector({
             });
         }
       }}
+      triggerClassName="px-2.5 py-1.5 min-h-10 h-auto w-full"
+      contentClassName="w-[400px]"
     >
       {selectedTags && selectedTags.length > 0 && (
-        <div className="flex gap-2">
-          {tags?.map((tag) => (
+        <div className="flex flex-wrap gap-2">
+          {tags?.slice(0, 10).map((tag) => (
             <TagBadge
               name={tag.name}
               color={tag.color}

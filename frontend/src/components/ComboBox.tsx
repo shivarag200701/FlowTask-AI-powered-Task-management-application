@@ -31,6 +31,9 @@ export type ComboBoxProps<TMeta extends any> = {
   shouldFilter?: boolean;
   searchValue: string;
   setSearchValue: (serach: string) => void;
+  triggerClassName?: string;
+  matchTriggerWidth?: boolean;
+  contentClassName?: string;
 };
 
 function ComboBox({
@@ -44,6 +47,9 @@ function ComboBox({
   shouldFilter = true,
   searchValue,
   setSearchValue,
+  triggerClassName,
+  matchTriggerWidth,
+  contentClassName,
 }: ComboBoxProps<any>) {
   const handleSelect = (option: ComboBoxOptions<any>) => {
     setSelectedTags?.(option);
@@ -82,7 +88,10 @@ function ComboBox({
     <Popover
       openPopover={open}
       setOpenPopover={onOpenChange}
-      popoverContentClassName="sm:w-[var(--radix-popover-trigger-width)]"
+      popoverContentClassName={cn(
+        matchTriggerWidth && "sm:w-[var(--radix-popover-trigger-width)]",
+        contentClassName,
+      )}
       content={
         <AnimatedSizeContainer height>
           <Command
@@ -135,8 +144,9 @@ function ComboBox({
       <Button
         variant="outline"
         className={cn(
-          "text-neutral-500 w-fit sm:w-[390px] text-left flex justify-start hover:bg-none",
+          "text-neutral-500  text-left flex justify-start hover:bg-none h-auto w-full",
           outlinePopoverTriggerClasses,
+          triggerClassName,
         )}
         icon={<Tag />}
         type="button"

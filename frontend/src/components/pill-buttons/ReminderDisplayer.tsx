@@ -16,7 +16,10 @@ function ReminderDisplayer({
       ref={ref}
       {...props}
       variant="outline"
-      className={cn("w-fit text-sm", outlinePopoverTriggerClasses)}
+      className={cn(
+        "w-full md:w-fit text-sm h-10",
+        outlinePopoverTriggerClasses,
+      )}
       icon={<AlarmClock />}
       type="button"
     >

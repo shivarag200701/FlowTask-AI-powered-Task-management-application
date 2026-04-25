@@ -61,7 +61,7 @@ function InlineTaskForm({
             placeholder="Description"
             {...register("description")}
           />
-          <div className="flex gap-2 mt-4">
+          <div className="grid grid-cols-2 md:flex gap-2 mt-4">
             <Popover
               openPopover={isPriorityDropDownOpen}
               setOpenPopover={setIsPriorityDropDownOpen}
@@ -76,10 +76,12 @@ function InlineTaskForm({
             >
               <ReminderDisplayer remimder={todo?.reminder} />
             </Popover>
-            <TagsSelector
-              open={isTagsDropDownOpen}
-              setOpen={setIsTagsDropDownOpen}
-            />
+            <div className="col-span-2 w-full">
+              <TagsSelector
+                open={isTagsDropDownOpen}
+                setOpen={setIsTagsDropDownOpen}
+              />
+            </div>
           </div>
         </div>
         <div className="w-full p-3 flex justify-end gap-2">
