@@ -1,5 +1,5 @@
 import { Mic, ListTree, CalendarClock, Tag, CalendarDays } from "lucide-react";
-import ComingSoon from "@/features/landingPage/ComingSoon";
+import ComingSoon from "@/features/LandingPage/ComingSoon";
 import { useRef } from "react";
 import PathAnimation from "@/features/_legacy/PathAnimation";
 
