@@ -21,7 +21,7 @@ import type { UpdateTodo } from "@shiva200701/todotypes";
 import TimeDisplayer from "@/components/TimeDisplayer";
 import { AlarmClock } from "lucide-react";
 
-type DragEndPayload = Parameters<DragEndEvent>[0];
+type DragEndPayload = DragEndEvent;
 
 function BoardView() {
   const { data: todayTodos } = useTodayTodos();
