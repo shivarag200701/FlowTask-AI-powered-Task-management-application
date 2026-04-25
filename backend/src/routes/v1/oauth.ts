@@ -14,7 +14,7 @@ import prisma from "../../db/index.js";
 import crypto from "crypto";
 import { requireLogin } from "../../middleware.js";
 
-const oauthRouter = express();
+const oauthRouter = express.Router();
 
 const FRONTEND_URL = (
   process.env.FRONTEND_URL || "http://localhost:5173"

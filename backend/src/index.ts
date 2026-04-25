@@ -106,6 +106,11 @@ app.use(
 //json parser
 app.use(express.json());
 
+app.use((req, res, next) => {
+  res.setHeader("Cache-Control", "no-store, private");
+  next();
+});
+
 //routes
 app.get("/api/v1/auth-check", (req, res) => {
   if (req.session?.userId) {
