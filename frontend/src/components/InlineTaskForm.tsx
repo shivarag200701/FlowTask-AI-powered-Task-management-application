@@ -44,7 +44,7 @@ function InlineTaskForm({
   // };
 
   return (
-    <div className="rounded-lg border border-border  min-h-15">
+    <div className="rounded-lg border border-border min-h-15 ">
       <form>
         <div className="border-b border-border/50  px-3 py-2">
           <input

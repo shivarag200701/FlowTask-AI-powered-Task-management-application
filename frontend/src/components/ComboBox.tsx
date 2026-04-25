@@ -11,6 +11,7 @@ import { getResourceColors } from "@/utils/functions/getTagColors";
 import AnimatedSizeContainer from "./ui/animated-size-container";
 import ScrollContainer from "./ui/scroll-container";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 export type ComboBoxOptions<TMeta = any> = {
   value: string;
@@ -75,27 +76,28 @@ function ComboBox({
 
   const hoveredItem = options?.[hoveredIndex]?.value;
 
+  const { isMobile } = useMediaQuery();
+
   return (
     <Popover
       openPopover={open}
       setOpenPopover={onOpenChange}
+      popoverContentClassName="sm:w-[var(--radix-popover-trigger-width)]"
       content={
         <AnimatedSizeContainer height>
           <Command
             label="Command Menu"
-            className="w-[390px]"
             loop
+            className="w-full"
             shouldFilter={shouldFilter}
             filter={(value, serach) => {
-              console.log(serach);
-
               if (value.includes(serach)) return 1;
               return 0;
             }}
           >
             <div className="relative flex items-center">
               <Command.Input
-                className=" pl-4 py-3 focus:outline-none text-sm "
+                className=" pl-4 py-3 focus:outline-none text-sm"
                 placeholder="search or add tags..."
                 value={searchValue}
                 onValueChange={setSearchValue}
@@ -132,14 +134,15 @@ function ComboBox({
     >
       <Button
         variant="outline"
-        Initial={children ? children : placeholder}
         className={cn(
-          "text-neutral-500 w-[390px] text-left flex justify-start hover:bg-none",
+          "text-neutral-500 w-fit sm:w-[390px] text-left flex justify-start hover:bg-none",
           outlinePopoverTriggerClasses,
         )}
         icon={<Tag />}
         type="button"
-      />
+      >
+        {children ? children : placeholder}
+      </Button>
     </Popover>
   );
 }

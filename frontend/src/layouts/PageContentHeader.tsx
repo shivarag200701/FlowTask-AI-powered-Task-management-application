@@ -16,10 +16,15 @@ function PageContentHeader({
 }: PageContentHeaderProps) {
   const hasHeaderContent = !!(title || controls || headerContent);
   return (
-    <div className={cn("border-border", hasHeaderContent && "border-b")}>
+    <div
+      className={cn(
+        "border-border bg-accent lg:bg-transparent",
+        hasHeaderContent && "border-b",
+      )}
+    >
       <PageWidthWrapper>
         <div
-          className={`flex items-center justify-between gap-4 h-12 ${hasHeaderContent ? "sm:h-16" : "h-0"}`}
+          className={`flex items-center justify-between gap-4 ${hasHeaderContent ? "h-12 sm:h-16" : "h-0"}`}
         >
           <div className="flex items-center gap-4 min-w-0">
             {<SidebarTrigger className="-ml-1" />}

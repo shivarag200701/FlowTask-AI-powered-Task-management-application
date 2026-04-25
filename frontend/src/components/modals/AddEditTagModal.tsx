@@ -72,7 +72,7 @@ function AddEditTagModal({
   return (
     <Modal showModal={show} setShowModal={setShow} className="">
       <div className="flex flex-col items-center justify-center space-y-4 border-b border-border">
-        <div className="flex flex-col space-y-1 items-center justify-center px-16 pt-8 pb-4 w-full">
+        <div className="flex flex-col space-y-1 items-center justify-center px-4 py-8 sm:px-16 sm:py-8 w-full">
           <img src="/logo.png" className="size-15" />
           <h3 className="font-medium text-lg">Create tag</h3>
           <p className="text-neutral-500 text-sm">
@@ -80,7 +80,7 @@ function AddEditTagModal({
           </p>
         </div>
       </div>
-      <div className="bg-accent/50 flex flex-col gap-y-4 px-16 py-8 items-center justify-center">
+      <div className="bg-accent/50 flex flex-col gap-y-4 px-4 py-8 sm:px-16 sm:py-8 items-center justify-center">
         <form
           className="flex flex-col space-y-6 w-full"
           onSubmit={handleSubmit(onSubmit)}
