@@ -1,5 +1,5 @@
 import {
-  GetTagQuerySchema,
+  GetTagsQuerySchema,
   type ResourceColorsEnum,
 } from "@shiva200701/todotypes";
 import type { DateTime } from "luxon";
@@ -43,7 +43,7 @@ export interface TagProps {
   _count: { todos: number };
 }
 
-export type TagsQuery = z.infer<typeof GetTagQuerySchema>;
+export type TagsQuery = z.infer<typeof GetTagsQuerySchema>;
 
 export type TodoWithCompleteAtDateTime = Omit<Todo, "dueTime"> & {
   dueTime: DateTime | null;
