@@ -1,15 +1,15 @@
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
-type SpinnerProps = React.SVGProps<SVGSVGElement>
+type SpinnerProps = React.SVGProps<SVGSVGElement>;
 
 export function Spinner({ className, ...props }: SpinnerProps) {
-  const size = 20        // px
-  const strokeWidth = 2
-  const radius = (size - strokeWidth) / 2
-  const circumference = 2 * Math.PI * radius
+  const size = 16; // px
+  const strokeWidth = 2;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
 
   // 0–1: how much of the circle is the "thumb"
-  const thumbFraction = 0.2
+  const thumbFraction = 0.2;
 
   return (
     <svg
@@ -29,7 +29,7 @@ export function Spinner({ className, ...props }: SpinnerProps) {
         fill="none"
         stroke="currentColor"
         strokeWidth={strokeWidth}
-        className={cn("text-accent/20",className)}      // light track
+        className={cn("text-accent/20", className)} // light track
       />
 
       {/* Thumb (arc) */}
@@ -56,5 +56,5 @@ export function Spinner({ className, ...props }: SpinnerProps) {
         />
       </circle>
     </svg>
-  )
+  );
 }

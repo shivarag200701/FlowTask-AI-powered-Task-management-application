@@ -22,8 +22,6 @@ function AnimatedSizeContainer({
   const containerRef = useRef<HTMLDivElement>(null);
   const resizeObserverEntry = useResizeObeserver(containerRef);
 
-  console.log(resizeObserverEntry?.contentRect);
-
   const hasMeasuredRef = useRef(false);
 
   const measuredWidth = resizeObserverEntry?.contentRect?.width;

@@ -5,12 +5,12 @@ import { Button } from "./ui/button";
 import { Plus, Tag, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { outlinePopoverTriggerClasses } from "@/lib/constants";
-import { isValidElement, useEffect, useState, type ReactNode } from "react";
+import { isValidElement, useState, type ReactNode } from "react";
 import { Checkbox } from "./ui/checkbox";
-import { getResourceColors } from "@/utils/functions/getTagColors";
+import { getResourceColors } from "@/utils/functions/tag-colors";
 import AnimatedSizeContainer from "./ui/animated-size-container";
 import ScrollContainer from "./ui/scroll-container";
-import { useHotkeys } from "react-hotkeys-hook";
+import { Spinner } from "./ui/spinner";
 
 export type ComboBoxOptions<TMeta = any> = {
   value: string;
@@ -26,13 +26,18 @@ export type ComboBoxProps<TMeta extends any> = {
   children?: ReactNode;
   options?: ComboBoxOptions<TMeta>[];
   selectedTags?: ComboBoxOptions<TMeta>[];
+  //multiple select
   setSelectedTags?: (value: ComboBoxOptions<any>) => void;
+  //single select
+  onSelect?: (value: ComboBoxOptions<any>) => void;
   shouldFilter?: boolean;
   searchValue: string;
   setSearchValue: (serach: string) => void;
   triggerClassName?: string;
   matchTriggerWidth?: boolean;
   contentClassName?: string;
+  multiple?: boolean;
+  onCreate?: (tagName: string) => Promise<void>;
 };
 
 function ComboBox({
@@ -42,6 +47,7 @@ function ComboBox({
   children,
   options,
   selectedTags,
+  onSelect,
   setSelectedTags,
   shouldFilter = true,
   searchValue,
@@ -49,37 +55,20 @@ function ComboBox({
   triggerClassName,
   matchTriggerWidth,
   contentClassName,
+  multiple = false,
+  onCreate,
 }: ComboBoxProps<any>) {
   const handleSelect = (option: ComboBoxOptions<any>) => {
+    if (!multiple) {
+      onSelect?.(option);
+      return;
+    }
     setSelectedTags?.(option);
   };
 
+  const [isCreating, setIsCreating] = useState(false);
+
   //Currenlty all the filtering is in client side, we need to implement a server side filtering
-
-  const [hoveredIndex, setHoveredIndex] = useState(0);
-
-  useHotkeys(
-    "down",
-    () => {
-      if (options && hoveredIndex + 1 > options?.length - 1) return;
-      setHoveredIndex((prev) => prev + 1);
-    },
-    { enableOnFormTags: true },
-  );
-  useHotkeys(
-    "up",
-    () => {
-      if (hoveredIndex - 1 < 0) return;
-      setHoveredIndex((prev) => prev - 1);
-    },
-    { enableOnFormTags: true },
-  );
-
-  useEffect(() => {
-    setHoveredIndex(0);
-  }, [searchValue]);
-
-  const hoveredItem = options?.[hoveredIndex]?.value;
 
   return (
     <Popover
@@ -116,8 +105,13 @@ function ComboBox({
             />
             <ScrollContainer className="max-h-[300px]">
               <Command.List className="p-1">
-                {searchValue.length > 0 && (
-                  <NewOption searchValue={searchValue} />
+                {searchValue.length > 0 && onCreate && (
+                  <CreateNewOption
+                    searchValue={searchValue}
+                    isCreating={isCreating}
+                    setIsCreating={setIsCreating}
+                    onCreate={onCreate}
+                  />
                 )}
                 {options?.map((option) => (
                   <Option
@@ -129,7 +123,7 @@ function ComboBox({
                     option={option}
                     onSelect={() => handleSelect(option)}
                     key={option.value}
-                    hoveredItem={hoveredItem}
+                    multiple={multiple}
                   />
                 ))}
               </Command.List>
@@ -158,35 +152,61 @@ type OptionsProps = {
   option: ComboBoxOptions;
   selected: boolean;
   onSelect: () => void;
-  hoveredItem: string | undefined;
+  multiple?: boolean;
 };
 
-function NewOption({ searchValue }: { searchValue: string }) {
+type CreateNewOptions = {
+  searchValue: string;
+  isCreating: boolean;
+  setIsCreating: (isCreating: boolean) => void;
+  onCreate: (value: string) => Promise<void>;
+};
+
+function CreateNewOption({
+  searchValue,
+  isCreating,
+  setIsCreating,
+  onCreate,
+}: CreateNewOptions) {
   return (
     <Command.Item
-      className="hover:cursor-pointer px-3 py-2 hover:bg-accent rounded-md text-sm flex gap-4 items-center"
+      className={cn(
+        "hover:cursor-pointer px-3 py-2 hover:bg-accent rounded-md text-sm flex gap-4 items-center",
+        "data-[selected=true]:bg-accent",
+      )}
       forceMount
+      onSelect={async () => {
+        setIsCreating(true);
+        await new Promise((r) => setTimeout(r, 3000));
+        try {
+          await onCreate(searchValue);
+        } finally {
+          setIsCreating(false);
+        }
+      }}
     >
-      <Plus className="w-4 h-4 text-neutral-500" />
+      {isCreating ? <Spinner /> : <Plus className="w-4 h-4 text-neutral-500" />}
       <span>{searchValue ? `Create "${searchValue}"` : "...new option"}</span>
     </Command.Item>
   );
 }
 
-function Option({ option, selected, onSelect, hoveredItem }: OptionsProps) {
+function Option({ option, selected, onSelect, multiple }: OptionsProps) {
   return (
     <Command.Item
       className={cn(
         "hover:cursor-pointer px-3 py-2 hover:bg-accent rounded-md text-sm flex gap-4 items-center",
-        hoveredItem === option.value && "bg-accent",
+        "data-[selected=true]:bg-accent",
       )}
       value={option.value + option.label}
       onSelect={onSelect}
     >
-      <Checkbox
-        className="size-3 rounded-xs border-border cursor-pointer"
-        checked={selected}
-      />
+      {multiple && (
+        <Checkbox
+          className="size-3 rounded-xs border-border cursor-pointer"
+          checked={selected}
+        />
+      )}
       <div className="flex gap-4 items-center">
         <div
           className={`bg-${getResourceColors({ color: option.meta.color })?.tagVariants}`}

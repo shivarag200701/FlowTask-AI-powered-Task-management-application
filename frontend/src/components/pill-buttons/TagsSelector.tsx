@@ -1,4 +1,4 @@
-import { useTagCount, useTags } from "@/hooks/use-tags";
+import { useCreateTags, useTagCount, useTags } from "@/hooks/use-tags";
 import ComboBox from "../ComboBox";
 import TagBadge from "../TagBadge";
 import { Tag } from "lucide-react";
@@ -6,6 +6,7 @@ import type { TodoTag } from "@/types";
 import { useMemo, useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { MAX_TAGS_PER_PAGE } from "@/utils/constants/tags";
+import { getRandomTagColor } from "@/utils/functions/tag-colors";
 
 function TagsSelector({
   open,
@@ -41,6 +42,8 @@ function TagsSelector({
     query: { search: asyncSearch ? searchValue : "" },
   });
 
+  const { mutateAsync } = useCreateTags();
+
   const options = useMemo(
     () => availableTags?.map((tag) => getTagOption(tag)),
     [availableTags],
@@ -60,6 +63,8 @@ function TagsSelector({
       selectedTags={selectedTags}
       searchValue={searchValue}
       setSearchValue={setSearchValue}
+      multiple
+      // multiple
       setSelectedTags={(option) => {
         //need to change for case where we add a new Tag
         const id = option.value;
@@ -78,6 +83,9 @@ function TagsSelector({
               shouldDirty: true,
             });
         }
+      }}
+      onCreate={async (tagName) => {
+        mutateAsync({ name: tagName, color: getRandomTagColor() });
       }}
       triggerClassName="px-2.5 py-1.5 min-h-10 h-auto w-full"
       contentClassName="w-[400px]"

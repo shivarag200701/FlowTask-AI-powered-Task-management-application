@@ -58,8 +58,6 @@ const Button = ({
   ...props
 }: ButtonProps & { ref?: Ref<HTMLButtonElement> }) => {
   const { disabled } = props;
-  console.log("disabled", disabled || isSubmitting);
-
   return (
     <button
       {...props}
