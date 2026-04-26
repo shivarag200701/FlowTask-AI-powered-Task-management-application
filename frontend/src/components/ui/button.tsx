@@ -78,7 +78,7 @@ const Button = ({
           <p>{Loading}</p>
         </div>
       ) : (
-        <div className="flex min-w-0 truncate gap-2 justify-center items-center">
+        <div className="flex gap-2 justify-center items-center">
           {icon && <div>{icon}</div>}
           {Initial && <p>{Initial}</p>}
           {children}

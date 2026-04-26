@@ -21,6 +21,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { motion } from "motion/react";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -173,6 +174,11 @@ function Sidebar({
 }) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
 
+  const sidebarVariants = {
+    closed: { x: "-100%", transition: { type: "spring", duration: 0.5 } },
+    open: { x: "0%", transition: { type: "spring", duration: 0.5 } },
+  };
+
   if (collapsible === "none") {
     return (
       <div
@@ -274,15 +280,14 @@ function SidebarTrigger({
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
       variant="ghost"
-      size="icon"
       className={cn("size-7 lg:hidden", className)}
       onClick={(event) => {
         onClick?.(event);
         toggleSidebar();
       }}
       {...props}
+      icon={<PanelLeftIcon className="size-4" />}
     >
-      <PanelLeftIcon className="size-4" />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );
