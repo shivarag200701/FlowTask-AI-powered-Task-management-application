@@ -21,7 +21,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { motion } from "motion/react";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -173,11 +172,6 @@ function Sidebar({
   collapsible?: "offcanvas" | "icon" | "none";
 }) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
-
-  const sidebarVariants = {
-    closed: { x: "-100%", transition: { type: "spring", duration: 0.5 } },
-    open: { x: "0%", transition: { type: "spring", duration: 0.5 } },
-  };
 
   if (collapsible === "none") {
     return (

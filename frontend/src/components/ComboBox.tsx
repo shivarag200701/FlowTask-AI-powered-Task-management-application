@@ -11,7 +11,6 @@ import { getResourceColors } from "@/utils/functions/getTagColors";
 import AnimatedSizeContainer from "./ui/animated-size-container";
 import ScrollContainer from "./ui/scroll-container";
 import { useHotkeys } from "react-hotkeys-hook";
-import { useMediaQuery } from "@/hooks/use-media-query";
 
 export type ComboBoxOptions<TMeta = any> = {
   value: string;
@@ -81,8 +80,6 @@ function ComboBox({
   }, [searchValue]);
 
   const hoveredItem = options?.[hoveredIndex]?.value;
-
-  const { isMobile } = useMediaQuery();
 
   return (
     <Popover
