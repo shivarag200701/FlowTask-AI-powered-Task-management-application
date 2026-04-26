@@ -58,13 +58,15 @@ const Button = ({
   ...props
 }: ButtonProps & { ref?: Ref<HTMLButtonElement> }) => {
   const { disabled } = props;
+  console.log("disabled", disabled || isSubmitting);
+
   return (
     <button
       {...props}
       disabled={isSubmitting || disabled}
       className={cn(
-        "group flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-md  px-4 text-sm",
-        disabled || Loading
+        "group flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-md  px-4 py-2 text-sm",
+        disabled || isSubmitting
           ? "cursor-not-allowed border-neutral-200 bg-neutral-100 text-neutral-400 outline-none"
           : buttonVariants({ variant }),
         className,

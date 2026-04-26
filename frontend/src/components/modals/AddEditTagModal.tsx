@@ -105,7 +105,10 @@ function AddEditTagModal({
                         color={color}
                         key={color}
                         name={color}
-                        className={cn(field.value === color && "ring-2")}
+                        className={cn(
+                          field.value === color && "ring-2",
+                          "px-2 py-1 text-sm",
+                        )}
                       />
                     </div>
                   ))}
@@ -115,7 +118,6 @@ function AddEditTagModal({
           </div>
           <Button
             Initial={`${tag ? "Save Changes" : "Create Tag"}`}
-            size="lg"
             disabled={!!tag ? !isValid || !isDirty : !isValid}
             isSubmitting={isSubmitting}
             Loading="Create Tag"
