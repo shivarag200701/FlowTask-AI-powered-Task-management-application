@@ -7,6 +7,7 @@ import { useMemo, useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { MAX_TAGS_PER_PAGE } from "@/utils/constants/tags";
 import { getRandomTagColor } from "@/utils/functions/tag-colors";
+import { useDebounce } from "use-debounce";
 
 function TagsSelector({
   open,
@@ -16,6 +17,7 @@ function TagsSelector({
   setOpen: (open: boolean) => void;
 }) {
   const [searchValue, setSearchValue] = useState("");
+  const [debouncedValue] = useDebounce(searchValue, 500);
 
   function getTagOption(tag: TodoTag) {
     return {
@@ -39,7 +41,13 @@ function TagsSelector({
   const asyncSearch = tagCount > MAX_TAGS_PER_PAGE;
 
   const { data: availableTags, isLoading: tagsLoading } = useTags({
-    query: { search: asyncSearch ? searchValue : "" },
+    query: {
+      search: asyncSearch
+        ? debouncedValue.length > 0
+          ? debouncedValue
+          : undefined
+        : "",
+    },
   });
 
   const { mutateAsync } = useCreateTags();
@@ -63,6 +71,7 @@ function TagsSelector({
       selectedTags={selectedTags}
       searchValue={searchValue}
       setSearchValue={setSearchValue}
+      shouldFilter
       multiple
       // multiple
       setSelectedTags={(option) => {
@@ -87,6 +96,7 @@ function TagsSelector({
       onCreate={async (tagName) => {
         mutateAsync({ name: tagName, color: getRandomTagColor() });
       }}
+      loading={tagsLoading}
       triggerClassName="px-2.5 py-1.5 min-h-10 h-auto w-full"
       contentClassName="w-[400px]"
     >

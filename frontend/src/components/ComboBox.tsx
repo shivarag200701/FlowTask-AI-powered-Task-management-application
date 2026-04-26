@@ -12,6 +12,7 @@ import AnimatedSizeContainer from "./ui/animated-size-container";
 import ScrollContainer from "./ui/scroll-container";
 import { Spinner } from "./ui/spinner";
 
+//kept sorting simple by using built in sorting from cmdk, need to upgrade later
 export type ComboBoxOptions<TMeta = any> = {
   value: string;
   label: string;
@@ -32,12 +33,14 @@ export type ComboBoxProps<TMeta extends any> = {
   onSelect?: (value: ComboBoxOptions<any>) => void;
   shouldFilter?: boolean;
   searchValue: string;
-  setSearchValue: (serach: string) => void;
+  setSearchValue: (search: string) => void;
   triggerClassName?: string;
   matchTriggerWidth?: boolean;
   contentClassName?: string;
   multiple?: boolean;
   onCreate?: (tagName: string) => Promise<void>;
+  loading?: boolean;
+  isPending?: boolean;
 };
 
 function ComboBox({
@@ -49,7 +52,7 @@ function ComboBox({
   selectedTags,
   onSelect,
   setSelectedTags,
-  shouldFilter = true,
+  shouldFilter = false,
   searchValue,
   setSearchValue,
   triggerClassName,
@@ -57,6 +60,7 @@ function ComboBox({
   contentClassName,
   multiple = false,
   onCreate,
+  loading,
 }: ComboBoxProps<any>) {
   const handleSelect = (option: ComboBoxOptions<any>) => {
     if (!multiple) {
@@ -85,8 +89,8 @@ function ComboBox({
             loop
             className="w-full"
             shouldFilter={shouldFilter}
-            filter={(value, serach) => {
-              if (value.includes(serach)) return 1;
+            filter={(value, search) => {
+              if (value.includes(search)) return 1;
               return 0;
             }}
           >
@@ -105,28 +109,43 @@ function ComboBox({
             />
             <ScrollContainer className="max-h-[300px]">
               <Command.List className="p-1">
-                {searchValue.length > 0 && onCreate && (
-                  <CreateNewOption
-                    searchValue={searchValue}
-                    isCreating={isCreating}
-                    setIsCreating={setIsCreating}
-                    onCreate={onCreate}
-                  />
+                {loading ? (
+                  <Command.Loading>
+                    <div className="h-12 flex items-center justify-center">
+                      <Spinner />
+                    </div>
+                  </Command.Loading>
+                ) : (
+                  <>
+                    {searchValue.length > 0 && onCreate && (
+                      <CreateNewOption
+                        searchValue={searchValue}
+                        isCreating={isCreating}
+                        setIsCreating={setIsCreating}
+                        onCreate={onCreate}
+                      />
+                    )}
+                    {options?.map((option) => (
+                      <Option
+                        selected={
+                          selectedTags?.some(
+                            ({ value }) => option.value === value,
+                          ) ?? false
+                        }
+                        option={option}
+                        onSelect={() => handleSelect(option)}
+                        key={option.value}
+                        multiple={multiple}
+                      />
+                    ))}
+                  </>
                 )}
-                {options?.map((option) => (
-                  <Option
-                    selected={
-                      selectedTags?.some(
-                        ({ value }) => option.value === value,
-                      ) ?? false
-                    }
-                    option={option}
-                    onSelect={() => handleSelect(option)}
-                    key={option.value}
-                    multiple={multiple}
-                  />
-                ))}
               </Command.List>
+              {!onCreate && (
+                <Command.Empty className="flex justify-center items-center h-12 text-neutral-500 text-sm">
+                  No matches
+                </Command.Empty>
+              )}
             </ScrollContainer>
           </Command>
         </AnimatedSizeContainer>
@@ -177,7 +196,6 @@ function CreateNewOption({
       forceMount
       onSelect={async () => {
         setIsCreating(true);
-        await new Promise((r) => setTimeout(r, 3000));
         try {
           await onCreate(searchValue);
         } finally {
@@ -196,7 +214,7 @@ function Option({ option, selected, onSelect, multiple }: OptionsProps) {
     <Command.Item
       className={cn(
         "hover:cursor-pointer px-3 py-2 hover:bg-accent rounded-md text-sm flex gap-4 items-center",
-        "data-[selected=true]:bg-accent",
+        "data-[selected=true]:bg-accent ",
       )}
       value={option.value + option.label}
       onSelect={onSelect}
