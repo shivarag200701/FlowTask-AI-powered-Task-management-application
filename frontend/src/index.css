@@ -1,10 +1,13 @@
 /* Add this to your existing CSS */
-@keyframes jiggle {
-    0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(-5deg); }
-    75% { transform: rotate(5deg); }
+@keyframes scroll {
+  0% {
+    transform: translateY(0);
   }
-  
-  .hover\:animate-jiggle:hover {
-    animation: jiggle 0.3s ease-in-out infinite;
+  100% {
+    transform: translateY(-50%);
   }
+}
+
+.animate-scroll {
+  animation: scroll 20s linear infinite;
+}

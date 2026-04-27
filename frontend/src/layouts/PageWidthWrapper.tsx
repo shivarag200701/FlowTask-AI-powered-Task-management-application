@@ -6,9 +6,7 @@ function PageWidthWrapper({
   className,
 }: PropsWithChildren<{ className?: string }>) {
   return (
-    <div
-      className={cn("mx-auto w-full max-w-screen-xl px-3 md:px-6", className)}
-    >
+    <div className={cn("mx-auto w-full max-w-7xl px-3 md:px-6", className)}>
       {children}
     </div>
   );

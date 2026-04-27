@@ -144,7 +144,7 @@ function CreateTagButton({
       }}
       className="hover:ring-4 hover:ring-border/70 hover:text-accent"
     >
-      <Kbd>C</Kbd>
+      <Kbd className="hidden md:block font-sans ">C</Kbd>
     </Button>
   );
 }

@@ -6,6 +6,7 @@ import { SearchBoxPersisted } from "@/components/SearchBox";
 import { useAddEditTagModal } from "@/components/modals/AddEditTagModal";
 import { useState } from "react";
 import type { TagProps } from "@/types";
+import NoTags from "./NoTags";
 
 function ListView() {
   const [searchParams] = useSearchParams();
@@ -18,7 +19,7 @@ function ListView() {
   const { data: tags } = useTags({ query: { search } });
 
   return (
-    <PageWidthWrapper className="grid pt-6">
+    <PageWidthWrapper className="pt-6">
       <SearchBoxPersisted />
       <div>
         {tags &&
@@ -36,6 +37,7 @@ function ListView() {
               />
             </div>
           ))}
+        {tags?.length === 0 && <NoTags />}
       </div>
       <AddEditTagModal />
     </PageWidthWrapper>
