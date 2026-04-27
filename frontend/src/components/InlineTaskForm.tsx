@@ -8,12 +8,7 @@ import ReminderDisplayer from "@/components/pill-buttons/ReminderDisplayer";
 import TagsSelector from "@/components/pill-buttons/TagsSelector";
 import { useHotkeys } from "react-hotkeys-hook";
 import type { CreateTodo } from "@shiva200701/todotypes";
-
-type Inputs = {
-  title: string;
-  description: string;
-  tags: TagProps;
-};
+import PriorityDropDown from "./popovers/PriorityDropDown";
 
 function InlineTaskForm({
   todo,
@@ -72,9 +67,9 @@ function InlineTaskForm({
             <Popover
               openPopover={isPriorityDropDownOpen}
               setOpenPopover={setIsPriorityDropDownOpen}
-              content={<div>HI there fools</div>}
+              content={<PriorityDropDown />}
             >
-              <PriorityDisplayer priority={todo?.priority ?? null} />
+              <PriorityDisplayer />
             </Popover>
             <Popover
               openPopover={isReminderDropDownOpen}

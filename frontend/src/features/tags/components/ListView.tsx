@@ -27,7 +27,7 @@ function ListView() {
         {tagsLoading ? (
           <>
             {Array.from({ length: 5 }, (_, index) => (
-              <TagsListWrapper id={index}>
+              <TagsListWrapper key={index} id={index}>
                 <TagCardPlaceholder />
               </TagsListWrapper>
             ))}
@@ -36,7 +36,7 @@ function ListView() {
           <>
             {tags &&
               tags.map((tag) => (
-                <TagsListWrapper id={tag.id}>
+                <TagsListWrapper key={tag.id} id={tag.id}>
                   <TagCard
                     tag={tag}
                     onEdit={(tag) => {
