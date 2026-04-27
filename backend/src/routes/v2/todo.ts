@@ -63,6 +63,7 @@ todoRouter.post("/", requireLogin, async (req, res) => {
   }
 
   const { data, success, error } = CreateTodoSchema.safeParse(req.body);
+  console.log(req.body);
 
   if (!success) {
     return res.status(400).json({

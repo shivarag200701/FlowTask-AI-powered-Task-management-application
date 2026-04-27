@@ -1,28 +1,46 @@
 import { api } from "@/utils/functions/api";
 import type { Todo, TodoWithCompleteAtDateTime } from "@/types";
 import { DateTime } from "luxon";
-import type { UpdateTodo } from "@shiva200701/todotypes";
+import type { CreateTodo, UpdateTodo } from "@shiva200701/todotypes";
 
 export async function fetchTodos(): Promise<TodoWithCompleteAtDateTime[]> {
-  const { todos }: { todos: Todo[] } = (await api.get("/api/v2/todo")).data;
+  try {
+    const { todos }: { todos: Todo[] } = (await api.get("/api/v2/todo")).data;
 
-  return todos.map((todo) => ({
-    ...todo,
-    dueTime: DateTime.fromISO(todo.dueTime ?? ""),
-  }));
+    return todos.map((todo) => ({
+      ...todo,
+      dueTime: DateTime.fromISO(todo.dueTime ?? ""),
+    }));
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function updateTodo(
   data: UpdateTodo,
   id: string,
 ): Promise<TodoWithCompleteAtDateTime> {
-  const res = await api.patch(`/api/v2/todo/${id}`, {
-    ...data,
-  });
+  try {
+    const res = await api.patch(`/api/v2/todo/${id}`, {
+      ...data,
+    });
 
-  return res.data.todo;
+    return res.data.todo;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function deleteTodo(id: string) {
-  await api.delete(`/api/v2/todo/${id}`);
+  try {
+    await api.delete(`/api/v2/todo/${id}`);
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function createTodo(todo: CreateTodo) {
+  await api.post(`/api/v2/todo`, {
+    ...todo,
+  });
 }

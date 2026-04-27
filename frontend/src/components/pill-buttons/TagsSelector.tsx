@@ -94,7 +94,7 @@ function TagsSelector({
         }
       }}
       onCreate={async (tagName) => {
-        mutateAsync({ name: tagName, color: getRandomTagColor() });
+        await mutateAsync({ name: tagName, color: getRandomTagColor() });
       }}
       loading={tagsLoading}
       triggerClassName="px-2.5 py-1.5 min-h-10 h-auto w-full"

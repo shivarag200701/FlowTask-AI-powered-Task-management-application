@@ -9,6 +9,8 @@ import TagsSelector from "@/components/pill-buttons/TagsSelector";
 import { useHotkeys } from "react-hotkeys-hook";
 import type { CreateTodo } from "@shiva200701/todotypes";
 import PriorityDropDown from "./popovers/PriorityDropDown";
+import { useCreateTodo } from "@/hooks/use-todos";
+import { DateTime } from "luxon";
 
 function InlineTaskForm({
   todo,
@@ -24,6 +26,9 @@ function InlineTaskForm({
     formState: { isValid },
     handleSubmit,
   } = useFormContext<CreateTodo>();
+
+  const { mutate } = useCreateTodo();
+
   const [tags, title, description] = useWatch({
     control,
     name: ["tags", "title", "description"],
@@ -42,7 +47,11 @@ function InlineTaskForm({
   const [isTagsDropDownOpen, setIsTagsDropDownOpen] = useState(false);
 
   const onSubmit: SubmitHandler<CreateTodo> = (data) => {
-    console.log("in submot handler", data);
+    console.log(data);
+
+    const today = DateTime.now().toISODate();
+    data.dueDate = today;
+    mutate(data);
   };
 
   return (

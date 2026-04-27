@@ -1,12 +1,14 @@
 import { deleteTodo, fetchTodos, updateTodo } from "@/api";
+import { createTodo } from "@/api/todos";
 import { todosQueryKeys } from "@/query-keys";
 import {
   toastMessages,
   type moveTodo,
   type TodoWithCompleteAtDateTime,
 } from "@/types";
-import type { UpdateTodo } from "@shiva200701/todotypes";
+import type { CreateTodo, UpdateTodo } from "@shiva200701/todotypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
 import { DateTime } from "luxon";
 import { toast } from "sonner";
 
@@ -122,7 +124,31 @@ export function useDeleteTodo() {
     mutationFn: (id: string) => deleteTodo(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
-      toast.success("Todo deleted");
+      toast.success("Todo deleted successfully");
+    },
+  });
+}
+
+export function useCreateTodo() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (todo: CreateTodo) => createTodo(todo),
+    onMutate: async (todo) => {
+      await queryClient.cancelQueries({ queryKey: todosQueryKeys.all });
+      queryClient.setQueryData(todosQueryKeys.all, todo);
+      toast.success("todo created successfully");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        const errorMsg = error.response?.data.msg;
+        toast.error(errorMsg);
+        return;
+      }
+      toast.error("something went wrong");
     },
   });
 }

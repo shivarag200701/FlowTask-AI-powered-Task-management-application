@@ -1,10 +1,7 @@
 import z from "zod";
 export const CreateTodoSchema = z.object({
     title: z.string().min(1, "title must be atleast one character"),
-    description: z
-        .string()
-        .min(1, "description must be atleast one character")
-        .optional(),
+    description: z.string().optional(),
     priority: z.enum(["high", "medium", "low"]).nullable(),
     dueDate: z.string().nullable(), //all todos with date will have this
     dueTime: z.string().nullable(), //only timed todos have this
