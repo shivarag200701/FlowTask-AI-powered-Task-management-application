@@ -13,7 +13,7 @@ export declare const CreateTodoSchema: z.ZodObject<{
     reminder: z.ZodDefault<z.ZodBoolean>;
     isAllDay: z.ZodOptional<z.ZodBoolean>;
     tags: z.ZodOptional<z.ZodPipe<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>, z.ZodTransform<string[], string | string[]>>>;
-}, z.z.core.$strip>;
+}, z.core.$strip>;
 export declare const UpdateTodoSchema: z.ZodObject<{
     title: z.ZodOptional<z.ZodString>;
     description: z.ZodOptional<z.ZodOptional<z.ZodString>>;
@@ -32,7 +32,7 @@ export declare const UpdateTodoSchema: z.ZodObject<{
     nextIndex: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     completed: z.ZodOptional<z.ZodBoolean>;
     sortKey: z.ZodOptional<z.ZodString>;
-}, z.z.core.$strip>;
+}, z.core.$strip>;
 export type CreateTodo = z.infer<typeof CreateTodoSchema>;
 export type UpdateTodo = z.infer<typeof UpdateTodoSchema>;
 //# sourceMappingURL=todo.d.ts.map
