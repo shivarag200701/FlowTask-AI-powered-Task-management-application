@@ -1,5 +1,5 @@
-import type { TodoWithCompleteAtDateTime } from "@/types";
-import { useFormContext } from "react-hook-form";
+import type { TagProps, TodoWithCompleteAtDateTime } from "@/types";
+import { useFormContext, useWatch, type SubmitHandler } from "react-hook-form";
 import { Button } from "./ui/button";
 import { Popover } from "./ui/popover";
 import { useState, type Dispatch, type SetStateAction } from "react";
@@ -7,6 +7,13 @@ import PriorityDisplayer from "@/components/pill-buttons/PriorityDisplay";
 import ReminderDisplayer from "@/components/pill-buttons/ReminderDisplayer";
 import TagsSelector from "@/components/pill-buttons/TagsSelector";
 import { useHotkeys } from "react-hotkeys-hook";
+import type { CreateTodo } from "@shiva200701/todotypes";
+
+type Inputs = {
+  title: string;
+  description: string;
+  tags: TagProps;
+};
 
 function InlineTaskForm({
   todo,
@@ -16,16 +23,16 @@ function InlineTaskForm({
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }) {
   const {
-    // control,
-    // setValue,
+    control,
+    setValue,
     register,
     formState: { isValid },
-    // handleSubmit
-  } = useFormContext();
-  // const [tags, title, description] = useWatch({
-  //   control,
-  //   name: ["tags", "title", "description"],
-  // });
+    handleSubmit,
+  } = useFormContext<CreateTodo>();
+  const [tags, title, description] = useWatch({
+    control,
+    name: ["tags", "title", "description"],
+  });
 
   useHotkeys(
     "t",
@@ -39,17 +46,17 @@ function InlineTaskForm({
   const [isReminderDropDownOpen, setIsReminderDropDownOpen] = useState(false);
   const [isTagsDropDownOpen, setIsTagsDropDownOpen] = useState(false);
 
-  // const onSubmit: SubmitHandler<Inputs> = (data) => {
-  //   console.log(data);
-  // };
+  const onSubmit: SubmitHandler<CreateTodo> = (data) => {
+    console.log("in submot handler", data);
+  };
 
   return (
     <div className="rounded-lg border border-border min-h-15 ">
-      <form>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="border-b border-border/50  px-3 py-2">
           <input
             className="font-semibold w-full border-none focus:outline-none"
-            style={{ fontSize: "14px" }}
+            style={{ fontSize: "16px" }}
             placeholder="Task name"
             {...register("title", {
               required: "title is required",
@@ -57,7 +64,7 @@ function InlineTaskForm({
           />
           <input
             className="w-full border-none focus:outline-none"
-            style={{ fontSize: "13px" }}
+            style={{ fontSize: "14px" }}
             placeholder="Description"
             {...register("description")}
           />

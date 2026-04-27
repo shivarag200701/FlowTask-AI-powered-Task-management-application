@@ -2,7 +2,7 @@ import TagBadge from "../TagBadge";
 
 function AnimatedScrollContainer() {
   return (
-    <div className="flex flex-col gap-3 animate-scroll">
+    <div className="flex flex-col gap-3 animate-scroll  ">
       {Array.from({ length: 6 }, (_, index) => (
         <div
           key={index}

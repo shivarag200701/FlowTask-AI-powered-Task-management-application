@@ -1,11 +1,11 @@
-export const DEFAULT_TODO_PROPS: any = {
-  title: null,
-  description: null,
-  priority: null,
+export const DEFAULT_TODO_PROPS = {
+  title: undefined,
+  description: undefined,
+  priority: undefined,
   isAllDay: true,
-  dueDate: null,
-  dueTime: null,
-  color: null,
-  reminder: null,
+  dueDate: undefined,
+  dueTime: undefined,
+  color: undefined,
+  reminder: undefined,
   tags: [],
 };
