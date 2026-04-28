@@ -15,7 +15,7 @@ import type { TodoWithCompleteAtDateTime } from "@/types";
 import { useOverDueTodos } from "@/hooks/use-todos";
 import { isSortable } from "@dnd-kit/react/sortable";
 import { type UniqueIdentifier } from "@dnd-kit/abstract";
-import { Spinner } from "@/components/ui/spinner";
+import { SpinnerCustom } from "@/components/ui/spinner";
 import EmptyState from "@/features/today/components/EmptyState";
 import type { UpdateTodo } from "@shiva200701/todotypes";
 import TimeDisplayer from "@/components/TimeDisplayer";
@@ -48,7 +48,7 @@ function BoardView() {
     });
   }, [todayTodos, overdueTodos]);
 
-  if (todayTodos == null || overdueTodos == null) return <Spinner />;
+  if (todayTodos == null || overdueTodos == null) return <SpinnerCustom />;
 
   const todos = [...todayTodos, ...overdueTodos];
 

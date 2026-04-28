@@ -1,5 +1,5 @@
 import { cn } from "@/utils/functions/cn";
-import { Spinner } from "@/components/ui/spinner";
+import { SpinnerCustom } from "@/components/ui/spinner";
 import type { ReactNode, Ref } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
@@ -74,7 +74,7 @@ const Button = ({
     >
       {isSubmitting ? (
         <div className="flex gap-2 justify-center">
-          <Spinner className="text-gray-300" />
+          <SpinnerCustom />
           <p>{Loading}</p>
         </div>
       ) : (

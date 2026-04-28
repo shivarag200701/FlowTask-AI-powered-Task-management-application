@@ -1,6 +1,6 @@
 import { useLocation, Navigate, Outlet } from "react-router-dom";
 import { Auth } from "@/context/AuthContext";
-import { Spinner } from "@/components/ui/spinner";
+import { SpinnerCustom } from "@/components/ui/spinner";
 import { useQuery } from "@tanstack/react-query";
 import { ONBOARDING_WINDOW_SECONDS } from "@shiva200701/todotypes";
 import { getCurrentUser, fetchTodos, getOnboardingProgress } from "@/api";
@@ -52,7 +52,7 @@ const ProtectedRoute = () => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4">
         <img src="/logo.png" alt="Logo" width={100} height={100} />
-        <Spinner />
+        <SpinnerCustom />
       </div>
     );
   }

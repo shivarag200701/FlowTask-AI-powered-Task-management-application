@@ -1,4 +1,4 @@
-import type { TagProps, TodoWithCompleteAtDateTime } from "@/types";
+import type { TodoWithCompleteAtDateTime } from "@/types";
 import { useFormContext, useWatch, type SubmitHandler } from "react-hook-form";
 import { Button } from "./ui/button";
 import { Popover } from "./ui/popover";
@@ -11,6 +11,8 @@ import type { CreateTodo } from "@shiva200701/todotypes";
 import PriorityDropDown from "./popovers/PriorityDropDown";
 import { useCreateTodo } from "@/hooks/use-todos";
 import { DateTime } from "luxon";
+import { useDateTimeModal } from "./modals/DateTimeModal";
+import { SpinnerCustom } from "./ui/spinner";
 
 function InlineTaskForm({
   todo,
@@ -34,10 +36,25 @@ function InlineTaskForm({
     name: ["tags", "title", "description"],
   });
 
+  const {
+    DateTimeButton,
+    DateTimeModal,
+    setShowDateTimeModal,
+    showDateTimeModal,
+  } = useDateTimeModal();
+
   useHotkeys(
     "t",
     () => {
       setIsTagsDropDownOpen(true);
+    },
+    { preventDefault: true, enabled: !showDateTimeModal },
+  );
+
+  useHotkeys(
+    "d",
+    () => {
+      setShowDateTimeModal(true);
     },
     { preventDefault: true },
   );
@@ -47,6 +64,9 @@ function InlineTaskForm({
   const [isTagsDropDownOpen, setIsTagsDropDownOpen] = useState(false);
 
   const onSubmit: SubmitHandler<CreateTodo> = (data) => {
+    //mock- change later to selected date
+
+    data.tags = data.tags?.map((tag) => tag.id);
     console.log(data);
 
     const today = DateTime.now().toISODate();
@@ -60,7 +80,7 @@ function InlineTaskForm({
         <div className="border-b border-border/50  px-3 py-2">
           <input
             className="font-semibold w-full border-none focus:outline-none"
-            style={{ fontSize: "16px" }}
+            style={{ fontSize: "14px" }}
             placeholder="Task name"
             {...register("title", {
               required: "title is required",
@@ -73,6 +93,7 @@ function InlineTaskForm({
             {...register("description")}
           />
           <div className="grid grid-cols-2 md:flex gap-2 mt-4">
+            <DateTimeButton />
             <Popover
               openPopover={isPriorityDropDownOpen}
               setOpenPopover={setIsPriorityDropDownOpen}
@@ -113,6 +134,7 @@ function InlineTaskForm({
             type="submit"
           />
         </div>
+        <DateTimeModal />
       </form>
     </div>
   );

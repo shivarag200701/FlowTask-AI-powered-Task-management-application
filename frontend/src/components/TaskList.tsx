@@ -54,8 +54,8 @@ function TaskList({
           <Check size={15} className="group-hover/circle:block hidden" />
         </button>
         <div className="flex flex-col gap-[1.5px]">
-          <div className="text-sm">{todo.title}</div>
-          <span className="text-[12px] font-light text-secondary-foreground">
+          <div className="text-sm font-semibold">{todo.title}</div>
+          <span className="text-sm font-light text-secondary-foreground">
             {todo.description}
           </span>
           <div className="flex items-center gap-2">
@@ -67,14 +67,16 @@ function TaskList({
         </div>
       </div>
       <div className="flex gap-10">
-        <TagsToolTip secondaryTags={secondaryTag ?? []}>
-          <TagBadge
-            color={primaryTag?.color ?? "blue"}
-            withIcon
-            name={primaryTag?.name}
-            plus={secondaryTag?.length}
-          />
-        </TagsToolTip>
+        {primaryTag !== undefined && (
+          <TagsToolTip secondaryTags={secondaryTag ?? []}>
+            <TagBadge
+              color={primaryTag?.color ?? "blue"}
+              withIcon
+              name={primaryTag?.name}
+              plus={secondaryTag?.length}
+            />
+          </TagsToolTip>
+        )}
         <Popover
           openPopover={isMoreOptionsOpen}
           setOpenPopover={setIsMoreOptionsOpen}

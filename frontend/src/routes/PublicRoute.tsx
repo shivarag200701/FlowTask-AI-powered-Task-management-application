@@ -1,6 +1,6 @@
 import { Auth } from "@/context/AuthContext";
 import { Outlet, Navigate } from "react-router-dom";
-import { Spinner } from "@/components/ui/spinner";
+import { SpinnerCustom } from "@/components/ui/spinner";
 
 const PublicRoute = () => {
   const { isAuthenticated, isLoading } = Auth();
@@ -9,7 +9,7 @@ const PublicRoute = () => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4">
         <img src="/logo.png" alt="Logo" width={100} height={100} />
-        <Spinner />
+        <SpinnerCustom />
       </div>
     );
   }

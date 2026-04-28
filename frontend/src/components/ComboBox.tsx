@@ -10,7 +10,7 @@ import { Checkbox } from "./ui/checkbox";
 import { getResourceColors } from "@/utils/functions/tag-colors";
 import AnimatedSizeContainer from "./ui/animated-size-container";
 import ScrollContainer from "./ui/scroll-container";
-import { Spinner } from "./ui/spinner";
+import { SpinnerCustom } from "./ui/spinner";
 
 //kept sorting simple by using built in sorting from cmdk, need to upgrade later
 export type ComboBoxOptions<TMeta = any> = {
@@ -112,7 +112,7 @@ function ComboBox({
                 {loading ? (
                   <Command.Loading>
                     <div className="h-12 flex items-center justify-center">
-                      <Spinner />
+                      <SpinnerCustom />
                     </div>
                   </Command.Loading>
                 ) : (
@@ -203,7 +203,11 @@ function CreateNewOption({
         }
       }}
     >
-      {isCreating ? <Spinner /> : <Plus className="w-4 h-4 text-neutral-500" />}
+      {isCreating ? (
+        <SpinnerCustom />
+      ) : (
+        <Plus className="w-4 h-4 text-neutral-500" />
+      )}
       <span>{searchValue ? `Create "${searchValue}"` : "...new option"}</span>
     </Command.Item>
   );

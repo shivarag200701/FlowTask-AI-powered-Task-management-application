@@ -2,6 +2,7 @@ import { Calendar } from "lucide-react";
 import * as chrono from "chrono-node";
 import { useEffect, useState } from "react";
 import { toLuxonDate } from "@/utils/functions/datetime";
+import { Input } from "@/components/ui/input";
 
 export default function NLPDateParser() {
   const [nlpInput, setNlpInput] = useState("");
@@ -26,10 +27,25 @@ export default function NLPDateParser() {
       <div
         className={`${parsedResult && parsedResult.length > 0 ? "border-b border-border" : ""}`}
       >
-        <input
+        <Input
           type="text"
           value={nlpInput}
-          onChange={(e) => setNlpInput(e.target.value)}
+          onChange={(e) => {
+            setNlpInput(e.target.value);
+          }}
+          onBlur={(e) => {
+            const result = chrono.parseDate(e.target.value);
+            console.log(
+              result?.toLocaleTimeString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+              }),
+            );
+          }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               // onApply();

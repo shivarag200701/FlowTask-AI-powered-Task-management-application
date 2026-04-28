@@ -29,10 +29,12 @@ function AddEditTagModal({
   show,
   setShow,
   tag,
+  className,
 }: {
   show: boolean;
   setShow: Dispatch<SetStateAction<boolean>>;
   tag?: TodoTag;
+  className?: string;
 }) {
   const {
     register,
@@ -70,7 +72,7 @@ function AddEditTagModal({
   }, [tag?.id]);
 
   return (
-    <Modal showModal={show} setShowModal={setShow} className="">
+    <Modal showModal={show} setShowModal={setShow} className={cn(className)}>
       <div className="flex flex-col items-center justify-center space-y-4 border-b border-border">
         <div className="flex flex-col space-y-1 items-center justify-center px-4 py-8 sm:px-16 sm:py-8 w-full">
           <img src="/logo.png" className="size-15" />
