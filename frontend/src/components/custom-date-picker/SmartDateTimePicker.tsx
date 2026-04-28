@@ -1,11 +1,26 @@
-import { Calendar } from "lucide-react";
 import * as chrono from "chrono-node";
 import { useEffect, useState } from "react";
 import { toLuxonDate } from "@/utils/functions/datetime";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { parseDateTime } from "@/utils/functions/parseDateTime";
+import { DateTime } from "luxon";
 
-export default function NLPDateParser() {
+type SmartDateTimePickerProps = {
+  onChange?: ({
+    date,
+    isAllDay,
+  }: {
+    date: DateTime;
+    isAllDay: boolean;
+  }) => void;
+};
+
+export default function SmartDateTimePicker({
+  onChange,
+}: SmartDateTimePickerProps) {
   const [nlpInput, setNlpInput] = useState("");
+  const [isDateTimeInputOpen, setIsDateTimeInputOpen] = useState(false);
   const [parsedResult, setParsedResult] = useState<
     chrono.en.ParsedResult[] | null
   >(null);
@@ -23,10 +38,8 @@ export default function NLPDateParser() {
   }, [nlpInput, setNlpInput]);
 
   return (
-    <div className="border-b border-border">
-      <div
-        className={`${parsedResult && parsedResult.length > 0 ? "border-b border-border" : ""}`}
-      >
+    <div className={cn("")}>
+      <div className="flex gap-2 items-center relative">
         <Input
           type="text"
           value={nlpInput}
@@ -34,17 +47,14 @@ export default function NLPDateParser() {
             setNlpInput(e.target.value);
           }}
           onBlur={(e) => {
-            const result = chrono.parseDate(e.target.value);
-            console.log(
-              result?.toLocaleTimeString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-                hour: "numeric",
-                minute: "numeric",
-                hour12: true,
-              }),
-            );
+            const parsed = parseDateTime(e.target.value);
+
+            if (parsed) {
+              onChange?.({ date: parsed.date, isAllDay: parsed.isAllDay });
+              e.target.value = parsed.date.toLocaleString(
+                DateTime.DATETIME_MED,
+              );
+            }
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
@@ -52,17 +62,16 @@ export default function NLPDateParser() {
             }
           }}
           placeholder="Type a date"
-          className="w-full text-base sm:text-lg text-foreground placeholder:text-secondary focus:outline-none focus:border-ring bg-transparent h-10 px-3 "
+          className="w-full text-base sm:text-lg text-foreground placeholder:text-secondary focus:outline-none focus:border-ring bg-transparent h-10 px-3"
         />
       </div>
       {parsedResult && parsedResult.length > 0 && (
         <div className="mt-3 text-xs flex items-center gap-3 px-3">
           <div>
             <div
-              className="flex items-center gap-3 cursor-pointer"
+              className="flex items-center gap-3 cursor-pointerx"
               // onClick={onApply}
             >
-              <Calendar className="w-4 h-4 text-muted-foreground" />
               <div className="text-black text-[13px] flex items-center gap-1">
                 {toLuxonDate(parsedResult[0].start.date()).toFormat("DD")}
               </div>

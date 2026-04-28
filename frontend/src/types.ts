@@ -1,5 +1,6 @@
 import {
   GetTagsQuerySchema,
+  type CreateTodo,
   type ResourceColorsEnum,
 } from "@shiva200701/todotypes";
 import type { DateTime } from "luxon";
@@ -57,3 +58,12 @@ export const toastMessages: Record<moveTodo, string> = {
 };
 
 export type ViewMode = "list" | "board" | "calendar";
+
+export type CreateTodoWithDateTime = Omit<
+  CreateTodo,
+  "dueTime" | "dueDate" | "tags"
+> & {
+  dueTime: DateTime | null;
+  dueDate: DateTime | null;
+  tags?: TodoTag[];
+};

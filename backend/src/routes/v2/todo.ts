@@ -63,8 +63,6 @@ todoRouter.post("/", requireLogin, async (req, res) => {
   }
 
   const { data, success, error } = CreateTodoSchema.safeParse(req.body);
-  console.log(req.body);
-
   if (!success) {
     return res.status(400).json({
       msg: "Send proper data",
@@ -90,8 +88,6 @@ todoRouter.post("/", requireLogin, async (req, res) => {
       orderBy: { sortKey: "desc" },
       select: { sortKey: true },
     });
-
-    console.log("last key", last?.sortKey);
 
     const sortKey = generateSortKey(last ? last.sortKey : null, null);
 
@@ -121,7 +117,7 @@ todoRouter.post("/", requireLogin, async (req, res) => {
       msg: "todo added sucessfully",
       todo,
     });
-  } catch {
+  } catch (error) {
     console.error("Error while adding todo", error);
     return res.status(500).json({
       msg: "internal Server Error",

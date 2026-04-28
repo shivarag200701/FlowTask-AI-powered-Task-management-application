@@ -1,5 +1,8 @@
-import type { TodoWithCompleteAtDateTime } from "@/types";
-import { useFormContext, useWatch, type SubmitHandler } from "react-hook-form";
+import type {
+  CreateTodoWithDateTime,
+  TodoWithCompleteAtDateTime,
+} from "@/types";
+import { useFormContext, type SubmitHandler } from "react-hook-form";
 import { Button } from "./ui/button";
 import { Popover } from "./ui/popover";
 import { useState, type Dispatch, type SetStateAction } from "react";
@@ -7,12 +10,10 @@ import PriorityDisplayer from "@/components/pill-buttons/PriorityDisplay";
 import ReminderDisplayer from "@/components/pill-buttons/ReminderDisplayer";
 import TagsSelector from "@/components/pill-buttons/TagsSelector";
 import { useHotkeys } from "react-hotkeys-hook";
-import type { CreateTodo } from "@shiva200701/todotypes";
 import PriorityDropDown from "./popovers/PriorityDropDown";
 import { useCreateTodo } from "@/hooks/use-todos";
-import { DateTime } from "luxon";
 import { useDateTimeModal } from "./modals/DateTimeModal";
-import { SpinnerCustom } from "./ui/spinner";
+import { SerializeFormData } from "@/utils/functions/serialize-form-data";
 
 function InlineTaskForm({
   todo,
@@ -22,19 +23,12 @@ function InlineTaskForm({
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }) {
   const {
-    control,
-    setValue,
     register,
     formState: { isValid },
     handleSubmit,
-  } = useFormContext<CreateTodo>();
+  } = useFormContext<CreateTodoWithDateTime>();
 
   const { mutate } = useCreateTodo();
-
-  const [tags, title, description] = useWatch({
-    control,
-    name: ["tags", "title", "description"],
-  });
 
   const {
     DateTimeButton,
@@ -63,15 +57,8 @@ function InlineTaskForm({
   const [isReminderDropDownOpen, setIsReminderDropDownOpen] = useState(false);
   const [isTagsDropDownOpen, setIsTagsDropDownOpen] = useState(false);
 
-  const onSubmit: SubmitHandler<CreateTodo> = (data) => {
-    //mock- change later to selected date
-
-    data.tags = data.tags?.map((tag) => tag.id);
-    console.log(data);
-
-    const today = DateTime.now().toISODate();
-    data.dueDate = today;
-    mutate(data);
+  const onSubmit: SubmitHandler<CreateTodoWithDateTime> = (data) => {
+    mutate(SerializeFormData(data));
   };
 
   return (

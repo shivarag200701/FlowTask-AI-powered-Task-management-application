@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { CirclePlus } from "lucide-react";
 import InlineTaskForm from "@/components/InlineTaskForm";
 import TaskBuilderProvider from "@/components/task-builder-provider";
+import { Calendar } from "@/components/ui/calendar";
 
 function ListView() {
   const { data: todos } = useTodayTodos();
