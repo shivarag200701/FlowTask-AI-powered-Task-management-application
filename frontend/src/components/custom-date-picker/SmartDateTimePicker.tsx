@@ -1,10 +1,9 @@
-import * as chrono from "chrono-node";
-import { useEffect, useState } from "react";
-import { toLuxonDate } from "@/utils/functions/datetime";
+import { useEffect, useId, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { parseDateTime } from "@/utils/functions/parseDateTime";
 import { DateTime } from "luxon";
+import { formatDatetime } from "@/utils/functions/formate-datetime";
 
 type SmartDateTimePickerProps = {
   onChange?: ({
@@ -14,21 +13,24 @@ type SmartDateTimePickerProps = {
     date: DateTime;
     isAllDay: boolean;
   }) => void;
+  label?: string;
+  value: string;
 };
 
 export default function SmartDateTimePicker({
   onChange,
+  label,
+  value,
 }: SmartDateTimePickerProps) {
   const [nlpInput, setNlpInput] = useState("");
-  const [isDateTimeInputOpen, setIsDateTimeInputOpen] = useState(false);
-  const [parsedResult, setParsedResult] = useState<
-    chrono.en.ParsedResult[] | null
-  >(null);
+  const [parsedResult, setParsedResult] = useState<string>("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     const id = setTimeout(() => {
-      const result = chrono.parse(nlpInput);
+      const result = parseDateTime(nlpInput);
       if (result) {
-        setParsedResult(result);
+        setParsedResult(formatDatetime(result.date, result.isAllDay));
       }
     }, 300);
 
@@ -37,12 +39,21 @@ export default function SmartDateTimePicker({
     };
   }, [nlpInput, setNlpInput]);
 
+  const id = useId();
+
   return (
-    <div className={cn("")}>
+    <div className={cn("flex flex-col gap-2")}>
+      {label && (
+        <label htmlFor={`${id}-datetime`} className="text-sm font-medium block">
+          {label}
+        </label>
+      )}
       <div className="flex gap-2 items-center relative">
         <Input
+          ref={inputRef}
           type="text"
-          value={nlpInput}
+          defaultValue={value}
+          id={`${id}-datetime`}
           onChange={(e) => {
             setNlpInput(e.target.value);
           }}
@@ -51,21 +62,29 @@ export default function SmartDateTimePicker({
 
             if (parsed) {
               onChange?.({ date: parsed.date, isAllDay: parsed.isAllDay });
-              e.target.value = parsed.date.toLocaleString(
-                DateTime.DATETIME_MED,
-              );
+              e.target.value = formatDatetime(parsed.date, parsed.isAllDay);
             }
           }}
           onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              // onApply();
+            if (e.key === "Enter" && inputRef.current) {
+              console.log("here");
+
+              e.preventDefault();
+              const parsed = parseDateTime(inputRef.current.value);
+              if (parsed) {
+                onChange?.({ date: parsed.date, isAllDay: parsed.isAllDay });
+                inputRef.current.value = formatDatetime(
+                  parsed?.date,
+                  parsed?.isAllDay,
+                );
+              }
             }
           }}
-          placeholder="Type a date"
-          className="w-full text-base sm:text-lg text-foreground placeholder:text-secondary focus:outline-none focus:border-ring bg-transparent h-10 px-3"
+          placeholder='E.g. "tomorrow at 5pm" or in "in 2 hours" '
+          className="w-full text-base sm:text-lg text-foreground  focus:outline-none focus:border-ring bg-transparent h-10 px-3 "
         />
       </div>
-      {parsedResult && parsedResult.length > 0 && (
+      {parsedResult && (
         <div className="mt-3 text-xs flex items-center gap-3 px-3">
           <div>
             <div
@@ -73,7 +92,7 @@ export default function SmartDateTimePicker({
               // onClick={onApply}
             >
               <div className="text-black text-[13px] flex items-center gap-1">
-                {toLuxonDate(parsedResult[0].start.date()).toFormat("DD")}
+                {parsedResult}
               </div>
             </div>
             <div className="text-muted-foreground mt-3 text-[10px] pb-2">

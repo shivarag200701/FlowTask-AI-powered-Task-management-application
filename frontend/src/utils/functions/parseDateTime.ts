@@ -12,7 +12,6 @@ export function parseDateTime(
   const result = results[0];
 
   const isAllDay = !result.start.isCertain("hour");
-
   const date = DateTime.fromJSDate(result.start.date());
 
   return {

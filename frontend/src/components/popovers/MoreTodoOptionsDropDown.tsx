@@ -70,7 +70,7 @@ function MoreTodoOptionsDropDown({
             </div>
             <div>
               {option.hotKey && !isMobile && (
-                <Kbd className="text-[10px]">{option.hotKey}</Kbd>
+                <Kbd className="text-[10px] w-fit">{option.hotKey}</Kbd>
               )}
             </div>
           </button>
@@ -95,7 +95,7 @@ function MoreTodoOptionsDropDown({
             </div>
             <div>
               {option.hotKey && !isMobile && (
-                <Kbd className="text-[10px]">{option.hotKey}</Kbd>
+                <Kbd className="text-[10px] w-fit">{option.hotKey}</Kbd>
               )}
             </div>
           </button>
