@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { useTags } from "@/hooks/use-tags";
 import { SearchBoxPersisted } from "@/components/SearchBox";
 import { useAddEditTagModal } from "@/components/modals/AddEditTagModal";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { TagProps } from "@/types";
 import NoTags from "./NoTags";
 import TagsListWrapper from "./TagsListWrapper";

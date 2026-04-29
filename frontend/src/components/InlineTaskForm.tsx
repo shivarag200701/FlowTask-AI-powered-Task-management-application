@@ -26,6 +26,7 @@ function InlineTaskForm({
     register,
     formState: { isValid },
     handleSubmit,
+    reset,
   } = useFormContext<CreateTodoWithDateTime>();
 
   const { mutate } = useCreateTodo();
@@ -59,6 +60,7 @@ function InlineTaskForm({
 
   const onSubmit: SubmitHandler<CreateTodoWithDateTime> = (data) => {
     mutate(SerializeFormData(data));
+    reset();
   };
 
   return (

@@ -54,7 +54,7 @@ function DateTimeModal({
       <form
         className="px-4 py-5"
         onSubmit={(e) => {
-          e.preventDefault();
+          e.stopPropagation();
           handleSubmit((data) => {
             setValuesParent("dueDate", data.dueDate, { shouldDirty: true });
             setValuesParent("dueTime", null, { shouldDirty: true });
@@ -93,7 +93,7 @@ function DateTimeModal({
                 setValue("dueTime", date, { shouldDirty: true });
               }
             }}
-            label="Date and Time"
+            label="Type a date"
           />
         </div>
         <div className="flex w-full justify-between items-center h-full mt-4">

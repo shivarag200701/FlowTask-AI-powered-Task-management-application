@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { parseDateTime } from "@/utils/functions/parseDateTime";
 import { DateTime } from "luxon";
 import { formatDatetime } from "@/utils/functions/formate-datetime";
+import AnimatedSizeContainer from "../ui/animated-size-container";
 
 type SmartDateTimePickerProps = {
   onChange?: ({
@@ -28,10 +29,11 @@ export default function SmartDateTimePicker({
 
   useEffect(() => {
     const id = setTimeout(() => {
+      console.log("nlp ", nlpInput);
+
       const result = parseDateTime(nlpInput);
-      if (result) {
-        setParsedResult(formatDatetime(result.date, result.isAllDay));
-      }
+      if (!result) return setParsedResult("");
+      setParsedResult(formatDatetime(result.date, result.isAllDay));
     }, 300);
 
     return () => {
@@ -67,8 +69,6 @@ export default function SmartDateTimePicker({
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter" && inputRef.current) {
-              console.log("here");
-
               e.preventDefault();
               const parsed = parseDateTime(inputRef.current.value);
               if (parsed) {
@@ -84,26 +84,18 @@ export default function SmartDateTimePicker({
           className="w-full text-base sm:text-lg text-foreground  focus:outline-none focus:border-ring bg-transparent h-10 px-3 "
         />
       </div>
-      {parsedResult && (
-        <div className="mt-3 text-xs flex items-center gap-3 px-3">
-          <div>
-            <div
-              className="flex items-center gap-3 cursor-pointerx"
-              // onClick={onApply}
-            >
-              <div className="text-black text-[13px] flex items-center gap-1">
-                {parsedResult}
+      <AnimatedSizeContainer height>
+        {parsedResult && parsedResult.length > 0 && (
+          <div className="mt-3 text-xs flex items-center px-3">
+            <div className="flex flex-col ">
+              <div className="text-black text-[13px]">{parsedResult}</div>
+              <div className="text-muted-foreground text-[10px]">
+                Press enter to apply the Date and Time
               </div>
             </div>
-            <div className="text-muted-foreground mt-3 text-[10px] pb-2">
-              You can also type in recurring dates like{" "}
-              <span className="text-gray-300">
-                every day, every 2 weeks, and every month.
-              </span>
-            </div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatedSizeContainer>
     </div>
   );
 }

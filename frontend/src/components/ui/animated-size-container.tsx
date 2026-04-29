@@ -41,7 +41,7 @@ function AnimatedSizeContainer({
 
   return (
     <motion.div
-      className={cn("overflow-hidden ", className)}
+      className={cn("", className)}
       animate={{
         width: width ? (measuredWidth ?? "auto") : "auto",
         height: height ? (measuredHeight ?? "auto") : "auto",
