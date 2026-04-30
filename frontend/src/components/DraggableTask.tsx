@@ -54,7 +54,7 @@ function DraggableTask({
     <>
       <div
         className={cn(
-          "border border-border rounded-lg p-2.5 mb-2 w-[260px] min-h-[70px] bg-white shadow-2xs hover:shadow-card-hover hover:cursor-pointer relative group",
+          "border border-border rounded-lg py-1.5 px-3 mb-2 w-[260px] min-h-[70px] bg-white shadow-2xs hover:shadow-card-hover hover:cursor-pointer relative group",
           className,
         )}
         ref={ref}
@@ -89,7 +89,7 @@ function DraggableTask({
           <div className="flex flex-col">
             <div className="text-sm">{todo.title}</div>
             <div className="text-xs font-light">{todo.description}</div>
-            <div className="flex items-center gap-2 pt-2">
+            <div className="flex items-center gap-2 py-1 ">
               {todo.dueTime?.isValid && (
                 <TimeDisplayer className="text-xs" dueTime={todo.dueTime} />
               )}

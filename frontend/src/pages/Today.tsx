@@ -13,7 +13,7 @@ function Today({ className }: TodayProps) {
   const { viewMode } = useTaskDisplayContext();
 
   return (
-    <div className={cn(className)}>
+    <div className={cn(className, "h-full")}>
       <PageContentHeader title="Today" controls={<TaskDisplaySelector />} />
       {viewMode === "list" && <ListView />}
       {viewMode === "board" && <BoardView />}

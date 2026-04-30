@@ -14,6 +14,7 @@ import PriorityDropDown from "./popovers/PriorityDropDown";
 import { useCreateTodo } from "@/hooks/use-todos";
 import { useDateTimeModal } from "./modals/DateTimeModal";
 import { SerializeFormData } from "@/utils/functions/serialize-form-data";
+import { useTaskDisplayContext } from "@/context/TaskDisplayContext";
 
 function InlineTaskForm({
   todo,
@@ -30,6 +31,8 @@ function InlineTaskForm({
   } = useFormContext<CreateTodoWithDateTime>();
 
   const { mutate } = useCreateTodo();
+
+  const { viewMode } = useTaskDisplayContext();
 
   const {
     DateTimeButton,
@@ -81,12 +84,18 @@ function InlineTaskForm({
             placeholder="Description"
             {...register("description")}
           />
-          <div className="grid grid-cols-2 md:flex gap-2 mt-4">
+          <div className={`grid grid-cols-2 md:flex gap-2 mt-4 flex-wrap`}>
             <DateTimeButton />
             <Popover
               openPopover={isPriorityDropDownOpen}
               setOpenPopover={setIsPriorityDropDownOpen}
-              content={<PriorityDropDown />}
+              content={
+                <PriorityDropDown
+                  onSelect={() => {
+                    setIsPriorityDropDownOpen(false);
+                  }}
+                />
+              }
             >
               <PriorityDisplayer />
             </Popover>

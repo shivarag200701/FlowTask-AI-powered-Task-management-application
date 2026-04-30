@@ -20,7 +20,7 @@ const buttonVariants = cva("transition-all hover:cursor-pointer", {
     size: {
       default:
         "h-9 px-4 py-2 has-[>svg]:px-3 [&_svg:not([class*='size-'])]:size-4",
-      xs: "h-6 gap-1 rounded-md px-2 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
+      xs: "h-6 gap-1 rounded-md px-2 py-0 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
       sm: "h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5 [&_svg:not([class*='size-'])]:size-3",
       lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
       icon: "size-9",
@@ -66,7 +66,7 @@ const Button = ({
         "group flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-md  px-4 py-2 text-sm",
         disabled || isSubmitting
           ? "cursor-not-allowed border-neutral-200 bg-neutral-100 text-neutral-400 outline-none"
-          : buttonVariants({ variant }),
+          : buttonVariants({ variant, size }),
         className,
       )}
       onClick={onClick}

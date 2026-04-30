@@ -17,6 +17,7 @@ import SmartDateTimePicker from "../custom-date-picker/SmartDateTimePicker";
 import { useForm, useFormContext } from "react-hook-form";
 import type { CreateTodoWithDateTime } from "@/types";
 import { formatDatetime } from "@/utils/functions/formate-datetime";
+import { useTaskDisplayContext } from "@/context/TaskDisplayContext";
 
 function DateTimeModal({
   show,
@@ -144,10 +145,12 @@ function DateTimeButton({
   const date = watch("dueDate");
   const dateTime = watch("dueTime");
 
+  const { viewMode } = useTaskDisplayContext();
+
   return (
     <Button
       variant="outline"
-      className={cn("w-full md:w-fit text-sm h-10", className)}
+      className={cn("w-full md:w-fit text-xs h-8", className)}
       icon={<CalendarClockIcon />}
       type="button"
       onClick={() => {
@@ -158,7 +161,9 @@ function DateTimeButton({
         ? dateTime.toFormat("MMMM d h" + " " + "a")
         : date
           ? date.toFormat("MMMM dd")
-          : "Date"}
+          : viewMode !== "board"
+            ? "Date"
+            : ""}
       {date && (
         <button
           onClick={(e) => {
@@ -172,7 +177,7 @@ function DateTimeButton({
           <X className="hover:bg-neutral-200 rounded-sm size-3.5" />
         </button>
       )}
-      <Kbd>D</Kbd>
+      {viewMode !== "board" ? <Kbd>D</Kbd> : ""}
     </Button>
   );
 }

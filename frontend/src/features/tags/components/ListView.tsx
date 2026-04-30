@@ -6,16 +6,15 @@ import { SearchBoxPersisted } from "@/components/SearchBox";
 import { useAddEditTagModal } from "@/components/modals/AddEditTagModal";
 import { useState } from "react";
 import type { TagProps } from "@/types";
-import NoTags from "./NoTags";
 import TagsListWrapper from "./TagsListWrapper";
 import TagCardPlaceholder from "./TagCardPlaceholder";
+import EmptyState from "@/components/EmptyState";
 
 function ListView() {
   const [searchParams] = useSearchParams();
   const [selectedTag, setSelectedTag] = useState<TagProps | null>(null);
-  const { AddEditTagModal, setShowAddEditTagModal } = useAddEditTagModal(
-    selectedTag ?? undefined,
-  );
+  const { AddEditTagModal, setShowAddEditTagModal, CreateTagButton } =
+    useAddEditTagModal(selectedTag ?? undefined);
 
   const search = searchParams.get("search") ?? "";
   const { data: tags, isLoading: tagsLoading } = useTags({ query: { search } });
@@ -49,7 +48,13 @@ function ListView() {
           </>
         )}
 
-        {tags?.length === 0 && <NoTags />}
+        {tags?.length === 0 && (
+          <EmptyState
+            title="No tags found"
+            description="Create tags to organize your links"
+            addButton={<CreateTagButton />}
+          />
+        )}
       </div>
       <AddEditTagModal />
     </PageWidthWrapper>

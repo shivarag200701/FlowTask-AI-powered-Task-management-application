@@ -6,9 +6,11 @@ import { outlinePopoverTriggerClasses } from "@/lib/constants";
 import { useFormContext, useWatch } from "react-hook-form";
 import type { CreateTodo } from "@shiva200701/todotypes";
 import { priorities } from "@/utils/constants/priority";
+import { useTaskDisplayContext } from "@/context/TaskDisplayContext";
 
 function PriorityDisplayer({ ref, ...props }: ComponentProps<typeof Button>) {
   const { control } = useFormContext<CreateTodo>();
+  const { viewMode } = useTaskDisplayContext();
 
   const [selectedPriority] = useWatch({
     control,
@@ -23,10 +25,7 @@ function PriorityDisplayer({ ref, ...props }: ComponentProps<typeof Button>) {
       ref={ref}
       {...props}
       variant="outline"
-      className={cn(
-        "w-full md:w-fit text-sm h-10",
-        outlinePopoverTriggerClasses,
-      )}
+      className={cn("w-fit md:w-fit text-sm h-8", outlinePopoverTriggerClasses)}
       icon={
         <Flag
           className={selectedPriorityData?.textClass}
@@ -35,7 +34,11 @@ function PriorityDisplayer({ ref, ...props }: ComponentProps<typeof Button>) {
       }
       type="button"
     >
-      {selectedPriority ? selectedPriority : "Priority"}
+      {selectedPriority
+        ? selectedPriority
+        : viewMode !== "board"
+          ? "Priority"
+          : ""}
     </Button>
   );
 }

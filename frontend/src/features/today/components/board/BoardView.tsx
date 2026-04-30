@@ -16,10 +16,11 @@ import { useOverDueTodos } from "@/hooks/use-todos";
 import { isSortable } from "@dnd-kit/react/sortable";
 import { type UniqueIdentifier } from "@dnd-kit/abstract";
 import { SpinnerCustom } from "@/components/ui/spinner";
-import EmptyState from "@/features/today/components/EmptyState";
 import type { UpdateTodo } from "@shiva200701/todotypes";
 import TimeDisplayer from "@/components/TimeDisplayer";
 import { AlarmClock } from "lucide-react";
+import EmptyState from "@/components/EmptyState";
+import { Button } from "@/components/ui/button";
 
 type DragEndPayload = DragEndEvent;
 
@@ -99,7 +100,7 @@ function BoardView() {
   }
 
   return (
-    <PageWidthWrapper className="pt-6 lg:pt-12 flex flex-col gap-6">
+    <PageWidthWrapper className="pt-6 lg:pt-12 flex flex-col overflow-x-auto ">
       {todos.length > 0 ? (
         <DragDropProvider
           onDragStart={(event) => {
@@ -116,7 +117,7 @@ function BoardView() {
             handleDragEnd(event);
           }}
         >
-          <div className="flex gap-10">
+          <div className="flex gap-10 px-3 w-max">
             {Object.entries(items).map(([column, items]) => (
               <DroppableColumn
                 key={column}
@@ -140,7 +141,11 @@ function BoardView() {
           <Overlay todos={todos} />
         </DragDropProvider>
       ) : (
-        <EmptyState />
+        <EmptyState
+          title="No todos yet"
+          description="Start organizing your day with todos"
+          addButton={<Button>Create Task</Button>}
+        />
       )}
     </PageWidthWrapper>
   );

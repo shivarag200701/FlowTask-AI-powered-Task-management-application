@@ -4,13 +4,12 @@ import type { CreateTodo } from "@shiva200701/todotypes";
 import { Check, Flag } from "lucide-react";
 import { useFormContext, useWatch } from "react-hook-form";
 
-function PriorityDropDown() {
+function PriorityDropDown({ onSelect }: { onSelect: () => void }) {
   const { control, setValue } = useFormContext<CreateTodo>();
   const [selectedPriority] = useWatch({
     control,
     name: ["priority"],
   });
-  console.log("priority", selectedPriority);
 
   return (
     <div className="flex flex-col gap-1 p-2 sm:text-[13px] w-full sm:w-[160px]">
@@ -22,6 +21,7 @@ function PriorityDropDown() {
           )}
           onClick={() => {
             setValue("priority", priority.id, { shouldDirty: true });
+            onSelect();
           }}
         >
           <div className="flex gap-2 justify-between w-full">

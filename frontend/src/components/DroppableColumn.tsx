@@ -2,6 +2,10 @@ import { cn } from "@/lib/utils";
 import { useDroppable } from "@dnd-kit/react";
 import { useState, type ReactNode } from "react";
 import { CollisionPriority } from "@dnd-kit/abstract";
+import { CirclePlus } from "lucide-react";
+import { Button } from "./ui/button";
+import TaskBuilderProvider from "./task-builder-provider";
+import InlineTaskForm from "./InlineTaskForm";
 
 function DroppableColumn({
   id,
@@ -25,13 +29,11 @@ function DroppableColumn({
 
   const [atTop, setAtTop] = useState(true);
   const [atBottom, setAtBottom] = useState(false);
+  const [isAddTodoOpen, setIsAddTodoOpen] = useState(false);
 
   if (numberofTodos === 0) {
     return null;
   }
-
-  console.log("top", atTop);
-  console.log("bottom", atBottom);
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const scrollTop = e.currentTarget.scrollTop;
@@ -73,6 +75,23 @@ function DroppableColumn({
       >
         {children}
       </div>
+      {id !== "Overdue" &&
+        (!isAddTodoOpen ? (
+          <Button
+            variant="outline"
+            className="flex justify-start border-none shadow-none hover:text-primary gap-2"
+            onClick={() => {
+              setIsAddTodoOpen(true);
+            }}
+          >
+            <CirclePlus />
+            Add Task
+          </Button>
+        ) : (
+          <TaskBuilderProvider>
+            <InlineTaskForm setIsOpen={setIsAddTodoOpen} />
+          </TaskBuilderProvider>
+        ))}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import type { TodoWithCompleteAtDateTime } from "@/types";
 import { cn } from "@/lib/utils";
 import { outlinePopoverTriggerClasses } from "@/lib/constants";
 import type { ComponentProps } from "react";
+import { useTaskDisplayContext } from "@/context/TaskDisplayContext";
 
 function ReminderDisplayer({
   ref,
@@ -11,19 +12,20 @@ function ReminderDisplayer({
 }: {
   remimder: TodoWithCompleteAtDateTime["reminder"];
 } & ComponentProps<typeof Button>) {
+  const { viewMode } = useTaskDisplayContext();
   return (
     <Button
       ref={ref}
       {...props}
       variant="outline"
       className={cn(
-        "w-full md:w-fit text-sm h-10",
+        "w-full md:w-fit text-sm h-8",
         outlinePopoverTriggerClasses,
       )}
       icon={<AlarmClock />}
       type="button"
     >
-      reminder
+      {viewMode !== "board" ? "reminder" : ""}
     </Button>
   );
 }
