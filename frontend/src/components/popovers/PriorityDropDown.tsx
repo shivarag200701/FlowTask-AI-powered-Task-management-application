@@ -12,7 +12,7 @@ function PriorityDropDown({ onSelect }: { onSelect: () => void }) {
   });
 
   return (
-    <div className="flex flex-col gap-1 p-2 sm:text-[13px] w-full sm:w-[160px]">
+    <div className="flex flex-col gap-1 p-2 text-[13px] w-full sm:w-[160px]">
       {priorities.map((priority) => (
         <button
           key={priority.id}
@@ -27,7 +27,7 @@ function PriorityDropDown({ onSelect }: { onSelect: () => void }) {
           <div className="flex gap-2 justify-between w-full">
             <div className="flex gap-2">
               <Flag
-                className={`size-6 sm:size-4 ${priority.textClass}`}
+                className={`size-4 ${priority.textClass}`}
                 fill={priority.fillColor}
               />
               <p className="font-semibold">{priority.label}</p>
