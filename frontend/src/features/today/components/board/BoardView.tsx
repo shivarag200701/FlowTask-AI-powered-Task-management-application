@@ -21,6 +21,7 @@ import TimeDisplayer from "@/components/TimeDisplayer";
 import { AlarmClock } from "lucide-react";
 import EmptyState from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
+import { useAddEditTodoModal } from "@/components/modals/AddEditTodoModal";
 
 type DragEndPayload = DragEndEvent;
 
@@ -38,6 +39,8 @@ function BoardView() {
 
   const snapshot = useRef(structuredClone(items));
   const dragInitialColumn = useRef<UniqueIdentifier | undefined>(undefined);
+
+  const { AddEditTodoModal, CreateTodoButton } = useAddEditTodoModal();
 
   useEffect(() => {
     if (!todayTodos || !overdueTodos) return;
@@ -141,11 +144,14 @@ function BoardView() {
           <Overlay todos={todos} />
         </DragDropProvider>
       ) : (
-        <EmptyState
-          title="No todos yet"
-          description="Start organizing your day with todos"
-          addButton={<Button>Create Task</Button>}
-        />
+        <div>
+          <EmptyState
+            title="No todos yet"
+            description="Start organizing your day with todos"
+            addButton={<CreateTodoButton />}
+          />
+          <AddEditTodoModal />
+        </div>
       )}
     </PageWidthWrapper>
   );

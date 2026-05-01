@@ -25,7 +25,10 @@ function PriorityDisplayer({ ref, ...props }: ComponentProps<typeof Button>) {
       ref={ref}
       {...props}
       variant="outline"
-      className={cn("w-fit md:w-fit text-sm h-8", outlinePopoverTriggerClasses)}
+      className={cn(
+        "w-full md:w-fit text-sm h-8",
+        outlinePopoverTriggerClasses,
+      )}
       icon={
         <Flag
           className={selectedPriorityData?.textClass}

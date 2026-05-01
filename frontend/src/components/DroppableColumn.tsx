@@ -6,6 +6,7 @@ import { CirclePlus } from "lucide-react";
 import { Button } from "./ui/button";
 import TaskBuilderProvider from "./task-builder-provider";
 import InlineTaskForm from "./InlineTaskForm";
+import { useAddEditTodoModal } from "./modals/AddEditTodoModal";
 
 function DroppableColumn({
   id,
@@ -30,6 +31,8 @@ function DroppableColumn({
   const [atTop, setAtTop] = useState(true);
   const [atBottom, setAtBottom] = useState(false);
   const [isAddTodoOpen, setIsAddTodoOpen] = useState(false);
+
+  const { setShowAddEditTodoModal, AddEditTodoModal } = useAddEditTodoModal();
 
   if (numberofTodos === 0) {
     return null;
@@ -75,23 +78,19 @@ function DroppableColumn({
       >
         {children}
       </div>
-      {id !== "Overdue" &&
-        (!isAddTodoOpen ? (
-          <Button
-            variant="outline"
-            className="flex justify-start border-none shadow-none hover:text-primary gap-2"
-            onClick={() => {
-              setIsAddTodoOpen(true);
-            }}
-          >
-            <CirclePlus />
-            Add Task
-          </Button>
-        ) : (
-          <TaskBuilderProvider>
-            <InlineTaskForm setIsOpen={setIsAddTodoOpen} />
-          </TaskBuilderProvider>
-        ))}
+      {id !== "Overdue" && (
+        <Button
+          variant="outline"
+          className="flex justify-start border-none shadow-none hover:text-primary gap-2"
+          onClick={() => {
+            setShowAddEditTodoModal(true);
+          }}
+        >
+          <CirclePlus />
+          Add Task
+        </Button>
+      )}
+      <AddEditTodoModal />
     </div>
   );
 }

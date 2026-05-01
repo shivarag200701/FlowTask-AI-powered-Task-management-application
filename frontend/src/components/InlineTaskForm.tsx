@@ -19,9 +19,11 @@ import { useTaskDisplayContext } from "@/context/TaskDisplayContext";
 function InlineTaskForm({
   todo,
   setIsOpen,
+  mode = "default",
 }: {
   todo?: TodoWithCompleteAtDateTime;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  mode?: "default" | "modal";
 }) {
   const {
     register,
@@ -31,8 +33,6 @@ function InlineTaskForm({
   } = useFormContext<CreateTodoWithDateTime>();
 
   const { mutate } = useCreateTodo();
-
-  const { viewMode } = useTaskDisplayContext();
 
   const {
     DateTimeButton,
@@ -67,12 +67,12 @@ function InlineTaskForm({
   };
 
   return (
-    <div className="rounded-lg border border-border min-h-15 ">
+    <div className="rounded-2xl sm:border sm:border-border min-h-15 ">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="border-b border-border/50  px-3 py-2">
           <input
             className="font-semibold w-full border-none focus:outline-none"
-            style={{ fontSize: "14px" }}
+            style={{ fontSize: mode === "modal" ? "16px" : "14px" }}
             placeholder="Task name"
             {...register("title", {
               required: "title is required",
