@@ -4,8 +4,6 @@ import { useState, type ReactNode } from "react";
 import { CollisionPriority } from "@dnd-kit/abstract";
 import { CirclePlus } from "lucide-react";
 import { Button } from "./ui/button";
-import TaskBuilderProvider from "./task-builder-provider";
-import InlineTaskForm from "./InlineTaskForm";
 import { useAddEditTodoModal } from "./modals/AddEditTodoModal";
 
 function DroppableColumn({
@@ -30,7 +28,6 @@ function DroppableColumn({
 
   const [atTop, setAtTop] = useState(true);
   const [atBottom, setAtBottom] = useState(false);
-  const [isAddTodoOpen, setIsAddTodoOpen] = useState(false);
 
   const { setShowAddEditTodoModal, AddEditTodoModal } = useAddEditTodoModal();
 

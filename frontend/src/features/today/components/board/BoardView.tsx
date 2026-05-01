@@ -20,7 +20,6 @@ import type { UpdateTodo } from "@shiva200701/todotypes";
 import TimeDisplayer from "@/components/TimeDisplayer";
 import { AlarmClock } from "lucide-react";
 import EmptyState from "@/components/EmptyState";
-import { Button } from "@/components/ui/button";
 import { useAddEditTodoModal } from "@/components/modals/AddEditTodoModal";
 
 type DragEndPayload = DragEndEvent;

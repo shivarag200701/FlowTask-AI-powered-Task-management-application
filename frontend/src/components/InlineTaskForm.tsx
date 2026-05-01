@@ -14,7 +14,6 @@ import PriorityDropDown from "./popovers/PriorityDropDown";
 import { useCreateTodo } from "@/hooks/use-todos";
 import { useDateTimeModal } from "./modals/DateTimeModal";
 import { SerializeFormData } from "@/utils/functions/serialize-form-data";
-import { useTaskDisplayContext } from "@/context/TaskDisplayContext";
 
 function InlineTaskForm({
   todo,
