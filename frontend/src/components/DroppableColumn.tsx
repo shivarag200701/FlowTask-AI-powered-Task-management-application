@@ -26,12 +26,14 @@ function DroppableColumn({
     collisionPriority: CollisionPriority.Low,
   });
 
+  console.log("id", id);
+
   const [atTop, setAtTop] = useState(true);
   const [atBottom, setAtBottom] = useState(false);
 
   const { setShowAddEditTodoModal, AddEditTodoModal } = useAddEditTodoModal();
 
-  if (numberofTodos === 0) {
+  if (id === "Overdue" && numberofTodos === 0) {
     return null;
   }
 

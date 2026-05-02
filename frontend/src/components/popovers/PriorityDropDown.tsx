@@ -4,7 +4,7 @@ import type { CreateTodo } from "@shiva200701/todotypes";
 import { Check, Flag } from "lucide-react";
 import { useFormContext, useWatch } from "react-hook-form";
 
-function PriorityDropDown({ onSelect }: { onSelect: () => void }) {
+function PriorityDropDown({ onSelect }: { onSelect?: () => void }) {
   const { control, setValue } = useFormContext<CreateTodo>();
   const [selectedPriority] = useWatch({
     control,

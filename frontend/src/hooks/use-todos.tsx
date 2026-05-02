@@ -13,23 +13,20 @@ import { DateTime } from "luxon";
 import { toast } from "sonner";
 
 const selectOverdueTodos = (todos: TodoWithCompleteAtDateTime[]) => {
-  return todos.filter((todo) => {
-    return (
+  const startOfToday = DateTime.now().startOf("day");
+  return todos.filter(
+    (todo) =>
       !todo.completed &&
       todo.dueDate &&
-      todo.dueDate < DateTime.now().toFormat("yyyy-MM-dd")
-    );
-  });
+      todo.dueDate.startOf("day") < startOfToday,
+  );
 };
 
 const selectTodayTodos = (todos: TodoWithCompleteAtDateTime[]) =>
-  todos.filter((t) => {
-    return (
-      !t.completed &&
-      t.dueDate &&
-      t.dueDate === DateTime.now().toFormat("yyyy-MM-dd")
-    );
-  });
+  todos.filter(
+    (t) =>
+      !t.completed && t.dueDate && t.dueDate.hasSame(DateTime.now(), "day"),
+  );
 
 export function useTodos() {
   return useQuery({
@@ -94,7 +91,7 @@ export function useUpdateTodo() {
               updateTodo(
                 {
                   sortKey: oldTodo?.sortKey,
-                  dueDate: oldTodo?.dueDate,
+                  dueDate: oldTodo?.dueDate?.toISODate(),
                   dueTime: oldTodo?.dueTime?.toISO(),
                 },
                 newTodo.id,

@@ -11,17 +11,20 @@ import { Button } from "../ui/button";
 import { Kbd } from "../ui/kbd";
 import { useHotkeys } from "react-hotkeys-hook";
 import TaskBuilderProvider from "../task-builder-provider";
+import type { TodoWithCompleteAtDateTime } from "@/types";
 
 function AddEditTodoModal({
   show,
   setShow,
+  todo,
 }: {
   show: boolean;
   setShow: Dispatch<SetStateAction<boolean>>;
+  todo?: TodoWithCompleteAtDateTime;
 }) {
   return (
     <Modal showModal={show} setShowModal={setShow} className="max-w-xl">
-      <TaskBuilderProvider>
+      <TaskBuilderProvider todo={todo}>
         <InlineTaskForm setIsOpen={setShow} mode="modal" />
       </TaskBuilderProvider>
     </Modal>
@@ -48,12 +51,12 @@ function CreateTodoButton({
   );
 }
 
-export function useAddEditTodoModal() {
+export function useAddEditTodoModal(todo?: TodoWithCompleteAtDateTime) {
   const [show, setShow] = useState(false);
 
   const AddEditTodoModalCallback = useCallback(() => {
-    return <AddEditTodoModal show={show} setShow={setShow} />;
-  }, [show, setShow]);
+    return <AddEditTodoModal show={show} setShow={setShow} todo={todo} />;
+  }, [show, setShow, todo]);
 
   const CreateTodoButtonCallback = useCallback(() => {
     return <CreateTodoButton setShow={setShow} />;

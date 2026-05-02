@@ -9,7 +9,8 @@ export async function fetchTodos(): Promise<TodoWithCompleteAtDateTime[]> {
 
     return todos.map((todo) => ({
       ...todo,
-      dueTime: DateTime.fromISO(todo.dueTime ?? ""),
+      dueDate: todo.dueDate ? DateTime.fromISO(todo.dueDate) : null,
+      dueTime: todo.dueTime ? DateTime.fromISO(todo.dueTime) : null,
     }));
   } catch (error) {
     throw error;

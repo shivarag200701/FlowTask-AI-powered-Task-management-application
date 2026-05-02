@@ -46,7 +46,8 @@ export interface TagProps {
 
 export type TagsQuery = z.infer<typeof GetTagsQuerySchema>;
 
-export type TodoWithCompleteAtDateTime = Omit<Todo, "dueTime"> & {
+export type TodoWithCompleteAtDateTime = Omit<Todo, "dueTime" | "dueDate"> & {
+  dueDate: DateTime | null;
   dueTime: DateTime | null;
 };
 

@@ -11,9 +11,13 @@ import ReminderDisplayer from "@/components/pill-buttons/ReminderDisplayer";
 import TagsSelector from "@/components/pill-buttons/TagsSelector";
 import { useHotkeys } from "react-hotkeys-hook";
 import PriorityDropDown from "./popovers/PriorityDropDown";
-import { useCreateTodo } from "@/hooks/use-todos";
+import { useCreateTodo, useUpdateTodo } from "@/hooks/use-todos";
 import { useDateTimeModal } from "./modals/DateTimeModal";
 import { SerializeFormData } from "@/utils/functions/serialize-form-data";
+import type { UpdateTodo } from "@shiva200701/todotypes";
+import { cn } from "@/lib/utils";
+
+type TodoFormValues = CreateTodoWithDateTime & { id?: string };
 
 function InlineTaskForm({
   todo,
@@ -29,9 +33,14 @@ function InlineTaskForm({
     formState: { isValid },
     handleSubmit,
     reset,
-  } = useFormContext<CreateTodoWithDateTime>();
+    watch,
+  } = useFormContext<TodoFormValues>();
 
-  const { mutate } = useCreateTodo();
+  const { mutate: createTodo } = useCreateTodo();
+  const { mutate: updateTodo } = useUpdateTodo();
+  const todoId = watch("id");
+
+  const isEdit = Boolean(todoId);
 
   const {
     DateTimeButton,
@@ -60,18 +69,29 @@ function InlineTaskForm({
   const [isReminderDropDownOpen, setIsReminderDropDownOpen] = useState(false);
   const [isTagsDropDownOpen, setIsTagsDropDownOpen] = useState(false);
 
-  const onSubmit: SubmitHandler<CreateTodoWithDateTime> = (data) => {
-    mutate(SerializeFormData(data));
+  const onSubmit: SubmitHandler<TodoFormValues> = (data) => {
+    const serialized = SerializeFormData(data);
+    if (isEdit && todoId) {
+      updateTodo({ id: todoId, data: serialized as UpdateTodo });
+    } else {
+      createTodo(SerializeFormData(data));
+    }
     reset();
+    setIsOpen(false);
   };
 
   return (
-    <div className="rounded-2xl sm:border sm:border-border min-h-15 ">
+    <div
+      className={cn(
+        "rounded-lg border border-border min-h-15",
+        mode === "modal" && "rounded-2xl",
+      )}
+    >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="border-b border-border/50  px-3 py-2">
           <input
             className="font-semibold w-full border-none focus:outline-none"
-            style={{ fontSize: mode === "modal" ? "16px" : "14px" }}
+            style={{ fontSize: "14px" }}
             placeholder="Task name"
             {...register("title", {
               required: "title is required",
@@ -83,18 +103,12 @@ function InlineTaskForm({
             placeholder="Description"
             {...register("description")}
           />
-          <div className={`grid grid-cols-2 md:flex gap-2 mt-4 flex-wrap`}>
+          <div className="grid grid-cols-2 md:flex gap-2 mt-4">
             <DateTimeButton />
             <Popover
               openPopover={isPriorityDropDownOpen}
               setOpenPopover={setIsPriorityDropDownOpen}
-              content={
-                <PriorityDropDown
-                  onSelect={() => {
-                    setIsPriorityDropDownOpen(false);
-                  }}
-                />
-              }
+              content={<PriorityDropDown />}
             >
               <PriorityDisplayer />
             </Popover>
@@ -126,10 +140,11 @@ function InlineTaskForm({
           <Button
             variant="default"
             className="w-fit"
-            Initial="Add Task"
             disabled={!isValid}
             type="submit"
-          />
+          >
+            {isEdit ? "Update Task" : "Add Task"}
+          </Button>
         </div>
         <DateTimeModal />
       </form>
