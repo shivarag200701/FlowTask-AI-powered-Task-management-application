@@ -21,6 +21,7 @@ import Upcoming from "./pages/Upcoming";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Tags from "./pages/Tags";
 import SuccessIcon from "./components/icons/success-icon";
+import Todos from "./pages/todos";
 
 const queryClient = new QueryClient();
 
@@ -95,6 +96,7 @@ function App() {
                         <Route path="/app/today" element={<Today />} />
                         <Route path="/app/upcoming" element={<Upcoming />} />
                         <Route path="/app/tags" element={<Tags />} />
+                        <Route path="/app/todos" element={<Todos />} />
                       </Route>
                     </Route>
                   </Routes>

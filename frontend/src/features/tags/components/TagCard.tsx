@@ -6,6 +6,7 @@ import type { TagProps } from "@/types";
 import pluralize from "@/utils/functions/pluralize";
 import { ListTodo, MoreVertical } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function TagCard({
   tag,
@@ -16,8 +17,18 @@ function TagCard({
 }) {
   const todoCount = tag._count?.todos;
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
+
+  const navigate = useNavigate();
+
+  //
+  const todoPageUrl = `/app/todos?tagIds=${tag.id}`;
   return (
-    <div className="flex justify-between items-center py-2.5 px-4">
+    <div
+      className="flex justify-between items-center py-2.5 px-4"
+      onClick={() => {
+        navigate(todoPageUrl);
+      }}
+    >
       <div className="flex gap-3 text-sm items-center">
         <TagBadge color={tag.color} withIcon />
         {tag.name}
