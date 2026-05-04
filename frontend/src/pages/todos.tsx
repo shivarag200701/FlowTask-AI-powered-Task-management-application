@@ -24,8 +24,6 @@ function Todos() {
 
   const selectedTags = tags?.filter((tag) => urlTagSet.has(tag.id));
 
-  const { isMobile } = useMediaQuery();
-
   useHotkeys("esc", () => {
     setSearchParams("");
   });

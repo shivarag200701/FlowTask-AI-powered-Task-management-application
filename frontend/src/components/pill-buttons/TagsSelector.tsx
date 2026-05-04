@@ -73,6 +73,7 @@ function TagsSelector({
       setSearchValue={setSearchValue}
       shouldFilter
       multiple
+      trigger
       // multiple
       setSelectedTags={(option) => {
         //need to change for case where we add a new Tag

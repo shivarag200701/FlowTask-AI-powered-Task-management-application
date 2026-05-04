@@ -10,6 +10,8 @@ const todoRouter = Router();
 todoRouter.get("/", requireLogin, async (req, res) => {
   const userId = req.session.userId;
 
+  console.log(req.query);
+
   if (!userId) {
     return res.status(401).json({
       msg: "unauthorized",

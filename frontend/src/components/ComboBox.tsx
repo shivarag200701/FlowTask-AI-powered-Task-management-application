@@ -41,6 +41,7 @@ export type ComboBoxProps<TMeta extends any> = {
   onCreate?: (tagName: string) => Promise<void>;
   loading?: boolean;
   isPending?: boolean;
+  trigger?: boolean;
 };
 
 function ComboBox({
@@ -61,6 +62,7 @@ function ComboBox({
   multiple = false,
   onCreate,
   loading,
+  trigger = false,
 }: ComboBoxProps<any>) {
   const handleSelect = (option: ComboBoxOptions<any>) => {
     if (!multiple) {
@@ -151,18 +153,22 @@ function ComboBox({
         </AnimatedSizeContainer>
       }
     >
-      <Button
-        variant="outline"
-        className={cn(
-          "text-neutral-500  text-left flex justify-start hover:bg-none h-auto w-full",
-          outlinePopoverTriggerClasses,
-          triggerClassName,
-        )}
-        icon={<Tag />}
-        type="button"
-      >
-        {children ? children : placeholder}
-      </Button>
+      {trigger ? (
+        <Button
+          variant="outline"
+          className={cn(
+            "text-neutral-500  text-left flex justify-start hover:bg-none h-auto w-full",
+            outlinePopoverTriggerClasses,
+            triggerClassName,
+          )}
+          icon={<Tag />}
+          type="button"
+        >
+          {children ? children : placeholder}
+        </Button>
+      ) : (
+        <button>{children ? children : placeholder}</button>
+      )}
     </Popover>
   );
 }
