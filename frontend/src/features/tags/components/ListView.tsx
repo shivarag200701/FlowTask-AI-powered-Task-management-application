@@ -20,7 +20,7 @@ function ListView() {
   const { data: tags, isLoading: tagsLoading } = useTags({ query: { search } });
 
   return (
-    <PageWidthWrapper className="pt-6">
+    <PageWidthWrapper className="pt-6 px-3">
       <SearchBoxPersisted />
       <div>
         {tagsLoading ? (

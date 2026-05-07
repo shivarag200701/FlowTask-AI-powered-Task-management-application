@@ -86,6 +86,8 @@ function TaskList({
                 setIsMoreOptionsOpen(false);
                 setShowDeleteConfirmModal(true);
               }}
+              //todo need to implement
+              onEdit={() => {}}
             />
           }
           sideOffset={5}

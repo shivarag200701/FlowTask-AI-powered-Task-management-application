@@ -16,15 +16,23 @@ type Option = {
 
 function MoreTodoOptionsDropDown({
   onDelete,
+  onEdit,
   className,
 }: {
   onDelete: () => void;
   className?: string;
+  onEdit: () => void;
 }) {
   const { isMobile } = useMediaQuery();
 
   const editOptions: Option[] = [
-    { id: "edit", icon: <Edit3Icon />, label: "Edit", hotKey: "⌘ E" },
+    {
+      id: "edit",
+      icon: <Edit3Icon />,
+      label: "Edit",
+      hotKey: "E",
+      onClick: onEdit,
+    },
     { id: "reminders", icon: <AlarmClock />, label: "Reminders" },
   ];
 
@@ -34,13 +42,14 @@ function MoreTodoOptionsDropDown({
       icon: <LucideTrash />,
       iconColor: "#FF0000",
       label: "Delete",
-      hotKey: "⌘ ⌫",
+      hotKey: "X",
       onClick: onDelete,
     },
   ];
 
   //move to a seprate hook for abstraction
-  useHotkeys("mod+backspace", onDelete);
+  useHotkeys("x", onDelete);
+  useHotkeys("e", onEdit);
 
   return (
     <div
@@ -70,7 +79,7 @@ function MoreTodoOptionsDropDown({
             </div>
             <div>
               {option.hotKey && !isMobile && (
-                <Kbd className="text-[10px] w-fit">{option.hotKey}</Kbd>
+                <Kbd className="text-[10px]">{option.hotKey}</Kbd>
               )}
             </div>
           </button>
@@ -95,7 +104,7 @@ function MoreTodoOptionsDropDown({
             </div>
             <div>
               {option.hotKey && !isMobile && (
-                <Kbd className="text-[10px] w-fit">{option.hotKey}</Kbd>
+                <Kbd className="text-[10px]">{option.hotKey}</Kbd>
               )}
             </div>
           </button>

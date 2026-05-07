@@ -4,6 +4,7 @@ import { todosQueryKeys } from "@/query-keys";
 import {
   toastMessages,
   type moveTodo,
+  type TodosQuery,
   type TodoWithCompleteAtDateTime,
 } from "@/types";
 import type { CreateTodo, UpdateTodo } from "@shiva200701/todotypes";
@@ -13,28 +14,35 @@ import { DateTime } from "luxon";
 import { toast } from "sonner";
 
 const selectOverdueTodos = (todos: TodoWithCompleteAtDateTime[]) => {
-  return todos.filter((todo) => {
-    return (
+  const startOfToday = DateTime.now().startOf("day");
+  return todos.filter(
+    (todo) =>
       !todo.completed &&
       todo.dueDate &&
-      todo.dueDate < DateTime.now().toFormat("yyyy-MM-dd")
-    );
-  });
+      todo.dueDate.startOf("day") < startOfToday,
+  );
 };
 
 const selectTodayTodos = (todos: TodoWithCompleteAtDateTime[]) =>
-  todos.filter((t) => {
-    return (
-      !t.completed &&
-      t.dueDate &&
-      t.dueDate === DateTime.now().toFormat("yyyy-MM-dd")
-    );
-  });
+  todos.filter(
+    (t) =>
+      !t.completed && t.dueDate && t.dueDate.hasSame(DateTime.now(), "day"),
+  );
 
-export function useTodos() {
+export function useTodos(
+  params?: Record<string, string | number | boolean | string[] | undefined>,
+) {
   return useQuery({
     queryKey: todosQueryKeys.all,
-    queryFn: fetchTodos,
+    queryFn: () => fetchTodos(params),
+    staleTime: 60000,
+  });
+}
+
+export function useFilteredTodos({ query }: { query: TodosQuery }) {
+  return useQuery({
+    queryKey: todosQueryKeys.filtered(query),
+    queryFn: () => fetchTodos(query),
     staleTime: 60000,
   });
 }
@@ -42,7 +50,7 @@ export function useTodos() {
 export function useTodayTodos() {
   return useQuery({
     queryKey: todosQueryKeys.all,
-    queryFn: fetchTodos,
+    queryFn: () => fetchTodos(),
     staleTime: 60000,
     select: (data) => {
       const todoTodos = selectTodayTodos(data);
@@ -58,7 +66,7 @@ export function useTodayTodos() {
 export function useOverDueTodos() {
   return useQuery({
     queryKey: todosQueryKeys.all,
-    queryFn: fetchTodos,
+    queryFn: () => fetchTodos(),
     staleTime: 60000,
     select: selectOverdueTodos,
   });
@@ -94,7 +102,7 @@ export function useUpdateTodo() {
               updateTodo(
                 {
                   sortKey: oldTodo?.sortKey,
-                  dueDate: oldTodo?.dueDate,
+                  dueDate: oldTodo?.dueDate?.toISODate(),
                   dueTime: oldTodo?.dueTime?.toISO(),
                 },
                 newTodo.id,

@@ -1,6 +1,6 @@
 //exploe about uniqueness of keys whether having old keys affects things
 
-import type { TagsQuery } from "@/types";
+import type { TagsQuery, TodosQuery } from "@/types";
 
 //check whether we need different query keys for different preferences
 export const authQueryKeys = {
@@ -9,6 +9,7 @@ export const authQueryKeys = {
 
 export const todosQueryKeys = {
   all: ["todos"] as const,
+  filtered: ({ tagIds }: TodosQuery) => ["todos", "filtered", tagIds] as const,
 };
 
 export const onboardingQueryKeys = {

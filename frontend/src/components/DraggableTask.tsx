@@ -9,6 +9,7 @@ import MoreOptionsDropDown from "./popovers/MoreTodoOptionsDropDown";
 import { useDeleteTodoConfirmModal } from "@/hooks/use-delete-todo-confirm-modal";
 import TimeDisplayer from "./TimeDisplayer";
 import completed from "@/assets/completed.mp3";
+import { useAddEditTodoModal } from "./modals/AddEditTodoModal";
 
 function DraggableTask({
   id,
@@ -26,6 +27,9 @@ function DraggableTask({
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
 
   const { mutate: updateTodo } = useUpdateTodo();
+
+  const { setShowAddEditTodoModal, AddEditTodoModal } =
+    useAddEditTodoModal(todo);
 
   const {
     setShowConfirmModal: setShowDeleteConfirmModal,
@@ -68,6 +72,10 @@ function DraggableTask({
                 setIsMoreOptionsOpen(false);
                 setShowDeleteConfirmModal(true);
               }}
+              onEdit={() => {
+                setIsMoreOptionsOpen(false);
+                setShowAddEditTodoModal(true);
+              }}
             />
           }
           sideOffset={2}
@@ -99,6 +107,7 @@ function DraggableTask({
         </div>
         {DeleteConfirmModal}
       </div>
+      <AddEditTodoModal />
     </>
   );
 }

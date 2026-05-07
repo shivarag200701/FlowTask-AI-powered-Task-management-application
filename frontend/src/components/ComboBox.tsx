@@ -26,9 +26,9 @@ export type ComboBoxProps<TMeta extends any> = {
   placeholder?: string;
   children?: ReactNode;
   options?: ComboBoxOptions<TMeta>[];
-  selectedTags?: ComboBoxOptions<TMeta>[];
+  selectedOptions?: ComboBoxOptions<TMeta>[];
   //multiple select
-  setSelectedTags?: (value: ComboBoxOptions<any>) => void;
+  setSelectedOptions?: (value: ComboBoxOptions<any>) => void;
   //single select
   onSelect?: (value: ComboBoxOptions<any>) => void;
   shouldFilter?: boolean;
@@ -41,6 +41,7 @@ export type ComboBoxProps<TMeta extends any> = {
   onCreate?: (tagName: string) => Promise<void>;
   loading?: boolean;
   isPending?: boolean;
+  trigger?: boolean;
 };
 
 function ComboBox({
@@ -49,9 +50,9 @@ function ComboBox({
   placeholder = "search...",
   children,
   options,
-  selectedTags,
+  selectedOptions,
   onSelect,
-  setSelectedTags,
+  setSelectedOptions,
   shouldFilter = false,
   searchValue,
   setSearchValue,
@@ -61,13 +62,14 @@ function ComboBox({
   multiple = false,
   onCreate,
   loading,
+  trigger = false,
 }: ComboBoxProps<any>) {
   const handleSelect = (option: ComboBoxOptions<any>) => {
     if (!multiple) {
       onSelect?.(option);
       return;
     }
-    setSelectedTags?.(option);
+    setSelectedOptions?.(option);
   };
 
   const [isCreating, setIsCreating] = useState(false);
@@ -128,7 +130,7 @@ function ComboBox({
                     {options?.map((option) => (
                       <Option
                         selected={
-                          selectedTags?.some(
+                          selectedOptions?.some(
                             ({ value }) => option.value === value,
                           ) ?? false
                         }
@@ -151,18 +153,22 @@ function ComboBox({
         </AnimatedSizeContainer>
       }
     >
-      <Button
-        variant="outline"
-        className={cn(
-          "text-neutral-500  text-left flex justify-start hover:bg-none h-auto w-full",
-          outlinePopoverTriggerClasses,
-          triggerClassName,
-        )}
-        icon={<Tag />}
-        type="button"
-      >
-        {children ? children : placeholder}
-      </Button>
+      {trigger ? (
+        <Button
+          variant="outline"
+          className={cn(
+            "text-neutral-500  text-left flex justify-start hover:bg-none h-auto w-full",
+            outlinePopoverTriggerClasses,
+            triggerClassName,
+          )}
+          icon={<Tag />}
+          type="button"
+        >
+          {children ? children : placeholder}
+        </Button>
+      ) : (
+        <button>{children ? children : placeholder}</button>
+      )}
     </Popover>
   );
 }

@@ -3,13 +3,18 @@ import type { Todo, TodoWithCompleteAtDateTime } from "@/types";
 import { DateTime } from "luxon";
 import type { CreateTodo, UpdateTodo } from "@shiva200701/todotypes";
 
-export async function fetchTodos(): Promise<TodoWithCompleteAtDateTime[]> {
+export async function fetchTodos(
+  params?: Record<string, string | number | boolean | string[] | undefined>,
+): Promise<TodoWithCompleteAtDateTime[]> {
   try {
-    const { todos }: { todos: Todo[] } = (await api.get("/api/v2/todo")).data;
+    const { todos }: { todos: Todo[] } = (
+      await api.get("/api/v2/todo", params !== null ? { params } : undefined)
+    ).data;
 
     return todos.map((todo) => ({
       ...todo,
-      dueTime: DateTime.fromISO(todo.dueTime ?? ""),
+      dueDate: todo.dueDate ? DateTime.fromISO(todo.dueDate) : null,
+      dueTime: todo.dueTime ? DateTime.fromISO(todo.dueTime) : null,
     }));
   } catch (error) {
     throw error;

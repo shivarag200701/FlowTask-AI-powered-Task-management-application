@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 interface PageContentHeaderProps {
-  title?: string;
+  title?: ReactNode;
   controls?: ReactNode;
   headerContent?: ReactNode;
 }
