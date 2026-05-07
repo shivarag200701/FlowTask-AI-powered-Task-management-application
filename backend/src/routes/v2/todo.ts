@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { CreateTodoSchema, UpdateTodoSchema } from "@shiva200701/todotypes";
+import {
+  CreateTodoSchema,
+  todoQuerySchema,
+  UpdateTodoSchema,
+} from "@shiva200701/todotypes";
 import { requireLogin } from "../../middleware.js";
 import { generateSortKey } from "../../utils/todo-ordering.js";
 import prisma from "../../db/index.js";
@@ -10,7 +14,18 @@ const todoRouter = Router();
 todoRouter.get("/", requireLogin, async (req, res) => {
   const userId = req.session.userId;
 
-  console.log(req.query);
+  const { data, success, error } = todoQuerySchema.safeParse(req.query);
+
+  if (!success) {
+    return res.status(400).json({
+      msg: "Send proper query params",
+      error,
+    });
+  }
+
+  const { tagIds } = data;
+
+  const tagIdArray = tagIds?.split(",");
 
   if (!userId) {
     return res.status(401).json({
@@ -21,6 +36,11 @@ todoRouter.get("/", requireLogin, async (req, res) => {
     const rawTodos = await prisma.todo.findMany({
       where: {
         userId,
+        ...(tagIdArray?.length
+          ? {
+              tags: { some: { tagId: { in: tagIdArray } } },
+            }
+          : {}),
       },
       include: {
         notifications: true,

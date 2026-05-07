@@ -14,6 +14,9 @@ export declare const CreateTodoSchema: z.ZodObject<{
     isAllDay: z.ZodOptional<z.ZodBoolean>;
     tags: z.ZodOptional<z.ZodPipe<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>, z.ZodTransform<string[], string | string[]>>>;
 }, z.core.$strip>;
+export declare const todoQuerySchema: z.ZodObject<{
+    tagIds: z.ZodOptional<z.ZodString>;
+}, z.core.$strip>;
 export declare const UpdateTodoSchema: z.ZodObject<{
     title: z.ZodOptional<z.ZodString>;
     description: z.ZodOptional<z.ZodOptional<z.ZodString>>;

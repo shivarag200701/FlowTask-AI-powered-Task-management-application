@@ -20,6 +20,10 @@ export const CreateTodoSchema = z.object({
     }),
 });
 
+export const todoQuerySchema = z.object({
+  tagIds: z.string().optional(),
+});
+
 export const UpdateTodoSchema = CreateTodoSchema.partial().extend({
   prevIndex: z.string().nullish(),
   nextIndex: z.string().nullish(),
