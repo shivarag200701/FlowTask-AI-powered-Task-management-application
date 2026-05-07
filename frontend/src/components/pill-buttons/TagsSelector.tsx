@@ -68,14 +68,14 @@ function TagsSelector({
       open={open}
       options={tagsLoading ? undefined : options}
       placeholder="Select tags..."
-      selectedTags={selectedTags}
+      selectedOptions={selectedTags}
       searchValue={searchValue}
       setSearchValue={setSearchValue}
       shouldFilter
       multiple
       trigger
       // multiple
-      setSelectedTags={(option) => {
+      setSelectedOptions={(option) => {
         //need to change for case where we add a new Tag
         const id = option.value;
         const alreadySelected = tags.find((t) => t.id === id);

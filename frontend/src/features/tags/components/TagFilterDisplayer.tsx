@@ -2,8 +2,9 @@ import ComboBox from "@/components/ComboBox";
 import TagBadge from "@/components/TagBadge";
 import { useTags } from "@/hooks/use-tags";
 import type { TagProps } from "@/types";
+import { getTagOption } from "@/utils/functions/get-tag-options";
 import { Tag, X } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 function TagFilterDisplayer({ tags }: { tags?: TagProps[] }) {
@@ -11,7 +12,14 @@ function TagFilterDisplayer({ tags }: { tags?: TagProps[] }) {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
 
-  //   const { data: allTags, isLoading:tagsLoading } = useTags({ query: { search: "" } });
+  const { data: availableTags, isLoading: tagsLoading } = useTags({
+    query: { search: "" },
+  });
+
+  const options = useMemo(
+    () => availableTags?.map((tag) => getTagOption(tag)),
+    [availableTags],
+  );
   return (
     <div className="flex justify-center border border-border rounded-lg h-full">
       <div className="border-r border-border px-3 py-2 flex items-center gap-2">
@@ -26,9 +34,34 @@ function TagFilterDisplayer({ tags }: { tags?: TagProps[] }) {
         onOpenChange={setOpen}
         searchValue={searchValue}
         setSearchValue={setSearchValue}
-        placeholder="hi"
         triggerClassName="h-fit"
+        matchTriggerWidth={false}
         multiple
+        options={tagsLoading ? undefined : options}
+        shouldFilter
+        selectedOptions={tags?.map((tag) => getTagOption(tag))}
+        setSelectedOptions={(option) => {
+          setSearchParams((prev) => {
+            const current = prev.get("tagIds") || "";
+
+            let currentTags = current.split(",").filter(Boolean);
+
+            if (currentTags.includes(option.value)) {
+              currentTags = currentTags.filter((id) => id !== option.value);
+            } else {
+              currentTags.push(option.value);
+            }
+
+            if (currentTags.length > 0) {
+              prev.set("tagIds", currentTags.join(","));
+            } else {
+              prev.delete("tagIds");
+            }
+
+            return prev;
+          });
+        }}
+        contentClassName="w-[300px]"
       >
         <div className="flex items-center justify-center  text-xs w-full px-3 py-2 border-r transition-all duration-200 hover:bg-accent cursor-pointer">
           {tags?.length === 1 ? (
@@ -44,7 +77,7 @@ function TagFilterDisplayer({ tags }: { tags?: TagProps[] }) {
                     key={tag.id}
                     color={tag.color}
                     withIcon
-                    className="ring-2 ring-background"
+                    className="ring-2 ring-background p-1"
                   />
                 ))}
               </div>

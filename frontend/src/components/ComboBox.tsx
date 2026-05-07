@@ -26,9 +26,9 @@ export type ComboBoxProps<TMeta extends any> = {
   placeholder?: string;
   children?: ReactNode;
   options?: ComboBoxOptions<TMeta>[];
-  selectedTags?: ComboBoxOptions<TMeta>[];
+  selectedOptions?: ComboBoxOptions<TMeta>[];
   //multiple select
-  setSelectedTags?: (value: ComboBoxOptions<any>) => void;
+  setSelectedOptions?: (value: ComboBoxOptions<any>) => void;
   //single select
   onSelect?: (value: ComboBoxOptions<any>) => void;
   shouldFilter?: boolean;
@@ -50,9 +50,9 @@ function ComboBox({
   placeholder = "search...",
   children,
   options,
-  selectedTags,
+  selectedOptions,
   onSelect,
-  setSelectedTags,
+  setSelectedOptions,
   shouldFilter = false,
   searchValue,
   setSearchValue,
@@ -69,7 +69,7 @@ function ComboBox({
       onSelect?.(option);
       return;
     }
-    setSelectedTags?.(option);
+    setSelectedOptions?.(option);
   };
 
   const [isCreating, setIsCreating] = useState(false);
@@ -130,7 +130,7 @@ function ComboBox({
                     {options?.map((option) => (
                       <Option
                         selected={
-                          selectedTags?.some(
+                          selectedOptions?.some(
                             ({ value }) => option.value === value,
                           ) ?? false
                         }
