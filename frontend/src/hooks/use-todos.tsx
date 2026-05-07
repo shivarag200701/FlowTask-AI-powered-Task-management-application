@@ -4,6 +4,7 @@ import { todosQueryKeys } from "@/query-keys";
 import {
   toastMessages,
   type moveTodo,
+  type TodosQuery,
   type TodoWithCompleteAtDateTime,
 } from "@/types";
 import type { CreateTodo, UpdateTodo } from "@shiva200701/todotypes";
@@ -28,10 +29,20 @@ const selectTodayTodos = (todos: TodoWithCompleteAtDateTime[]) =>
       !t.completed && t.dueDate && t.dueDate.hasSame(DateTime.now(), "day"),
   );
 
-export function useTodos() {
+export function useTodos(
+  params?: Record<string, string | number | boolean | string[] | undefined>,
+) {
   return useQuery({
     queryKey: todosQueryKeys.all,
-    queryFn: fetchTodos,
+    queryFn: () => fetchTodos(params),
+    staleTime: 60000,
+  });
+}
+
+export function useFilteredTodos({ query }: { query: TodosQuery }) {
+  return useQuery({
+    queryKey: todosQueryKeys.filtered(query),
+    queryFn: () => fetchTodos(query),
     staleTime: 60000,
   });
 }
@@ -39,7 +50,7 @@ export function useTodos() {
 export function useTodayTodos() {
   return useQuery({
     queryKey: todosQueryKeys.all,
-    queryFn: fetchTodos,
+    queryFn: () => fetchTodos(),
     staleTime: 60000,
     select: (data) => {
       const todoTodos = selectTodayTodos(data);
@@ -55,7 +66,7 @@ export function useTodayTodos() {
 export function useOverDueTodos() {
   return useQuery({
     queryKey: todosQueryKeys.all,
-    queryFn: fetchTodos,
+    queryFn: () => fetchTodos(),
     staleTime: 60000,
     select: selectOverdueTodos,
   });

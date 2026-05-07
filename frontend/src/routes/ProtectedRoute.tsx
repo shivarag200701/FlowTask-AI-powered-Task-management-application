@@ -32,7 +32,7 @@ const ProtectedRoute = () => {
   // Fetch todos - this ensures todos are loaded before showing dashboard
   const { isLoading: todosLoading } = useQuery({
     queryKey: todosQueryKeys.all,
-    queryFn: fetchTodos,
+    queryFn: () => fetchTodos(),
     enabled: isAuthenticated, // Only fetch if authenticated
     staleTime: 60000,
   });

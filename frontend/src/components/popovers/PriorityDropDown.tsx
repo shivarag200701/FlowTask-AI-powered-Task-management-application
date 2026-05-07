@@ -21,7 +21,7 @@ function PriorityDropDown({ onSelect }: { onSelect?: () => void }) {
           )}
           onClick={() => {
             setValue("priority", priority.id, { shouldDirty: true });
-            onSelect();
+            onSelect?.();
           }}
         >
           <div className="flex gap-2 justify-between w-full">

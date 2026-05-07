@@ -1,9 +1,13 @@
 import EmptyState from "@/components/EmptyState";
+import TaskList from "@/components/TaskList";
 import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
+import TagCardPlaceholder from "@/features/tags/components/TagCardPlaceholder";
 import TagFilterDisplayer from "@/features/tags/components/TagFilterDisplayer";
+import TagsListWrapper from "@/features/tags/components/TagsListWrapper";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useTags } from "@/hooks/use-tags";
+import { useFilteredTodos } from "@/hooks/use-todos";
 import PageContentHeader from "@/layouts/PageContentHeader";
 import PageWidthWrapper from "@/layouts/PageWidthWrapper";
 import { cn } from "@/lib/utils";
@@ -12,7 +16,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 function Todos() {
   const [searchParams, setSearchParams] = useSearchParams();
-
   const urlTags = searchParams.get("tagIds")?.split(",");
 
   const urlTagSet = new Set(urlTags);
@@ -27,6 +30,13 @@ function Todos() {
   useHotkeys("esc", () => {
     setSearchParams("");
   });
+
+  const { data: filteredTodos, isLoading: todosLodaing } = useFilteredTodos({
+    query: { tagIds: searchParams.get("tagIds") ?? "" },
+  });
+
+  console.log("filtered Todos", filteredTodos);
+
   return (
     <div className={cn("")}>
       <PageContentHeader
@@ -50,6 +60,22 @@ function Todos() {
             )}
           </div>
         )}
+        {todosLodaing ? (
+          <>
+            {Array.from({ length: 5 }, (_, index) => (
+              <TagsListWrapper key={index} id={index}>
+                <TagCardPlaceholder />
+              </TagsListWrapper>
+            ))}
+          </>
+        ) : (
+          <>
+            {filteredTodos?.map((todo) => (
+              <TaskList key={todo.id} todo={todo} />
+            ))}
+          </>
+        )}
+
         {(!searchParams.get("tagIds") ||
           searchParams.get("tagIds")?.length === 0) && (
           <EmptyState
