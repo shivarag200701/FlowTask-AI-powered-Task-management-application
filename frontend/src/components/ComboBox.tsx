@@ -223,28 +223,31 @@ function Option({ option, selected, onSelect, multiple }: OptionsProps) {
   return (
     <Command.Item
       className={cn(
-        "hover:cursor-pointer px-3 py-2 hover:bg-accent rounded-md text-sm flex gap-4 items-center",
+        "hover:cursor-pointer px-3 py-2 hover:bg-accent rounded-md text-sm flex gap-4 items-center justify-between",
         "data-[selected=true]:bg-accent ",
       )}
       value={option.value + option.label}
       onSelect={onSelect}
     >
-      {multiple && (
-        <Checkbox
-          className="size-3 rounded-xs border-border cursor-pointer"
-          checked={selected}
-        />
-      )}
       <div className="flex gap-4 items-center">
-        <div
-          className={`bg-${getResourceColors({ color: option.meta.color })?.tagVariants}`}
-        >
-          {option.icon && (
-            <span>{isValidElement(option.icon) && option.icon}</span>
-          )}
+        {multiple && (
+          <Checkbox
+            className="size-3 rounded-xs border-border cursor-pointer"
+            checked={selected}
+          />
+        )}
+        <div className="flex gap-4 items-center justify-between">
+          <div
+            className={`bg-${getResourceColors({ color: option.meta.color })?.tagVariants}`}
+          >
+            {option.icon && (
+              <span>{isValidElement(option.icon) && option.icon}</span>
+            )}
+          </div>
+          <span>{option.label}</span>
         </div>
-        <span>{option.label}</span>
       </div>
+      <div className="text-neutral-500">{option.meta.count.todos}</div>
     </Command.Item>
   );
 }
