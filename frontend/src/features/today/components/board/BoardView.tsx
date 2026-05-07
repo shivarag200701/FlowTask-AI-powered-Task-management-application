@@ -102,7 +102,7 @@ function BoardView() {
   }
 
   return (
-    <PageWidthWrapper className="pt-6 lg:pt-12 flex flex-col overflow-x-auto ">
+    <PageWidthWrapper className="pt-6 px-3 flex flex-col overflow-x-auto ">
       {todos.length > 0 ? (
         <DragDropProvider
           onDragStart={(event) => {
