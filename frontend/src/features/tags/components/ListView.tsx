@@ -9,9 +9,11 @@ import type { TagProps } from "@/types";
 import TagsListWrapper from "./TagsListWrapper";
 import TagCardPlaceholder from "./TagCardPlaceholder";
 import EmptyState from "@/components/EmptyState";
+import { useTagSelectionContext } from "../TagSelectionContext";
 
 function ListView() {
   const [searchParams] = useSearchParams();
+
   const [selectedTag, setSelectedTag] = useState<TagProps | null>(null);
   const { AddEditTagModal, setShowAddEditTagModal, CreateTagButton } =
     useAddEditTagModal(selectedTag ?? undefined);
@@ -19,8 +21,13 @@ function ListView() {
   const search = searchParams.get("search") ?? "";
   const { data: tags, isLoading: tagsLoading } = useTags({ query: { search } });
 
+  const { setIsSelectMode, selectedTags, setSelectedTags } =
+    useTagSelectionContext();
+
+  console.log("selectedTags", selectedTags);
+
   return (
-    <PageWidthWrapper className="pt-6 px-3">
+    <PageWidthWrapper className="py-6 px-3">
       <SearchBoxPersisted />
       <div>
         {tagsLoading ? (
@@ -41,6 +48,15 @@ function ListView() {
                     onEdit={(tag) => {
                       setSelectedTag(tag);
                       setShowAddEditTagModal(true);
+                    }}
+                    onSelect={(tagId: string) => {
+                      setIsSelectMode(true);
+                      setSelectedTags((prev) => {
+                        if (prev.includes(tagId)) {
+                          return prev?.filter((id) => id !== tagId);
+                        }
+                        return [...prev, tagId];
+                      });
                     }}
                   />
                 </TagsListWrapper>

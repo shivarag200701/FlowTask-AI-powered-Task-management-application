@@ -54,7 +54,7 @@ function useTaskDisplayContext() {
 
   if (context === undefined) {
     throw new Error(
-      "useRegisterContext must be used within a RegisterProvider",
+      "taskDisplayContext must be used within a TaskDisplayProvider",
     );
   }
   return context;

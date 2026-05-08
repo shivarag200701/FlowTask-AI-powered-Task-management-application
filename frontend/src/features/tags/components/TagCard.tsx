@@ -5,27 +5,45 @@ import { Popover } from "@/components/ui/popover";
 import type { TagProps } from "@/types";
 import pluralize from "@/utils/functions/pluralize";
 import { ListTodo, MoreVertical } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTagSelectionContext } from "../TagSelectionContext";
+import { cn } from "@/lib/utils";
 
 function TagCard({
   tag,
   onEdit,
+  onSelect,
 }: {
   tag: TagProps;
   onEdit: (tag: TagProps) => void;
+  onSelect?: (tagId: TagProps["id"]) => void;
 }) {
   const todoCount = tag._count?.todos;
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
 
   const navigate = useNavigate();
 
+  const { selectedTags } = useTagSelectionContext();
+
+  const tagSelected = useMemo(() => {
+    return selectedTags?.includes(tag.id);
+  }, [selectedTags]);
+
   //
   const todoPageUrl = `/app/todos?tagIds=${tag.id}`;
   return (
     <div
-      className="flex justify-between items-center py-2.5 px-4"
-      onClick={() => {
+      className={cn(
+        "flex justify-between items-center py-2.5 px-4 select-none",
+        tagSelected && "border-l-4 border-l-primary pl-3",
+      )}
+      onClick={(e) => {
+        if (e.shiftKey) {
+          e.preventDefault();
+          onSelect?.(tag.id);
+          return;
+        }
         navigate(todoPageUrl);
       }}
     >

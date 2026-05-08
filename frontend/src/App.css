@@ -4,6 +4,11 @@
   nocompatible: true;
 }
 
+html,
+body {
+  overflow: hidden;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
