@@ -247,7 +247,7 @@ function Option({ option, selected, onSelect, multiple }: OptionsProps) {
           <span>{option.label}</span>
         </div>
       </div>
-      <div className="text-neutral-500">{option.meta.count.todos}</div>
+      <div className="text-neutral-500">{option.meta?.count?.todos}</div>
     </Command.Item>
   );
 }
