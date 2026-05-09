@@ -61,3 +61,7 @@ export const GetTagsQuerySchema = z.object({
       description: "ids of tags associated with the todo",
     }),
 });
+
+export const TagBulkDeleteSchema = z.object({
+  tagIds: z.string(),
+});

@@ -60,4 +60,7 @@ export declare const GetTagsQuerySchema: z.ZodObject<{
     search: z.ZodOptional<z.ZodString>;
     ids: z.ZodOptional<z.ZodPipe<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>, z.ZodTransform<string[], string | string[]>>>;
 }, z.core.$strip>;
+export declare const TagBulkDeleteSchema: z.ZodObject<{
+    tagIds: z.ZodString;
+}, z.core.$strip>;
 //# sourceMappingURL=tag.d.ts.map
