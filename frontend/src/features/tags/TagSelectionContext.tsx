@@ -10,14 +10,14 @@ import {
 type TagSelectionContext = {
   isSelectMode: boolean;
   setIsSelectMode: Dispatch<SetStateAction<boolean>>;
-  selectedTags: string[] | null;
+  selectedTags: string[];
   setSelectedTags: Dispatch<SetStateAction<string[]>>;
 };
 
 const tagSelectionContext = createContext<TagSelectionContext>({
   isSelectMode: false,
   setIsSelectMode: () => {},
-  selectedTags: null,
+  selectedTags: [],
   setSelectedTags: () => {},
 });
 

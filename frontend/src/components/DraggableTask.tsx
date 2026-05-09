@@ -33,7 +33,7 @@ function DraggableTask({
 
   const {
     setShowConfirmModal: setShowDeleteConfirmModal,
-    confirmModal: DeleteConfirmModal,
+    ConfirmModal: DeleteConfirmModal,
   } = useDeleteTodoConfirmModal(todo);
 
   const { ref, isDragging } = useSortable({

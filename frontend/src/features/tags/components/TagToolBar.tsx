@@ -3,7 +3,7 @@ import { useTagSelectionContext } from "../TagSelectionContext";
 import { Trash, X } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { Kbd } from "@/components/ui/kbd";
-import { useBulkDeleteTags } from "@/hooks/use-tags";
+import { useBulkDeleteTagConfirmModal } from "../hooks/use-bulk-delete-tag-confirm-modal";
 
 function TagToolBar() {
   const { isSelectMode, setIsSelectMode, selectedTags, setSelectedTags } =
@@ -12,7 +12,8 @@ function TagToolBar() {
     return selectedTags?.length;
   }, [selectedTags]);
 
-  const { mutate: bulkDeleteTags } = useBulkDeleteTags();
+  const { ConfirmModal, setShowConfirmModal } =
+    useBulkDeleteTagConfirmModal(selectedTags);
 
   useEffect(() => {
     if (selectedTags?.length === 0) {
@@ -40,7 +41,7 @@ function TagToolBar() {
           <button
             className="rounded-lg border whitespace-nowrap flex items-center justify-center gap-2 px-2 py-1 hover:bg-accent cursor-pointer transition-all duration-75"
             onClick={() => {
-              if (selectedTags) bulkDeleteTags({ tagIds: selectedTags });
+              setShowConfirmModal(true);
             }}
           >
             <Trash className="size-3.5" />
@@ -53,6 +54,7 @@ function TagToolBar() {
       ) : (
         <div>Viewing 1-8 of 8 links</div>
       )}
+      {ConfirmModal}
     </Toolbar>
   );
 }

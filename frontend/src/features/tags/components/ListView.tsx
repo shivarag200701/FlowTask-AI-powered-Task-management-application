@@ -21,10 +21,7 @@ function ListView() {
   const search = searchParams.get("search") ?? "";
   const { data: tags, isLoading: tagsLoading } = useTags({ query: { search } });
 
-  const { setIsSelectMode, selectedTags, setSelectedTags } =
-    useTagSelectionContext();
-
-  console.log("selectedTags", selectedTags);
+  const { setIsSelectMode, setSelectedTags } = useTagSelectionContext();
 
   return (
     <PageWidthWrapper className="py-6 px-3">
