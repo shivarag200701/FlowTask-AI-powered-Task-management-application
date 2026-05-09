@@ -42,6 +42,15 @@ export async function updateTag({
   }
 }
 
+export async function bulkDeleteTags({ tagIds }: { tagIds: string[] }) {
+  const ids = tagIds.join(",");
+  try {
+    await api.delete(`/api/v2/tag/bulk?tagIds=${ids}`);
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function getTagCount() {
   try {
     const { count } = (await api.get("/api/v2/tag/count")).data;

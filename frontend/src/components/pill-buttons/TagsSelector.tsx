@@ -1,4 +1,4 @@
-import { useCreateTags, useTagCount, useTags } from "@/hooks/use-tags";
+import { useCreateTag, useTagCount, useTags } from "@/hooks/use-tags";
 import ComboBox from "../ComboBox";
 import TagBadge from "../TagBadge";
 import { Tag } from "lucide-react";
@@ -50,7 +50,7 @@ function TagsSelector({
     },
   });
 
-  const { mutateAsync } = useCreateTags();
+  const { mutateAsync } = useCreateTag();
 
   const options = useMemo(
     () => availableTags?.map((tag) => getTagOption(tag)),

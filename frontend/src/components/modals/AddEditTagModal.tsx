@@ -17,7 +17,7 @@ import {
 import TagBadge from "../TagBadge";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { cn } from "@/lib/utils";
-import { useCreateTags, useUpdateTags } from "@/hooks/use-tags";
+import { useCreateTag, useUpdateTag } from "@/hooks/use-tags";
 import type { TagProps, TodoTag } from "@/types";
 
 type FormValues = {
@@ -48,8 +48,8 @@ function AddEditTagModal({
     },
   });
 
-  const { mutateAsync: CreateTag } = useCreateTags();
-  const { mutateAsync: updatedTag } = useUpdateTags();
+  const { mutateAsync: CreateTag } = useCreateTag();
+  const { mutateAsync: updatedTag } = useUpdateTag();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (!isEditing) {

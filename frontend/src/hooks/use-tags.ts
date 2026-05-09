@@ -1,4 +1,10 @@
-import { createTag, getFilteredTags, getTagCount, updateTag } from "@/api/tag";
+import {
+  bulkDeleteTags,
+  createTag,
+  getFilteredTags,
+  getTagCount,
+  updateTag,
+} from "@/api/tag";
 import { tagsQueryKeys } from "@/query-keys";
 import type { TagsQuery } from "@/types";
 import type { ResourceColorsEnum } from "@shiva200701/todotypes";
@@ -20,7 +26,7 @@ export function useTags({
   });
 }
 
-export function useCreateTags() {
+export function useCreateTag() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (tag: { name: string; color: ResourceColorsEnum }) => {
@@ -41,7 +47,7 @@ export function useCreateTags() {
   });
 }
 
-export function useUpdateTags() {
+export function useUpdateTag() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
@@ -76,5 +82,26 @@ export function useTagCount(enabled = true) {
     queryKey: tagsQueryKeys.count,
     queryFn: getTagCount,
     enabled,
+  });
+}
+
+export function useBulkDeleteTags() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ tagIds }: { tagIds: string[] }) => {
+      await bulkDeleteTags({ tagIds });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: tagsQueryKeys.all });
+      toast.success("Successfully updated tag!");
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        const errorMsg = error.response?.data.msg;
+        toast.error(errorMsg);
+        return;
+      }
+      toast.error("something went wrong");
+    },
   });
 }

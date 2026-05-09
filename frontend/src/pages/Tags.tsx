@@ -1,7 +1,7 @@
-import { BottomToolbar } from "@/components/ui/toolbar";
 import ListView, {
   TagsPageControls,
 } from "@/features/tags/components/ListView";
+import TagToolBar from "@/features/tags/components/TagToolBar";
 import { TagSelectionProvider } from "@/features/tags/TagSelectionContext";
 import PageContentHeader from "@/layouts/PageContentHeader";
 
@@ -11,7 +11,7 @@ function Tags() {
       <PageContentHeader title="Tags" controls={<TagsPageControls />} />
       <TagSelectionProvider>
         <ListView />
-        <BottomToolbar text="viewing 1-8 of 8 links" />
+        <TagToolBar />
       </TagSelectionProvider>
     </div>
   );
