@@ -1,9 +1,10 @@
 import { Toolbar } from "@/components/ui/toolbar";
 import { useTagSelectionContext } from "../TagSelectionContext";
-import { Trash, X } from "lucide-react";
+import { CircleCheck, Trash, X } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { Kbd } from "@/components/ui/kbd";
 import { useBulkDeleteTagConfirmModal } from "../hooks/use-bulk-delete-tag-confirm-modal";
+import { Button } from "@/components/ui/button";
 
 function TagToolBar() {
   const { isSelectMode, setIsSelectMode, selectedTags, setSelectedTags } =
@@ -20,6 +21,7 @@ function TagToolBar() {
       setIsSelectMode(false);
     }
   }, [selectedTags]);
+
   return (
     <Toolbar>
       {isSelectMode ? (
@@ -52,7 +54,20 @@ function TagToolBar() {
           </button>
         </div>
       ) : (
-        <div>Viewing 1-8 of 8 links</div>
+        <div className="flex flex-col gap-2">
+          <div>Viewing 1-8 of 8 links</div>
+          <div className="pt-3 sm:hidden">
+            <Button
+              variant="outline"
+              icon={<CircleCheck className="size-3.5" />}
+              onClick={() => {
+                setIsSelectMode(true);
+              }}
+            >
+              Select
+            </Button>
+          </div>
+        </div>
       )}
       {ConfirmModal}
     </Toolbar>

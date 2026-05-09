@@ -25,7 +25,7 @@ function TaskList({
 
   const {
     setShowConfirmModal: setShowDeleteConfirmModal,
-    confirmModal: DeleteConfirmModal,
+    ConfirmModal: DeleteConfirmModal,
   } = useDeleteTodoConfirmModal(todo);
 
   const { tags } = todo;

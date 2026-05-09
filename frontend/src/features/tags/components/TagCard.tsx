@@ -9,6 +9,7 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTagSelectionContext } from "../TagSelectionContext";
 import { cn } from "@/lib/utils";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 function TagCard({
   tag,
@@ -24,7 +25,9 @@ function TagCard({
 
   const navigate = useNavigate();
 
-  const { selectedTags } = useTagSelectionContext();
+  const { selectedTags, isSelectMode } = useTagSelectionContext();
+
+  const { isMobile } = useMediaQuery();
 
   const tagSelected = useMemo(() => {
     return selectedTags?.includes(tag.id);
@@ -40,6 +43,10 @@ function TagCard({
       )}
       onClick={(e) => {
         if (e.shiftKey) {
+          e.preventDefault();
+          onSelect?.(tag.id);
+          return;
+        } else if (isSelectMode && isMobile) {
           e.preventDefault();
           onSelect?.(tag.id);
           return;
