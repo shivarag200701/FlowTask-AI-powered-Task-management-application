@@ -5,6 +5,9 @@ import { useEffect, useMemo } from "react";
 import { Kbd } from "@/components/ui/kbd";
 import { useBulkDeleteTagConfirmModal } from "../hooks/use-bulk-delete-tag-confirm-modal";
 import { Button } from "@/components/ui/button";
+import { useSearchParams } from "react-router-dom";
+import { useTags } from "@/hooks/use-tags";
+import pluralize from "@/utils/functions/pluralize";
 
 function TagToolBar() {
   const { isSelectMode, setIsSelectMode, selectedTags, setSelectedTags } =
@@ -15,6 +18,16 @@ function TagToolBar() {
 
   const { ConfirmModal, setShowConfirmModal } =
     useBulkDeleteTagConfirmModal(selectedTags);
+
+  const [searchParams] = useSearchParams();
+
+  const search = searchParams.get("search") ?? "";
+
+  const { data: tags } = useTags({ query: { search } });
+
+  const tagCount = useMemo(() => {
+    return tags?.length;
+  }, [tags]);
 
   useEffect(() => {
     if (selectedTags?.length === 0) {
@@ -55,7 +68,9 @@ function TagToolBar() {
         </div>
       ) : (
         <div className="flex flex-col gap-2">
-          <div>Viewing 1-8 of 8 links</div>
+          <div className="text-sm text-neutral-600">
+            Viewing 1-{tagCount} of {tagCount} {pluralize("tag", tagCount ?? 0)}
+          </div>
           <div className="pt-3 sm:hidden">
             <Button
               variant="outline"
