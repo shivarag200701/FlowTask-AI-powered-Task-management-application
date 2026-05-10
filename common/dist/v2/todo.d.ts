@@ -36,6 +36,9 @@ export declare const UpdateTodoSchema: z.ZodObject<{
     completed: z.ZodOptional<z.ZodBoolean>;
     sortKey: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
+export declare const TodoBulkDeleteSchema: z.ZodObject<{
+    todoIds: z.ZodString;
+}, z.core.$strip>;
 export type CreateTodo = z.infer<typeof CreateTodoSchema>;
 export type UpdateTodo = z.infer<typeof UpdateTodoSchema>;
 //# sourceMappingURL=todo.d.ts.map

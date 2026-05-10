@@ -4,12 +4,13 @@ import { useSortable } from "@dnd-kit/react/sortable";
 import { AlarmClock, Check, MoreHorizontal } from "lucide-react";
 import { useUpdateTodo } from "@/hooks/use-todos";
 import { Popover } from "./ui/popover";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import MoreOptionsDropDown from "./popovers/MoreTodoOptionsDropDown";
 import { useDeleteTodoConfirmModal } from "@/hooks/use-delete-todo-confirm-modal";
 import TimeDisplayer from "./TimeDisplayer";
 import completed from "@/assets/completed.mp3";
 import { useAddEditTodoModal } from "./modals/AddEditTodoModal";
+import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
 
 function DraggableTask({
   id,
@@ -29,6 +30,7 @@ function DraggableTask({
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
 
   const { mutate: updateTodo } = useUpdateTodo();
+  const { selectedTaskIds } = useTaskSelectionContext();
 
   const { setShowAddEditTodoModal, AddEditTodoModal } =
     useAddEditTodoModal(todo);
@@ -48,6 +50,10 @@ function DraggableTask({
     data: todo,
   });
 
+  const taskSelected = useMemo(() => {
+    return selectedTaskIds.includes(id);
+  }, [selectedTaskIds]);
+
   if (isDragging) {
     return (
       <div
@@ -60,8 +66,9 @@ function DraggableTask({
     <>
       <div
         className={cn(
-          "border border-border rounded-lg py-1.5 px-3 mb-2 w-[260px] min-h-[70px] bg-white shadow-2xs hover:shadow-card-hover hover:cursor-pointer relative group select-none",
+          "border border-border rounded-lg py-1.5 px-3 mb-2 w-[260px] min-h-[70px] bg-white shadow-2xs hover:shadow-card-hover hover:cursor-pointer relative group select-none transition-all duration-200",
           className,
+          taskSelected && "bg-accent",
         )}
         ref={ref}
         onClick={(e) => {

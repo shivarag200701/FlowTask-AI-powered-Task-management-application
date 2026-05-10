@@ -1,5 +1,5 @@
 import { Router } from "express";
-import todoRouter from "./todo.js";
+import todoRouter from "./todo/index.js";
 import tagRouter from "./tag/index.js";
 
 const router = Router();

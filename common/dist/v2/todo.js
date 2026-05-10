@@ -27,4 +27,7 @@ export const UpdateTodoSchema = CreateTodoSchema.partial().extend({
     completed: z.boolean().optional(),
     sortKey: z.string().optional(),
 });
+export const TodoBulkDeleteSchema = z.object({
+    todoIds: z.string(),
+});
 //# sourceMappingURL=todo.js.map

@@ -1,7 +1,54 @@
+import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
 import { Toolbar } from "./ui/toolbar";
+import { useEffect, useMemo } from "react";
+import { Trash, X } from "lucide-react";
+import { Kbd } from "./ui/kbd";
 
 function TaskToolBar() {
-  return <Toolbar></Toolbar>;
+  const { selectedTaskIds, setSelectedTaskIds, setIsSelectMode } =
+    useTaskSelectionContext();
+
+  const numberOfTaskSelected = useMemo(() => {
+    return selectedTaskIds.length;
+  }, [selectedTaskIds]);
+
+  useEffect(() => {
+    if (selectedTaskIds?.length === 0) {
+      setIsSelectMode(false);
+    }
+  }, [selectedTaskIds]);
+  return (
+    <Toolbar>
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <button
+            className="p-1.5 rounded-md hover:bg-accent/50 hover:cursor-pointer tranisition-colors duration-75"
+            onClick={() => {
+              setSelectedTaskIds([]);
+              setIsSelectMode(false);
+            }}
+          >
+            <X className="size-4 text-neutral-900" />
+          </button>
+          <span className="text-sm font-medium text-neutral-600 whitespace-nowrap">
+            {numberOfTaskSelected} selected{" "}
+          </span>
+        </div>
+        <button
+          className="rounded-lg border whitespace-nowrap flex items-center justify-center gap-2 px-2 py-1 hover:bg-accent cursor-pointer transition-all duration-75"
+          onClick={() => {
+            //   setShowConfirmModal(true);
+          }}
+        >
+          <Trash className="size-3.5" />
+          <span className="text-xs font-medium text-neutral-600 whitespace-nowrap">
+            Delete
+          </span>
+          <Kbd>X</Kbd>
+        </button>
+      </div>
+    </Toolbar>
+  );
 }
 
 export default TaskToolBar;
