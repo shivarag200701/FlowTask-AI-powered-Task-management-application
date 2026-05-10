@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { requireLogin } from "../../../middleware.js";
-import { TodoBulkDeleteSchema } from "@shiva200701/todotypes";
+import { TodoBulkDeleteSchema, UpdateTodoSchema } from "@shiva200701/todotypes";
 import prisma from "../../../db/index.js";
+import constructPatchPayload from "../../../utils/construct-patch-payload.js";
 
 export const bulkTodoRouter = Router();
 
@@ -27,7 +28,7 @@ bulkTodoRouter.delete("/", requireLogin, async (req, res) => {
 
   if (todoIds.length === 0) {
     return res.status(400).json({
-      msg: "Need to send atleast one tag Id",
+      msg: "Need to send atleast one todo Id",
     });
   }
 
@@ -42,6 +43,84 @@ bulkTodoRouter.delete("/", requireLogin, async (req, res) => {
     return res.status(200).json({ deletedCount });
   } catch (error) {
     console.error("Failed bulk deleting the todos", error);
+    return res.status(500).json({
+      msg: "internal Server Error",
+    });
+  }
+});
+
+bulkTodoRouter.patch("/", requireLogin, async (req, res) => {
+  const userId = req.session.userId;
+
+  if (!userId) {
+    return res.status(401).json({
+      msg: "unauthorized",
+    });
+  }
+
+  const BulkPatchSchema = UpdateTodoSchema.omit({
+    color: true,
+    description: true,
+    nextIndex: true,
+    prevIndex: true,
+    title: true,
+  });
+
+  const { data, success, error } = TodoBulkDeleteSchema.safeParse(req.query);
+
+  if (!success) {
+    return res.status(400).json({
+      msg: "Todo Ids not sent",
+      error,
+    });
+  }
+
+  const todoIds = data.todoIds.split(",");
+
+  if (todoIds.length === 0) {
+    return res.status(400).json({
+      msg: "Need to send atleast one todo Id",
+    });
+  }
+
+  const {
+    data: updateData,
+    success: bodySuccess,
+    error: bodyParseError,
+  } = BulkPatchSchema.safeParse(req.body);
+
+  if (!bodySuccess) {
+    return res.status(400).json({
+      msg: "Send proper body",
+      bodyParseError,
+    });
+  }
+
+  const bulkUpdateData = constructPatchPayload(updateData);
+
+  try {
+    const updatedTodos = await prisma.todo.updateMany({
+      where: {
+        userId,
+        id: { in: todoIds },
+      },
+      data: {
+        ...bulkUpdateData,
+        ...(updateData.tags !== undefined && {
+          tags: {
+            deleteMany: {},
+            create: updateData.tags.map((tagId) => ({
+              tag: { connect: { id: tagId } },
+            })),
+          },
+        }),
+      },
+    });
+    return res.status(200).json({
+      todos: updatedTodos,
+    });
+  } catch (error) {
+    console.error("Error while bulk updating todos", error);
     return res.status(500).json({
       msg: "internal Server Error",
     });

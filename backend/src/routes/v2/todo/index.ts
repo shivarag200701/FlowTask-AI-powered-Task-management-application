@@ -209,7 +209,7 @@ todoRouter.patch("/:id", requireLogin, async (req, res) => {
       todo: updatedTodo,
     });
   } catch (error) {
-    console.error("Error while adding todo", error);
+    console.error("Error while updating todo", error);
     return res.status(500).json({
       msg: "internal Server Error",
     });

@@ -93,7 +93,7 @@ export function useBulkDeleteTags() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: tagsQueryKeys.all });
-      toast.success("Successfully updated tag!");
+      toast.success("Successfully deleted tags!");
     },
     onError: (error) => {
       if (isAxiosError(error)) {

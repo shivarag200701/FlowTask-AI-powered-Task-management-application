@@ -3,10 +3,14 @@ import { Toolbar } from "./ui/toolbar";
 import { useEffect, useMemo } from "react";
 import { Trash, X } from "lucide-react";
 import { Kbd } from "./ui/kbd";
+import { useBulkDeleteTodoConfirmModal } from "@/hooks/use-bulk-delete-todo-confirm-modal";
 
 function TaskToolBar() {
   const { selectedTaskIds, setSelectedTaskIds, setIsSelectMode } =
     useTaskSelectionContext();
+
+  const { ConfirmModal, setShowConfirmModal } =
+    useBulkDeleteTodoConfirmModal(selectedTaskIds);
 
   const numberOfTaskSelected = useMemo(() => {
     return selectedTaskIds.length;
@@ -37,7 +41,7 @@ function TaskToolBar() {
         <button
           className="rounded-lg border whitespace-nowrap flex items-center justify-center gap-2 px-2 py-1 hover:bg-accent cursor-pointer transition-all duration-75"
           onClick={() => {
-            //   setShowConfirmModal(true);
+            setShowConfirmModal(true);
           }}
         >
           <Trash className="size-3.5" />
@@ -47,6 +51,7 @@ function TaskToolBar() {
           <Kbd>X</Kbd>
         </button>
       </div>
+      {ConfirmModal}
     </Toolbar>
   );
 }

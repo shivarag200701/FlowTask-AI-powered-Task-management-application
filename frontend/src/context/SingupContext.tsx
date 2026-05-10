@@ -40,7 +40,7 @@ export function SignupProvider({ children }: PropsWithChildren) {
 export const useSignupContext = () => {
   const context = useContext(signupContext);
 
-  if (context === null) {
+  if (context === undefined) {
     throw new Error(
       "useRegisterContext must be used within a RegisterProvider",
     );

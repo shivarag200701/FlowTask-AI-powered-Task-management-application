@@ -44,6 +44,15 @@ export async function deleteTodo(id: string) {
   }
 }
 
+export async function bulkDeleteTodos({ todoIds }: { todoIds: string[] }) {
+  const ids = todoIds.join(",");
+  try {
+    await api.delete(`/api/v2/todo/bulk?todoIds=${ids}`);
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function createTodo(todo: CreateTodo) {
   await api.post(`/api/v2/todo`, {
     ...todo,
