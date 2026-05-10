@@ -17,12 +17,14 @@ function DraggableTask({
   todo,
   column,
   className,
+  onSelect,
 }: {
   id: string;
   index: number;
   todo: TodoWithCompleteAtDateTime;
   column: string;
   className?: string;
+  onSelect?: (taskId: string) => void;
 }) {
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
 
@@ -58,10 +60,16 @@ function DraggableTask({
     <>
       <div
         className={cn(
-          "border border-border rounded-lg py-1.5 px-3 mb-2 w-[260px] min-h-[70px] bg-white shadow-2xs hover:shadow-card-hover hover:cursor-pointer relative group",
+          "border border-border rounded-lg py-1.5 px-3 mb-2 w-[260px] min-h-[70px] bg-white shadow-2xs hover:shadow-card-hover hover:cursor-pointer relative group select-none",
           className,
         )}
         ref={ref}
+        onClick={(e) => {
+          e.preventDefault();
+          if (e.shiftKey) {
+            onSelect?.(id);
+          }
+        }}
       >
         <Popover
           openPopover={isMoreOptionsOpen}
@@ -84,7 +92,7 @@ function DraggableTask({
             <MoreHorizontal color="#808080" />
           </div>
         </Popover>
-        <div className="flex gap-2">
+        <div className="flex gap-2 select-none">
           <button
             className="h-5 w-5 border border-border/50 rounded-full bg-linear-to-t from-neutral-100 hover:bg-none hover:cursor-pointer hover:border-border hover:ring-3 hover:ring-border/30 flex items-center justify-center group/circle"
             onClick={() => {

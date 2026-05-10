@@ -21,6 +21,7 @@ import TimeDisplayer from "@/components/TimeDisplayer";
 import { AlarmClock } from "lucide-react";
 import EmptyState from "@/components/EmptyState";
 import { useAddEditTodoModal } from "@/components/modals/AddEditTodoModal";
+import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
 
 type DragEndPayload = DragEndEvent;
 
@@ -40,6 +41,10 @@ function BoardView() {
   const dragInitialColumn = useRef<UniqueIdentifier | undefined>(undefined);
 
   const { AddEditTodoModal, CreateTodoButton } = useAddEditTodoModal();
+  const { setSelectedTaskIds, selectedTaskIds, setIsSelectMode } =
+    useTaskSelectionContext();
+
+  console.log("tasks that have been selected", selectedTaskIds);
 
   useEffect(() => {
     if (!todayTodos || !overdueTodos) return;
@@ -135,6 +140,15 @@ function BoardView() {
                     index={index}
                     column={column}
                     todo={todo}
+                    onSelect={(taskId) => {
+                      setIsSelectMode(true);
+                      setSelectedTaskIds((prev) => {
+                        if (prev.includes(taskId))
+                          return prev.filter((id) => id !== taskId);
+
+                        return [...prev, taskId];
+                      });
+                    }}
                   />
                 ))}
               </DroppableColumn>

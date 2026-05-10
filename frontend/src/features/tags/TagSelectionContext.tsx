@@ -36,7 +36,7 @@ export const TagSelectionProvider = ({ children }: PropsWithChildren) => {
 export function useTagSelectionContext() {
   const context = useContext(tagSelectionContext);
 
-  if (context === undefined) {
+  if (context === null) {
     throw new Error(
       "useRegisterContext must be used within a RegisterProvider",
     );

@@ -28,7 +28,7 @@ export function SideNavProvider({ children }: PropsWithChildren) {
 
 export function useSideNavContext() {
   const context = useContext(sideNavContext);
-  if (context === undefined) {
+  if (context === null) {
     throw new Error(
       "useRegisterContext must be used within a RegisterProvider",
     );

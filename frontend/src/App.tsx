@@ -22,6 +22,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Tags from "./pages/Tags";
 import SuccessIcon from "./components/icons/success-icon";
 import Todos from "./pages/todos";
+import { TaskSelectionProvider } from "./context/TaskSelectionContext";
 
 const queryClient = new QueryClient();
 
@@ -93,7 +94,14 @@ function App() {
                         element={<Completed />}
                       />
                       <Route element={<AppLayout />}>
-                        <Route path="/app/today" element={<Today />} />
+                        <Route
+                          path="/app/today"
+                          element={
+                            <TaskSelectionProvider>
+                              <Today />
+                            </TaskSelectionProvider>
+                          }
+                        />
                         <Route path="/app/upcoming" element={<Upcoming />} />
                         <Route path="/app/tags" element={<Tags />} />
                         <Route path="/app/todos" element={<Todos />} />

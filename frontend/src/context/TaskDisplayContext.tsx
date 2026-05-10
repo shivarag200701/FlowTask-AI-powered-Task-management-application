@@ -52,7 +52,7 @@ function TaskDisplayProvider({ children }: PropsWithChildren) {
 function useTaskDisplayContext() {
   const context = useContext(taskDisplayContext);
 
-  if (context === undefined) {
+  if (context === null) {
     throw new Error(
       "taskDisplayContext must be used within a TaskDisplayProvider",
     );
