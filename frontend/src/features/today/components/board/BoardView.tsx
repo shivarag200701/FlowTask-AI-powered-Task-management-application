@@ -41,10 +41,7 @@ function BoardView() {
   const dragInitialColumn = useRef<UniqueIdentifier | undefined>(undefined);
 
   const { AddEditTodoModal, CreateTodoButton } = useAddEditTodoModal();
-  const { setSelectedTaskIds, selectedTaskIds, setIsSelectMode } =
-    useTaskSelectionContext();
-
-  console.log("tasks that have been selected", selectedTaskIds);
+  const { setSelectedTaskIds, setIsSelectMode } = useTaskSelectionContext();
 
   useEffect(() => {
     if (!todayTodos || !overdueTodos) return;

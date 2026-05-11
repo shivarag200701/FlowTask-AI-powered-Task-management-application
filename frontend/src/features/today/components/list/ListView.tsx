@@ -10,11 +10,14 @@ import { Button } from "@/components/ui/button";
 import { CirclePlus } from "lucide-react";
 import InlineTaskForm from "@/components/InlineTaskForm";
 import TaskBuilderProvider from "@/components/task-builder-provider";
+import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
 
 function ListView() {
   const { data: todos } = useTodayTodos();
   const { data: overdueTodos } = useOverDueTodos();
   const [isAddTodoOpen, setIsAddTodoOpen] = useState(false);
+
+  const { setIsSelectMode, setSelectedTaskIds } = useTaskSelectionContext();
 
   return (
     <PageWidthWrapper className="grid pt-6 lg:pt-1">
@@ -32,7 +35,19 @@ function ListView() {
               </div>
             </div>
             {todos.map((todo) => (
-              <TaskList key={todo.id} todo={todo} />
+              <TaskList
+                key={todo.id}
+                todo={todo}
+                onSelect={(todoId) => {
+                  setIsSelectMode(true);
+                  setSelectedTaskIds((prev) => {
+                    if (prev.includes(todoId)) {
+                      return prev.filter((id) => id !== todoId);
+                    }
+                    return [...prev, todoId];
+                  });
+                }}
+              />
             ))}
             <div className="mt-5">
               {!isAddTodoOpen ? (

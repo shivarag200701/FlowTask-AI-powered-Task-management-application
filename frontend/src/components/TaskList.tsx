@@ -12,16 +12,24 @@ import { Button } from "./ui/button";
 import TagBadge from "./TagBadge";
 import { Tooltip, TooltipContent } from "./ui/tooltip";
 import { TooltipTrigger } from "@radix-ui/react-tooltip";
+import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
 
 function TaskList({
   todo,
   className,
+  onSelect,
 }: {
   todo: TodoWithCompleteAtDateTime;
   className?: string;
+  onSelect?: (todoId: string) => void;
 }) {
   const { mutate: updateTodo } = useUpdateTodo();
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
+  const { selectedTaskIds } = useTaskSelectionContext();
+
+  const todoSelected = useMemo(() => {
+    return selectedTaskIds.includes(todo.id);
+  }, [selectedTaskIds]);
 
   const {
     setShowConfirmModal: setShowDeleteConfirmModal,
@@ -38,10 +46,15 @@ function TaskList({
   return (
     <div
       className={cn(
-        "flex justify-between items-center  border-b border-border  px-4 py-2.5 min-h-15 hover:shadow-xs group cursor-pointer",
+        "flex justify-between items-center  border-b border-border  px-4 py-2.5 min-h-15 hover:shadow-xs group cursor-pointer select-none",
+        todoSelected && "bg-accent",
         className,
         { "shadow-card-hover": isMoreOptionsOpen },
       )}
+      onClick={(e) => {
+        e.preventDefault();
+        if (e.shiftKey) onSelect?.(todo.id);
+      }}
     >
       <div className="flex gap-4 items-start justify-start">
         <button

@@ -15,8 +15,6 @@ function Today({ className }: TodayProps) {
   const { viewMode } = useTaskDisplayContext();
   const { isSelectMode } = useTaskSelectionContext();
 
-  console.log("select mode", isSelectMode);
-
   return (
     <div className={cn(className, "h-full")}>
       <PageContentHeader title="Today" controls={<TaskDisplaySelector />} />
