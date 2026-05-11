@@ -90,6 +90,8 @@ bulkTodoRouter.patch("/", requireLogin, async (req, res) => {
   } = BulkPatchSchema.safeParse(req.body);
 
   if (!bodySuccess) {
+    console.log("error parsing body", bodyParseError);
+
     return res.status(400).json({
       msg: "Send proper body",
       bodyParseError,
@@ -99,25 +101,33 @@ bulkTodoRouter.patch("/", requireLogin, async (req, res) => {
   const bulkUpdateData = constructPatchPayload(updateData);
 
   try {
-    const updatedTodos = await prisma.todo.updateMany({
-      where: {
-        userId,
-        id: { in: todoIds },
-      },
-      data: {
-        ...bulkUpdateData,
-        ...(updateData.tags !== undefined && {
-          tags: {
-            deleteMany: {},
-            create: updateData.tags.map((tagId) => ({
-              tag: { connect: { id: tagId } },
-            })),
-          },
-        }),
-      },
+    const { count: updatedCount } = await prisma.$transaction(async (tx) => {
+      const result = await tx.todo.updateMany({
+        where: { userId, id: { in: todoIds } },
+        data: bulkUpdateData,
+      });
+
+      const tags = updateData.tags;
+      if (tags !== undefined) {
+        await tx.todoTag.deleteMany({
+          where: { todoId: { in: todoIds } },
+        });
+
+        if (tags.length > 0) {
+          await tx.todoTag.createMany({
+            data: todoIds.flatMap((todoId) =>
+              tags.map((tagId) => ({ todoId, tagId })),
+            ),
+            skipDuplicates: true,
+          });
+        }
+      }
+
+      return result;
     });
+
     return res.status(200).json({
-      todos: updatedTodos,
+      todos: updatedCount,
     });
   } catch (error) {
     console.error("Error while bulk updating todos", error);

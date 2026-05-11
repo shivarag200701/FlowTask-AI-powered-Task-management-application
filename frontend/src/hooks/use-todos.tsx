@@ -1,5 +1,5 @@
 import { deleteTodo, fetchTodos, updateTodo } from "@/api";
-import { bulkDeleteTodos, createTodo } from "@/api/todos";
+import { bulkDeleteTodos, bulkUpdateTodos, createTodo } from "@/api/todos";
 import { todosQueryKeys } from "@/query-keys";
 import {
   toastMessages,
@@ -81,6 +81,33 @@ export function useBulkDeleteTodos() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
       toast.success("Successfully deleted todos!");
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        const errorMsg = error.response?.data.msg;
+        toast.error(errorMsg);
+        return;
+      }
+      toast.error("something went wrong");
+    },
+  });
+}
+
+export function useBulkUpdateTodos() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      todoIds,
+      tags,
+    }: {
+      todoIds: string[];
+      tags: string[];
+    }) => {
+      await bulkUpdateTodos({ todoIds, tags });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
+      toast.success("Successfully updated todos!");
     },
     onError: (error) => {
       if (isAxiosError(error)) {

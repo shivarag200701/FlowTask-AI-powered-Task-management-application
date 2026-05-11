@@ -29,6 +29,9 @@ function TaskToolBar() {
   useHotkeys("x", () => {
     setShowConfirmModal(true);
   });
+  useHotkeys("t", () => {
+    setShowTagTodoModal(true);
+  });
   return (
     <Toolbar>
       <div className="flex justify-between items-center">

@@ -53,6 +53,21 @@ export async function bulkDeleteTodos({ todoIds }: { todoIds: string[] }) {
   }
 }
 
+export async function bulkUpdateTodos({
+  todoIds,
+  tags,
+}: {
+  todoIds: string[];
+  tags: string[];
+}) {
+  const ids = todoIds.join(",");
+  try {
+    await api.patch(`/api/v2/todo/bulk?todoIds=${ids}`, { tags });
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function createTodo(todo: CreateTodo) {
   await api.post(`/api/v2/todo`, {
     ...todo,
