@@ -1,9 +1,11 @@
 import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
 import { Toolbar } from "./ui/toolbar";
 import { useEffect, useMemo } from "react";
-import { Trash, X } from "lucide-react";
+import { Tag, Trash, X } from "lucide-react";
 import { Kbd } from "./ui/kbd";
 import { useBulkDeleteTodoConfirmModal } from "@/hooks/use-bulk-delete-todo-confirm-modal";
+import { useHotkeys } from "react-hotkeys-hook";
+import { useTagTodoModal } from "./modals/TagTodoModal";
 
 function TaskToolBar() {
   const { selectedTaskIds, setSelectedTaskIds, setIsSelectMode } =
@@ -11,6 +13,8 @@ function TaskToolBar() {
 
   const { ConfirmModal, setShowConfirmModal } =
     useBulkDeleteTodoConfirmModal(selectedTaskIds);
+
+  const { TagTodoModal, setShowTagTodoModal } = useTagTodoModal();
 
   const numberOfTaskSelected = useMemo(() => {
     return selectedTaskIds.length;
@@ -21,6 +25,10 @@ function TaskToolBar() {
       setIsSelectMode(false);
     }
   }, [selectedTaskIds]);
+
+  useHotkeys("x", () => {
+    setShowConfirmModal(true);
+  });
   return (
     <Toolbar>
       <div className="flex justify-between items-center">
@@ -38,20 +46,35 @@ function TaskToolBar() {
             {numberOfTaskSelected} selected{" "}
           </span>
         </div>
-        <button
-          className="rounded-lg border whitespace-nowrap flex items-center justify-center gap-2 px-2 py-1 hover:bg-accent cursor-pointer transition-all duration-75"
-          onClick={() => {
-            setShowConfirmModal(true);
-          }}
-        >
-          <Trash className="size-3.5" />
-          <span className="text-xs font-medium text-neutral-600 whitespace-nowrap">
-            Delete
-          </span>
-          <Kbd>X</Kbd>
-        </button>
+        <div className=" flex items-center gap-2">
+          <button
+            className="rounded-lg border whitespace-nowrap flex items-center justify-center gap-2 px-2 py-1 hover:bg-accent cursor-pointer transition-all duration-75"
+            onClick={() => {
+              setShowTagTodoModal(true);
+            }}
+          >
+            <Tag className="size-3.5" />
+            <span className="text-xs font-medium text-neutral-600 whitespace-nowrap">
+              Tags
+            </span>
+            <Kbd>T</Kbd>
+          </button>
+          <button
+            className="rounded-lg border whitespace-nowrap flex items-center justify-center gap-2 px-2 py-1 hover:bg-accent cursor-pointer transition-all duration-75"
+            onClick={() => {
+              setShowConfirmModal(true);
+            }}
+          >
+            <Trash className="size-3.5" />
+            <span className="text-xs font-medium text-neutral-600 whitespace-nowrap">
+              Delete
+            </span>
+            <Kbd>X</Kbd>
+          </button>
+        </div>
       </div>
       {ConfirmModal}
+      {TagTodoModal}
     </Toolbar>
   );
 }
