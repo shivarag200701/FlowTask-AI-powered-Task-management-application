@@ -74,7 +74,7 @@ function TagToolBar() {
           <div className="pt-3 sm:hidden">
             <Button
               variant="outline"
-              icon={<CircleCheck className="size-3.5" />}
+              icon={<CircleCheck className="size-4" strokeWidth={3} />}
               onClick={() => {
                 setIsSelectMode(true);
               }}

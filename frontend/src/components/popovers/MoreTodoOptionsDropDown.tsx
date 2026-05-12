@@ -58,7 +58,7 @@ function MoreTodoOptionsDropDown({
         className,
       )}
     >
-      <div className="p-2 w-full flex flex-col border-b">
+      <div className="sm:p-2 w-full flex flex-col border-b">
         {editOptions.map((option) => (
           <button
             key={option.id}
@@ -67,13 +67,13 @@ function MoreTodoOptionsDropDown({
             onClick={option.onClick}
           >
             <div
-              className="flex gap-5 sm:gap-2 items-center"
+              className="flex gap-2 sm:gap-2 items-center"
               style={{ color: option.iconColor }}
             >
-              <div className="[&_svg]:size-5 sm:[&_svg]:size-4">
+              <div className="[&_svg]:size-4 sm:[&_svg]:size-4">
                 {option.icon}
               </div>
-              <span className="font-semibold flex items-center">
+              <span className="font-medium flex items-center">
                 {option.label}
               </span>
             </div>
@@ -94,10 +94,10 @@ function MoreTodoOptionsDropDown({
             onClick={option.onClick}
           >
             <div
-              className={`flex gap-5 sm:gap-2 items-center text-red-500 ${option.id === "delete" ? "group-hover:text-white" : ""}`}
+              className={`flex gap-2 items-center text-red-500 ${option.id === "delete" ? "group-hover:text-white" : ""}`}
               // style={{ color: option.iconColor }}
             >
-              <div className="[&_svg]:size-5 sm:[&_svg]:size-4">
+              <div className="[&_svg]:size-4 sm:[&_svg]:size-4">
                 {option.icon}
               </div>
               <span className="font-semibold">{option.label}</span>

@@ -13,6 +13,8 @@ import TagBadge from "./TagBadge";
 import { Tooltip, TooltipContent } from "./ui/tooltip";
 import { TooltipTrigger } from "@radix-ui/react-tooltip";
 import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
+import { useAddEditTodoModal } from "./modals/AddEditTodoModal";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 function TaskList({
   todo,
@@ -25,7 +27,7 @@ function TaskList({
 }) {
   const { mutate: updateTodo } = useUpdateTodo();
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
-  const { selectedTaskIds } = useTaskSelectionContext();
+  const { selectedTaskIds, isSelectMode } = useTaskSelectionContext();
 
   const todoSelected = useMemo(() => {
     return selectedTaskIds.includes(todo.id);
@@ -36,7 +38,11 @@ function TaskList({
     ConfirmModal: DeleteConfirmModal,
   } = useDeleteTodoConfirmModal(todo);
 
+  const { AddEditTodoModal, setShowAddEditTodoModal } =
+    useAddEditTodoModal(todo);
+
   const { tags } = todo;
+  const { isMobile } = useMediaQuery();
 
   const { primaryTag, secondaryTag } = useMemo(() => {
     //implement sorting of tags  suppose a filter is applied in the url to make that as the primary tag
@@ -46,14 +52,20 @@ function TaskList({
   return (
     <div
       className={cn(
-        "flex justify-between items-center  border-b border-border  px-4 py-2.5 min-h-15 hover:shadow-xs group cursor-pointer select-none",
+        "flex justify-between items-center  border-b border-border  px-4 py-2.5 min-h-15 hover:shadow-xs group cursor-pointer select-none transition-all duration-200",
         todoSelected && "bg-accent",
         className,
         { "shadow-card-hover": isMoreOptionsOpen },
       )}
       onClick={(e) => {
         e.preventDefault();
-        if (e.shiftKey) onSelect?.(todo.id);
+        if (e.shiftKey) {
+          onSelect?.(todo.id);
+          return;
+        } else if (isSelectMode && isMobile) {
+          onSelect?.(todo.id);
+          return;
+        }
       }}
     >
       <div className="flex gap-4 items-start justify-start">
@@ -100,7 +112,10 @@ function TaskList({
                 setShowDeleteConfirmModal(true);
               }}
               //todo need to implement
-              onEdit={() => {}}
+              onEdit={() => {
+                setIsMoreOptionsOpen(false);
+                setShowAddEditTodoModal(true);
+              }}
             />
           }
           sideOffset={5}
@@ -116,6 +131,7 @@ function TaskList({
         </Popover>
       </div>
       {DeleteConfirmModal}
+      <AddEditTodoModal />
     </div>
   );
 }

@@ -16,6 +16,7 @@ import { useDateTimeModal } from "./modals/DateTimeModal";
 import { SerializeFormData } from "@/utils/functions/serialize-form-data";
 import type { UpdateTodo } from "@shiva200701/todotypes";
 import { cn } from "@/lib/utils";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 type TodoFormValues = CreateTodoWithDateTime & { id?: string };
 
@@ -57,6 +58,8 @@ function InlineTaskForm({
     { preventDefault: true, enabled: !showDateTimeModal },
   );
 
+  const { isMobile } = useMediaQuery();
+
   useHotkeys(
     "d",
     () => {
@@ -83,8 +86,9 @@ function InlineTaskForm({
   return (
     <div
       className={cn(
-        "rounded-lg border border-border min-h-15",
+        "rounded-lg min-h-15",
         mode === "modal" && "rounded-2xl",
+        !isMobile ? "border border-border" : "",
       )}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
