@@ -96,16 +96,14 @@ function InlineTaskForm({
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="border-b border-border/50  px-3 py-2 w-full">
           <input
-            className="font-semibold w-full border-none focus:outline-none"
-            style={{ fontSize: "14px" }}
+            className="font-semibold w-full border-none focus:outline-none sm:text:sm"
             placeholder="Task name"
             {...register("title", {
               required: "title is required",
             })}
           />
           <input
-            className="w-full border-none focus:outline-none"
-            style={{ fontSize: "14px" }}
+            className="w-full border-none focus:outline-none sm:text:sm"
             placeholder="Description"
             {...register("description")}
           />
