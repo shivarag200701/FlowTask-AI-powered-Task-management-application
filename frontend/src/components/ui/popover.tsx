@@ -59,7 +59,7 @@ export const Popover = ({
             <div className="sticky top-0 z-20 flex w-full  justify-center rounded-t-[10px] bg-background">
               <div className="bg-border my-3 h-1 w-12 rounded-full" />
             </div>
-            <div className="bg-background flex flex-col items-stretch w-full overflow-hidden pb-4 align-middle shadow-xl">
+            <div className="bg-background flex flex-col items-stretch w-full  pb-4 align-middle shadow-xl">
               {content}
             </div>
           </Drawer.Content>
