@@ -47,7 +47,11 @@ function DateTimeModal({
     },
   );
 
-  const [dueDate, isAllDay] = watch(["dueDate", "isAllDay"]);
+  const [dueDate, isAllDay, dueTime] = watch([
+    "dueDate",
+    "isAllDay",
+    "dueTime",
+  ]);
   const dueDateAtParent = watchParent("dueDate");
 
   return (
@@ -95,6 +99,9 @@ function DateTimeModal({
               }
             }}
             label="Type a date"
+            dueDate={dueDate}
+            dueTime={dueTime}
+            isAllDay={isAllDay ?? true}
           />
         </div>
         <div className="flex w-full justify-between items-center h-full mt-4">
