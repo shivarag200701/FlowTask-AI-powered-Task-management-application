@@ -44,7 +44,7 @@ export default function SmartDateTimePicker({
   const [parsedResult, setParsedResult] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
   const [calenderOpen, setCalenderOpen] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [date, setDate] = useState<Date | undefined>();
   const [addTimeExpanded, setAddTimeExpanded] = useState(false);
 
   const showTimePicker = dueTime != null || addTimeExpanded;
@@ -62,6 +62,10 @@ export default function SmartDateTimePicker({
   }, [nlpInput, setNlpInput]);
 
   const id = useId();
+
+  useEffect(() => {
+    setDate(dueDate?.toJSDate());
+  }, [dueDate]);
 
   const pickerBase = useMemo(() => {
     return (
@@ -128,7 +132,7 @@ export default function SmartDateTimePicker({
           openPopover={calenderOpen}
           setOpenPopover={setCalenderOpen}
           content={
-            <div className="flex flex-col gap-3 sm:gap-0 sm:items-start w-full sm:flex-row">
+            <div className="flex flex-col gap-3 sm:gap-0 w-full sm:flex-row">
               <Calendar
                 mode="single"
                 className="w-full rounded-2xl"
@@ -300,7 +304,7 @@ export default function SmartDateTimePicker({
                     </ScrollArea>
                   </div>
                 ) : (
-                  <div className="px-4 py-8 text-center text-sm text-muted-foreground max-w-[220px] mx-auto sm:mx-0 sm:max-w-none">
+                  <div className="px-4 py-8 text-center  text-sm text-muted-foreground max-w-[220px] mx-auto sm:mx-0 sm:max-w-none">
                     No specific time. Use{" "}
                     <span className="font-medium text-foreground">
                       Add time

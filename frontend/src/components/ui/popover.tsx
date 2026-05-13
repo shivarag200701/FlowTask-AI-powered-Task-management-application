@@ -43,7 +43,7 @@ export const Popover = ({
           {children}
         </Drawer.Trigger>
         <Drawer.Portal>
-          <Drawer.Overlay className="fixed inset-0 bg-black/40" />
+          <Drawer.Overlay className="bg-bg-subtle fixed inset-0 z-50 bg-opacity-10 backdrop-blur" />
           <Drawer.Content
             className="border-border-subtle bg-bg-default fixed bottom-0 left-0 right-0 z-50 mt-24 rounded-t-[10px] border-t"
             onPointerDownOutside={(e) => {
@@ -56,10 +56,10 @@ export const Popover = ({
               }
             }}
           >
-            <div className="sticky top-0 z-20 flex w-full  justify-center rounded-t-[10px] bg-background">
+            <div className="sticky top-0 z-20 flex w-full items-center  justify-center rounded-t-[10px] bg-background">
               <div className="bg-border my-3 h-1 w-12 rounded-full" />
             </div>
-            <div className="bg-background flex flex-col items-stretch w-full  pb-4 align-middle shadow-2xl">
+            <div className="bg-background flex  items-stretch w-full overflow-hidden pb-4 align-middle shadow-xl">
               {content}
             </div>
           </Drawer.Content>
@@ -83,7 +83,7 @@ export const Popover = ({
           align={align}
           alignOffset={0}
           className={cn(
-            "animate-slide-up-fade border border-border outline-none bg-white rounded-md z-50 items-center sm:block shadow-md",
+            "animate-slide-up-fade bg-white border border-border outline-none  rounded-md z-50 items-center sm:block shadow-md",
             popoverContentClassName,
           )}
         >

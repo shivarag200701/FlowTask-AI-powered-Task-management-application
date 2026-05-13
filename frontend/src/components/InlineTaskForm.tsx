@@ -31,7 +31,7 @@ function InlineTaskForm({
 }) {
   const {
     register,
-    formState: { isValid },
+    formState: { isValid, isDirty },
     handleSubmit,
     reset,
     watch,
@@ -73,6 +73,8 @@ function InlineTaskForm({
   const [isTagsDropDownOpen, setIsTagsDropDownOpen] = useState(false);
 
   const onSubmit: SubmitHandler<TodoFormValues> = (data) => {
+    console.log("here");
+
     const serialized = SerializeFormData(data);
     if (isEdit && todoId) {
       updateTodo({ id: todoId, data: serialized as UpdateTodo });
@@ -92,7 +94,7 @@ function InlineTaskForm({
       )}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="border-b border-border/50  px-3 py-2">
+        <div className="border-b border-border/50  px-3 py-2 w-full">
           <input
             className="font-semibold w-full border-none focus:outline-none"
             style={{ fontSize: "14px" }}
@@ -144,14 +146,15 @@ function InlineTaskForm({
           <Button
             variant="default"
             className="w-fit"
-            disabled={!isValid}
-            type="submit"
+            disabled={!isValid || !isDirty}
+            type="button"
+            onClick={handleSubmit(onSubmit)}
           >
             {isEdit ? "Update Task" : "Add Task"}
           </Button>
         </div>
-        <DateTimeModal />
       </form>
+      <DateTimeModal />
     </div>
   );
 }

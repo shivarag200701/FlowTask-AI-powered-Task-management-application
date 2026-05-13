@@ -23,7 +23,7 @@ function AddEditTodoModal({
   todo?: TodoWithCompleteAtDateTime;
 }) {
   return (
-    <Modal showModal={show} setShowModal={setShow} className="max-w-xl">
+    <Modal showModal={show} setShowModal={setShow} className="max-w-2xl">
       <TaskBuilderProvider todo={todo}>
         <InlineTaskForm setIsOpen={setShow} mode="modal" />
       </TaskBuilderProvider>

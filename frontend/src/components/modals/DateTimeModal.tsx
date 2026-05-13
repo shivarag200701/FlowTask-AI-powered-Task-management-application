@@ -63,7 +63,7 @@ function DateTimeModal({
           handleSubmit((data) => {
             setValuesParent("dueDate", data.dueDate, { shouldDirty: true });
             setValuesParent("dueTime", null, { shouldDirty: true });
-            setValuesParent("isAllDay", isAllDay, { shouldDirty: true });
+            setValuesParent("isAllDay", data.isAllDay, { shouldDirty: true });
             if (!data.isAllDay) {
               setValuesParent("dueTime", data.dueTime, { shouldDirty: true });
             }
@@ -88,7 +88,7 @@ function DateTimeModal({
         {/* Date Picker */}
         <div className="mt-6">
           <SmartDateTimePicker
-            value={formatDatetime(dueDate, isAllDay)}
+            value={formatDatetime(dueTime ?? dueDate, isAllDay)}
             onChange={({ date, isAllDay }) => {
               setValue("dueDate", date, { shouldDirty: true });
               setValue("dueTime", null, { shouldDirty: true });
@@ -131,7 +131,29 @@ function DateTimeModal({
             >
               Cancel
             </Button>
-            <Button className="w-fit" disabled={!isDirty}>
+            <Button
+              className="w-fit"
+              disabled={!isDirty}
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                handleSubmit((data) => {
+                  setValuesParent("dueDate", data.dueDate, {
+                    shouldDirty: true,
+                  });
+                  setValuesParent("dueTime", null, { shouldDirty: true });
+                  setValuesParent("isAllDay", data.isAllDay, {
+                    shouldDirty: true,
+                  });
+                  if (!data.isAllDay) {
+                    setValuesParent("dueTime", data.dueTime, {
+                      shouldDirty: true,
+                    });
+                  }
+                  setShow(false);
+                })(e);
+              }}
+            >
               {dueDateAtParent ? "Save" : "Add date"}
             </Button>
           </div>

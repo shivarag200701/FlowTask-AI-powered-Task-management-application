@@ -91,7 +91,7 @@ function TaskList({
           </div>
         </div>
       </div>
-      <div className="flex gap-10">
+      <div className="flex gap-1 sm:gap-10">
         {primaryTag !== undefined && (
           <TagsToolTip secondaryTags={secondaryTag ?? []}>
             <TagBadge
