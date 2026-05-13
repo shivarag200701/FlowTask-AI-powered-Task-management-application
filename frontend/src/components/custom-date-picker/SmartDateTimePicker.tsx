@@ -128,7 +128,7 @@ export default function SmartDateTimePicker({
           openPopover={calenderOpen}
           setOpenPopover={setCalenderOpen}
           content={
-            <div className="w-full sm:flex">
+            <div className="flex flex-col gap-3 sm:gap-0 sm:items-start w-full sm:flex-row">
               <Calendar
                 mode="single"
                 className="w-full rounded-2xl"
