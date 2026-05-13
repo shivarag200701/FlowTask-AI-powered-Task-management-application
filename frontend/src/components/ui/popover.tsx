@@ -46,7 +46,7 @@ export const Popover = ({
         <Drawer.Portal>
           <Drawer.Overlay className="fixed inset-0 bg-black/40" />
           <Drawer.Content
-            className="border-border-subtle bg-bg-default fixed bottom-0 left-0 right-0 flex flex-col z-50 mt-24 rounded-t-[10px] border-t"
+            className="border-border-subtle bg-bg-default fixed bottom-0 left-0 right-0 flex flex-col z-50 mt-24 rounded-t-[10px] border-t max-h-[calc(100dvh-20rem)]"
             onPointerDownOutside={(e) => {
               // Prevent dismissal when clicking inside a toast
               if (
