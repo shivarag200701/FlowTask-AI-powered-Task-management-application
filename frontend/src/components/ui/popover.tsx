@@ -43,9 +43,9 @@ export const Popover = ({
           {children}
         </Drawer.Trigger>
         <Drawer.Portal>
-          <Drawer.Overlay className="bg-bg-subtle fixed inset-0 z-50 bg-opacity-10 backdrop-blur" />
+          <Drawer.Overlay className="fixed inset-0 bg-black/40" />
           <Drawer.Content
-            className="border-border-subtle bg-bg-default fixed bottom-0 left-0 right-0 z-50 mt-24 rounded-t-[10px] border-t"
+            className="border-border-subtle bg-bg-default fixed bottom-0 left-0 right-0 flex flex-col z-50 mt-24 rounded-t-[10px] border-t"
             onPointerDownOutside={(e) => {
               // Prevent dismissal when clicking inside a toast
               if (
@@ -56,10 +56,10 @@ export const Popover = ({
               }
             }}
           >
-            <div className="sticky top-0 z-20 flex w-full items-center  justify-center rounded-t-[10px] bg-background">
+            <div className="sticky top-0 z-20 flex w-full  justify-center rounded-t-[10px] bg-background">
               <div className="bg-border my-3 h-1 w-12 rounded-full" />
             </div>
-            <div className="bg-background flex  items-stretch w-full overflow-hidden pb-4 align-middle shadow-xl">
+            <div className="scrollbar-hide flex-1 overflow-y-auto  rounded-t-[10px] bg-white">
               {content}
             </div>
           </Drawer.Content>
