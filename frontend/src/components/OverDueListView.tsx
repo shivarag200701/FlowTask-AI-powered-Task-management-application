@@ -7,9 +7,12 @@ import {
 import { useOverDueTodos } from "@/hooks/use-todos";
 import { ChevronRight } from "lucide-react";
 import TaskList from "./TaskList";
+import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
 
 function OverViewListView() {
   const { data: overdueTasks } = useOverDueTodos();
+  const { setIsSelectMode, setSelectedTaskIds } = useTaskSelectionContext();
+
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="overdue">
@@ -24,7 +27,21 @@ function OverViewListView() {
         </AccordionTrigger>
         <AccordionContent>
           {overdueTasks &&
-            overdueTasks.map((todo) => <TaskList key={todo.id} todo={todo} />)}
+            overdueTasks.map((todo) => (
+              <TaskList
+                key={todo.id}
+                todo={todo}
+                onSelect={(todoId) => {
+                  setIsSelectMode(true);
+                  setSelectedTaskIds((prev) => {
+                    if (prev.includes(todoId)) {
+                      return prev.filter((id) => id !== todoId);
+                    }
+                    return [...prev, todoId];
+                  });
+                }}
+              />
+            ))}
         </AccordionContent>
       </AccordionItem>
     </Accordion>
