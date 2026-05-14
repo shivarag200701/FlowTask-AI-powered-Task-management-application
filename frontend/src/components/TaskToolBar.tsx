@@ -7,6 +7,7 @@ import { useBulkDeleteTodoConfirmModal } from "@/hooks/use-bulk-delete-todo-conf
 import { useHotkeys } from "react-hotkeys-hook";
 import { useTagTodoModal } from "./modals/TagTodoModal";
 import { Button } from "./ui/button";
+import { useAddEditTodoModal } from "./modals/AddEditTodoModal";
 
 function TaskToolBar() {
   const { selectedTaskIds, setSelectedTaskIds, setIsSelectMode, isSelectMode } =
@@ -16,6 +17,8 @@ function TaskToolBar() {
     useBulkDeleteTodoConfirmModal(selectedTaskIds);
 
   const { TagTodoModal, setShowTagTodoModal } = useTagTodoModal();
+
+  const { CreateTodoButton, AddEditTodoModal } = useAddEditTodoModal();
 
   const numberOfTaskSelected = useMemo(() => {
     return selectedTaskIds.length;
@@ -79,18 +82,23 @@ function TaskToolBar() {
           </div>
         </div>
       ) : (
-        <Button
-          variant="outline"
-          icon={<CircleCheck className="size-4" strokeWidth={3} />}
-          onClick={() => {
-            setIsSelectMode(true);
-          }}
-        >
-          Select
-        </Button>
+        <div className="grid grid-cols-3 gap-2 w-full">
+          <Button
+            variant="outline"
+            className="col-span-2"
+            icon={<CircleCheck className="size-4" strokeWidth={3} />}
+            onClick={() => {
+              setIsSelectMode(true);
+            }}
+          >
+            Select
+          </Button>
+          <CreateTodoButton />
+        </div>
       )}
       {ConfirmModal}
       {TagTodoModal}
+      <AddEditTodoModal />
     </Toolbar>
   );
 }

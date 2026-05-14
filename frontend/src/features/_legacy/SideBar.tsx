@@ -192,7 +192,9 @@ const SideBar = ({
           <div className="flex flex-col">
             <button
               className="flex justify-start items-center gap-4 hover:bg-hover rounded-[4px] p-1.5 m-1.5 cursor-pointer hover:bg-options-hover transition-all duration-300 "
-              onClick={handleLogout}
+              onClick={() => {
+                handleLogout();
+              }}
             >
               <LogOut className="w-4.5 h-4.5" strokeWidth={1} />
               <span className="text-[13px] font-medium">Logout</span>

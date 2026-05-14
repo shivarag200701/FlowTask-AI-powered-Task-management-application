@@ -33,8 +33,10 @@ function AddEditTodoModal({
 
 function CreateTodoButton({
   setShow,
+  buttonPresent,
 }: {
   setShow: Dispatch<SetStateAction<boolean>>;
+  buttonPresent?: boolean;
 }) {
   useHotkeys("c", () => {
     setShow(true);
@@ -46,7 +48,7 @@ function CreateTodoButton({
         setShow(true);
       }}
     >
-      <Kbd>C</Kbd>
+      {buttonPresent && <Kbd>C</Kbd>}
     </Button>
   );
 }
