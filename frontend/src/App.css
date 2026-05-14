@@ -4,9 +4,18 @@
   nocompatible: true;
 }
 
+/* Mobile: document scroll avoids iOS keyboard / nested overflow issues */
 html,
 body {
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+@media (min-width: 768px) {
+  html,
+  body {
+    overflow: hidden;
+  }
 }
 
 @custom-variant dark (&:is(.dark *));
