@@ -1,11 +1,4 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar";
 import { Button } from "../ui/button";
 import { logout } from "@/api/user";
@@ -36,10 +29,10 @@ export function NavUser() {
           openPopover={isSettingsOpen}
           setOpenPopover={setIsSettingsOpen}
           content={
-            <div>
+            <div className="py-2 text-base sm:text-sm pb-4">
               <div className="px-2 font-normal">
-                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                  <div className="grid flex-1 text-left text-sm leading-tight">
+                <div className="flex items-center gap-2 px-1 py-1.5 text-left ">
+                  <div className="grid flex-1 text-left leading-tight">
                     <span className="truncate font-medium">
                       {userProfile?.name ?? ""}
                     </span>
@@ -49,7 +42,7 @@ export function NavUser() {
               </div>
               <Button
                 variant="ghost"
-                className="flex items-start justify-start hover:bg-accent/60 px-3"
+                className="flex items-start justify-start hover:bg-accent/60 px-3 text-base sm:text-sm"
                 onClick={handleLogout}
               >
                 <LogOut />
