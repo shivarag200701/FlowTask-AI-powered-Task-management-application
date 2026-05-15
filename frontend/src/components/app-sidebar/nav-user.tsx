@@ -34,10 +34,13 @@ export function NavUser() {
           <DropdownMenuTrigger asChild>
             <div className="data-[state=open]:bg-neutral-300 cursor-pointer hover:bg-neutral-200 data-[state=open]:text-sidebar-accent-foreground w-fit p-2 rounded-lg">
               <Avatar className="h-8 w-8 rounded-full">
-                <AvatarImage
-                  src={userProfile?.image ?? ""}
-                  alt={userProfile?.name ?? "John Doe"}
-                />
+                {userProfile?.image && (
+                  <AvatarImage
+                    src={userProfile.image}
+                    alt={userProfile?.name ?? "John Doe"}
+                    referrerPolicy="no-referrer"
+                  />
+                )}
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
             </div>
