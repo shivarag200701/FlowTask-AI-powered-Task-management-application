@@ -1,6 +1,18 @@
 {
-  "dependencies": {
-    "@dnd-kit/helpers": "^0.3.2",
-    "@dnd-kit/react": "^0.3.2"
+  "name": "flow-task",
+  "private": true,
+  "packageManager": "npm@10.9.2",
+  "workspaces": [
+    "frontend",
+    "backend",
+    "common"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint"
+  },
+  "devDependencies": {
+    "turbo": "^2"
   }
 }
