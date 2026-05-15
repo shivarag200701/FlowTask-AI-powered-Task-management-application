@@ -1,4 +1,3 @@
-
 <div align="center">
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
@@ -30,11 +29,11 @@ The **README** is kept aligned with what the **v2 client and routes** actually s
 
 Routes are mounted under **`/api`**.
 
-| Area | Version | Notes |
-|------|---------|--------|
-| **Tasks & tags (current product)** | **v2** (`/api/v2/todo`, `/api/v2/tag`) | Zod-validated query/body shapes (`@shiva200701/todotypes`), bulk helpers, Prisma models with `sortKey` and tag relations. |
+| Area                                 | Version                                     | Notes                                                                                                                                               |
+| ------------------------------------ | ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tasks & tags (current product)**   | **v2** (`/api/v2/todo`, `/api/v2/tag`)      | Zod-validated query/body shapes (`@shiva200701/todotypes`), bulk helpers, Prisma models with `sortKey` and tag relations.                           |
 | **Auth, sessions, OAuth, email OTP** | **v1** (`/api/v1/user`, `/api/v1/oauth`, …) | Sign-in, sign-up, **email OTP** verification, Google OAuth. **Redis-backed rate limiting** (e.g. OTP abuse protection via `rate-limiter-flexible`). |
-| **Legacy todo API** | **v1** (`/api/v1/todo`) | Older handlers; recurrence-related paths exist mostly as **commented** history. New UI work targets **v2**. |
+| **Legacy todo API**                  | **v1** (`/api/v1/todo`)                     | Older handlers; recurrence-related paths exist mostly as **commented** history. New UI work targets **v2**.                                         |
 
 **Auth check (cookie session):** `GET /api/v1/auth-check`
 

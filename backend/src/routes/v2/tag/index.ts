@@ -152,7 +152,7 @@ tagRouter.patch("/:id", requireLogin, async (req, res) => {
     }
 
     const { data, success, error } = CreateTagSchema.partial().safeParse(
-      req.body,
+      req.body
     );
     if (!success) {
       return res.status(400).json({

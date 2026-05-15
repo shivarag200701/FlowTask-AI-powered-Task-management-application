@@ -35,7 +35,7 @@ function TaskDisplayProvider({ children }: PropsWithChildren) {
   const persisted = preference?.taskDisplayPreferences?.viewMode ?? "list";
 
   const [viewMode, setViewMode] = useState<ViewMode>(
-    () => preference?.taskDisplayPreferences?.viewMode ?? "list",
+    () => preference?.taskDisplayPreferences?.viewMode ?? "list"
   );
 
   const isDirty = persisted !== viewMode;
@@ -54,7 +54,7 @@ function useTaskDisplayContext() {
 
   if (context === null) {
     throw new Error(
-      "taskDisplayContext must be used within a TaskDisplayProvider",
+      "taskDisplayContext must be used within a TaskDisplayProvider"
     );
   }
   return context;

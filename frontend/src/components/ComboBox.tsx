@@ -82,7 +82,7 @@ function ComboBox({
       setOpenPopover={onOpenChange}
       popoverContentClassName={cn(
         matchTriggerWidth && "sm:w-[var(--radix-popover-trigger-width)]",
-        contentClassName,
+        contentClassName
       )}
       content={
         <AnimatedSizeContainer height>
@@ -131,7 +131,7 @@ function ComboBox({
                       <Option
                         selected={
                           selectedOptions?.some(
-                            ({ value }) => option.value === value,
+                            ({ value }) => option.value === value
                           ) ?? false
                         }
                         option={option}
@@ -159,7 +159,7 @@ function ComboBox({
           className={cn(
             "text-neutral-500  text-left flex justify-start hover:bg-none h-auto w-full",
             outlinePopoverTriggerClasses,
-            triggerClassName,
+            triggerClassName
           )}
           icon={<Tag />}
           type="button"
@@ -197,7 +197,7 @@ function CreateNewOption({
     <Command.Item
       className={cn(
         "hover:cursor-pointer px-3 py-2 hover:bg-accent rounded-md text-sm flex gap-4 items-center",
-        "data-[selected=true]:bg-accent",
+        "data-[selected=true]:bg-accent"
       )}
       forceMount
       onSelect={async () => {
@@ -224,7 +224,7 @@ function Option({ option, selected, onSelect, multiple }: OptionsProps) {
     <Command.Item
       className={cn(
         "hover:cursor-pointer px-3 py-2 hover:bg-accent rounded-md text-sm flex gap-4 items-center justify-between",
-        "data-[selected=true]:bg-accent ",
+        "data-[selected=true]:bg-accent "
       )}
       value={option.value + option.label}
       onSelect={onSelect}

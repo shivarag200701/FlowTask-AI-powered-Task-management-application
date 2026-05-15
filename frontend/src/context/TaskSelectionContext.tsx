@@ -44,7 +44,7 @@ export function useTaskSelectionContext() {
 
   if (context === null) {
     throw new Error(
-      "taskSelectionContext must be used within a TaskSelectionProvider",
+      "taskSelectionContext must be used within a TaskSelectionProvider"
     );
   }
   return context;

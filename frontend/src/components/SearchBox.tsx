@@ -37,7 +37,7 @@ export function SearchBox({
         }
       }
     },
-    { preventDefault: true, enableOnFormTags: true },
+    { preventDefault: true, enableOnFormTags: true }
   );
   return (
     <div className="relative mb-5 w-[250px]">

@@ -88,7 +88,7 @@ const TaskDetailDrawer = ({
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [isAllDay, setIsAllDay] = useState(true);
   const [selectedTime, setSelectedTime] = useState<string>(
-    roundToNearest15Minutes(new Date()),
+    roundToNearest15Minutes(new Date())
   );
   const [isRecurring, setIsRecurring] = useState(false);
   const [recurrencePattern, setRecurrencePattern] = useState<
@@ -96,10 +96,10 @@ const TaskDetailDrawer = ({
   >(null);
   const [recurrenceEndDate, setRecurrenceEndDate] = useState<string>("");
   const [recurrenceInterval, setRecurrenceInterval] = useState<number | null>(
-    null,
+    null
   );
   const [priority, setPriority] = useState<"high" | "medium" | "low" | null>(
-    null,
+    null
   );
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showPriorityPicker, setShowPriorityPicker] = useState(false);
@@ -278,7 +278,7 @@ const TaskDetailDrawer = ({
     return null;
   }
   const handleToggleComplete = async (
-    e: React.MouseEvent<HTMLButtonElement>,
+    e: React.MouseEvent<HTMLButtonElement>
   ) => {
     e.stopPropagation();
     onToggleComplete(todo.id! as string | number);
@@ -319,7 +319,7 @@ const TaskDetailDrawer = ({
 
   const convertDateTime = (
     dateStr: string | null,
-    time: string | null,
+    time: string | null
   ): string | null => {
     if (!dateStr) return null;
 
@@ -393,7 +393,7 @@ const TaskDetailDrawer = ({
 
   const getDateLabel = (
     dateStr: string | null,
-    time: string | null,
+    time: string | null
   ): string | null => {
     if (!dateStr) return null;
 
@@ -620,7 +620,7 @@ const TaskDetailDrawer = ({
   };
 
   const handlePrioritySelect = async (
-    priority: "high" | "medium" | "low" | null,
+    priority: "high" | "medium" | "low" | null
   ) => {
     if (!priority) return;
 

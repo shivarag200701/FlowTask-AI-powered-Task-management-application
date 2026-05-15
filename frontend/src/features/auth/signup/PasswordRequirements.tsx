@@ -42,7 +42,7 @@ export const PasswordRequirements = memo(function PasswordRequirements({
     <ul
       className={cn(
         "mt-2 flex flex-wrap items-center justify-center gap-3",
-        className,
+        className
       )}
     >
       {REQUIREMENTS.map(({ name, check }) => {
@@ -53,7 +53,7 @@ export const PasswordRequirements = memo(function PasswordRequirements({
             key={name}
             className={cn(
               "flex items-center gap-1 text-xs text-neutral-400 transition-colors",
-              checked ? "text-green-600" : errors[field] && "text-red-600",
+              checked ? "text-green-600" : errors[field] && "text-red-600"
             )}
           >
             <div className="flex justify-center items-center">
@@ -64,7 +64,7 @@ export const PasswordRequirements = memo(function PasswordRequirements({
                     ? "animate-scale-in [--from-scale:1] [--to-scale:1.2] direction-alternate animation-duration-[150] repeat-2 [animation-timing-function:ease-in-out]"
                     : errors[field]
                       ? "text-red-600"
-                      : "text-neutral-200",
+                      : "text-neutral-200"
                 )}
               />
             </div>

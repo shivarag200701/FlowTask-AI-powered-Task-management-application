@@ -26,7 +26,7 @@ const Modal = ({
   const [description, setDescription] = useState("");
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [priority, setPriority] = useState<"high" | "medium" | "low" | null>(
-    null,
+    null
   );
   const [category, setCategory] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -67,7 +67,7 @@ const Modal = ({
       setRecurrenceEndDate(
         todoToEdit.recurrenceEndDate
           ? new Date(todoToEdit.recurrenceEndDate).toISOString().split("T")[0]
-          : "",
+          : ""
       );
     } else {
       // Reset form for new todo

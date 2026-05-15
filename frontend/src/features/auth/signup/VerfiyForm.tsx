@@ -71,7 +71,7 @@ const VerfiyForm = () => {
                     "rounded-lg border border-neutral-200 bg-white ring-0 transition-all text-black",
                     isActive &&
                       "z-10 border border-neutral-800 ring-2 ring-neutral-200",
-                    isInvalidCode && "border-red-500 ring-red-200",
+                    isInvalidCode && "border-red-500 ring-red-200"
                   )}
                 >
                   {char}

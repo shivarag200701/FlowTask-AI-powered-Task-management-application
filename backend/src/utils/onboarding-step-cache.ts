@@ -6,7 +6,7 @@ const CACHE_KEY_PREFIX = "onboarding-step";
 
 export async function setOnboardingProgress(
   userId: string,
-  step: OnboardingStep,
+  step: OnboardingStep
 ) {
   return await redisClient.set(`${CACHE_KEY_PREFIX}:${userId}`, step, {
     expiration: {

@@ -14,7 +14,7 @@ const Onboarding = ({
         className={cn(
           "absolute inset-y-0 -z-30 left-1/2 w-full -translate-x-1/2",
           "mask-intersect mask-[linear-gradient(black,transparent_1000px),linear-gradient(90deg,transparent,black_5%,black_100%,transparent)]",
-          className,
+          className
         )}
       >
         <Grid

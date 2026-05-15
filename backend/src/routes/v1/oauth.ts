@@ -233,7 +233,7 @@ oauthRouter.get("/google/callback", async (req, res) => {
         },
       });
       return res.redirect(
-        `${FRONTEND_URL}/settings?success=google_calendar_connected`,
+        `${FRONTEND_URL}/settings?success=google_calendar_connected`
       );
     } else {
       return res.redirect(`${FRONTEND_URL}/signin?error=invalid_state`);
@@ -332,7 +332,7 @@ oauthRouter.post("/google/refresh", requireLogin, async (req, res) => {
     }
 
     const { accessToken, expiresAt } = await refreshGoogleTokens(
-      account.refreshToken,
+      account.refreshToken
     );
     if (!accessToken) {
       return res.status(500).json({ msg: "Failed to refresh access token" });

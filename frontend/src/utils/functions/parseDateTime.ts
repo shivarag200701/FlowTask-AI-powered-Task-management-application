@@ -2,7 +2,7 @@ import * as chrono from "chrono-node";
 import { DateTime } from "luxon";
 
 export function parseDateTime(
-  input: string | null,
+  input: string | null
 ): { isAllDay: boolean; date: DateTime } | null {
   if (!input) return null;
 

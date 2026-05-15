@@ -42,7 +42,7 @@ export const useSignupContext = () => {
 
   if (context === undefined) {
     throw new Error(
-      "useRegisterContext must be used within a RegisterProvider",
+      "useRegisterContext must be used within a RegisterProvider"
     );
   }
 

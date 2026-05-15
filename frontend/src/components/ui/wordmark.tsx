@@ -1,16 +1,24 @@
-import { cn } from '@/lib/utils'
-import {motion, type Variants} from "motion/react"
+import { cn } from "@/lib/utils";
+import { motion, type Variants } from "motion/react";
 
-
-const Wordmark = ({ className, variants }: { className?: string, variants:Variants }) => {
+const Wordmark = ({
+  className,
+  variants,
+}: {
+  className?: string;
+  variants: Variants;
+}) => {
   return (
     <motion.h1
-        className={cn('text-6xl sm:text-8xl text-accent font-extrabold',className)}
-        variants={variants}
+      className={cn(
+        "text-6xl sm:text-8xl text-accent font-extrabold",
+        className
+      )}
+      variants={variants}
     >
-        FlowTask
+      FlowTask
     </motion.h1>
-  )
-}
+  );
+};
 
-export default Wordmark
+export default Wordmark;

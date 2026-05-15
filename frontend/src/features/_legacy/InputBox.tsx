@@ -24,7 +24,7 @@ const InputBox = ({
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const toggleIsPasswordVisible = useCallback(
     () => setIsPasswordVisible(!isPasswordVisible),
-    [isPasswordVisible, setIsPasswordVisible],
+    [isPasswordVisible, setIsPasswordVisible]
   );
 
   return (
@@ -38,13 +38,13 @@ const InputBox = ({
         autoComplete={Type === "password" ? "new-password" : "off"}
         className={cn(
           "py-2 px-3  bg-slate-100 backdrop-blur-sm text-slate-900 placeholder:text-[#9EA0BB] border  rounded-lg focus:border-accent focus:outline-none focus:ring-2 focus:ring-purple-500/20 transition-all relative sm:text-sm",
-          className,
+          className
         )}
       />
       {Type === "password" && (
         <button
           className={cn(
-            "text-black absolute inset-y-0 right-0 flex items-center px-3 cursor-pointer",
+            "text-black absolute inset-y-0 right-0 flex items-center px-3 cursor-pointer"
           )}
           type="button"
           onClick={() => toggleIsPasswordVisible()}

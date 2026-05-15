@@ -36,11 +36,11 @@ const SignInForm = () => {
 
   const [lastUsedAuthMethodLive] = useLocalStorage<AuthMethod | undefined>(
     "last-used-auth-method",
-    undefined,
+    undefined
   );
 
   const { current: lastUsedAuthMethod } = useRef<AuthMethod | undefined>(
-    lastUsedAuthMethodLive,
+    lastUsedAuthMethodLive
   );
 
   // Handle OAuth errors from URL params
@@ -55,7 +55,7 @@ const SignInForm = () => {
         oauth_failed: "Sign-in failed. Please try again.",
       };
       toast.error(
-        errorMessages[oauthError] || "Sign-in failed. Please try again.",
+        errorMessages[oauthError] || "Sign-in failed. Please try again."
       );
       navigate("/signin", { replace: true });
     }
@@ -81,7 +81,7 @@ const SignInForm = () => {
       <div
         className={cn(
           "absolute inset-y-0 left-1/2 w-full -translate-x-1/2",
-          "mask-intersect mask-[linear-gradient(black,transparent_1000px),linear-gradient(90deg,transparent,black_5%,black_100%,transparent)]",
+          "mask-intersect mask-[linear-gradient(black,transparent_1000px),linear-gradient(90deg,transparent,black_5%,black_100%,transparent)]"
         )}
       >
         <Grid

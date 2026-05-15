@@ -44,7 +44,7 @@ function DateTimeModal({
         dueTime: getValuesParent("dueTime"),
         isAllDay: getValuesParent("isAllDay"),
       },
-    },
+    }
   );
 
   const [dueDate, isAllDay, dueTime] = watch([
@@ -231,6 +231,6 @@ export function useDateTimeModal() {
       setShowDateTimeModal,
       showDateTimeModal,
     }),
-    [DateTimeModalCallback, DateTimeButtonCallback],
+    [DateTimeModalCallback, DateTimeButtonCallback]
   );
 }

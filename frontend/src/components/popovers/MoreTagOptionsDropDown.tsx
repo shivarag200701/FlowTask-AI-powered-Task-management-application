@@ -51,7 +51,7 @@ function MoreTagOptionsDropDown({
     <div
       className={cn(
         `w-full sm:w-[200px] flex flex-col text-sm sm:text-[13px] font-light`,
-        className,
+        className
       )}
     >
       <div className="p-2 w-full flex flex-col border-b">

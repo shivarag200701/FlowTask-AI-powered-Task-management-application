@@ -30,7 +30,7 @@ export function useSideNavContext() {
   const context = useContext(sideNavContext);
   if (context === null) {
     throw new Error(
-      "useRegisterContext must be used within a RegisterProvider",
+      "useRegisterContext must be used within a RegisterProvider"
     );
   }
 

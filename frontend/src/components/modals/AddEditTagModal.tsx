@@ -109,7 +109,7 @@ function AddEditTagModal({
                         name={color}
                         className={cn(
                           field.value === color && "ring-2",
-                          "px-2 py-1 text-sm",
+                          "px-2 py-1 text-sm"
                         )}
                       />
                     </div>
@@ -167,7 +167,7 @@ export function useAddEditTagModal(tag?: TagProps) {
       AddEditTagModal: AddEditTagModalCallback,
       CreateTagButton: CreateTagButtonCallback,
     }),
-    [setShow, AddEditTagModalCallback, CreateTagButtonCallback],
+    [setShow, AddEditTagModalCallback, CreateTagButtonCallback]
   );
 }
 

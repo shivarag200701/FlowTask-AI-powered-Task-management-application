@@ -11,8 +11,12 @@ const StatsCard = ({ label, icon: Icon, value, trend }: statsProps) => {
   return (
     <div className="grid grid-cols-2 w-full border border-border shadow-lg sm:p-6 p-4 rounded-2xl bg-card hover:border-purple-500/30 hover:shadow-xl transition-all">
       <div className="flex-col">
-        <div className="text-muted-foreground text-sm font-medium mb-3">{label}</div>
-        <div className="text-white sm:text-3xl text-2xl font-bold mb-2">{value}</div>
+        <div className="text-muted-foreground text-sm font-medium mb-3">
+          {label}
+        </div>
+        <div className="text-white sm:text-3xl text-2xl font-bold mb-2">
+          {value}
+        </div>
         <div className="text-[#6B6B75] text-xs">{trend}</div>
       </div>
       <div className="flex justify-center items-center relative">

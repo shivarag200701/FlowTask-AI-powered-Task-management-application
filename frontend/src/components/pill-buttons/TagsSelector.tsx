@@ -54,12 +54,12 @@ function TagsSelector({
 
   const options = useMemo(
     () => availableTags?.map((tag) => getTagOption(tag)),
-    [availableTags],
+    [availableTags]
   );
 
   const selectedTags = useMemo(
     () => tags?.map((tag) => getTagOption(tag)),
-    [tags],
+    [tags]
   );
 
   return (
@@ -84,7 +84,7 @@ function TagsSelector({
           setValue(
             "tags",
             (tags || []).filter((t) => t.id !== id),
-            { shouldDirty: true },
+            { shouldDirty: true }
           );
         } else {
           const tagToAdd = availableTags?.find((t) => t.id === id);

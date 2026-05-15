@@ -40,17 +40,17 @@ export function useUpcomingDateRange(dayCount: number) {
         setStartDate(
           DateTime.now()
             .set({ year: year, month: month, day: now.day })
-            .startOf("day"),
+            .startOf("day")
         );
       } else {
         setStartDate(
           DateTime.now()
             .set({ year: year, month: month, day: 1 })
-            .startOf("day"),
+            .startOf("day")
         );
       }
     },
-    [startDate, setStartDate],
+    [startDate, setStartDate]
   );
 
   const currentMonthYearLabel = useMemo(() => {

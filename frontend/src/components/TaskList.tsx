@@ -55,7 +55,7 @@ function TaskList({
         "flex justify-between items-center  border-b border-border  px-4 py-2.5 min-h-15 hover:shadow-xs group cursor-pointer select-none transition-all duration-200",
         todoSelected && "bg-accent",
         className,
-        { "shadow-card-hover": isMoreOptionsOpen },
+        { "shadow-card-hover": isMoreOptionsOpen }
       )}
       onClick={(e) => {
         e.preventDefault();

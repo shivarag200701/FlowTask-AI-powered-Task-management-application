@@ -83,6 +83,9 @@ function TaskToolBar() {
         </div>
       ) : (
         <div className="grid grid-cols-3 gap-2 w-full">
+          <div className="col-span-2">
+            <CreateTodoButton />
+          </div>
           <Button
             variant="outline"
             className="col-span-1"
@@ -93,9 +96,6 @@ function TaskToolBar() {
           >
             Select
           </Button>
-          <div className="col-span-2">
-          <CreateTodoButton />
-          </div>
         </div>
       )}
       {ConfirmModal}

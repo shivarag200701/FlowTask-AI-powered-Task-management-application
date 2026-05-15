@@ -34,7 +34,7 @@ function TagBadge({
         color === "purple" && "border-purple-300 bg-purple-100 text-purple-600",
         color === "brown" && "border-stone-300 bg-stone-100 text-stone-600",
         name && !isMobile && "sm:px-2 py-0.5",
-        className,
+        className
       )}
     >
       {withIcon && <Tag className="size-3 shrink-0" />}

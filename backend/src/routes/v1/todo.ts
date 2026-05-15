@@ -119,8 +119,8 @@ todoRouter.get("/", requireLogin, async (req, res) => {
         0,
         0,
         0,
-        0,
-      ),
+        0
+      )
     );
 
     const tomorrow = new Date(today);
@@ -310,13 +310,13 @@ todoRouter.delete("/:id", requireLogin, async (req, res) => {
     try {
       await Promise.all(
         notifications.map((notification) =>
-          notificationService.deleteNotification(notification),
-        ),
+          notificationService.deleteNotification(notification)
+        )
       );
     } catch (queueError) {
       console.error(
         "Failed to remove jobs from queue, continuing with DB delete:",
-        queueError,
+        queueError
       );
       //tell monitoring software
     }

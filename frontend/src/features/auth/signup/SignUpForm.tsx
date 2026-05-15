@@ -52,7 +52,7 @@ const SignUpForm = () => {
         }
       }
     },
-    [getValues, showPassword, handleSubmit],
+    [getValues, showPassword, handleSubmit]
   );
 
   return (

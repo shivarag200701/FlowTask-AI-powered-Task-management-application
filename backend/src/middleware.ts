@@ -8,7 +8,7 @@ export function requireLogin(
   if (req.session?.userId) {
     next();
   } else {
-     return res.status(401).json({
+    return res.status(401).json({
       isAuthenticated: "false",
     });
   }

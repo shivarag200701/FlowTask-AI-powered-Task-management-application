@@ -181,7 +181,7 @@ const CalendarView = ({
         }, 100);
       }
     },
-    [visibleMonths, getMonthKey],
+    [visibleMonths, getMonthKey]
   );
 
   const getTasksForDate = (date: Date): Todo[] => {
@@ -226,7 +226,7 @@ const CalendarView = ({
     const previousMonthDate = new Date(
       newDate.getFullYear(),
       newDate.getMonth(),
-      1,
+      1
     );
     previousMonthDate.setHours(0, 0, 0, 0);
 
@@ -356,7 +356,7 @@ const CalendarView = ({
     const nextMonthDate = new Date(
       newDate.getFullYear(),
       newDate.getMonth(),
-      1,
+      1
     );
     nextMonthDate.setHours(0, 0, 0, 0);
 
@@ -718,7 +718,7 @@ const CalendarView = ({
                           currentDate.getMonth() === month.value;
                         const isDisabled = isPastDate(
                           currentDate.getFullYear(),
-                          month.value,
+                          month.value
                         );
 
                         return (
@@ -728,7 +728,7 @@ const CalendarView = ({
                               if (!isDisabled) {
                                 handleMonthYearSelect(
                                   currentDate.getFullYear(),
-                                  month.value,
+                                  month.value
                                 );
                               }
                             }}
@@ -765,7 +765,7 @@ const CalendarView = ({
                               const monthToUse = isCurrentYear
                                 ? Math.max(
                                     currentDate.getMonth(),
-                                    today.getMonth(),
+                                    today.getMonth()
                                   )
                                 : currentDate.getMonth();
                               handleMonthYearSelect(year, monthToUse);

@@ -9,8 +9,12 @@ interface ColorPickerProps {
   buttonRef?: React.RefObject<HTMLButtonElement | null>;
 }
 
-const ColorPicker = ({ selectedColor, onColorSelect, onClose, buttonRef }: ColorPickerProps) => {
-
+const ColorPicker = ({
+  selectedColor,
+  onColorSelect,
+  onClose,
+  buttonRef,
+}: ColorPickerProps) => {
   const getInitialPosition = () => {
     if (buttonRef?.current) {
       const rect = buttonRef.current.getBoundingClientRect();
@@ -24,14 +28,12 @@ const ColorPicker = ({ selectedColor, onColorSelect, onClose, buttonRef }: Color
   const [position, setPosition] = useState(getInitialPosition);
   const pickerRef = useRef<HTMLDivElement>(null);
 
-
-
   // Calculate position based on button
   useEffect(() => {
     const updatePosition = () => {
       if (buttonRef?.current) {
         const rect = buttonRef.current.getBoundingClientRect();
-        
+
         setPosition({
           left: rect.left,
           top: rect.top + rect.height,
@@ -40,12 +42,12 @@ const ColorPicker = ({ selectedColor, onColorSelect, onClose, buttonRef }: Color
     };
 
     updatePosition();
-    window.addEventListener('scroll', updatePosition, true);
-    window.addEventListener('resize', updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("resize", updatePosition);
 
     return () => {
-      window.removeEventListener('scroll', updatePosition, true);
-      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", updatePosition);
     };
   }, [buttonRef]);
 
@@ -53,7 +55,7 @@ const ColorPicker = ({ selectedColor, onColorSelect, onClose, buttonRef }: Color
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        pickerRef.current && 
+        pickerRef.current &&
         !pickerRef.current.contains(event.target as Node) &&
         buttonRef?.current &&
         !buttonRef.current.contains(event.target as Node)
@@ -61,14 +63,14 @@ const ColorPicker = ({ selectedColor, onColorSelect, onClose, buttonRef }: Color
         onClose();
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose, buttonRef]);
 
   const colors = [
     // Reds
-    { color: "bg-red-600" },   // bright red
-    { color: "bg-rose-400" },  // soft red / salmon
+    { color: "bg-red-600" }, // bright red
+    { color: "bg-rose-400" }, // soft red / salmon
 
     // Oranges / Yellows
     { color: "bg-orange-500" },
@@ -93,10 +95,7 @@ const ColorPicker = ({ selectedColor, onColorSelect, onClose, buttonRef }: Color
   return createPortal(
     <>
       {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-40"
-        onClick={onClose}
-      />
+      <div className="fixed inset-0 z-40" onClick={onClose} />
       {/* Priority Picker */}
       <div
         ref={pickerRef}
@@ -109,7 +108,7 @@ const ColorPicker = ({ selectedColor, onColorSelect, onClose, buttonRef }: Color
         <div className="grid grid-cols-2">
           {colors.map((color) => {
             const isSelected = selectedColor === color.color;
-            
+
             return (
               <button
                 key={color.color}
@@ -119,10 +118,10 @@ const ColorPicker = ({ selectedColor, onColorSelect, onClose, buttonRef }: Color
                 }}
                 className={`w-full flex items-center justify-center p-0.5 rounded-lg transition-colors cursor-pointer hover:bg-muted`}
               >
-                <div className={`w-4 h-4 rounded-full flex items-center justify-center ${color.color}`}>
-                    {isSelected && (
-                        <Check className="w-4 h-4 text-black" />
-                    )}
+                <div
+                  className={`w-4 h-4 rounded-full flex items-center justify-center ${color.color}`}
+                >
+                  {isSelected && <Check className="w-4 h-4 text-black" />}
                 </div>
               </button>
             );
@@ -130,9 +129,8 @@ const ColorPicker = ({ selectedColor, onColorSelect, onClose, buttonRef }: Color
         </div>
       </div>
     </>,
-    document.body,
+    document.body
   );
 };
 
 export default ColorPicker;
-

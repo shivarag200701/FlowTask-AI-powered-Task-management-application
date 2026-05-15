@@ -20,7 +20,7 @@ function getDimensions(): {
 
 export function useMediaQuery() {
   const [device, setDevice] = useState<"mobile" | "tablet" | "desktop" | null>(
-    getDevice(),
+    getDevice()
   );
 
   const [dimensions, setDimensions] = useState<{

@@ -12,7 +12,7 @@ function DateTimeDisplayer({ ref, ...props }: ComponentProps<typeof Button>) {
       variant="outline"
       className={cn(
         "w-full md:w-fit text-sm h-10",
-        outlinePopoverTriggerClasses,
+        outlinePopoverTriggerClasses
       )}
       icon={<CalendarClockIcon />}
       type="button"

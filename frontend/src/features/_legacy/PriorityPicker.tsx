@@ -9,7 +9,12 @@ interface PriorityPickerProps {
   buttonRef?: React.RefObject<HTMLButtonElement | null>;
 }
 
-const PriorityPicker = ({ selectedPriority, onPrioritySelect, onClose, buttonRef }: PriorityPickerProps) => {
+const PriorityPicker = ({
+  selectedPriority,
+  onPrioritySelect,
+  onClose,
+  buttonRef,
+}: PriorityPickerProps) => {
   const pickerRef = useRef<HTMLDivElement>(null);
 
   const getInitialPosition = () => {
@@ -29,7 +34,7 @@ const PriorityPicker = ({ selectedPriority, onPrioritySelect, onClose, buttonRef
     const updatePosition = () => {
       if (buttonRef?.current) {
         const rect = buttonRef.current.getBoundingClientRect();
-        
+
         setPosition({
           left: rect.left,
           top: rect.top + rect.height,
@@ -38,12 +43,12 @@ const PriorityPicker = ({ selectedPriority, onPrioritySelect, onClose, buttonRef
     };
 
     updatePosition();
-    window.addEventListener('scroll', updatePosition, true);
-    window.addEventListener('resize', updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("resize", updatePosition);
 
     return () => {
-      window.removeEventListener('scroll', updatePosition, true);
-      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", updatePosition);
     };
   }, [buttonRef]);
 
@@ -51,7 +56,7 @@ const PriorityPicker = ({ selectedPriority, onPrioritySelect, onClose, buttonRef
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        pickerRef.current && 
+        pickerRef.current &&
         !pickerRef.current.contains(event.target as Node) &&
         buttonRef?.current &&
         !buttonRef.current.contains(event.target as Node)
@@ -59,8 +64,8 @@ const PriorityPicker = ({ selectedPriority, onPrioritySelect, onClose, buttonRef
         onClose();
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose, buttonRef]);
 
   const priorities = [
@@ -87,16 +92,13 @@ const PriorityPicker = ({ selectedPriority, onPrioritySelect, onClose, buttonRef
       value: null,
       color: "text-gray-500",
       iconColor: "none",
-    }
+    },
   ];
 
   return createPortal(
     <>
       {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-40"
-        onClick={onClose}
-      />
+      <div className="fixed inset-0 z-40" onClick={onClose} />
       {/* Priority Picker */}
       <div
         ref={pickerRef}
@@ -109,7 +111,7 @@ const PriorityPicker = ({ selectedPriority, onPrioritySelect, onClose, buttonRef
         <div className="p-2 space-y-1">
           {priorities.map((priority) => {
             const isSelected = selectedPriority === priority.value;
-            
+
             return (
               <button
                 key={priority.value}
@@ -121,27 +123,26 @@ const PriorityPicker = ({ selectedPriority, onPrioritySelect, onClose, buttonRef
                   isSelected ? "bg-muted" : ""
                 }`}
               >
-                <Flag 
+                <Flag
                   className={`w-4 h-4 ${priority.color}`}
-                  style={{ fill: isSelected ? priority.iconColor : 'none' }}
+                  style={{ fill: isSelected ? priority.iconColor : "none" }}
                 />
                 <div className="flex-1 text-left">
-                  <div className={`text-sm ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>
+                  <div
+                    className={`text-sm ${isSelected ? "text-foreground" : "text-muted-foreground"}`}
+                  >
                     {priority.label}
                   </div>
                 </div>
-                {isSelected && (
-                  <Check className="w-4 h-4 text-red-500" />
-                )}
+                {isSelected && <Check className="w-4 h-4 text-red-500" />}
               </button>
             );
           })}
         </div>
       </div>
     </>,
-    document.body,
+    document.body
   );
 };
 
 export default PriorityPicker;
-

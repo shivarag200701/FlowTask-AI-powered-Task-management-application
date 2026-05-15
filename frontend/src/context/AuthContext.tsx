@@ -44,7 +44,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   >("last-used-auth-method", undefined);
 
   const { current: lastUsedAuthMethod } = useRef<AuthMethod | undefined>(
-    lastUsedAuthMethodLive,
+    lastUsedAuthMethodLive
   );
 
   async function fetchUserSession() {

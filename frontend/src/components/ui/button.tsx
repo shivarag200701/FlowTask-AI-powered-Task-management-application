@@ -67,7 +67,7 @@ const Button = ({
         disabled || isSubmitting
           ? "cursor-not-allowed border-neutral-200 bg-neutral-100 text-neutral-400 outline-none"
           : buttonVariants({ variant, size }),
-        className,
+        className
       )}
       onClick={onClick}
       ref={ref}

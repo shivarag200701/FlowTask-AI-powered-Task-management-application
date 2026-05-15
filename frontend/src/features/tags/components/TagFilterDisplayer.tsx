@@ -18,7 +18,7 @@ function TagFilterDisplayer({ tags }: { tags?: TagProps[] }) {
 
   const options = useMemo(
     () => availableTags?.map((tag) => getTagOption(tag)),
-    [availableTags],
+    [availableTags]
   );
   return (
     <div className="flex justify-center border border-border rounded-lg h-full">

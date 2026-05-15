@@ -87,7 +87,7 @@ export const Popover = ({
           alignOffset={0}
           className={cn(
             "animate-slide-up-fade bg-white border border-border outline-none  rounded-md z-50 items-center sm:block shadow-md",
-            popoverContentClassName,
+            popoverContentClassName
           )}
         >
           <motion.div

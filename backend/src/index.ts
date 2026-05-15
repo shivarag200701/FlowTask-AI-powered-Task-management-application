@@ -45,10 +45,10 @@ redisClient
   .catch((error) => console.error("unable to connect to redis client", error));
 
 redisClient.on("connect", () =>
-  console.log("connected to railway redis client"),
+  console.log("connected to railway redis client")
 );
 redisClient.on("error", (error) =>
-  console.error("Error connecting to redis client", error),
+  console.error("Error connecting to redis client", error)
 );
 
 //cors
@@ -72,7 +72,7 @@ app.use(
         callback(null, true);
       } else {
         console.error(
-          `CORS blocked origin: ${origin}, expected: ${FRONTEND_URL}`,
+          `CORS blocked origin: ${origin}, expected: ${FRONTEND_URL}`
         );
         callback(new Error("Not allowed by CORS"));
       }
@@ -80,7 +80,7 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  }),
+  })
 );
 
 app.set("trust proxy", 1);
@@ -100,7 +100,7 @@ app.use(
       sameSite: "lax",
       domain: NODE_ENV === "production" ? ".shiva-raghav.com" : undefined,
     },
-  }),
+  })
 );
 
 //json parser

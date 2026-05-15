@@ -10,7 +10,7 @@ function ScrollContainer({
       <div
         className={cn(
           "overflow-y-auto max-h-[400px] hover:scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent scrollbar-none",
-          className,
+          className
         )}
       >
         {children}

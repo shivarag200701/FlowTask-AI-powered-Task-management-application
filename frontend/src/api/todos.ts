@@ -4,7 +4,7 @@ import { DateTime } from "luxon";
 import type { CreateTodo, UpdateTodo } from "@shiva200701/todotypes";
 
 export async function fetchTodos(
-  params?: Record<string, string | number | boolean | string[] | undefined>,
+  params?: Record<string, string | number | boolean | string[] | undefined>
 ): Promise<TodoWithCompleteAtDateTime[]> {
   try {
     const { todos }: { todos: Todo[] } = (
@@ -23,7 +23,7 @@ export async function fetchTodos(
 
 export async function updateTodo(
   data: UpdateTodo,
-  id: string,
+  id: string
 ): Promise<TodoWithCompleteAtDateTime> {
   try {
     const res = await api.patch(`/api/v2/todo/${id}`, {

@@ -62,7 +62,7 @@ export function Modal({
             className={cn(
               "fixed bottom-0 left-0 right-0 z-50 flex flex-col",
               "rounded-t-[10px] border-t border-neutral-200 bg-white",
-              className,
+              className
             )}
           >
             <div className="scrollbar-hide flex-1 overflow-y-auto  rounded-t-[10px] bg-inherit">
@@ -104,7 +104,7 @@ export function Modal({
             "fixed inset-0 z-40 m-auto h-fit w-full max-w-md",
             "border border-neutral-200 bg-white p-0 shadow-xl sm:rounded-2xl",
             "scrollbar-hide animate-scale-in overflow-y-auto",
-            className,
+            className
           )}
         >
           <VisuallyHidden.Root>

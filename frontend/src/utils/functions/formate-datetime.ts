@@ -2,7 +2,7 @@ import { DateTime } from "luxon";
 
 export function formatDatetime(
   date: DateTime | null,
-  isAllDay?: boolean,
+  isAllDay?: boolean
 ): string {
   if (!date) return "";
 

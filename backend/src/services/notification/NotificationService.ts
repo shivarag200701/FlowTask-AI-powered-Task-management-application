@@ -102,9 +102,9 @@ class NotificationService {
               scheduledFor: scheduledFor,
               email: user?.email,
             },
-            delayMs,
-          ),
-        ),
+            delayMs
+          )
+        )
       );
     } catch (error) {
       console.error("failed to create notification", error);
@@ -114,7 +114,7 @@ class NotificationService {
 
   async deleteNotification({ id, channels }: DeleteNotificatioPayload) {
     await Promise.all(
-      channels.map((channel) => queueService.deleteJob(channel, id)),
+      channels.map((channel) => queueService.deleteJob(channel, id))
     );
   }
 }

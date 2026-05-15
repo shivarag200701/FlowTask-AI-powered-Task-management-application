@@ -21,7 +21,7 @@ function constructPatchPayload(patch: UpdateTodo) {
   } else if (patch.prevIndex !== undefined || patch.nextIndex !== undefined) {
     updateData.sortKey = generateSortKey(
       patch.prevIndex ?? null,
-      patch.nextIndex ?? null,
+      patch.nextIndex ?? null
     );
   }
 

@@ -46,8 +46,8 @@ export async function sendEmail(props: sendEmailProps) {
       case "notification":
         html = await pretty(
           await render(
-            <NotificationEmail title={props.title} todoId={props.todoId} />,
-          ),
+            <NotificationEmail title={props.title} todoId={props.todoId} />
+          )
         );
         subject = "Reminder from FlowTask about Task";
         break;

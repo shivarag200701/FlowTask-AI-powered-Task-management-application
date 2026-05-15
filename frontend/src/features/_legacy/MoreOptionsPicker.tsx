@@ -1,6 +1,6 @@
-import { Tag } from 'lucide-react'
-import React, { useEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { Tag } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 interface MoreOptionsPickerProps {
   onClose: () => void;
@@ -8,7 +8,11 @@ interface MoreOptionsPickerProps {
   onCategoryClick: () => void;
 }
 
-const MoreOptionsPicker = ({ onClose, buttonRef, onCategoryClick }: MoreOptionsPickerProps) => {
+const MoreOptionsPicker = ({
+  onClose,
+  buttonRef,
+  onCategoryClick,
+}: MoreOptionsPickerProps) => {
   // Calculate initial position synchronously to avoid flash at (0, 0)
   const getInitialPosition = () => {
     if (buttonRef?.current) {
@@ -29,7 +33,7 @@ const MoreOptionsPicker = ({ onClose, buttonRef, onCategoryClick }: MoreOptionsP
     const updatePosition = () => {
       if (buttonRef?.current) {
         const rect = buttonRef.current.getBoundingClientRect();
-        
+
         setPosition({
           left: rect.left,
           top: rect.top + rect.height,
@@ -38,12 +42,12 @@ const MoreOptionsPicker = ({ onClose, buttonRef, onCategoryClick }: MoreOptionsP
     };
 
     updatePosition();
-    window.addEventListener('scroll', updatePosition, true);
-    window.addEventListener('resize', updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("resize", updatePosition);
 
     return () => {
-      window.removeEventListener('scroll', updatePosition, true);
-      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", updatePosition);
     };
   }, [buttonRef]);
 
@@ -51,7 +55,7 @@ const MoreOptionsPicker = ({ onClose, buttonRef, onCategoryClick }: MoreOptionsP
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        pickerRef.current && 
+        pickerRef.current &&
         !pickerRef.current.contains(event.target as Node) &&
         buttonRef?.current &&
         !buttonRef.current.contains(event.target as Node)
@@ -59,8 +63,8 @@ const MoreOptionsPicker = ({ onClose, buttonRef, onCategoryClick }: MoreOptionsP
         onClose();
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose, buttonRef]);
 
   const handleCategoryClick = (e: React.MouseEvent) => {
@@ -98,7 +102,7 @@ const MoreOptionsPicker = ({ onClose, buttonRef, onCategoryClick }: MoreOptionsP
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-2 space-y-1">
-          <button 
+          <button
             onClick={handleCategoryClick}
             onMouseDown={(e) => e.stopPropagation()}
             className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer text-muted-foreground text-sm"
@@ -110,8 +114,8 @@ const MoreOptionsPicker = ({ onClose, buttonRef, onCategoryClick }: MoreOptionsP
       </div>
     </>,
     document.body
-  )
-}
+  );
+};
 
 interface CategoryPickerProps {
   onClose: () => void;
@@ -120,7 +124,12 @@ interface CategoryPickerProps {
   titleInputRef?: React.RefObject<HTMLInputElement | null>;
 }
 
-const CategoryPicker = ({ onClose, onCategorySelect, selectedCategory, titleInputRef }: CategoryPickerProps) => {
+const CategoryPicker = ({
+  onClose,
+  onCategorySelect,
+  selectedCategory,
+  titleInputRef,
+}: CategoryPickerProps) => {
   // Calculate initial position synchronously to avoid flash at (0, 0)
   const getInitialPosition = () => {
     if (titleInputRef?.current) {
@@ -156,12 +165,12 @@ const CategoryPicker = ({ onClose, onCategorySelect, selectedCategory, titleInpu
     };
 
     updatePosition();
-    window.addEventListener('scroll', updatePosition, true);
-    window.addEventListener('resize', updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("resize", updatePosition);
 
     return () => {
-      window.removeEventListener('scroll', updatePosition, true);
-      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", updatePosition);
     };
   }, [titleInputRef]);
 
@@ -176,7 +185,7 @@ const CategoryPicker = ({ onClose, onCategorySelect, selectedCategory, titleInpu
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        pickerRef.current && 
+        pickerRef.current &&
         !pickerRef.current.contains(event.target as Node) &&
         titleInputRef?.current &&
         !titleInputRef.current.contains(event.target as Node)
@@ -184,8 +193,8 @@ const CategoryPicker = ({ onClose, onCategorySelect, selectedCategory, titleInpu
         onClose();
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose, titleInputRef]);
 
   const handlePresetCategorySelect = (category: string) => {
@@ -222,88 +231,98 @@ const CategoryPicker = ({ onClose, onCategorySelect, selectedCategory, titleInpu
         }}
       />
       <div>
-  
-  {/* Category Picker / Dropdown Menu */}
-  <div className='bg-card fixed z-10' style={{ top: `${position.top}px`, left: `${position.left}px`, width: `${position.width}px` }}> {/* This acts as the page background */}
-      
-      {/* The dropdown arrow now matches the menu's background color */}
-      <div 
-        className="dropdown-arrow absolute w-3 h-3 bg-secondary border border-border z-40" 
-        style={{ 
-          left: `50%`, 
-          top: `-5px`,
-          transform: 'translateX(-50%) rotate(45deg)',
-        }}
-      ></div>
-      
-      {/* Category Picker (Now with lighter gray background and padding) */}
-      <div
-        ref={pickerRef}
-        className="relative bg-secondary border border-border rounded-xs shadow-2xl z-50 p-1.5" /* Added p-2 padding and lighter background */
-        onMouseDown={(e) => e.stopPropagation()}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="space-y-1 bg-card rounded-xs">
-          {presetCategories.map((category, index) => {
-            const isSelected = selectedCategory === category;
-            return (
-              <button
-                key={category}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handlePresetCategorySelect(category);
-                }}
-                onMouseDown={(e) => e.stopPropagation()}
-                className={`w-full flex items-center gap-3 p-2 ${index === 0 ? "rounded-t-xs" : ""} hover:bg-muted transition-colors cursor-pointer ${
-                  isSelected ? "bg-muted" : "" /* Subtle color change for selected */
-                }`}
-              >
-                <Tag className="w-5 h-5 text-muted-foreground " />
-                <span className={`text-sm ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>
-                  {category}
-                </span>
-              </button>
-            );
-          })}
-          {showCustomInput ? (
-            <div className='p-2'>
-              <input
-                ref={inputRef}
-                type="text"
-                value={customCategory}
-                onChange={(e) => setCustomCategory(e.target.value)}
-                placeholder="Category name"
-                className="w-full bg-card border border-border rounded-md px-2 py-1.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:outline-none focus:ring-2 focus:ring-accent/20"
-                onBlur={() => {
-                  if (!customCategory.trim()) {
-                    setShowCustomInput(false);
-                  }
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleCustomCategorySubmit(e);
-                  }
-                }}
-              />
-              </div>
-          ) : (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleCreateLabel();
-              }}
-              onMouseDown={(e) => e.stopPropagation()}
-              className="w-full flex items-center gap-3 p-2 rounded-b-xs hover:bg-muted transition-colors cursor-pointer text-muted-foreground text-sm"
-            >
-              <span>Create label</span>
-            </button>
-          )}
+        {/* Category Picker / Dropdown Menu */}
+        <div
+          className="bg-card fixed z-10"
+          style={{
+            top: `${position.top}px`,
+            left: `${position.left}px`,
+            width: `${position.width}px`,
+          }}
+        >
+          {" "}
+          {/* This acts as the page background */}
+          {/* The dropdown arrow now matches the menu's background color */}
+          <div
+            className="dropdown-arrow absolute w-3 h-3 bg-secondary border border-border z-40"
+            style={{
+              left: `50%`,
+              top: `-5px`,
+              transform: "translateX(-50%) rotate(45deg)",
+            }}
+          ></div>
+          {/* Category Picker (Now with lighter gray background and padding) */}
+          <div
+            ref={pickerRef}
+            className="relative bg-secondary border border-border rounded-xs shadow-2xl z-50 p-1.5" /* Added p-2 padding and lighter background */
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="space-y-1 bg-card rounded-xs">
+              {presetCategories.map((category, index) => {
+                const isSelected = selectedCategory === category;
+                return (
+                  <button
+                    key={category}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePresetCategorySelect(category);
+                    }}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    className={`w-full flex items-center gap-3 p-2 ${index === 0 ? "rounded-t-xs" : ""} hover:bg-muted transition-colors cursor-pointer ${
+                      isSelected
+                        ? "bg-muted"
+                        : "" /* Subtle color change for selected */
+                    }`}
+                  >
+                    <Tag className="w-5 h-5 text-muted-foreground " />
+                    <span
+                      className={`text-sm ${isSelected ? "text-foreground" : "text-muted-foreground"}`}
+                    >
+                      {category}
+                    </span>
+                  </button>
+                );
+              })}
+              {showCustomInput ? (
+                <div className="p-2">
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={customCategory}
+                    onChange={(e) => setCustomCategory(e.target.value)}
+                    placeholder="Category name"
+                    className="w-full bg-card border border-border rounded-md px-2 py-1.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:outline-none focus:ring-2 focus:ring-accent/20"
+                    onBlur={() => {
+                      if (!customCategory.trim()) {
+                        setShowCustomInput(false);
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleCustomCategorySubmit(e);
+                      }
+                    }}
+                  />
+                </div>
+              ) : (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCreateLabel();
+                  }}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  className="w-full flex items-center gap-3 p-2 rounded-b-xs hover:bg-muted transition-colors cursor-pointer text-muted-foreground text-sm"
+                >
+                  <span>Create label</span>
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-</div>
-</div>
     </>,
-    document.body,
+    document.body
   );
 };
 

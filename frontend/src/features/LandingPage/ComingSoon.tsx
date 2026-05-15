@@ -1,4 +1,3 @@
-
 import { Sparkles } from "lucide-react";
 
 const ComingSoon = () => {
@@ -7,7 +6,7 @@ const ComingSoon = () => {
       <Sparkles className="w-3 h-3" />
       <span>Coming Soon</span>
     </div>
-  )
-}
+  );
+};
 
-export default ComingSoon
+export default ComingSoon;

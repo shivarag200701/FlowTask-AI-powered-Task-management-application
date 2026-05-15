@@ -40,7 +40,7 @@ function TaskDisplaySelector() {
         variant="outline"
         className={cn(
           "p-2 flex items-center justify-center",
-          outlinePopoverTriggerClasses,
+          outlinePopoverTriggerClasses
         )}
       >
         <div className="flex w-full gap-2  items-center relative">
@@ -90,7 +90,7 @@ function DisplaySettingsDropdown() {
         (oldData) => ({
           ...oldData,
           taskDisplayPreferences: { viewMode: data.viewMode },
-        }),
+        })
       );
     } catch (error) {
       if (error instanceof AxiosError) {

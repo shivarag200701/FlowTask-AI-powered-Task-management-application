@@ -34,6 +34,6 @@ export function useDeleteModal() {
       setShowDeleteTodoModal: setShow,
       DeleteTodoModal: DeleteModalCallback,
     }),
-    [setShow, DeleteModalCallback],
+    [setShow, DeleteModalCallback]
   );
 }

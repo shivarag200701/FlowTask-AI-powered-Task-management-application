@@ -6,7 +6,7 @@ const LogoCard = ({ className }: { className?: string }) => {
     <div
       className={cn(
         "relative flex items-center justify-center gap-3 cursor-pointer hover-elevate rounded-2xl transition-all",
-        className,
+        className
       )}
       onClick={() => navigate("/")}
     >

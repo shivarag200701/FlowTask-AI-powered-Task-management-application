@@ -1,4 +1,6 @@
 {
   "prisma.pinToPrisma6": true,
-  "prisma.schemaPath": "backend/prisma/schema"
+  "prisma.schemaPath": "backend/prisma/schema",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true
 }

@@ -35,11 +35,11 @@ function AddEditTodoModal({
 function CreateTodoButton({
   setShow,
   buttonPresent,
-  className
+  className,
 }: {
   setShow: Dispatch<SetStateAction<boolean>>;
   buttonPresent?: boolean;
-  className?:string
+  className?: string;
 }) {
   useHotkeys("c", () => {
     setShow(true);
@@ -74,6 +74,6 @@ export function useAddEditTodoModal(todo?: TodoWithCompleteAtDateTime) {
       CreateTodoButton: CreateTodoButtonCallback,
       setShowAddEditTodoModal: setShow,
     }),
-    [AddEditTodoModalCallback, CreateTodoButtonCallback, setShow],
+    [AddEditTodoModalCallback, CreateTodoButtonCallback, setShow]
   );
 }

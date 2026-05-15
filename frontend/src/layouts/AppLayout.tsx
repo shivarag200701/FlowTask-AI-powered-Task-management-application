@@ -18,7 +18,7 @@ function AppLayout() {
                 "min-h-dvh md:min-h-0",
                 "md:overflow-y-auto",
                 "[--page-bottom-margin:0px] [--page-top-margin:0px] md:[--page-bottom-margin:0.5rem] md:[--page-top-margin:0.5rem]",
-                "[--page-height:calc(100dvh-var(--page-top-margin)-var(--page-bottom-margin)-1px)] md:h-(--page-height)",
+                "[--page-height:calc(100dvh-var(--page-top-margin)-var(--page-bottom-margin)-1px)] md:h-(--page-height)"
               )}
             >
               <Outlet />

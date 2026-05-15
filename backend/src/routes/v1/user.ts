@@ -329,7 +329,7 @@ userRouter.put("/password", requireLogin, async (req, res) => {
 
     const isPasswordValid = await verifyPassword(
       currentPassword,
-      user.hashedPassword,
+      user.hashedPassword
     );
 
     if (!isPasswordValid) {
@@ -404,7 +404,7 @@ userRouter.post("/onboarding/progess", requireLogin, async (req, res) => {
     });
   }
   const { data, success, error } = setOnboardingProgressSchema.safeParse(
-    req.body,
+    req.body
   );
 
   if (!success) {
@@ -490,7 +490,7 @@ userRouter.put("/user-preferences", requireLogin, async (req, res) => {
   }
 
   const updateData = Object.fromEntries(
-    Object.entries(data).filter(([key, value]) => value !== undefined),
+    Object.entries(data).filter(([key, value]) => value !== undefined)
   );
 
   if (Object.keys(updateData).length === 0) {
@@ -580,7 +580,7 @@ userRouter.post(
         msg: "error while updating user profile",
       });
     }
-  },
+  }
 );
 
 userRouter.get("/profile", requireLogin, async (req, res) => {

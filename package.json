@@ -10,9 +10,12 @@
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
-    "lint": "turbo lint"
+    "lint": "turbo lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
+    "prettier": "^3.8.3",
     "turbo": "^2"
   }
 }

@@ -17,7 +17,7 @@ function PriorityDropDown({ onSelect }: { onSelect?: () => void }) {
         <button
           key={priority.id}
           className={cn(
-            "flex items-center justify-start gap-4  px-3 py-2 hover:bg-accent hover:cursor-pointer rounded-md tranistion-all duration-100",
+            "flex items-center justify-start gap-4  px-3 py-2 hover:bg-accent hover:cursor-pointer rounded-md tranistion-all duration-100"
           )}
           onClick={() => {
             setValue("priority", priority.id, { shouldDirty: true });

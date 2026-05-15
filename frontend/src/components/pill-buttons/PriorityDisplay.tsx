@@ -18,7 +18,7 @@ function PriorityDisplayer({ ref, ...props }: ComponentProps<typeof Button>) {
   });
 
   const selectedPriorityData = priorities.find(
-    (p) => p.id === selectedPriority,
+    (p) => p.id === selectedPriority
   );
   return (
     <Button
@@ -27,7 +27,7 @@ function PriorityDisplayer({ ref, ...props }: ComponentProps<typeof Button>) {
       variant="outline"
       className={cn(
         "w-full md:w-fit text-sm h-8",
-        outlinePopoverTriggerClasses,
+        outlinePopoverTriggerClasses
       )}
       icon={
         <Flag

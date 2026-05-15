@@ -35,7 +35,5 @@ export const TodoBulkDeleteSchema = z.object({
   todoIds: z.string(),
 });
 
-
-
 export type CreateTodo = z.infer<typeof CreateTodoSchema>;
 export type UpdateTodo = z.infer<typeof UpdateTodoSchema>;

@@ -38,10 +38,11 @@ FLAG_REMINDER_NOTIFICATION=true
 ```
 
 Defined in `flags.ts`:
+
 ```ts
 export const flags = {
   notificationService: process.env.FLAG_REMINDER_NOTIFICATION === "true",
-}
+};
 ```
 
 When `false`, todo creation proceeds normally but no notification is created and no queue job is added. The flag must be explicitly set — it is `false` by default.
@@ -59,15 +60,20 @@ A notification is scheduled if and only if all three conditions are met:
 3. `flags.notificationService` is `true`
 
 ```ts
-if (reminder && completeAt && flags.notificationService && notificationService) {
+if (
+  reminder &&
+  completeAt &&
+  flags.notificationService &&
+  notificationService
+) {
   await notificationService.createNotification({
     userId,
     type: "task reminder",
     title: title,
     message: todo.description,
     todoId: todo.id,
-    scheduledFor: completeAt,   // ISO string of the due date
-  })
+    scheduledFor: completeAt, // ISO string of the due date
+  });
 }
 ```
 
@@ -106,8 +112,13 @@ await prisma.todo.delete(...)
 `NotificationService.createNotification()` fetches `UserPrefrence` and the user's email from the database:
 
 ```ts
-const preferences = await prisma.userPrefrence.findUnique({ where: { userId } })
-const user = await prisma.user.findUnique({ where: { id: userId }, select: { email: true } })
+const preferences = await prisma.userPrefrence.findUnique({
+  where: { userId },
+});
+const user = await prisma.user.findUnique({
+  where: { id: userId },
+  select: { email: true },
+});
 ```
 
 If no preferences record exists, the method returns early with no notification created.
@@ -117,11 +128,11 @@ If no preferences record exists, the method returns early with no notification c
 Enabled channels are collected from preferences:
 
 ```ts
-const channels = []
-if (preferences.emailEnabled) channels.push('email')
-if (preferences.smsEnabled)   channels.push('sms')
-if (preferences.pushEnabled)  channels.push('push')
-if (preferences.inAppEnabled) channels.push('inApp')
+const channels = [];
+if (preferences.emailEnabled) channels.push("email");
+if (preferences.smsEnabled) channels.push("sms");
+if (preferences.pushEnabled) channels.push("push");
+if (preferences.inAppEnabled) channels.push("inApp");
 ```
 
 All four channels are enabled by default when a user is first created.
@@ -133,12 +144,16 @@ A `Notifications` row is persisted **before** the queue jobs are added, for audi
 ```ts
 const notification = await prisma.notifications.create({
   data: {
-    userId, type, title, message, todoId,
-    channels,          // e.g. ["email", "inApp"]
+    userId,
+    type,
+    title,
+    message,
+    todoId,
+    channels, // e.g. ["email", "inApp"]
     status: "SCHEDULED",
     schedulesFor: scheduledFor ?? null,
-  }
-})
+  },
+});
 ```
 
 The `notification.id` becomes the BullMQ job ID anchor for each channel.
@@ -148,17 +163,27 @@ The `notification.id` becomes the BullMQ job ID anchor for each channel.
 One job is added to each channel's queue. Jobs are delayed by the difference between now and the scheduled time:
 
 ```ts
-const delayMs = Math.max(0, new Date(scheduledFor).getTime() - Date.now())
+const delayMs = Math.max(0, new Date(scheduledFor).getTime() - Date.now());
 
-await Promise.all(channels.map(channel =>
-  queueService.addToQueue(channel, {
-    template: "notification",
-    notificationId: notification.id,
-    userId, type, message, todoId, title,
-    scheduledFor,
-    email: user.email,
-  }, delayMs)
-))
+await Promise.all(
+  channels.map((channel) =>
+    queueService.addToQueue(
+      channel,
+      {
+        template: "notification",
+        notificationId: notification.id,
+        userId,
+        type,
+        message,
+        todoId,
+        title,
+        scheduledFor,
+        email: user.email,
+      },
+      delayMs
+    )
+  )
+);
 ```
 
 Each job is given a deterministic ID: `${channel}-${notificationId}` (e.g. `email-42`). This ID is what makes job deletion possible later.
@@ -167,14 +192,15 @@ Each job is given a deterministic ID: `${channel}-${notificationId}` (e.g. `emai
 
 Four queues are created at startup, one per channel:
 
-| Queue name | Channel |
-|---|---|
+| Queue name           | Channel |
+| -------------------- | ------- |
 | `notification-email` | `email` |
-| `notification-sms` | `sms` |
-| `notification-push` | `push` |
+| `notification-sms`   | `sms`   |
+| `notification-push`  | `push`  |
 | `notification-inApp` | `inApp` |
 
 Job options:
+
 - **Attempts**: 3
 - **Backoff**: Exponential, starting at 1000ms
 - **Delay**: Computed from `scheduledFor`
@@ -185,13 +211,23 @@ Job options:
 Workers run as a **separate Node.js process** (`Worker.ts`). Each worker listens on its respective queue:
 
 ```ts
-const emailWorker = new Worker('notification-email', async (job) => {
-  await sendEmail(job.data)
-}, { connection: connectionOptions })
+const emailWorker = new Worker(
+  "notification-email",
+  async (job) => {
+    await sendEmail(job.data);
+  },
+  { connection: connectionOptions }
+);
 
-const smsWorker   = new Worker('notification-sms',   async (job) => { /* stub */ })
-const pushWorker  = new Worker('notification-push',  async (job) => { /* stub */ })
-const inAppWorker = new Worker('notification-inApp', async (job) => { /* stub */ })
+const smsWorker = new Worker("notification-sms", async (job) => {
+  /* stub */
+});
+const pushWorker = new Worker("notification-push", async (job) => {
+  /* stub */
+});
+const inAppWorker = new Worker("notification-inApp", async (job) => {
+  /* stub */
+});
 ```
 
 All workers have error listeners that log to console. On `SIGTERM`, all workers are gracefully closed.
@@ -201,10 +237,11 @@ All workers have error listeners that log to console. On `SIGTERM`, all workers 
 `sendEmail()` in `EmailService.ts` uses the **Resend** API with **React Email** for template rendering:
 
 ```ts
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = new Resend(process.env.RESEND_API_KEY);
 ```
 
 For notification jobs, it renders `NotificationEmail.tsx` and sends with:
+
 - **From**: `process.env.EMAIL` in production, `onboarding@resend.dev` in development
 - **Subject**: `"Reminder from FlowTask about Task"`
 - **HTML**: Rendered via `@react-email/render`
@@ -217,40 +254,41 @@ The email template includes the task title, a "Due Now" timestamp, and a **"Mark
 
 ### `Notifications` table
 
-| Field | Type | Description |
-|---|---|---|
-| `id` | `Int` PK | Auto-increment |
-| `userId` | `Int` FK | Owner; cascade deletes |
-| `todoId` | `Int?` FK | Related task; cascade deletes |
-| `type` | `String` | Always `"task reminder"` currently |
-| `title` | `String` | Task title |
-| `message` | `String` | Task description |
-| `channels` | `String[]` | e.g. `["email", "inApp"]` |
-| `status` | `String` | `SCHEDULED` / `SENT` / `FAILED` |
-| `sentAt` | `DateTime?` | Populated when delivered |
-| `readAt` | `DateTime?` | Populated when read |
-| `schedulesFor` | `DateTime?` | Scheduled delivery time |
-| `metadata` | `Json?` | Reserved for future use |
+| Field          | Type        | Description                        |
+| -------------- | ----------- | ---------------------------------- |
+| `id`           | `Int` PK    | Auto-increment                     |
+| `userId`       | `Int` FK    | Owner; cascade deletes             |
+| `todoId`       | `Int?` FK   | Related task; cascade deletes      |
+| `type`         | `String`    | Always `"task reminder"` currently |
+| `title`        | `String`    | Task title                         |
+| `message`      | `String`    | Task description                   |
+| `channels`     | `String[]`  | e.g. `["email", "inApp"]`          |
+| `status`       | `String`    | `SCHEDULED` / `SENT` / `FAILED`    |
+| `sentAt`       | `DateTime?` | Populated when delivered           |
+| `readAt`       | `DateTime?` | Populated when read                |
+| `schedulesFor` | `DateTime?` | Scheduled delivery time            |
+| `metadata`     | `Json?`     | Reserved for future use            |
 
 Indexes:
+
 - `[userId, readAt]` — for fetching unread notifications per user
 - `[status]` — for querying pending jobs
 
 ### `UserPrefrence` fields relevant to notifications
 
-| Field | Default | Used |
-|---|---|---|
-| `emailEnabled` | `true` | ✅ Channel selection |
-| `smsEnabled` | `true` | ✅ Channel selection (SMS stub) |
-| `pushEnabled` | `true` | ✅ Channel selection (Push stub) |
-| `inAppEnabled` | `true` | ✅ Channel selection (InApp stub) |
-| `taskRemainders` | `true` | ❌ Not checked in code |
-| `automaticRemainder` | `true` | ❌ Not checked in code |
-| `reminderBefore` | `30` (min) | ❌ Not applied to schedule timing |
-| `dailyDigest` | `false` | ❌ Not implemented |
-| `digestTime` | `null` | ❌ Not implemented |
-| `phoneNumber` | `null` | ❌ Not used (SMS stub) |
-| `pushToken` | `null` | ❌ Not used (Push stub) |
+| Field                | Default    | Used                              |
+| -------------------- | ---------- | --------------------------------- |
+| `emailEnabled`       | `true`     | ✅ Channel selection              |
+| `smsEnabled`         | `true`     | ✅ Channel selection (SMS stub)   |
+| `pushEnabled`        | `true`     | ✅ Channel selection (Push stub)  |
+| `inAppEnabled`       | `true`     | ✅ Channel selection (InApp stub) |
+| `taskRemainders`     | `true`     | ❌ Not checked in code            |
+| `automaticRemainder` | `true`     | ❌ Not checked in code            |
+| `reminderBefore`     | `30` (min) | ❌ Not applied to schedule timing |
+| `dailyDigest`        | `false`    | ❌ Not implemented                |
+| `digestTime`         | `null`     | ❌ Not implemented                |
+| `phoneNumber`        | `null`     | ❌ Not used (SMS stub)            |
+| `pushToken`          | `null`     | ❌ Not used (Push stub)           |
 
 ---
 
@@ -272,41 +310,52 @@ The app name used in both the notification email and OTP email is **FlowTask**.
 ## Known Issues
 
 ### 1. `reminderBefore` preference is not applied
+
 The `UserPrefrence.reminderBefore` field (default 30 minutes) is fetched from the database but never used to offset `scheduledFor`. Notifications fire at the exact due time rather than 30 minutes before it as the schema implies.
 
 **Fix**: In `NotificationService.createNotification()`, apply the offset before computing `delayMs`:
+
 ```ts
-const reminderOffsetMs = (preferences.reminderBefore ?? 30) * 60 * 1000
-delayMs = Math.max(0, targetDate.getTime() - currentTime - reminderOffsetMs)
+const reminderOffsetMs = (preferences.reminderBefore ?? 30) * 60 * 1000;
+delayMs = Math.max(0, targetDate.getTime() - currentTime - reminderOffsetMs);
 ```
 
 ### 2. `delayMs` is uninitialized when `scheduledFor` is absent
+
 `delayMs` is declared as `let delayMs: number` and only assigned inside an `if(scheduledFor)` block. If `scheduledFor` is falsy, `delayMs` is `undefined` when passed to `addToQueue`, causing `Math.max(undefined, 0)` → `NaN`. BullMQ's behavior with a `NaN` delay is undefined.
 
 **Fix**: Give `delayMs` a default: `let delayMs: number = 0`.
 
 ### 3. Task updates do not reschedule notifications
+
 `PUT /v1/todo/:id` does not cancel the old notification job or create a new one. If a user moves a task's due date from 3pm to 5pm, the reminder will still fire at 3pm.
 
 ### 4. Task completion does not cancel pending notifications
+
 Marking a task complete before its due time does not remove the queued job. The user will still receive a "Due Now" reminder for a task they've already finished.
 
 ### 5. Schema field name typo
-The Prisma schema defines the column as `schedulesFor` but conceptually it represents when the notification is *scheduled for*. The `NotificationService` uses the key `schedulesFor` consistently, but it does not match the more intuitive `scheduledFor` used everywhere else in the codebase.
+
+The Prisma schema defines the column as `schedulesFor` but conceptually it represents when the notification is _scheduled for_. The `NotificationService` uses the key `schedulesFor` consistently, but it does not match the more intuitive `scheduledFor` used everywhere else in the codebase.
 
 ### 6. SMS, Push, and In-App workers are empty stubs
+
 The queue infrastructure for all four channels is complete, but only email has an actual delivery implementation. Jobs added to `notification-sms`, `notification-push`, and `notification-inApp` are consumed and discarded silently.
 
 ### 7. Notification status is never updated after delivery
+
 Workers do not update the `Notifications.status` field to `SENT` or `FAILED` after processing. The database record stays in `SCHEDULED` indefinitely, making the `status` index and `sentAt`/`readAt` fields unused.
 
 ### 8. `taskRemainders` and `automaticRemainder` preferences are ignored
+
 Both fields exist in the schema and are returned by the preferences API, but `NotificationService` does not check them before scheduling. A user who disables task reminders in settings will still receive them.
 
 ### 9. No notification lifecycle on the frontend
+
 There is no notification center, bell icon, or in-app notification UI. The `readAt` index exists in the schema but nothing can mark a notification as read.
 
 ### 10. Email deep-link points to a deprecated route
+
 The "Mark as Complete" button in `NotificationEmail.tsx` links to `/dashboard?task=${todoId}`. This route pattern does not match the current routing structure and will not correctly open the task.
 
 ---

@@ -76,7 +76,7 @@ const Landing = () => {
         return;
       document.documentElement.style.setProperty(
         "--landing-height",
-        `${window.innerHeight + 240}px`,
+        `${window.innerHeight + 240}px`
       );
     };
     updateHeight();

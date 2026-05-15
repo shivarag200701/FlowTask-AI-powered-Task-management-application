@@ -39,7 +39,7 @@ function TagCard({
     <div
       className={cn(
         "flex justify-between items-center py-2.5 px-4 select-none",
-        tagSelected && "border-l-4 border-l-primary pl-3",
+        tagSelected && "border-l-4 border-l-primary pl-3"
       )}
       onClick={(e) => {
         if (e.shiftKey) {

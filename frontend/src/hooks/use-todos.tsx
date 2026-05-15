@@ -19,18 +19,17 @@ const selectOverdueTodos = (todos: TodoWithCompleteAtDateTime[]) => {
     (todo) =>
       !todo.completed &&
       todo.dueDate &&
-      todo.dueDate.startOf("day") < startOfToday,
+      todo.dueDate.startOf("day") < startOfToday
   );
 };
 
 const selectTodayTodos = (todos: TodoWithCompleteAtDateTime[]) =>
   todos.filter(
-    (t) =>
-      !t.completed && t.dueDate && t.dueDate.hasSame(DateTime.now(), "day"),
+    (t) => !t.completed && t.dueDate && t.dueDate.hasSame(DateTime.now(), "day")
   );
 
 export function useTodos(
-  params?: Record<string, string | number | boolean | string[] | undefined>,
+  params?: Record<string, string | number | boolean | string[] | undefined>
 ) {
   return useQuery({
     queryKey: todosQueryKeys.all,
@@ -153,7 +152,7 @@ export function useUpdateTodo() {
                   dueDate: oldTodo?.dueDate?.toISODate(),
                   dueTime: oldTodo?.dueTime?.toISO(),
                 },
-                newTodo.id,
+                newTodo.id
               );
             },
           },

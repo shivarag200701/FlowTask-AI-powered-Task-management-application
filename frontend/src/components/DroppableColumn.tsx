@@ -41,7 +41,7 @@ function DroppableColumn({
     const scrollTop = e.currentTarget.scrollTop;
     setAtBottom(
       e.currentTarget.scrollHeight - e.currentTarget.clientHeight - scrollTop <=
-        1,
+        1
     );
 
     if (scrollTop === 0) {
@@ -71,7 +71,7 @@ function DroppableColumn({
           {
             "border-t": !atTop,
             "border-b": !atBottom,
-          },
+          }
         )}
         onScroll={handleScroll}
       >

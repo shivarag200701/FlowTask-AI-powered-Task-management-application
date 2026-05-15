@@ -77,7 +77,7 @@ export default function SmartDateTimePicker({
   }, [dueTime, dueDate, date]);
 
   const [meridiem, setMeridiem] = useState<Meridiem>(() =>
-    meridiemFrom24(pickerBase),
+    meridiemFrom24(pickerBase)
   );
 
   useEffect(() => {
@@ -120,7 +120,7 @@ export default function SmartDateTimePicker({
                 onChange?.({ date: parsed.date, isAllDay: parsed.isAllDay });
                 inputRef.current.value = formatDatetime(
                   parsed?.date,
-                  parsed?.isAllDay,
+                  parsed?.isAllDay
                 );
               }
             }
@@ -148,7 +148,7 @@ export default function SmartDateTimePicker({
                     if (inputRef.current) {
                       inputRef.current.value = formatDatetime(
                         DateTime.fromJSDate(date),
-                        true,
+                        true
                       );
                     }
                   }
@@ -219,7 +219,7 @@ export default function SmartDateTimePicker({
                                 if (inputRef.current) {
                                   inputRef.current.value = formatDatetime(
                                     next,
-                                    false,
+                                    false
                                   );
                                 }
                               }}
@@ -256,14 +256,14 @@ export default function SmartDateTimePicker({
                                 if (inputRef.current) {
                                   inputRef.current.value = formatDatetime(
                                     next,
-                                    false,
+                                    false
                                   );
                                 }
                               }}
                             >
                               {minute.toString().padStart(2, "0")}
                             </Button>
-                          ),
+                          )
                         )}
                       </div>
                       <ScrollBar
@@ -292,7 +292,7 @@ export default function SmartDateTimePicker({
                               if (inputRef.current) {
                                 inputRef.current.value = formatDatetime(
                                   next,
-                                  false,
+                                  false
                                 );
                               }
                             }}

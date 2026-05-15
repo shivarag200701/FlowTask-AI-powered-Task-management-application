@@ -17,7 +17,9 @@ const Day = ({ icon: Icon, heading, tasks }: DayProps) => {
           {heading}
         </div>
       </div>
-      <div className="text-[#A2A2A9] text-sm md:text-base flex items-center font-medium">{tasks}</div>
+      <div className="text-[#A2A2A9] text-sm md:text-base flex items-center font-medium">
+        {tasks}
+      </div>
     </div>
   );
 };

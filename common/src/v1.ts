@@ -12,7 +12,7 @@ export const passwordSchema = z
   .max(1000, "Password must be less than 1000 characters")
   .regex(
     /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/,
-    "Password must contain at least one number, one uppercase, and one lowercase letter",
+    "Password must contain at least one number, one uppercase, and one lowercase letter"
   );
 
 export const signUpSchema = z.object({
@@ -50,7 +50,7 @@ export type TimeSelection = "Today" | "Tomorrow" | "This Week";
  * Always uses UTC to ensure consistent behavior regardless of server location
  */
 export function convertCompleteAtToDate(
-  completeAt: string | undefined,
+  completeAt: string | undefined
 ): Date | null {
   if (!completeAt) {
     return null;
@@ -66,8 +66,8 @@ export function convertCompleteAtToDate(
       0,
       0,
       0,
-      0,
-    ),
+      0
+    )
   );
 
   switch (completeAt) {
@@ -110,8 +110,8 @@ export function getStartOfTodayUTC(): Date {
       0,
       0,
       0,
-      0,
-    ),
+      0
+    )
   );
 }
 
@@ -129,8 +129,8 @@ export function getEndOfTodayUTC(): Date {
       23,
       59,
       59,
-      999,
-    ),
+      999
+    )
   );
 }
 
@@ -167,8 +167,8 @@ export function isTomorrowUTC(dateString: string | null | undefined): boolean {
       0,
       0,
       0,
-      0,
-    ),
+      0
+    )
   );
 
   return (
@@ -187,7 +187,7 @@ export type RecurrencePattern = "daily" | "weekly" | "monthly" | "yearly";
 export const calculateNextOccurence = (
   pattern: RecurrencePattern,
   interval: number,
-  lastOccurence: Date,
+  lastOccurence: Date
 ): Date => {
   const next = new Date(lastOccurence);
   switch (pattern) {
@@ -214,7 +214,7 @@ export const calculateNextOccurence = (
  * Used in frontend to convert database DateTime to user-friendly selection
  */
 export function dateToTimeSelection(
-  date: string | null | undefined,
+  date: string | null | undefined
 ): TimeSelection {
   if (!date) return "Today";
 
@@ -346,7 +346,7 @@ export function isThisWeek(dateString: string | null | undefined): boolean {
  * Returns "Today", "Tomorrow", day name, or formatted date
  */
 export function formatCompleteAt(
-  dateString: string | null | undefined,
+  dateString: string | null | undefined
 ): string {
   if (!dateString) return "No date";
 
@@ -392,7 +392,7 @@ export function formatCompleteAt(
  */
 export function getUpcomingDateRange(
   startDate: DateTime,
-  days: number = 5,
+  days: number = 5
 ): DateTime[] {
   const dates: DateTime[] = [];
   for (let i = 1; i <= days; i++) {
@@ -440,7 +440,7 @@ export function formatUpcomingDateHeader(date: Date): string {
  */
 export function isTaskOnDate(
   taskDateString: string | null | undefined,
-  targetDate: Date,
+  targetDate: Date
 ): boolean {
   if (!taskDateString) return false;
 

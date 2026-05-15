@@ -55,7 +55,7 @@ function InlineTaskForm({
     () => {
       setIsTagsDropDownOpen(true);
     },
-    { preventDefault: true, enabled: !showDateTimeModal },
+    { preventDefault: true, enabled: !showDateTimeModal }
   );
 
   const { isMobile } = useMediaQuery();
@@ -65,7 +65,7 @@ function InlineTaskForm({
     () => {
       setShowDateTimeModal(true);
     },
-    { preventDefault: true },
+    { preventDefault: true }
   );
 
   const [isPriorityDropDownOpen, setIsPriorityDropDownOpen] = useState(false);
@@ -90,7 +90,7 @@ function InlineTaskForm({
       className={cn(
         "rounded-lg min-h-15",
         mode === "modal" && "rounded-2xl",
-        !isMobile ? "border border-border" : "",
+        !isMobile ? "border border-border" : ""
       )}
     >
       <form onSubmit={handleSubmit(onSubmit)}>

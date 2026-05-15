@@ -19,7 +19,7 @@ function PageContentHeader({
     <div
       className={cn(
         "border-border bg-accent lg:bg-transparent",
-        hasHeaderContent && "border-b",
+        hasHeaderContent && "border-b"
       )}
     >
       <PageWidthWrapper>

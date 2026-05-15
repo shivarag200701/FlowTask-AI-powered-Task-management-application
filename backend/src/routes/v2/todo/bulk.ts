@@ -116,7 +116,7 @@ bulkTodoRouter.patch("/", requireLogin, async (req, res) => {
         if (tags.length > 0) {
           await tx.todoTag.createMany({
             data: todoIds.flatMap((todoId) =>
-              tags.map((tagId) => ({ todoId, tagId })),
+              tags.map((tagId) => ({ todoId, tagId }))
             ),
             skipDuplicates: true,
           });

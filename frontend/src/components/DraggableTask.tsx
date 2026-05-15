@@ -11,6 +11,7 @@ import TimeDisplayer from "./TimeDisplayer";
 import completed from "@/assets/completed.mp3";
 import { useAddEditTodoModal } from "./modals/AddEditTodoModal";
 import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 function DraggableTask({
   id,
@@ -50,6 +51,9 @@ function DraggableTask({
     data: todo,
   });
 
+  const { isMobile } = useMediaQuery();
+  const { isSelectMode } = useTaskSelectionContext();
+
   const taskSelected = useMemo(() => {
     return selectedTaskIds.includes(id);
   }, [selectedTaskIds]);
@@ -68,13 +72,17 @@ function DraggableTask({
         className={cn(
           "border border-border rounded-lg py-1.5 px-3 mb-2 w-[260px] min-h-[70px] bg-white shadow-2xs hover:shadow-card-hover hover:cursor-pointer relative group select-none transition-all duration-200",
           className,
-          taskSelected && "bg-accent",
+          taskSelected && "bg-accent"
         )}
         ref={ref}
         onClick={(e) => {
           e.preventDefault();
           if (e.shiftKey) {
             onSelect?.(id);
+            return;
+          } else if (isSelectMode && isMobile) {
+            onSelect?.(id);
+            return;
           }
         }}
       >
