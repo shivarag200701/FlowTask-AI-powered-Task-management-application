@@ -12,6 +12,7 @@ import { Kbd } from "../ui/kbd";
 import { useHotkeys } from "react-hotkeys-hook";
 import TaskBuilderProvider from "../task-builder-provider";
 import type { TodoWithCompleteAtDateTime } from "@/types";
+import { cn } from "@/lib/utils";
 
 function AddEditTodoModal({
   show,
@@ -34,9 +35,11 @@ function AddEditTodoModal({
 function CreateTodoButton({
   setShow,
   buttonPresent,
+  className
 }: {
   setShow: Dispatch<SetStateAction<boolean>>;
   buttonPresent?: boolean;
+  className?:string
 }) {
   useHotkeys("c", () => {
     setShow(true);
@@ -47,6 +50,7 @@ function CreateTodoButton({
       onClick={() => {
         setShow(true);
       }}
+      className={cn(className)}
     >
       {buttonPresent && <Kbd>C</Kbd>}
     </Button>

@@ -85,7 +85,7 @@ function TaskToolBar() {
         <div className="grid grid-cols-3 gap-2 w-full">
           <Button
             variant="outline"
-            className="col-span-2"
+            className="col-span-1"
             icon={<CircleCheck className="size-4" strokeWidth={3} />}
             onClick={() => {
               setIsSelectMode(true);
@@ -93,7 +93,9 @@ function TaskToolBar() {
           >
             Select
           </Button>
+          <div className="col-span-2">
           <CreateTodoButton />
+          </div>
         </div>
       )}
       {ConfirmModal}
