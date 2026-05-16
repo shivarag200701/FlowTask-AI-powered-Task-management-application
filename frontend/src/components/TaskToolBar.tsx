@@ -1,13 +1,14 @@
 import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
 import { Toolbar } from "./ui/toolbar";
 import { useEffect, useMemo } from "react";
-import { CircleCheck, Tag, Trash, X } from "lucide-react";
+import { Calendar, CircleCheck, Tag, Trash, X } from "lucide-react";
 import { Kbd } from "./ui/kbd";
 import { useBulkDeleteTodoConfirmModal } from "@/hooks/use-bulk-delete-todo-confirm-modal";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useTagTodoModal } from "./modals/TagTodoModal";
 import { Button } from "./ui/button";
 import { useAddEditTodoModal } from "./modals/AddEditTodoModal";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 function TaskToolBar() {
   const { selectedTaskIds, setSelectedTaskIds, setIsSelectMode, isSelectMode } =
@@ -19,6 +20,7 @@ function TaskToolBar() {
   const { TagTodoModal, setShowTagTodoModal } = useTagTodoModal();
 
   const { CreateTodoButton, AddEditTodoModal } = useAddEditTodoModal();
+  const { isMobile } = useMediaQuery();
 
   const numberOfTaskSelected = useMemo(() => {
     return selectedTaskIds.length;
@@ -56,28 +58,47 @@ function TaskToolBar() {
           </div>
           <div className=" flex items-center gap-2">
             <button
-              className="rounded-lg border whitespace-nowrap flex items-center justify-center gap-2 px-2 py-1 hover:bg-accent cursor-pointer transition-all duration-75"
+              className="rounded-lg border whitespace-nowrap flex items-center justify-center gap-2 px-2 py-1.5 sm:py-1 hover:bg-accent cursor-pointer transition-all duration-75"
               onClick={() => {
                 setShowTagTodoModal(true);
               }}
             >
               <Tag className="size-3.5" />
-              <span className="text-xs font-medium text-neutral-600 whitespace-nowrap">
-                Tags
-              </span>
-              <Kbd>T</Kbd>
+              {!isMobile && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-medium text-neutral-600 whitespace-nowrap">
+                    Tags
+                  </span>
+                  <Kbd>T</Kbd>
+                </div>
+              )}
+            </button>
+            <button className="rounded-lg border whitespace-nowrap flex items-center justify-center gap-2 px-2 py-1.5 sm:py-1 hover:bg-accent cursor-pointer transition-all duration-75">
+              <Calendar className="size-3.5" />
+              {!isMobile && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-medium text-neutral-600 whitespace-nowrap">
+                    Date
+                  </span>
+                  <Kbd>D</Kbd>
+                </div>
+              )}
             </button>
             <button
-              className="rounded-lg border whitespace-nowrap flex items-center justify-center gap-2 px-2 py-1 hover:bg-accent cursor-pointer transition-all duration-75"
+              className="rounded-lg border whitespace-nowrap flex items-center justify-center gap-2 px-2 py-1.5 sm:py-1 hover:bg-accent cursor-pointer transition-all duration-75"
               onClick={() => {
                 setShowConfirmModal(true);
               }}
             >
               <Trash className="size-3.5" />
-              <span className="text-xs font-medium text-neutral-600 whitespace-nowrap">
-                Delete
-              </span>
-              <Kbd>X</Kbd>
+              {!isMobile && (
+                <div className="flex gap-2 items-center">
+                  <span className="text-xs font-medium text-neutral-600 whitespace-nowrap">
+                    Delete
+                  </span>
+                  <Kbd>X</Kbd>
+                </div>
+              )}
             </button>
           </div>
         </div>

@@ -395,7 +395,7 @@ export function getUpcomingDateRange(
   days: number = 5
 ): DateTime[] {
   const dates: DateTime[] = [];
-  for (let i = 1; i <= days; i++) {
+  for (let i = 0; i < days; i++) {
     const date = startDate.plus({ days: i });
     dates.push(date);
   }

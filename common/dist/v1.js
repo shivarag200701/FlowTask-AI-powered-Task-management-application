@@ -286,7 +286,7 @@ export function formatCompleteAt(dateString) {
  */
 export function getUpcomingDateRange(startDate, days = 5) {
     const dates = [];
-    for (let i = 1; i <= days; i++) {
+    for (let i = 0; i < days; i++) {
         const date = startDate.plus({ days: i });
         dates.push(date);
     }

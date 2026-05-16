@@ -46,6 +46,26 @@ export function useFilteredTodos({ query }: { query: TodosQuery }) {
   });
 }
 
+export function useUpcomingTodos(dateRange: DateTime[]) {
+  return useQuery({
+    queryKey: todosQueryKeys.all,
+    queryFn: () => fetchTodos(),
+    staleTime: 60000,
+    select: (data) => {
+      return data
+        .filter(
+          (t) =>
+            !t.completed &&
+            t.dueDate &&
+            dateRange.some((d) => t.dueDate?.hasSame(d, "day"))
+        )
+        .sort((a, b) =>
+          a.sortKey < b.sortKey ? -1 : a.sortKey > b.sortKey ? 1 : 0
+        );
+    },
+  });
+}
+
 export function useTodayTodos() {
   return useQuery({
     queryKey: todosQueryKeys.all,

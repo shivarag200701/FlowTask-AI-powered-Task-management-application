@@ -5,6 +5,7 @@ import {
   AudioWaveform,
   BookOpen,
   Bot,
+  CalendarDays,
   Command,
   Frame,
   GalleryVerticalEnd,
@@ -182,6 +183,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             className="flex justify-start"
             onClick={() => {
               navigate("app/today");
+            }}
+          />
+          <Button
+            Initial="Upcoming"
+            variant="ghost"
+            icon={<CalendarDays />}
+            className="flex justify-start"
+            onClick={() => {
+              navigate("app/upcoming");
             }}
           />
         </div>
