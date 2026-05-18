@@ -1,15 +1,11 @@
 import { useTodayTodos, useUpdateTodo } from "@/hooks/use-todos";
 import PageWidthWrapper from "@/layouts/PageWidthWrapper";
-import {
-  DragDropProvider,
-  DragOverlay,
-  type DragEndEvent,
-} from "@dnd-kit/react";
+import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
 import { move } from "@dnd-kit/helpers";
 import { useEffect, useRef, useState } from "react";
 import FormatDate from "@/utils/functions/format-date";
-import DroppableColumn from "@/components/DroppableColumn";
-import DraggableTask from "@/components/DraggableTask";
+import DroppableColumn from "@/components/drag-drop/DroppableColumn";
+import DraggableTask from "@/components/drag-drop/DraggableTask";
 import { DateTime } from "luxon";
 import type { TodoWithCompleteAtDateTime } from "@/types";
 import { useOverDueTodos } from "@/hooks/use-todos";
@@ -17,11 +13,10 @@ import { isSortable } from "@dnd-kit/react/sortable";
 import { type UniqueIdentifier } from "@dnd-kit/abstract";
 import { SpinnerCustom } from "@/components/ui/spinner";
 import type { UpdateTodo } from "@shiva200701/todotypes";
-import TimeDisplayer from "@/components/TimeDisplayer";
-import { AlarmClock } from "lucide-react";
 import EmptyState from "@/components/EmptyState";
 import { useAddEditTodoModal } from "@/components/modals/AddEditTodoModal";
 import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
+import DragOverlayCard from "@/components/drag-drop/DragOverlayCard";
 
 type DragEndPayload = DragEndEvent;
 
@@ -151,7 +146,7 @@ function BoardView() {
               </DroppableColumn>
             ))}
           </div>
-          <Overlay todos={todos} />
+          <DragOverlayCard todos={todos} />
         </DragDropProvider>
       ) : (
         <div>
@@ -164,37 +159,6 @@ function BoardView() {
         </div>
       )}
     </PageWidthWrapper>
-  );
-}
-
-function Overlay({ todos }: { todos: TodoWithCompleteAtDateTime[] }) {
-  return (
-    <DragOverlay dropAnimation={null}>
-      {(source) => {
-        const todo = todos.find((todo) => todo.id === source.id);
-        if (!todo) {
-          return null;
-        }
-
-        return (
-          <div className="border border-border rounded-lg p-2.5 w-[260px] min-h-[70px] bg-white shadow-lg rotate-3">
-            <div className="flex gap-2">
-              <div className="border border-border rounded-full h-5 w-5" />
-              <div className="flex flex-col">
-                <div className="text-md">{todo.title}</div>
-                <div className="text-xs font-light">{todo.description}</div>
-                <div className="flex items-center gap-2 pt-2">
-                  {todo.dueTime?.isValid && (
-                    <TimeDisplayer className="text-xs" dueTime={todo.dueTime} />
-                  )}
-                  {todo.dueTime?.isValid && <AlarmClock size={13} />}
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      }}
-    </DragOverlay>
   );
 }
 

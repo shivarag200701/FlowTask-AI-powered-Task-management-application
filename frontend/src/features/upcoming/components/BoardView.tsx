@@ -3,11 +3,13 @@ import { useOverDueTodos, useUpcomingTodos } from "@/hooks/use-todos";
 import PageWidthWrapper from "@/layouts/PageWidthWrapper";
 import type { TodoWithCompleteAtDateTime } from "@/types";
 import formatDate from "@/utils/functions/format-date";
-import DroppableColumn from "@/components/DroppableColumn";
+import DroppableColumn from "@/components/drag-drop/DroppableColumn";
 import { DragDropProvider } from "@dnd-kit/react";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
-import DraggableTask from "@/components/DraggableTask";
+import DraggableTask from "@/components/drag-drop/DraggableTask";
+import { SpinnerCustom } from "@/components/ui/spinner";
+import DragOverlayCard from "@/components/drag-drop/DragOverlayCard";
 
 function BoardView({ dateRange }: { dateRange: DateTime[] }) {
   const { data: overdueTodos } = useOverDueTodos();
@@ -36,10 +38,14 @@ function BoardView({ dateRange }: { dateRange: DateTime[] }) {
     setItems(grouped);
   }, [dateRange, upcomingTodos]);
 
+  if (overdueTodos == null || upcomingTodos == null) return <SpinnerCustom />;
+
+  const todos = [...overdueTodos, ...upcomingTodos];
+
   return (
     <>
-      <div className="px-5 md:px-6 pt-5">
-        <TaskDisplaySelector className="w-fit px-3 h-10" />
+      <div className="px-5 md:px-6 pt-5 flex w-full gap-2">
+        <TaskDisplaySelector className="sm:w-fit w-1/2  px-3 h-10" />
       </div>
       <PageWidthWrapper className="pt-6 px-3 flex flex-col overflow-x-auto scrollbar-none max-w-none">
         <div>
@@ -51,7 +57,9 @@ function BoardView({ dateRange }: { dateRange: DateTime[] }) {
                   id={column}
                   className="flex flex-col gap-2.5"
                   numberofTodos={items.length}
-                  dateLabel="Today"
+                  dateLabel={
+                    DateTime.fromFormat(column, "MMM d").weekdayLong ?? column
+                  }
                 >
                   {items.map((todo, index) => (
                     <DraggableTask
@@ -64,6 +72,7 @@ function BoardView({ dateRange }: { dateRange: DateTime[] }) {
                   ))}
                 </DroppableColumn>
               ))}
+              <DragOverlayCard todos={todos} />
             </DragDropProvider>
           </div>
         </div>

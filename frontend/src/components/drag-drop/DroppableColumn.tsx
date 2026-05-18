@@ -3,8 +3,8 @@ import { useDroppable } from "@dnd-kit/react";
 import { useState, type ReactNode } from "react";
 import { CollisionPriority } from "@dnd-kit/abstract";
 import { CirclePlus } from "lucide-react";
-import { Button } from "./ui/button";
-import { useAddEditTodoModal } from "./modals/AddEditTodoModal";
+import { Button } from "@/components/ui/button";
+import { useAddEditTodoModal } from "@/components/modals/AddEditTodoModal";
 
 function DroppableColumn({
   id,

@@ -3,13 +3,13 @@ import type { TodoWithCompleteAtDateTime } from "@/types";
 import { useSortable } from "@dnd-kit/react/sortable";
 import { AlarmClock, Check, MoreHorizontal } from "lucide-react";
 import { useUpdateTodo } from "@/hooks/use-todos";
-import { Popover } from "./ui/popover";
+import { Popover } from "@/components/ui/popover";
 import { useMemo, useState } from "react";
-import MoreOptionsDropDown from "./popovers/MoreTodoOptionsDropDown";
+import MoreOptionsDropDown from "@/components/popovers/MoreTodoOptionsDropDown";
 import { useDeleteTodoConfirmModal } from "@/hooks/use-delete-todo-confirm-modal";
-import TimeDisplayer from "./TimeDisplayer";
+import TimeDisplayer from "@/components/TimeDisplayer";
 import completed from "@/assets/completed.mp3";
-import { useAddEditTodoModal } from "./modals/AddEditTodoModal";
+import { useAddEditTodoModal } from "@/components/modals/AddEditTodoModal";
 import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
