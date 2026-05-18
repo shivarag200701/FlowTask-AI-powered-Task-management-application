@@ -26,8 +26,6 @@ function DroppableColumn({
     collisionPriority: CollisionPriority.Low,
   });
 
-  console.log("id", id);
-
   const [atTop, setAtTop] = useState(true);
   const [atBottom, setAtBottom] = useState(false);
 
@@ -52,7 +50,7 @@ function DroppableColumn({
   };
 
   return (
-    <div ref={ref} className={cn("p-1 w-[300px] h-[700px]", className)}>
+    <div ref={ref} className={cn("p-1 min-w-[300px] h-[700px]", className)}>
       <div className="text-sm font-bold text-left flex items-center gap-1">
         <span>{id}</span>
         {id !== "Overdue" && (

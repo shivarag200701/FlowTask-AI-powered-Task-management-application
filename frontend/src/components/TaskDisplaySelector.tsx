@@ -23,7 +23,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { userPreferenceKeys } from "@/query-keys";
 import type { UserPreference } from "@/api/user";
 
-function TaskDisplaySelector() {
+function TaskDisplaySelector({ className }: { className?: string }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const { isDirty } = useTaskDisplayContext();
@@ -40,6 +40,7 @@ function TaskDisplaySelector() {
         variant="outline"
         className={cn(
           "p-2 flex items-center justify-center",
+          className,
           outlinePopoverTriggerClasses
         )}
       >
