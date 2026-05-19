@@ -38,12 +38,7 @@ function TodoDetailForm({
   const { mutate: updateTodo } = useUpdateTodo();
   const todoId = watch("id");
 
-  const {
-    DateTimeButton,
-    DateTimeModal,
-    setShowDateTimeModal,
-    showDateTimeModal,
-  } = useDateTimeModal();
+  const { DateTimeButton, DateTimeModal } = useDateTimeModal();
 
   const [isPriorityDropDownOpen, setIsPriorityDropDownOpen] = useState(false);
 
@@ -57,31 +52,31 @@ function TodoDetailForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex flex-col sm:flex-row min-h-[240px]">
+      <div className="flex flex-col sm:flex-row min-h-[200px]">
         {/* Left column - Title & Description */}
-        <div className="flex-1 pt-5 px-5 pb-3 sm:border-r border-b sm:border-b-0 border-border/50">
+        <div className="flex-1 p-4 sm:border-r border-b sm:border-b-0 border-border/50">
           <input
-            className="w-full border-none font-semibold text-lg focus:outline-none"
+            className="w-full border-none font-semibold text-base focus:outline-none"
             placeholder="Task name"
             {...register("title", { required: "title is required" })}
           />
           <textarea
-            className="w-full border-none text-sm mt-3 focus:outline-none resize-none min-h-[140px] text-secondary-foreground font-light leading-relaxed"
+            className="w-full border-none text-sm mt-2 focus:outline-none resize-none min-h-[120px] text-secondary-foreground"
             placeholder="Add a description..."
             {...register("description")}
           />
         </div>
 
         {/* Right column - Metadata */}
-        <div className="w-full sm:w-[220px] p-4 flex flex-col gap-5 bg-neutral-50 sm:rounded-tr-2xl">
-          <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+        <div className="w-full sm:w-[200px] p-4 flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
+            <span className="text-xs font-medium text-muted-foreground">
               Due Date
             </span>
             <DateTimeButton />
           </div>
-          <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+          <div className="flex flex-col gap-1">
+            <span className="text-xs font-medium text-muted-foreground">
               Priority
             </span>
             <Popover
@@ -106,20 +101,14 @@ function TodoDetailForm({
           className="w-fit"
           Initial="Cancel"
           type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setShow(false);
-          }}
+          onClick={() => setShow(false)}
         />
         <Button
           variant="default"
           className="w-fit"
           disabled={!isValid || !isDirty}
           type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleSubmit(onSubmit)(e);
-          }}
+          onClick={handleSubmit(onSubmit)}
         >
           Save
         </Button>
