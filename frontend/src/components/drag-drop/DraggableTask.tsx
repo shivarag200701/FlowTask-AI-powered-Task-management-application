@@ -9,7 +9,7 @@ import MoreOptionsDropDown from "@/components/popovers/MoreTodoOptionsDropDown";
 import { useDeleteTodoConfirmModal } from "@/hooks/use-delete-todo-confirm-modal";
 import TimeDisplayer from "@/components/TimeDisplayer";
 import completed from "@/assets/completed.mp3";
-import { useAddEditTodoModal } from "@/components/modals/AddEditTodoModal";
+import { useTodoDetailModal } from "@/components/modals/TodoDetailModal";
 import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
@@ -33,8 +33,8 @@ function DraggableTask({
   const { mutate: updateTodo } = useUpdateTodo();
   const { selectedTaskIds } = useTaskSelectionContext();
 
-  const { setShowAddEditTodoModal, AddEditTodoModal } =
-    useAddEditTodoModal(todo);
+  const { setShowTodoDetailModal, TodoDetailModal } =
+    useTodoDetailModal(todo);
 
   const {
     setShowConfirmModal: setShowDeleteConfirmModal,
@@ -84,6 +84,7 @@ function DraggableTask({
             onSelect?.(id);
             return;
           }
+          setShowTodoDetailModal(true);
         }}
       >
         <Popover
@@ -97,7 +98,7 @@ function DraggableTask({
               }}
               onEdit={() => {
                 setIsMoreOptionsOpen(false);
-                setShowAddEditTodoModal(true);
+                setShowTodoDetailModal(true);
               }}
             />
           }
@@ -110,7 +111,8 @@ function DraggableTask({
         <div className="flex gap-2 select-none">
           <button
             className="h-5 w-5 border border-border/50 rounded-full bg-linear-to-t from-neutral-100 hover:bg-none hover:cursor-pointer hover:border-border hover:ring-3 hover:ring-border/30 flex items-center justify-center group/circle"
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               new Audio(completed).play();
               updateTodo({ id, data: { completed: !todo.completed } });
             }}
@@ -130,7 +132,7 @@ function DraggableTask({
         </div>
         {DeleteConfirmModal}
       </div>
-      <AddEditTodoModal />
+      <TodoDetailModal />
     </>
   );
 }

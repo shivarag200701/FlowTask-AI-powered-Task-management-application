@@ -13,7 +13,7 @@ import TagBadge from "./TagBadge";
 import { Tooltip, TooltipContent } from "./ui/tooltip";
 import { TooltipTrigger } from "@radix-ui/react-tooltip";
 import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
-import { useAddEditTodoModal } from "./modals/AddEditTodoModal";
+import { useTodoDetailModal } from "./modals/TodoDetailModal";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
 function TaskList({
@@ -38,8 +38,8 @@ function TaskList({
     ConfirmModal: DeleteConfirmModal,
   } = useDeleteTodoConfirmModal(todo);
 
-  const { AddEditTodoModal, setShowAddEditTodoModal } =
-    useAddEditTodoModal(todo);
+  const { TodoDetailModal, setShowTodoDetailModal } =
+    useTodoDetailModal(todo);
 
   const { tags } = todo;
   const { isMobile } = useMediaQuery();
@@ -66,12 +66,14 @@ function TaskList({
           onSelect?.(todo.id);
           return;
         }
+        setShowTodoDetailModal(true);
       }}
     >
       <div className="flex gap-4 items-start justify-start">
         <button
           className="h-5 w-5 border border-border/50 rounded-full bg-linear-to-t from-neutral-100 hover:bg-none hover:cursor-pointer hover:border-border hover:ring-3 hover:ring-border/30 flex items-center justify-center group/circle"
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             new Audio(completed).play();
             updateTodo({ id: todo.id, data: { completed: !todo.completed } });
           }}
@@ -114,7 +116,7 @@ function TaskList({
               //todo need to implement
               onEdit={() => {
                 setIsMoreOptionsOpen(false);
-                setShowAddEditTodoModal(true);
+                setShowTodoDetailModal(true);
               }}
             />
           }
@@ -131,7 +133,7 @@ function TaskList({
         </Popover>
       </div>
       {DeleteConfirmModal}
-      <AddEditTodoModal />
+      <TodoDetailModal />
     </div>
   );
 }
