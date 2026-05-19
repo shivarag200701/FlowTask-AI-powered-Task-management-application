@@ -185,7 +185,6 @@ export function useUpdateTodo() {
     },
 
     onError: (_err, _newTodo, context) => {
-      const queryClient = useQueryClient();
       toast.error("Error updating the todo");
       queryClient.setQueryData(todosQueryKeys.all, context?.previousTodos);
     },

@@ -77,16 +77,18 @@ function BoardView() {
 
       const payload: UpdateTodo = { prevIndex, nextIndex };
 
-      const today = DateTime.now();
+      if (group !== "Overdue") {
+        const today = DateTime.now();
 
-      payload.dueDate = DateTime.now().toFormat("yyyy-MM-dd");
+        payload.dueDate = today.toFormat("yyyy-MM-dd");
 
-      if (data.dueTime) {
-        payload.dueTime =
-          data.dueTime
-            ?.set({ year: today.year, month: today.month, day: today.day })
-            .toUTC()
-            .toISO() ?? null;
+        if (data.dueTime) {
+          payload.dueTime =
+            data.dueTime
+              ?.set({ year: today.year, month: today.month, day: today.day })
+              .toUTC()
+              .toISO() ?? null;
+        }
       }
 
       if (group === dragInitialColumn.current) {
