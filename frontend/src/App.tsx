@@ -102,7 +102,14 @@ function App() {
                             </TaskSelectionProvider>
                           }
                         />
-                        <Route path="/app/upcoming" element={<Upcoming />} />
+                        <Route
+                          path="/app/upcoming"
+                          element={
+                            <TaskSelectionProvider>
+                              <Upcoming />
+                            </TaskSelectionProvider>
+                          }
+                        />
                         <Route path="/app/tags" element={<Tags />} />
                         <Route path="/app/todos" element={<Todos />} />
                       </Route>

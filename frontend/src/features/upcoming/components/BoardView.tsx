@@ -10,13 +10,14 @@ import DroppableColumn from "@/components/drag-drop/DroppableColumn";
 import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
 import { type UniqueIdentifier } from "@dnd-kit/abstract";
 import { DateTime } from "luxon";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import DraggableTask from "@/components/drag-drop/DraggableTask";
 import { SpinnerCustom } from "@/components/ui/spinner";
 import DragOverlayCard from "@/components/drag-drop/DragOverlayCard";
 import { isSortable } from "@dnd-kit/react/sortable";
 import { move } from "@dnd-kit/helpers";
 import type { UpdateTodo } from "@shiva200701/todotypes";
+import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
 
 type DragEndPayload = DragEndEvent;
 
@@ -25,6 +26,20 @@ function BoardView({ dateRange }: { dateRange: DateTime[] }) {
 
   const { data: upcomingTodos } = useUpcomingTodos(dateRange);
   const { mutate } = useUpdateTodo();
+  const { setIsSelectMode, setSelectedTaskIds } = useTaskSelectionContext();
+
+  const handleSelect = useCallback(
+    (todoId: string) => {
+      setIsSelectMode(true);
+      setSelectedTaskIds((prev) => {
+        if (prev.includes(todoId)) {
+          return prev.filter((id) => id !== todoId);
+        }
+        return [...prev, todoId];
+      });
+    },
+    [setIsSelectMode, setSelectedTaskIds]
+  );
 
   const [items, setItems] = useState<
     Record<string, TodoWithCompleteAtDateTime[]>
@@ -142,6 +157,7 @@ function BoardView({ dateRange }: { dateRange: DateTime[] }) {
                       index={index}
                       column={column}
                       todo={todo}
+                      onSelect={handleSelect}
                     />
                   ))}
                 </DroppableColumn>

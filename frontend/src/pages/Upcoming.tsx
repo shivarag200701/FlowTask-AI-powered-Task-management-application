@@ -1,5 +1,8 @@
+import TaskToolBar from "@/components/TaskToolBar";
+import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
 import BoardView from "@/features/upcoming/components/BoardView";
 import TaskPaginationControls from "@/features/upcoming/components/TaskPaginationControls";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import { useUpcomingDateRange } from "@/hooks/use-upcoming-date-range";
 import PageContentHeader from "@/layouts/PageContentHeader";
 
@@ -11,6 +14,8 @@ function Upcoming() {
     navigateToToday,
     previousDisabled,
   } = useUpcomingDateRange(7);
+  const { isSelectMode } = useTaskSelectionContext();
+  const { isMobile } = useMediaQuery();
 
   return (
     <div>
@@ -30,6 +35,7 @@ function Upcoming() {
         <TaskDisplaySelector className="sm:w-fit w-1/2  px-5 h-10" />
       </div> */}
       <BoardView dateRange={dateRange} />
+      {(isSelectMode || isMobile) && <TaskToolBar />}
     </div>
   );
 }
