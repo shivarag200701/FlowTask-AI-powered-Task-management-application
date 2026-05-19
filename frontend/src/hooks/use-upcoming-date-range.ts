@@ -17,11 +17,13 @@ export function useUpcomingDateRange(dayCount: number) {
 
   const navigatePrevious = useCallback(() => {
     const candidate = startDate.minus({ days: dayCount });
-    if (candidate < DateTime.now().startOf("day")) return;
+    if (candidate < DateTime.now().startOf("day")) {
+      return;
+    }
     setStartDate(candidate);
   }, [dayCount, startDate]);
 
-  DateTime.now;
+  const previousDisabled = startDate.hasSame(DateTime.now(), "day");
 
   const navigateNext = useCallback(() => {
     const candidate = startDate.plus({ days: dayCount });
@@ -68,5 +70,6 @@ export function useUpcomingDateRange(dayCount: number) {
     selectMonthYear,
     currentMonthYearLabel,
     dateRange,
+    previousDisabled,
   };
 }

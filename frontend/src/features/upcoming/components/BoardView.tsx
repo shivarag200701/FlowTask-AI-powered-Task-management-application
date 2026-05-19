@@ -1,4 +1,3 @@
-import TaskDisplaySelector from "@/components/TaskDisplaySelector";
 import {
   useOverDueTodos,
   useUpcomingTodos,
@@ -108,9 +107,6 @@ function BoardView({ dateRange }: { dateRange: DateTime[] }) {
 
   return (
     <>
-      <div className="px-5 md:px-6 pt-5 flex w-full gap-2">
-        <TaskDisplaySelector className="sm:w-fit w-1/2  px-3 h-10" />
-      </div>
       <PageWidthWrapper className="pt-6 px-3 flex flex-col overflow-x-auto scrollbar-none max-w-none">
         <div>
           <div className="flex gap-2 pt-3">
