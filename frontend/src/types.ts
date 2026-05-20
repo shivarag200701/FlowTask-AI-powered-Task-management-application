@@ -34,6 +34,8 @@ export interface Todo {
   createdAt: string | null;
   reminder?: boolean;
   tags?: TodoTag[];
+  parentId: string | undefined;
+  children?: Omit<Todo, "children">[];
 }
 
 export type TodoTag = Omit<TagProps, "_count">;
@@ -49,9 +51,15 @@ export type TagsQuery = z.infer<typeof GetTagsQuerySchema>;
 
 export type TodosQuery = z.infer<typeof todoQuerySchema>;
 
-export type TodoWithCompleteAtDateTime = Omit<Todo, "dueTime" | "dueDate"> & {
+export type ChildTodoWithDateTime = Omit<Todo, "dueTime" | "dueDate" | "children"> & {
   dueDate: DateTime | null;
   dueTime: DateTime | null;
+};
+
+export type TodoWithCompleteAtDateTime = Omit<Todo, "dueTime" | "dueDate" | "children"> & {
+  dueDate: DateTime | null;
+  dueTime: DateTime | null;
+  children?: ChildTodoWithDateTime[];
 };
 
 export type moveTodo = "updateDate" | "updateOrder";

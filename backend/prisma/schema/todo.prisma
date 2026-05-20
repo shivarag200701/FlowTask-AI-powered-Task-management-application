@@ -19,4 +19,9 @@ model Todo {
 
   notifications Notifications[]
   tags         TodoTag[]
+
+  //child task
+  parentId String?
+  parent   Todo? @relation("SubTasks",fields: [parentId],references: [id],onDelete: Cascade)
+  children Todo[] @relation("SubTasks")
 }

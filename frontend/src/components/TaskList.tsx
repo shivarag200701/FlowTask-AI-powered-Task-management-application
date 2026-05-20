@@ -20,10 +20,14 @@ function TaskList({
   todo,
   className,
   onSelect,
+  compact = false,
+  onClick,
 }: {
   todo: TodoWithCompleteAtDateTime;
   className?: string;
   onSelect?: (todoId: string) => void;
+  compact?: boolean;
+  onClick?: () => void;
 }) {
   const { mutate: updateTodo } = useUpdateTodo();
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
@@ -38,8 +42,7 @@ function TaskList({
     ConfirmModal: DeleteConfirmModal,
   } = useDeleteTodoConfirmModal(todo);
 
-  const { TodoDetailModal, setShowTodoDetailModal } =
-    useTodoDetailModal(todo);
+  const { TodoDetailModal, setShowTodoDetailModal } = useTodoDetailModal(todo);
 
   const { tags } = todo;
   const { isMobile } = useMediaQuery();
@@ -53,6 +56,7 @@ function TaskList({
     <div
       className={cn(
         "flex justify-between items-center  border-b border-border  px-4 py-2.5 min-h-15 hover:shadow-xs group cursor-pointer select-none transition-all duration-200",
+        compact && "hover:shadow-none min-h-10",
         todoSelected && "bg-accent",
         className,
         { "shadow-card-hover": isMoreOptionsOpen }
@@ -66,7 +70,11 @@ function TaskList({
           onSelect?.(todo.id);
           return;
         }
-        setShowTodoDetailModal(true);
+        if (onClick) {
+          onClick();
+        } else {
+          setShowTodoDetailModal(true);
+        }
       }}
     >
       <div className="flex gap-4 items-start justify-start">
@@ -82,9 +90,11 @@ function TaskList({
         </button>
         <div className="flex flex-col gap-[1.5px]">
           <div className="text-sm font-semibold">{todo.title}</div>
-          <span className="text-sm font-light text-secondary-foreground">
-            {todo.description}
-          </span>
+          {!compact && (
+            <span className="text-sm font-light text-secondary-foreground">
+              {todo.description}
+            </span>
+          )}
           <div className="flex items-center gap-2">
             {todo.dueTime?.isValid && (
               <TimeDisplayer className="text-xs" dueTime={todo.dueTime} />
@@ -94,7 +104,7 @@ function TaskList({
         </div>
       </div>
       <div className="flex gap-1 sm:gap-10">
-        {primaryTag !== undefined && (
+        {primaryTag !== undefined && !compact && (
           <TagsToolTip secondaryTags={secondaryTag ?? []}>
             <TagBadge
               color={primaryTag?.color ?? "blue"}
@@ -124,12 +134,14 @@ function TaskList({
           side="bottom"
           align="end"
         >
-          <Button
-            variant="custom"
-            className="w-fit"
-            icon={<MoreVertical color="#808080" strokeWidth={2.5} />}
-            size="icon-sm"
-          />
+          {!compact && (
+            <Button
+              variant="custom"
+              className="w-fit"
+              icon={<MoreVertical color="#808080" strokeWidth={2.5} />}
+              size="icon-sm"
+            />
+          )}
         </Popover>
       </div>
       {DeleteConfirmModal}

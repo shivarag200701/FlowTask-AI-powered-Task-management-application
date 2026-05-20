@@ -20,13 +20,26 @@ import { Popover } from "../ui/popover";
 import PriorityDisplayer from "../pill-buttons/PriorityDisplay";
 import PriorityDropDown from "../popovers/PriorityDropDown";
 import { useDateTimeModal } from "./DateTimeModal";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../ui/accordion";
+import { ArrowLeft, ChevronRight } from "lucide-react";
+import TaskList from "../TaskList";
+import type { ChildTodoWithDateTime } from "@/types";
 
 type TodoFormValues = CreateTodoWithDateTime & { id?: string };
 
 function TodoDetailForm({
   setShow,
+  todo,
+  onChildClick,
 }: {
   setShow: Dispatch<SetStateAction<boolean>>;
+  todo: TodoWithCompleteAtDateTime;
+  onChildClick?: (child: ChildTodoWithDateTime) => void;
 }) {
   const {
     register,
@@ -50,6 +63,10 @@ function TodoDetailForm({
     setShow(false);
   };
 
+  const subTaskCompleted = useMemo(() => {
+    return todo?.children?.filter((child) => child.completed).length;
+  }, [todo]);
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col sm:flex-row min-h-[200px]">
@@ -61,10 +78,40 @@ function TodoDetailForm({
             {...register("title", { required: "title is required" })}
           />
           <textarea
-            className="w-full border-none text-sm mt-2 focus:outline-none resize-none min-h-[120px] text-secondary-foreground"
+            className="w-full border-none text-sm mt-2 focus:outline-none resize-none min-h-[80px] text-secondary-foreground"
             placeholder="Add a description..."
             {...register("description")}
           />
+          {todo.children && todo.children.length > 0 ? (
+            <Accordion type="single" collapsible>
+              <AccordionItem value="overdue">
+                <AccordionTrigger className="group relative border-b">
+                  <div className="flex gap-2 items-center">
+                    <ChevronRight
+                      size={25}
+                      className="group-data-[state=open]:rotate-90 hover:cursor-pointer p-1 hover:bg-accent rounded-md absolute top-4 -left-2"
+                    />
+                    <div className="flex items-center gap-1 justify-center">
+                      <div className="font-medium ml-5">Sub-tasks</div>
+                      <span className="text-xs text-neutral-500">{`${subTaskCompleted} / ${todo.children.length}`}</span>
+                    </div>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  {todo.children.map((child) => (
+                    <TaskList
+                      key={child.id}
+                      todo={child}
+                      compact={true}
+                      onClick={() => onChildClick?.(child)}
+                    />
+                  ))}
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          ) : (
+            <div>asd</div>
+          )}
         </div>
 
         {/* Right column - Metadata */}
@@ -128,10 +175,39 @@ function TodoDetailModal({
   setShow: Dispatch<SetStateAction<boolean>>;
   todo: TodoWithCompleteAtDateTime;
 }) {
+  const [activeChild, setActiveChild] = useState<ChildTodoWithDateTime | null>(
+    null
+  );
+
+  const activeTodo = activeChild ?? todo;
+
   return (
-    <Modal showModal={show} setShowModal={setShow} className="max-w-2xl">
-      <TaskBuilderProvider todo={todo}>
-        <TodoDetailForm setShow={setShow} />
+    <Modal
+      showModal={show}
+      setShowModal={setShow}
+      onClose={() => setActiveChild(null)}
+      className="max-w-2xl"
+    >
+      {activeChild && (
+        <div className="pt-3 px-4">
+          <Button
+            variant="outline"
+            className="w-fit rounded-sm shadow-none"
+            onClick={() => setActiveChild(null)}
+          >
+            <div className="flex gap-2 items-center">
+              <div className="h-4 w-4 border rounded-full" />
+              {todo.title}
+            </div>
+          </Button>
+        </div>
+      )}
+      <TaskBuilderProvider key={activeTodo.id} todo={activeTodo}>
+        <TodoDetailForm
+          setShow={setShow}
+          todo={activeTodo}
+          onChildClick={(child) => setActiveChild(child)}
+        />
       </TaskBuilderProvider>
     </Modal>
   );

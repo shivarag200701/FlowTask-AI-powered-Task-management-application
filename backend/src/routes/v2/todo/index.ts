@@ -8,7 +8,6 @@ import { requireLogin } from "../../../middleware.js";
 import { generateSortKey } from "../../../utils/todo-ordering.js";
 import prisma from "../../../db/index.js";
 import constructPatchPayload from "../../../utils/construct-patch-payload.js";
-import bulkTagRouter from "../tag/bulk.js";
 import { bulkTodoRouter } from "./bulk.js";
 
 const todoRouter = Router();
@@ -40,6 +39,7 @@ todoRouter.get("/", requireLogin, async (req, res) => {
     const rawTodos = await prisma.todo.findMany({
       where: {
         userId,
+        parentId: null,
         ...(tagIdArray?.length
           ? {
               tags: { some: { tagId: { in: tagIdArray } } },
@@ -48,6 +48,7 @@ todoRouter.get("/", requireLogin, async (req, res) => {
       },
       include: {
         notifications: true,
+        children: true,
         tags: {
           select: {
             tag: {
@@ -103,12 +104,31 @@ todoRouter.post("/", requireLogin, async (req, res) => {
     dueDate,
     dueTime,
     color,
+    //todo, Reminder not yet hooked up
     reminder,
     isAllDay,
     tags,
+    parentId,
   } = data;
 
   try {
+    if (parentId) {
+      const parent = await prisma.todo.findFirst({
+        where: { userId, id: parentId },
+      });
+
+      if (!parent) {
+        return res.status(400).json({
+          msg: "A task with the parent Id does not exist, Create the parent task first",
+        });
+      }
+      if (parent?.parentId) {
+        return res
+          .status(400)
+          .json({ error: "Cannot create subtask of a subtask" });
+      }
+    }
+
     const last = await prisma.todo.findFirst({
       where: { userId, dueDate },
       orderBy: { sortKey: "desc" },
@@ -128,6 +148,7 @@ todoRouter.post("/", requireLogin, async (req, res) => {
         color: color ?? null,
         sortKey,
         isAllDay: isAllDay ?? null,
+        parentId: parentId ?? null,
         tags: {
           create:
             tags?.map((tagId) => ({

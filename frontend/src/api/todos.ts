@@ -15,6 +15,11 @@ export async function fetchTodos(
       ...todo,
       dueDate: todo.dueDate ? DateTime.fromISO(todo.dueDate) : null,
       dueTime: todo.dueTime ? DateTime.fromISO(todo.dueTime) : null,
+      children: todo.children?.map((child) => ({
+        ...child,
+        dueDate: child.dueDate ? DateTime.fromISO(child.dueDate) : null,
+        dueTime: child.dueTime ? DateTime.fromISO(child.dueTime) : null,
+      })),
     }));
   } catch (error) {
     throw error;
