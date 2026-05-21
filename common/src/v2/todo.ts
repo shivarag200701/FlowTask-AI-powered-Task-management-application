@@ -4,8 +4,8 @@ export const CreateTodoSchema = z.object({
   title: z.string().min(1, "title must be atleast one character"),
   description: z.string().optional(),
   priority: z.enum(["high", "medium", "low"]).nullable(),
-  dueDate: z.string().nullish(), //all todos with date will have this
-  dueTime: z.string().nullish(), //only timed todos have this
+  dueDate: z.string().nullable(), //all todos with date will have this
+  dueTime: z.string().nullable(), //only timed todos have this
   color: z.string().nullish(),
   reminder: z.boolean().default(false),
   isAllDay: z.boolean().optional(), // send true only, if not sent, the database defaults to false
