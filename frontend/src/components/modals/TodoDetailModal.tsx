@@ -85,7 +85,7 @@ function TodoDetailForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex flex-col sm:flex-row min-h-[700px]">
+      <div className="flex flex-col sm:flex-row min-h-[500px] overflow-y-auto sm:min-h-[700px]">
         {/* Left column - Title & Description */}
         <div className="flex-1 p-4 sm:border-r border-b sm:border-b-0 border-border/50 ">
           <div className="flex items-start gap-3">
@@ -194,7 +194,7 @@ function TodoDetailForm({
                   {!addChildTask ? (
                     <Button
                       variant="ghost"
-                      className="w-fit hover:bg-accent/50"
+                      className="w-fit hover:bg-accent/50 max-sm:p-0"
                       onClick={() => setAddChildTask(true)}
                     >
                       <Plus />
