@@ -7,8 +7,8 @@ export declare const CreateTodoSchema: z.ZodObject<{
         medium: "medium";
         low: "low";
     }>>;
-    dueDate: z.ZodNullable<z.ZodString>;
-    dueTime: z.ZodNullable<z.ZodString>;
+    dueDate: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    dueTime: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     color: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     reminder: z.ZodDefault<z.ZodBoolean>;
     isAllDay: z.ZodOptional<z.ZodBoolean>;
@@ -26,8 +26,8 @@ export declare const UpdateTodoSchema: z.ZodObject<{
         medium: "medium";
         low: "low";
     }>>>;
-    dueDate: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-    dueTime: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    dueDate: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
+    dueTime: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
     color: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
     reminder: z.ZodOptional<z.ZodDefault<z.ZodBoolean>>;
     isAllDay: z.ZodOptional<z.ZodOptional<z.ZodBoolean>>;
