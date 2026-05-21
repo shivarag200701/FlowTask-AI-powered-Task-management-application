@@ -22,12 +22,14 @@ function TaskList({
   onSelect,
   compact = false,
   onClick,
+  taskCompleted = false,
 }: {
   todo: TodoWithCompleteAtDateTime;
   className?: string;
   onSelect?: (todoId: string) => void;
   compact?: boolean;
   onClick?: () => void;
+  taskCompleted?: boolean;
 }) {
   const { mutate: updateTodo } = useUpdateTodo();
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
@@ -79,17 +81,29 @@ function TaskList({
     >
       <div className="flex gap-4 items-start justify-start">
         <button
-          className="h-5 w-5 border border-border/50 rounded-full bg-linear-to-t from-neutral-100 hover:bg-none hover:cursor-pointer hover:border-border hover:ring-3 hover:ring-border/30 flex items-center justify-center group/circle"
+          type="button"
+          className={cn(
+            "h-5 w-5 border border-border/50 rounded-full bg-linear-to-t from-neutral-100 hover:bg-none hover:cursor-pointer hover:border-border hover:ring-3 hover:ring-border/30 flex items-center justify-center group/circle",
+            taskCompleted && "opacity-50"
+          )}
           onClick={(e) => {
             e.stopPropagation();
             new Audio(completed).play();
             updateTodo({ id: todo.id, data: { completed: !todo.completed } });
           }}
         >
-          <Check size={15} className="group-hover/circle:block hidden" />
+          {taskCompleted ? (
+            <Check size={15} />
+          ) : (
+            <Check size={15} className="group-hover/circle:block hidden" />
+          )}
         </button>
         <div className="flex flex-col gap-[1.5px]">
-          <div className="text-sm font-semibold">{todo.title}</div>
+          <div
+            className={`text-sm  ${compact ? "font-normal" : "font-semibold"} ${taskCompleted && "line-through opacity-50"}`}
+          >
+            {todo.title}
+          </div>
           {!compact && (
             <span className="text-sm font-light text-secondary-foreground">
               {todo.description}

@@ -55,7 +55,8 @@ function ConfirmModal({
         <div className="flex justify-end gap-2 w-full mt-4">
           <Button
             variant="secondary"
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               onCancel?.();
               setShowConfirmModal(false);
             }}
@@ -64,7 +65,10 @@ function ConfirmModal({
           />
           <Button
             variant={variant}
-            onClick={handleConfirm}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleConfirm();
+            }}
             className="w-fit"
             Initial={confirmText}
             isSubmitting={isLoading}

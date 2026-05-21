@@ -461,6 +461,118 @@ UserPreference additions:
 
 ---
 
+## Phase 4: Real-Time Infrastructure
+
+These features add WebSocket-based real-time communication, completing the notification pipeline and enabling live updates across devices. They lay the groundwork for multi-user collaboration.
+
+**Shared infrastructure for all Phase 4 features:**
+
+- [ ] Install `socket.io` and `@socket.io/redis-adapter` in the backend
+- [ ] Install `socket.io-client` in the frontend
+- [ ] Create `/backend/src/services/socket/` module with Socket.io server setup and event constants
+
+---
+
+### 4.1 WebSocket Infrastructure + Real-Time Notifications
+
+**Description:**
+Establish the WebSocket layer using Socket.io and complete the in-app notification pipeline. The BullMQ `inAppWorker` currently exists as an empty stub — this feature fills it in so notifications are pushed to the frontend in real-time.
+
+**Why it's needed:**
+
+- The notification pipeline is half-built: `NotificationService` creates records, `QueueService` enqueues via BullMQ, but the `inAppWorker` has no way to deliver to the client
+- Foundation for all subsequent real-time features (todo sync, collaboration)
+- Redis is already available (sessions + BullMQ), so the Socket.io Redis adapter comes at near-zero infrastructure cost
+
+**Backend changes:**
+
+- [ ] Create `backend/src/services/socket/index.ts` — Socket.io server with Redis adapter, session-based auth middleware, room management
+- [ ] Create `backend/src/services/socket/events.ts` — centralized event name constants
+- [ ] Modify `backend/src/index.ts` — extract `http.createServer(app)`, extract session middleware to named variable, initialize Socket.io, change `app.listen()` to `server.listen()`
+- [ ] Modify `backend/src/services/notification/processors/Worker.ts` — fill in `inAppWorker` to emit `notification:new` events via Socket.io to `user:{userId}` rooms
+
+**Frontend changes:**
+
+- [ ] Create `frontend/src/services/socket.ts` — Socket.io client singleton with `withCredentials: true`, manual connect/disconnect
+- [ ] Create `frontend/src/hooks/use-socket.ts` — generic `useSocketEvent(event, handler)` hook
+- [ ] Create `frontend/src/hooks/use-realtime-notifications.ts` — listens for `notification:new`, shows toast via sonner, invalidates React Query caches
+- [ ] Modify `frontend/src/context/AuthContext.tsx` — call `connectSocket()` on auth success, `disconnectSocket()` on logout
+- [ ] Mount `useRealtimeNotifications()` in the authenticated app layout
+
+**Architecture decisions:**
+
+- Socket.io with `@socket.io/redis-adapter` for horizontal scaling
+- Cookie-based WebSocket auth: reuse existing `express-session` middleware in Socket.io handshake
+- Room-based: each user auto-joins `user:{userId}` on connection
+- Conservative cache strategy: invalidate React Query keys on events (refetch from server) rather than patching cache from WebSocket payloads
+
+**Dependencies:** None.
+
+---
+
+### 4.2 Real-Time Todo Sync
+
+**Description:**
+Broadcast todo mutations (create, update, delete) over WebSocket so all connected tabs and devices see changes instantly without waiting for React Query's stale time.
+
+**Why it's needed:**
+
+- Users with multiple tabs or devices see stale data for up to 60 seconds
+- AI background features (auto-tagging, task breakdown) apply changes that should appear immediately
+- Natural extension of the WebSocket infrastructure from 4.1
+
+**Backend changes:**
+
+- [ ] Add Socket.io emit calls in todo route handlers (`POST`, `PATCH`, `DELETE` in `/backend/src/routes/v2/todo/`) to broadcast `todo:created`, `todo:updated`, `todo:deleted` events to `user:{userId}`
+- [ ] Include the full todo payload in events for optional optimistic cache updates
+
+**Frontend changes:**
+
+- [ ] Create `frontend/src/hooks/use-realtime-todos.ts` — listens for todo events, invalidates relevant React Query keys
+- [ ] Add reconnection handler: invalidate all caches on `socket.on("connect")` to catch up after going offline
+- [ ] Optional: use `queryClient.setQueryData` for optimistic updates instead of refetching
+
+**Dependencies:** 4.1 (WebSocket infrastructure).
+
+---
+
+### 4.3 Collaboration Infrastructure
+
+**Description:**
+Multi-user real-time collaboration with shared todo lists, team workspaces, live presence, and permission management.
+
+**Why it's needed:**
+
+- Transforms the app from a personal tool into a team productivity platform
+- Shared lists with real-time sync are a table-stakes feature for collaborative todo apps
+- Presence indicators (who's viewing, who's typing) make collaboration feel alive
+
+**Data model changes:**
+
+- [ ] New `Team` model with membership and roles (owner, member)
+- [ ] New `SharedList` model linking teams to todo lists
+- [ ] Permission system: owner, editor, viewer roles per list
+- [ ] Add `listId` to `Todo` model for list-scoped tasks
+
+**Backend changes:**
+
+- [ ] New route group: `/api/v2/team/` — create team, invite members, manage roles
+- [ ] New route group: `/api/v2/list/` — create/share lists, manage permissions
+- [ ] Socket.io `list:{listId}` rooms — join on list open, leave on navigate away
+- [ ] Broadcast todo mutations to list rooms (all collaborators see changes)
+- [ ] Presence tracking: `presence:join` / `presence:leave` events, track connected users with Redis sets per list
+
+**Frontend changes:**
+
+- [ ] Team/list management UI
+- [ ] Presence indicators (avatars of who's viewing a list)
+- [ ] Real-time cursor/typing indicators (optional, WebRTC data channels for low-latency)
+- [ ] Permission-aware UI (disable editing for viewers)
+
+**Dependencies:** 4.1 (WebSocket infrastructure), 4.2 (todo sync).
+
+---
+
 ## Summary
 
 | #   | Feature              | Phase | Depends On | Status |
@@ -475,3 +587,6 @@ UserPreference additions:
 | 2.3 | Auto-Tagging         | 2     | —          | [ ]    |
 | 3.1 | Daily Briefing       | 3     | 1.4        | [ ]    |
 | 3.2 | Weekly Review Agent  | 3     | 1.4        | [ ]    |
+| 4.1 | WebSocket + Notifications | 4 | —          | [ ]    |
+| 4.2 | Real-Time Todo Sync  | 4     | 4.1        | [ ]    |
+| 4.3 | Collaboration        | 4     | 4.1, 4.2   | [ ]    |

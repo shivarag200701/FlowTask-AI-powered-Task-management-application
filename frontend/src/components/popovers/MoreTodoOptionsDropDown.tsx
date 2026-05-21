@@ -64,7 +64,10 @@ function MoreTodoOptionsDropDown({
             key={option.id}
             className="flex items-center justify-between  px-3 py-2 hover:bg-accent hover:cursor-pointer rounded-md tranistion-all duration-100"
             type="button"
-            onClick={option.onClick}
+            onClick={(e) => {
+              option.onClick?.();
+              e.stopPropagation();
+            }}
           >
             <div
               className="flex gap-2 sm:gap-2 items-center"
@@ -91,7 +94,10 @@ function MoreTodoOptionsDropDown({
             key={option.id}
             className={`flex items-center justify-between  px-3 py-2 ${option.id === "delete" ? "hover:bg-red-500 hover:text-white" : "hover:bg-accent"}  hover:cursor-pointer rounded-md tranistion-all duration-100 group`}
             type="button"
-            onClick={option.onClick}
+            onClick={(e) => {
+              e.stopPropagation();
+              option.onClick?.();
+            }}
           >
             <div
               className={`flex gap-2 items-center text-red-500 ${option.id === "delete" ? "group-hover:text-white" : ""}`}

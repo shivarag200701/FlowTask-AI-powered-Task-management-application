@@ -24,10 +24,12 @@ function InlineTaskForm({
   todo,
   setIsOpen,
   mode = "default",
+  parentId,
 }: {
   todo?: TodoWithCompleteAtDateTime;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   mode?: "default" | "modal";
+  parentId?: string;
 }) {
   const {
     register,
@@ -73,13 +75,11 @@ function InlineTaskForm({
   const [isTagsDropDownOpen, setIsTagsDropDownOpen] = useState(false);
 
   const onSubmit: SubmitHandler<TodoFormValues> = (data) => {
-    console.log("here");
-
     const serialized = SerializeFormData(data);
     if (isEdit && todoId) {
       updateTodo({ id: todoId, data: serialized as UpdateTodo });
     } else {
-      createTodo(SerializeFormData(data));
+      createTodo({ ...SerializeFormData(data), parentId });
     }
     reset();
     setIsOpen(false);

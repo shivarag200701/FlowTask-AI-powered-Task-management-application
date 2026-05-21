@@ -48,7 +48,10 @@ export function Modal({
         }}
       >
         <Drawer.Portal>
-          <Drawer.Overlay className="fixed inset-0 z-50 bg-neutral-100 bg-opacity-10 backdrop-blur" />
+          <Drawer.Overlay
+            className="fixed inset-0 z-50 bg-neutral-100 bg-opacity-10 backdrop-blur"
+            onClick={(e) => e.stopPropagation()}
+          />
           <Drawer.Content
             onPointerDownOutside={(e) => {
               // Prevent dismissal when clicking inside a toast
@@ -87,7 +90,10 @@ export function Modal({
       }}
     >
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="bg-bg-subtle fixed inset-0 z-30 bg-opacity-10 backdrop-blur" />
+        <DialogPrimitive.Overlay
+          className="bg-bg-subtle fixed inset-0 z-30 bg-opacity-10 backdrop-blur"
+          onClick={(e) => e.stopPropagation()}
+        />
         <DialogPrimitive.Content
           onOpenAutoFocus={(e) => e.preventDefault()}
           onCloseAutoFocus={(e) => e.preventDefault()}

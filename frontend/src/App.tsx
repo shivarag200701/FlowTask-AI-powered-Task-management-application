@@ -122,6 +122,7 @@ function App() {
           <Toaster
             closeButton
             toastOptions={{
+              className: "border-none",
               classNames: {
                 actionButton: "!bg-primary",
               },

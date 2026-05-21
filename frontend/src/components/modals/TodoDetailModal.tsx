@@ -1,6 +1,7 @@
 import {
   useCallback,
   useMemo,
+  useRef,
   useState,
   type Dispatch,
   type SetStateAction,
@@ -26,9 +27,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
-import { ArrowLeft, ChevronRight } from "lucide-react";
+import { Check, ChevronRight, Plus } from "lucide-react";
 import TaskList from "../TaskList";
 import type { ChildTodoWithDateTime } from "@/types";
+import InlineTaskForm from "../InlineTaskForm";
+import { cn } from "@/lib/utils";
+import completed from "@/assets/completed.mp3";
 
 type TodoFormValues = CreateTodoWithDateTime & { id?: string };
 
@@ -54,6 +58,10 @@ function TodoDetailForm({
   const { DateTimeButton, DateTimeModal } = useDateTimeModal();
 
   const [isPriorityDropDownOpen, setIsPriorityDropDownOpen] = useState(false);
+  const [addChildTask, setAddChildTask] = useState(false);
+  const [accordionValue, setAccordionValue] = useState<string | undefined>(
+    undefined
+  );
 
   const onSubmit: SubmitHandler<TodoFormValues> = (data) => {
     const serialized = SerializeFormData(data);
@@ -67,51 +75,143 @@ function TodoDetailForm({
     return todo?.children?.filter((child) => child.completed).length;
   }, [todo]);
 
+  const completedSubTasks = useMemo(() => {
+    return todo?.children?.filter((child) => child.completed);
+  }, [todo]);
+
+  const notCompletedSubTasks = useMemo(() => {
+    return todo?.children?.filter((child) => !child.completed);
+  }, [todo]);
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex flex-col sm:flex-row min-h-[200px]">
+      <div className="flex flex-col sm:flex-row min-h-[700px]">
         {/* Left column - Title & Description */}
-        <div className="flex-1 p-4 sm:border-r border-b sm:border-b-0 border-border/50">
-          <input
-            className="w-full border-none font-semibold text-base focus:outline-none"
-            placeholder="Task name"
-            {...register("title", { required: "title is required" })}
-          />
-          <textarea
-            className="w-full border-none text-sm mt-2 focus:outline-none resize-none min-h-[80px] text-secondary-foreground"
-            placeholder="Add a description..."
-            {...register("description")}
-          />
-          {todo.children && todo.children.length > 0 ? (
-            <Accordion type="single" collapsible>
-              <AccordionItem value="overdue">
-                <AccordionTrigger className="group relative border-b">
-                  <div className="flex gap-2 items-center">
-                    <ChevronRight
-                      size={25}
-                      className="group-data-[state=open]:rotate-90 hover:cursor-pointer p-1 hover:bg-accent rounded-md absolute top-4 -left-2"
-                    />
-                    <div className="flex items-center gap-1 justify-center">
-                      <div className="font-medium ml-5">Sub-tasks</div>
-                      <span className="text-xs text-neutral-500">{`${subTaskCompleted} / ${todo.children.length}`}</span>
-                    </div>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  {todo.children.map((child) => (
-                    <TaskList
-                      key={child.id}
-                      todo={child}
-                      compact={true}
-                      onClick={() => onChildClick?.(child)}
-                    />
-                  ))}
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          ) : (
-            <div>asd</div>
-          )}
+        <div className="flex-1 p-4 sm:border-r border-b sm:border-b-0 border-border/50 ">
+          <div className="flex items-start gap-3">
+            <button
+              type="button"
+              className={cn(
+                "h-5 w-5 mt-1 shrink-0 border border-border/50 rounded-full bg-linear-to-t from-neutral-100 hover:bg-none hover:cursor-pointer hover:border-border hover:ring-3 hover:ring-border/30 flex items-center justify-center group/circle",
+                todo.completed && "opacity-50"
+              )}
+              onClick={(e) => {
+                e.stopPropagation();
+                new Audio(completed).play();
+                updateTodo({
+                  id: todo.id,
+                  data: { completed: !todo.completed },
+                });
+              }}
+            >
+              {todo.completed ? (
+                <Check size={15} />
+              ) : (
+                <Check size={15} className="group-hover/circle:block hidden" />
+              )}
+            </button>
+            <div className="flex-1 min-w-0">
+              <input
+                className={cn(
+                  "w-full border-none font-semibold text-xl focus:outline-none",
+                  todo.completed && "line-through"
+                )}
+                placeholder="Task name"
+                {...register("title", {
+                  required: "title is required",
+                  disabled: !!todo.parentId && todo.completed,
+                })}
+              />
+              {!todo.completed && (
+                <textarea
+                  className="w-full border-none text-sm mt-2 focus:outline-none resize-none min-h-[80px] text-secondary-foreground"
+                  placeholder="Add a description..."
+                  {...register("description", {
+                    disabled: !!todo.parentId && todo.completed,
+                  })}
+                />
+              )}
+              {todo.children && todo.children.length > 0 ? (
+                <Accordion
+                  type="single"
+                  collapsible
+                  value={accordionValue}
+                  onValueChange={setAccordionValue}
+                >
+                  <AccordionItem value="overdue">
+                    <AccordionTrigger className="group relative border-b">
+                      <div className="flex gap-2 items-center">
+                        <ChevronRight
+                          size={25}
+                          className="group-data-[state=open]:rotate-90 hover:cursor-pointer p-1 hover:bg-accent rounded-md absolute top-4 -left-2"
+                        />
+                        <div className="flex items-center gap-1 justify-center">
+                          <div className="font-medium ml-5">Sub-tasks</div>
+                          <span className="text-xs text-neutral-500">{`${subTaskCompleted} / ${todo.children.length}`}</span>
+                        </div>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      {notCompletedSubTasks?.map((child) => (
+                        <TaskList
+                          key={child.id}
+                          todo={child}
+                          compact={true}
+                          onClick={() => onChildClick?.(child)}
+                        />
+                      ))}
+                      {!addChildTask ? (
+                        <Button
+                          variant="ghost"
+                          className="w-fit hover:bg-accent/50"
+                          onClick={() => setAddChildTask(true)}
+                        >
+                          <Plus />
+                          <span>Add a sub-task</span>
+                        </Button>
+                      ) : (
+                        <TaskBuilderProvider>
+                          <InlineTaskForm
+                            setIsOpen={setAddChildTask}
+                            parentId={todo.id}
+                          />
+                        </TaskBuilderProvider>
+                      )}
+                      {completedSubTasks?.map((child) => (
+                        <TaskList
+                          key={child.id}
+                          todo={child}
+                          compact
+                          taskCompleted
+                          onClick={() => onChildClick?.(child)}
+                        />
+                      ))}
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              ) : (
+                <div className="pt-6">
+                  {!addChildTask ? (
+                    <Button
+                      variant="ghost"
+                      className="w-fit hover:bg-accent/50"
+                      onClick={() => setAddChildTask(true)}
+                    >
+                      <Plus />
+                      <span>Add a sub-task</span>
+                    </Button>
+                  ) : (
+                    <TaskBuilderProvider>
+                      <InlineTaskForm
+                        setIsOpen={setAddChildTask}
+                        parentId={todo.id}
+                      />
+                    </TaskBuilderProvider>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Right column - Metadata */}
@@ -175,25 +275,26 @@ function TodoDetailModal({
   setShow: Dispatch<SetStateAction<boolean>>;
   todo: TodoWithCompleteAtDateTime;
 }) {
-  const [activeChild, setActiveChild] = useState<ChildTodoWithDateTime | null>(
-    null
-  );
+  const [activeChildId, setActiveChildId] = useState<string | null>(null);
 
+  const activeChild = activeChildId
+    ? (todo.children?.find((c) => c.id === activeChildId) ?? null)
+    : null;
   const activeTodo = activeChild ?? todo;
 
   return (
     <Modal
       showModal={show}
       setShowModal={setShow}
-      onClose={() => setActiveChild(null)}
-      className="max-w-2xl"
+      onClose={() => setActiveChildId(null)}
+      className="max-w-3xl"
     >
       {activeChild && (
         <div className="pt-3 px-4">
           <Button
             variant="outline"
             className="w-fit rounded-sm shadow-none"
-            onClick={() => setActiveChild(null)}
+            onClick={() => setActiveChildId(null)}
           >
             <div className="flex gap-2 items-center">
               <div className="h-4 w-4 border rounded-full" />
@@ -206,7 +307,7 @@ function TodoDetailModal({
         <TodoDetailForm
           setShow={setShow}
           todo={activeTodo}
-          onChildClick={(child) => setActiveChild(child)}
+          onChildClick={(child) => setActiveChildId(child.id)}
         />
       </TaskBuilderProvider>
     </Modal>
@@ -215,10 +316,14 @@ function TodoDetailModal({
 
 export function useTodoDetailModal(todo: TodoWithCompleteAtDateTime) {
   const [show, setShow] = useState(false);
+  const todoRef = useRef(todo);
+  todoRef.current = todo;
 
   const TodoDetailModalCallback = useCallback(() => {
-    return <TodoDetailModal show={show} setShow={setShow} todo={todo} />;
-  }, [show, setShow, todo]);
+    return (
+      <TodoDetailModal show={show} setShow={setShow} todo={todoRef.current} />
+    );
+  }, [show]);
 
   return useMemo(
     () => ({

@@ -158,7 +158,25 @@ export function useUpdateTodo() {
 
       const oldTodo = previousTodos?.find((t) => t.id === newTodo.id);
 
-      queryClient.setQueryData(todosQueryKeys.all, newTodo.data);
+      queryClient.setQueryData(
+        todosQueryKeys.all,
+        (old: TodoWithCompleteAtDateTime[] | undefined) =>
+          old?.map((todo) => {
+            if (todo.id === newTodo.id) {
+              return { ...todo, ...newTodo.data };
+            }
+            // Check children
+            if (todo.children?.some((c) => c.id === newTodo.id)) {
+              return {
+                ...todo,
+                children: todo.children.map((c) =>
+                  c.id === newTodo.id ? { ...c, ...newTodo.data } : c
+                ),
+              };
+            }
+            return todo;
+          })
+      );
 
       if (newTodo.type) {
         toast.success(toastMessages[newTodo.type], {
@@ -185,6 +203,8 @@ export function useUpdateTodo() {
     },
 
     onError: (_err, _newTodo, context) => {
+      console.log(_err);
+
       toast.error("Error updating the todo");
       queryClient.setQueryData(todosQueryKeys.all, context?.previousTodos);
     },
@@ -208,13 +228,9 @@ export function useCreateTodo() {
 
   return useMutation({
     mutationFn: (todo: CreateTodo) => createTodo(todo),
-    onMutate: async (todo) => {
-      await queryClient.cancelQueries({ queryKey: todosQueryKeys.all });
-      queryClient.setQueryData(todosQueryKeys.all, todo);
-      toast.success("todo created successfully");
-    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
+      toast.success("todo created successfully");
     },
     onError: (error) => {
       if (isAxiosError(error)) {

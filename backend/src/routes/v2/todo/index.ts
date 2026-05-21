@@ -39,7 +39,6 @@ todoRouter.get("/", requireLogin, async (req, res) => {
     const rawTodos = await prisma.todo.findMany({
       where: {
         userId,
-        parentId: null,
         ...(tagIdArray?.length
           ? {
               tags: { some: { tagId: { in: tagIdArray } } },
@@ -125,7 +124,7 @@ todoRouter.post("/", requireLogin, async (req, res) => {
       if (parent?.parentId) {
         return res
           .status(400)
-          .json({ error: "Cannot create subtask of a subtask" });
+          .json({ msg: "Cannot create subtask of a subtask" });
       }
     }
 
