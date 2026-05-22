@@ -287,7 +287,7 @@ function TodoDetailModal({
       showModal={show}
       setShowModal={setShow}
       onClose={() => setActiveChildId(null)}
-      className="max-w-3xl"
+      className="max-w-5xl"
     >
       {activeChild && (
         <div className="pt-3 px-4">
