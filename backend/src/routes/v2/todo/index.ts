@@ -210,6 +210,8 @@ todoRouter.patch("/:id", requireLogin, async (req, res) => {
 
     const updateData = constructPatchPayload(patch);
 
+    console.log(updateData);
+
     const updatedTodo = await prisma.todo.update({
       where: { id: idParam, userId },
       data: {
@@ -224,6 +226,14 @@ todoRouter.patch("/:id", requireLogin, async (req, res) => {
         }),
       },
     });
+
+    //update child todo to completed
+    if (updateData.completed) {
+      await prisma.todo.updateMany({
+        where: { parentId: updatedTodo.id, userId },
+        data: { completed: true, completedAt: new Date() },
+      });
+    }
 
     return res.status(200).json({
       todo: updatedTodo,
