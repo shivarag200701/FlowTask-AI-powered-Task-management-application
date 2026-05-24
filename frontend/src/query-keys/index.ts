@@ -10,6 +10,7 @@ export const authQueryKeys = {
 export const todosQueryKeys = {
   all: ["todos"] as const,
   filtered: ({ tagIds }: TodosQuery) => ["todos", "filtered", tagIds] as const,
+  search: (q: string) => ["todos", "search", q] as const,
 };
 
 export const onboardingQueryKeys = {

@@ -1,5 +1,10 @@
 import { deleteTodo, fetchTodos, updateTodo } from "@/api";
-import { bulkDeleteTodos, bulkUpdateTodos, createTodo } from "@/api/todos";
+import {
+  bulkDeleteTodos,
+  bulkUpdateTodos,
+  createTodo,
+  serachTodo,
+} from "@/api/todos";
 import { todosQueryKeys } from "@/query-keys";
 import {
   toastMessages,
@@ -34,6 +39,14 @@ export function useTodos(
   return useQuery({
     queryKey: todosQueryKeys.all,
     queryFn: () => fetchTodos(params),
+    staleTime: 60000,
+  });
+}
+
+export function useSearchTodos(search: string) {
+  return useQuery({
+    queryKey: todosQueryKeys.search(search),
+    queryFn: () => serachTodo({ search }),
     staleTime: 60000,
   });
 }

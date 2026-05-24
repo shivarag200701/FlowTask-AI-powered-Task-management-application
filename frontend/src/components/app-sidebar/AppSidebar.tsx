@@ -27,6 +27,9 @@ import {
 import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
 import TodayCalendarIcon from "../TodayCalendarIcon";
+import { Input } from "../ui/input";
+import { useDebounce } from "use-debounce";
+import { useSearchTodos } from "@/hooks/use-todos";
 
 // This is sample data.
 const data = {
@@ -160,6 +163,12 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navigate = useNavigate();
+
+  const [searchValue, setSearchValue] = React.useState("");
+  const [debouncedValue] = useDebounce(searchValue, 500);
+
+  const {} = useSearchTodos(debouncedValue);
+
   return (
     <Sidebar collapsible="offcanvas" {...props} className="p-2 bg-neutral-200">
       <SidebarHeader>
@@ -193,6 +202,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             onClick={() => {
               navigate("app/upcoming");
             }}
+          />
+          <Input
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
           />
         </div>
       </SidebarContent>

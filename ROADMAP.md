@@ -10,7 +10,7 @@ These features must be in place before AI integration. They fill gaps in the cur
 
 ---
 
-### 1.1 Finish the Upcoming View
+### [X] 1.1 Finish the Upcoming View
 
 **Status:** In progress (`feature/upcoming` branch)
 
@@ -19,11 +19,11 @@ Complete the 7-day upcoming board view that lets users see and manage future tas
 
 **What needs to be done:**
 
-- [x] Lift `useUpcomingDateRange` state up to the `Upcoming` page so `TaskPaginationControls` and `BoardView` share the same date range state
-- [x] Render task cards within each date column in the `BoardView`
-- [x] Wire up drag-and-drop reordering between date columns (reassigns `dueDate` on drop)
-- [ ] Handle empty states per column
-- [ ] Connect the `TaskDisplaySelector` to toggle between list and board layouts(Skipped for now , lets do this in the next feature roll out)
+[x] Lift `useUpcomingDateRange` state up to the `Upcoming` page so `TaskPaginationControls` and `BoardView` share the same date range state
+[x] Render task cards within each date column in the `BoardView`
+[x] Wire up drag-and-drop reordering between date columns (reassigns `dueDate` on drop)
+[ ] Handle empty states per column
+[ ] Connect the `TaskDisplaySelector` to toggle between list and board layouts(Skipped for now , lets do this in the next feature roll out)
 
 **Key files:**
 
@@ -36,7 +36,7 @@ Complete the 7-day upcoming board view that lets users see and manage future tas
 
 ---
 
-### 1.2 Subtasks (Parent-Child Task Hierarchy)
+### [X] 1.2 Subtasks (Parent-Child Task Hierarchy)
 
 **Description:**
 Allow tasks to have child tasks (subtasks). A parent task like "Prepare for interview" can be broken into "Review data structures," "Practice system design," etc.
@@ -58,57 +58,91 @@ Todo model additions:
 
 **API changes (v2):**
 
-- [ ] `POST /api/v2/todo` — accept optional `parentId` field
-- [ ] `GET /api/v2/todo/:id/subtasks` — fetch subtasks for a parent
-- [ ] `GET /api/v2/todo` — include subtask count in response, exclude subtasks from top-level list by default (where `parentId` is null)
-- [ ] `PATCH /api/v2/todo/:id` — allow moving a task under a parent or promoting to top-level
+[X]`POST /api/v2/todo` — accept optional `parentId` field
+[ ]`GET /api/v2/todo/:id/subtasks` — fetch subtasks for a parent (excluded this for now)
+[X]`GET /api/v2/todo` — include subtask count in response, include subtasks from top-level list to also show them in the list
 
 **Frontend:**
 
-- [ ] Expandable subtask list within a task card
-- [ ] "Add subtask" button on task detail/edit view
-- [ ] Progress indicator on parent tasks (e.g., "2/4 done")
-- [ ] Subtask completion should not auto-complete the parent (user decides when parent is done)
+[X]Expandable subtask list within a task card
+[X]"Add subtask" button on task detail/edit view
+[X]Progress indicator on parent tasks (e.g., "2/4 done")
+[X]Subtask completion should not auto-complete the parent (user decides when parent is done)
 
 **Validation rules:**
 
-- [ ] Max nesting depth: 1 level (subtasks cannot have subtasks)
-- [ ] Deleting a parent task deletes all subtasks
-- [ ] Completing a parent task completes all incomplete subtasks
+[X]Max nesting depth: 1 level (subtasks cannot have subtasks) (Have implemented in backend , but frontend does allow it, but it fails on creation)
+[X]Deleting a parent task deletes all subtasks
+[X]Completing a parent task completes all incomplete subtasks
 
 **Dependencies:** None.
 
 ---
 
-### 1.3 Search
+### [ ] 1.3 Search
 
 **Description:**
-Full-text search across all tasks by title and description.
+Full-text search across all tasks using Meilisearch as a dedicated search engine.
 
 **Why it's needed:**
 
 - Basic product expectation — users with 100+ tasks need to find things fast
 - Foundation for AI-powered semantic search later (Phase 3+)
 
-**API changes (v2):**
+**What's been built (backend):**
 
-- [ ] `GET /api/v2/todo?q=searchterm` — add a `q` query parameter
-- [ ] Backend filters with Prisma `contains` (case-insensitive) on `title` and `description` fields
-- [ ] PostgreSQL `ILIKE` via Prisma's `mode: 'insensitive'` option
+A dedicated `MeilisearchService` class (`backend/src/services/search/MeilisearchService.ts`) manages a `todos` index with the following configuration:
+
+- **Indexed document (`TodoDocument`):** `id`, `title`, `description`, `tagNames`, `userId`, `completed`, `priority`, `parentId`, `dueDate`, `createdAt`
+- **Searchable attributes:** `title`, `description`, `tagNames`
+- **Filterable attributes:** `userId`, `completed`, `priority`, `parentId`
+- **Sortable attributes:** `createdAt`, `dueDate`
+
+Service methods:
+
+[x]`upsertTodo(todo, tagNames)` — upsert a single document
+[x]`deleteTodo(todoId)` — delete a single document
+[x]`deleteTodos(todoIds)` — batch delete
+[x]`search(userId, query)` — full-text search filtered by `userId`
+[x]`bulkUpsert(documents)` — batch upsert
+
+**API (v2):**
+
+[x]`GET /api/v2/todo/search?q=searchterm` — full-text search via Meilisearch, filtered to the authenticated user
+[x]`POST /api/v2/todo/search/reindex` — reindex all of a user's todos into Meilisearch
+
+**Sync integration:**
+
+Meilisearch is kept in sync with Postgres via fire-and-forget `.catch()` calls in the route handlers:
+
+[x]`POST /api/v2/todo` — `upsertTodo` on create
+[x]`PATCH /api/v2/todo/:id` — `upsertTodo` on update + `bulkUpsert` for child todos
+[x]`DELETE /api/v2/todo/:id` — `deleteTodos` for the task and its children
+[x]`DELETE /api/v2/todo/bulk` — `deleteTodos` for bulk-deleted tasks and children
+[x]`PATCH /api/v2/todo/bulk` — `bulkUpsert` for bulk-updated tasks
 
 **Frontend:**
 
-- [ ] Search input in the sidebar or top navigation
-- [ ] Results displayed as a filtered task list
-- [ ] Debounced input (300ms) to avoid excessive API calls
-- [ ] Highlight matching text in results
-- [ ] Empty state: "No tasks match your search"
+[ ]Search input in the sidebar or top navigation
+[ ]Results displayed as a filtered task list
+[ ]Debounced input (300ms) to avoid excessive API calls
+[ ]Highlight matching text in results
+[ ]Empty state: "No tasks match your search"
+
+#### TODO Later: Migrate to Queue-Based Sync
+
+The current Meilisearch sync uses a fire-and-forget `.catch()` pattern directly in route handlers. This works but has drawbacks: failed syncs are only logged (not retried), and sync logic is scattered across route files. In a future iteration, replace this with a **BullMQ queue + worker model** (similar to the existing notification queue pattern):
+
+[ ]Create a `search-sync` BullMQ queue
+[ ]Route handlers enqueue sync jobs (`upsert`, `delete`, `bulkUpsert`) instead of calling `MeilisearchService` directly
+[ ]A dedicated worker processes sync jobs with automatic retries and backoff
+[ ]Centralizes all sync logic in one place and makes failures recoverable
 
 **Dependencies:** None.
 
 ---
 
-### 1.4 Completed Tasks View
+### [ ] 1.4 Completed Tasks View
 
 **Description:**
 A dedicated view to see tasks that have been marked as complete, with the ability to restore them.
@@ -122,24 +156,24 @@ A dedicated view to see tasks that have been marked as complete, with the abilit
 
 **API changes (v2):**
 
-- [ ] `GET /api/v2/todo?completed=true` — filter for completed tasks
-- [ ] `GET /api/v2/todo?completed=true&from=2026-05-01&to=2026-05-17` — date range filter on `completedAt`
-- [ ] Response should include `completedAt` timestamp
+[ ]`GET /api/v2/todo?completed=true` — filter for completed tasks
+[ ]`GET /api/v2/todo?completed=true&from=2026-05-01&to=2026-05-17` — date range filter on `completedAt`
+[ ]Response should include `completedAt` timestamp
 
 **Frontend:**
 
-- [ ] New route: `/app/completed`
-- [ ] Sidebar nav link
-- [ ] Group completed tasks by completion date (Today, Yesterday, This Week, Older)
-- [ ] "Restore" action to mark a task as incomplete again
-- [ ] "Delete permanently" action
-- [ ] Task count in the header
+[ ]New route: `/app/completed`
+[ ]Sidebar nav link
+[ ]Group completed tasks by completion date (Today, Yesterday, This Week, Older)
+[ ]"Restore" action to mark a task as incomplete again
+[ ]"Delete permanently" action
+[ ]Task count in the header
 
 **Dependencies:** None.
 
 ---
 
-### 1.5 Recurring Tasks
+### [ ] 1.5 Recurring Tasks
 
 **Description:**
 Tasks that automatically regenerate on a schedule (daily, weekly, monthly, custom).
@@ -168,22 +202,22 @@ Todo model additions:
 
 **API changes (v2):**
 
-- [ ] `POST /api/v2/todo` — accept `recurrenceRule`, `recurrenceEnd`, `isRecurring`
-- [ ] `PATCH /api/v2/todo/:id` — when completing a recurring task, trigger next instance generation
-- [ ] `DELETE /api/v2/todo/:id?deleteAll=true` — stop recurrence and delete future scheduled jobs
+[ ]`POST /api/v2/todo` — accept `recurrenceRule`, `recurrenceEnd`, `isRecurring`
+[ ]`PATCH /api/v2/todo/:id` — when completing a recurring task, trigger next instance generation
+[ ]`DELETE /api/v2/todo/:id?deleteAll=true` — stop recurrence and delete future scheduled jobs
 
 **Frontend:**
 
-- [ ] Recurrence picker in task creation/edit: None, Daily, Weekly, Monthly, Custom
-- [ ] Custom picker: select days of week, interval (every N days/weeks/months)
-- [ ] Visual indicator on recurring tasks (repeat icon)
-- [ ] "Stop recurring" option in task menu
-- [ ] Recurrence label display (e.g., "Every Monday, Wednesday, Friday")
+[ ]Recurrence picker in task creation/edit: None, Daily, Weekly, Monthly, Custom
+[ ]Custom picker: select days of week, interval (every N days/weeks/months)
+[ ]Visual indicator on recurring tasks (repeat icon)
+[ ]"Stop recurring" option in task menu
+[ ]Recurrence label display (e.g., "Every Monday, Wednesday, Friday")
 
 **BullMQ integration:**
 
-- [ ] On task completion, if `isRecurring` is true, add a job to generate the next task instance
-- [ ] Calculate next due date from `recurrenceRule` using a library like `rrule`
+[ ]On task completion, if `isRecurring` is true, add a job to generate the next task instance
+[ ]Calculate next due date from `recurrenceRule` using a library like `rrule`
 
 **Dependencies:** None.
 
@@ -195,17 +229,18 @@ These features add intelligent automation using the Claude API for structured JS
 
 **Shared infrastructure for all Phase 2 features:**
 
-- [ ] Install `@anthropic-ai/sdk` in the backend
-- [ ] Create `/api/v2/ai/` route group
-- [ ] Create a shared `AIService` class in `/backend/src/services/ai/AIService.ts` that wraps Claude API calls with:
-  - Consistent error handling and retries
-  - Token usage logging
-  - Response parsing and validation against Zod schemas
-- [ ] Store `ANTHROPIC_API_KEY` in environment variables
+[ ]Install `@anthropic-ai/sdk` in the backend
+[ ]Create `/api/v2/ai/` route group
+[ ]Create a shared `AIService` class in `/backend/src/services/ai/AIService.ts` that wraps Claude API calls with:
+
+- Consistent error handling and retries
+- Token usage logging
+- Response parsing and validation against Zod schemas
+  [ ]Store `ANTHROPIC_API_KEY` in environment variables
 
 ---
 
-### 2.1 Natural Language Task Creation
+### [ ] 2.1 Natural Language Task Creation
 
 **Description:**
 Users type a freeform sentence and the AI extracts structured task data — title, due date, due time, priority, tags, and description.
@@ -238,27 +273,27 @@ Users type a freeform sentence and the AI extracts structured task data — titl
 
 **API:**
 
-- [ ] `POST /api/v2/ai/parse-task` — accepts `{ input: string }`, returns parsed `CreateTodo` payload
-- [ ] The frontend then calls the existing `POST /api/v2/todo` to actually create the task
+[ ]`POST /api/v2/ai/parse-task` — accepts `{ input: string }`, returns parsed `CreateTodo` payload
+[ ]The frontend then calls the existing `POST /api/v2/todo` to actually create the task
 
 **Frontend:**
 
-- [ ] "Quick add" input bar (always visible at top of task list or via keyboard shortcut)
-- [ ] Preview card showing parsed fields before confirmation
-- [ ] Editable preview: user can correct any field the AI got wrong
-- [ ] Fallback: if parsing fails, just use the raw text as the title
+[ ]"Quick add" input bar (always visible at top of task list or via keyboard shortcut)
+[ ]Preview card showing parsed fields before confirmation
+[ ]Editable preview: user can correct any field the AI got wrong
+[ ]Fallback: if parsing fails, just use the raw text as the title
 
 **Prompt engineering notes:**
 
-- [ ] Include the user's existing tag list in the system prompt so the AI maps to existing tags
-- [ ] Include the current date/time so relative dates ("tomorrow," "next week") resolve correctly
-- [ ] Use Claude's structured output / tool use to enforce the JSON schema
+[ ]Include the user's existing tag list in the system prompt so the AI maps to existing tags
+[ ]Include the current date/time so relative dates ("tomorrow," "next week") resolve correctly
+[ ]Use Claude's structured output / tool use to enforce the JSON schema
 
 **Dependencies:** None — uses existing `CreateTodo` flow.
 
 ---
 
-### 2.2 AI Task Breakdown
+### [ ] 2.2 AI Task Breakdown
 
 **Description:**
 A "Break it down" button on any task that uses AI to generate 3-6 actionable subtasks.
@@ -288,26 +323,26 @@ A "Break it down" button on any task that uses AI to generate 3-6 actionable sub
 
 **API:**
 
-- [ ] `POST /api/v2/ai/break-down` — accepts `{ todoId: string }`, returns created subtask array
+[ ]`POST /api/v2/ai/break-down` — accepts `{ todoId: string }`, returns created subtask array
 
 **Frontend:**
 
-- [ ] "Break it down" button (or sparkle/wand icon) on task cards and task detail view
-- [ ] Loading state while AI processes
-- [ ] Show generated subtasks in an expandable list under the parent
-- [ ] User can delete any generated subtask they don't want
+[ ]"Break it down" button (or sparkle/wand icon) on task cards and task detail view
+[ ]Loading state while AI processes
+[ ]Show generated subtasks in an expandable list under the parent
+[ ]User can delete any generated subtask they don't want
 
 **Prompt engineering notes:**
 
-- [ ] Instruct Claude to generate 3-6 subtasks (not more)
-- [ ] Each subtask should be a concrete, single-session action (not another vague goal)
-- [ ] Include the parent task's tags so subtasks can inherit relevant tags
+[ ]Instruct Claude to generate 3-6 subtasks (not more)
+[ ]Each subtask should be a concrete, single-session action (not another vague goal)
+[ ]Include the parent task's tags so subtasks can inherit relevant tags
 
 **Dependencies:** Subtasks (1.2) must be implemented first.
 
 ---
 
-### 2.3 Auto-Tagging
+### [ ] 2.3 Auto-Tagging
 
 **Description:**
 When a task is created, the AI automatically suggests tags based on the task content and the user's existing tag set.
@@ -333,21 +368,21 @@ When a task is created, the AI automatically suggests tags based on the task con
 
 **BullMQ job:**
 
-- [ ] Queue: `ai-auto-tag`
-- [ ] Job data: `{ todoId, userId }`
-- [ ] Worker fetches the task + user's tag list, calls Claude, writes `TodoTag` records
+[ ]Queue: `ai-auto-tag`
+[ ]Job data: `{ todoId, userId }`
+[ ]Worker fetches the task + user's tag list, calls Claude, writes `TodoTag` records
 
 **Frontend:**
 
-- [ ] Tags appear on task card after a short delay (React Query will pick up the change on next refetch or via invalidation)
-- [ ] Optional: show a subtle "AI-tagged" indicator so users know which tags were auto-applied
-- [ ] User toggle in preferences: enable/disable auto-tagging
+[ ]Tags appear on task card after a short delay (React Query will pick up the change on next refetch or via invalidation)
+[ ]Optional: show a subtle "AI-tagged" indicator so users know which tags were auto-applied
+[ ]User toggle in preferences: enable/disable auto-tagging
 
 **Prompt engineering notes:**
 
-- [ ] Only suggest from existing tags — do not invent new ones (to avoid tag sprawl)
-- [ ] If no tags match, return an empty array
-- [ ] Use a fast, cheap model (Haiku) since this is a background operation
+[ ]Only suggest from existing tags — do not invent new ones (to avoid tag sprawl)
+[ ]If no tags match, return an empty array
+[ ]Use a fast, cheap model (Haiku) since this is a background operation
 
 **Dependencies:** None — uses existing tag system.
 
@@ -359,7 +394,7 @@ These features use AI to analyze patterns in task data and deliver actionable in
 
 ---
 
-### 3.1 Daily Briefing
+### [ ] 3.1 Daily Briefing
 
 **Description:**
 A morning summary of the user's day: what's overdue, what's due today, and what's coming up — delivered as an in-app notification or email.
@@ -393,20 +428,20 @@ UserPreference additions:
 
 **BullMQ:**
 
-- [ ] Scheduled repeatable job per user
-- [ ] Queue: `ai-daily-briefing`
-- [ ] Respects user's timezone and preferred briefing time
+[ ]Scheduled repeatable job per user
+[ ]Queue: `ai-daily-briefing`
+[ ]Respects user's timezone and preferred briefing time
 
 **Email template:**
 
-- [ ] New React Email template: `DailyBriefing.tsx`
-- [ ] Clean, scannable format with task counts, priority highlights, and overdue warnings
+[ ]New React Email template: `DailyBriefing.tsx`
+[ ]Clean, scannable format with task counts, priority highlights, and overdue warnings
 
 **Dependencies:** Completed tasks view (1.4) — so the briefing can reference yesterday's completions.
 
 ---
 
-### 3.2 Weekly Review Agent
+### [ ] 3.2 Weekly Review Agent
 
 **Description:**
 An automated weekly analysis that reviews the user's task completion patterns and generates insights — delivered every Sunday evening or Monday morning.
@@ -446,13 +481,13 @@ UserPreference additions:
 
 **BullMQ:**
 
-- [ ] Scheduled repeatable job per user
-- [ ] Queue: `ai-weekly-review`
+[ ]Scheduled repeatable job per user
+[ ]Queue: `ai-weekly-review`
 
 **Email template:**
 
-- [ ] New React Email template: `WeeklyReview.tsx`
-- [ ] Sections: Summary Stats, Insights, Suggestions for Next Week
+[ ]New React Email template: `WeeklyReview.tsx`
+[ ]Sections: Summary Stats, Insights, Suggestions for Next Week
 
 **Dependencies:**
 
@@ -467,13 +502,13 @@ These features add WebSocket-based real-time communication, completing the notif
 
 **Shared infrastructure for all Phase 4 features:**
 
-- [ ] Install `socket.io` and `@socket.io/redis-adapter` in the backend
-- [ ] Install `socket.io-client` in the frontend
-- [ ] Create `/backend/src/services/socket/` module with Socket.io server setup and event constants
+[ ]Install `socket.io` and `@socket.io/redis-adapter` in the backend
+[ ]Install `socket.io-client` in the frontend
+[ ]Create `/backend/src/services/socket/` module with Socket.io server setup and event constants
 
 ---
 
-### 4.1 WebSocket Infrastructure + Real-Time Notifications
+### [ ] 4.1 WebSocket Infrastructure + Real-Time Notifications
 
 **Description:**
 Establish the WebSocket layer using Socket.io and complete the in-app notification pipeline. The BullMQ `inAppWorker` currently exists as an empty stub — this feature fills it in so notifications are pushed to the frontend in real-time.
@@ -486,18 +521,18 @@ Establish the WebSocket layer using Socket.io and complete the in-app notificati
 
 **Backend changes:**
 
-- [ ] Create `backend/src/services/socket/index.ts` — Socket.io server with Redis adapter, session-based auth middleware, room management
-- [ ] Create `backend/src/services/socket/events.ts` — centralized event name constants
-- [ ] Modify `backend/src/index.ts` — extract `http.createServer(app)`, extract session middleware to named variable, initialize Socket.io, change `app.listen()` to `server.listen()`
-- [ ] Modify `backend/src/services/notification/processors/Worker.ts` — fill in `inAppWorker` to emit `notification:new` events via Socket.io to `user:{userId}` rooms
+[ ]Create `backend/src/services/socket/index.ts` — Socket.io server with Redis adapter, session-based auth middleware, room management
+[ ]Create `backend/src/services/socket/events.ts` — centralized event name constants
+[ ]Modify `backend/src/index.ts` — extract `http.createServer(app)`, extract session middleware to named variable, initialize Socket.io, change `app.listen()` to `server.listen()`
+[ ]Modify `backend/src/services/notification/processors/Worker.ts` — fill in `inAppWorker` to emit `notification:new` events via Socket.io to `user:{userId}` rooms
 
 **Frontend changes:**
 
-- [ ] Create `frontend/src/services/socket.ts` — Socket.io client singleton with `withCredentials: true`, manual connect/disconnect
-- [ ] Create `frontend/src/hooks/use-socket.ts` — generic `useSocketEvent(event, handler)` hook
-- [ ] Create `frontend/src/hooks/use-realtime-notifications.ts` — listens for `notification:new`, shows toast via sonner, invalidates React Query caches
-- [ ] Modify `frontend/src/context/AuthContext.tsx` — call `connectSocket()` on auth success, `disconnectSocket()` on logout
-- [ ] Mount `useRealtimeNotifications()` in the authenticated app layout
+[ ]Create `frontend/src/services/socket.ts` — Socket.io client singleton with `withCredentials: true`, manual connect/disconnect
+[ ]Create `frontend/src/hooks/use-socket.ts` — generic `useSocketEvent(event, handler)` hook
+[ ]Create `frontend/src/hooks/use-realtime-notifications.ts` — listens for `notification:new`, shows toast via sonner, invalidates React Query caches
+[ ]Modify `frontend/src/context/AuthContext.tsx` — call `connectSocket()` on auth success, `disconnectSocket()` on logout
+[ ]Mount `useRealtimeNotifications()` in the authenticated app layout
 
 **Architecture decisions:**
 
@@ -510,7 +545,7 @@ Establish the WebSocket layer using Socket.io and complete the in-app notificati
 
 ---
 
-### 4.2 Real-Time Todo Sync
+### [ ] 4.2 Real-Time Todo Sync
 
 **Description:**
 Broadcast todo mutations (create, update, delete) over WebSocket so all connected tabs and devices see changes instantly without waiting for React Query's stale time.
@@ -523,20 +558,20 @@ Broadcast todo mutations (create, update, delete) over WebSocket so all connecte
 
 **Backend changes:**
 
-- [ ] Add Socket.io emit calls in todo route handlers (`POST`, `PATCH`, `DELETE` in `/backend/src/routes/v2/todo/`) to broadcast `todo:created`, `todo:updated`, `todo:deleted` events to `user:{userId}`
-- [ ] Include the full todo payload in events for optional optimistic cache updates
+[ ]Add Socket.io emit calls in todo route handlers (`POST`, `PATCH`, `DELETE` in `/backend/src/routes/v2/todo/`) to broadcast `todo:created`, `todo:updated`, `todo:deleted` events to `user:{userId}`
+[ ]Include the full todo payload in events for optional optimistic cache updates
 
 **Frontend changes:**
 
-- [ ] Create `frontend/src/hooks/use-realtime-todos.ts` — listens for todo events, invalidates relevant React Query keys
-- [ ] Add reconnection handler: invalidate all caches on `socket.on("connect")` to catch up after going offline
-- [ ] Optional: use `queryClient.setQueryData` for optimistic updates instead of refetching
+[ ]Create `frontend/src/hooks/use-realtime-todos.ts` — listens for todo events, invalidates relevant React Query keys
+[ ]Add reconnection handler: invalidate all caches on `socket.on("connect")` to catch up after going offline
+[ ]Optional: use `queryClient.setQueryData` for optimistic updates instead of refetching
 
 **Dependencies:** 4.1 (WebSocket infrastructure).
 
 ---
 
-### 4.3 Collaboration Infrastructure
+### [ ] 4.3 Collaboration Infrastructure
 
 **Description:**
 Multi-user real-time collaboration with shared todo lists, team workspaces, live presence, and permission management.
@@ -549,25 +584,25 @@ Multi-user real-time collaboration with shared todo lists, team workspaces, live
 
 **Data model changes:**
 
-- [ ] New `Team` model with membership and roles (owner, member)
-- [ ] New `SharedList` model linking teams to todo lists
-- [ ] Permission system: owner, editor, viewer roles per list
-- [ ] Add `listId` to `Todo` model for list-scoped tasks
+[ ]New `Team` model with membership and roles (owner, member)
+[ ]New `SharedList` model linking teams to todo lists
+[ ]Permission system: owner, editor, viewer roles per list
+[ ]Add `listId` to `Todo` model for list-scoped tasks
 
 **Backend changes:**
 
-- [ ] New route group: `/api/v2/team/` — create team, invite members, manage roles
-- [ ] New route group: `/api/v2/list/` — create/share lists, manage permissions
-- [ ] Socket.io `list:{listId}` rooms — join on list open, leave on navigate away
-- [ ] Broadcast todo mutations to list rooms (all collaborators see changes)
-- [ ] Presence tracking: `presence:join` / `presence:leave` events, track connected users with Redis sets per list
+[ ]New route group: `/api/v2/team/` — create team, invite members, manage roles
+[ ]New route group: `/api/v2/list/` — create/share lists, manage permissions
+[ ]Socket.io `list:{listId}` rooms — join on list open, leave on navigate away
+[ ]Broadcast todo mutations to list rooms (all collaborators see changes)
+[ ]Presence tracking: `presence:join` / `presence:leave` events, track connected users with Redis sets per list
 
 **Frontend changes:**
 
-- [ ] Team/list management UI
-- [ ] Presence indicators (avatars of who's viewing a list)
-- [ ] Real-time cursor/typing indicators (optional, WebRTC data channels for low-latency)
-- [ ] Permission-aware UI (disable editing for viewers)
+[ ]Team/list management UI
+[ ]Presence indicators (avatars of who's viewing a list)
+[ ]Real-time cursor/typing indicators (optional, WebRTC data channels for low-latency)
+[ ]Permission-aware UI (disable editing for viewers)
 
 **Dependencies:** 4.1 (WebSocket infrastructure), 4.2 (todo sync).
 
@@ -575,18 +610,18 @@ Multi-user real-time collaboration with shared todo lists, team workspaces, live
 
 ## Summary
 
-| #   | Feature              | Phase | Depends On | Status |
-| --- | -------------------- | ----- | ---------- | ------ |
-| 1.1 | Finish Upcoming View | 1     | —          | [ ]    |
-| 1.2 | Subtasks             | 1     | —          | [ ]    |
-| 1.3 | Search               | 1     | —          | [ ]    |
-| 1.4 | Completed Tasks View | 1     | —          | [ ]    |
-| 1.5 | Recurring Tasks      | 1     | —          | [ ]    |
-| 2.1 | NLP Task Creation    | 2     | —          | [ ]    |
-| 2.2 | AI Task Breakdown    | 2     | 1.2        | [ ]    |
-| 2.3 | Auto-Tagging         | 2     | —          | [ ]    |
-| 3.1 | Daily Briefing       | 3     | 1.4        | [ ]    |
-| 3.2 | Weekly Review Agent  | 3     | 1.4        | [ ]    |
-| 4.1 | WebSocket + Notifications | 4 | —          | [ ]    |
-| 4.2 | Real-Time Todo Sync  | 4     | 4.1        | [ ]    |
-| 4.3 | Collaboration        | 4     | 4.1, 4.2   | [ ]    |
+| #   | Feature                   | Phase | Depends On | Status |
+| --- | ------------------------- | ----- | ---------- | ------ |
+| 1.1 | Finish Upcoming View      | 1     | —          | [X]    |
+| 1.2 | Subtasks                  | 1     | —          | [X]    |
+| 1.3 | Search                    | 1     | —          | [ ]    |
+| 1.4 | Completed Tasks View      | 1     | —          | [ ]    |
+| 1.5 | Recurring Tasks           | 1     | —          | [ ]    |
+| 2.1 | NLP Task Creation         | 2     | —          | [ ]    |
+| 2.2 | AI Task Breakdown         | 2     | 1.2        | [ ]    |
+| 2.3 | Auto-Tagging              | 2     | —          | [ ]    |
+| 3.1 | Daily Briefing            | 3     | 1.4        | [ ]    |
+| 3.2 | Weekly Review Agent       | 3     | 1.4        | [ ]    |
+| 4.1 | WebSocket + Notifications | 4     | —          | [ ]    |
+| 4.2 | Real-Time Todo Sync       | 4     | 4.1        | [ ]    |
+| 4.3 | Collaboration             | 4     | 4.1, 4.2   | [ ]    |

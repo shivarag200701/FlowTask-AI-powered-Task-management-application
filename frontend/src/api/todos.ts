@@ -41,6 +41,15 @@ export async function updateTodo(
   }
 }
 
+export async function serachTodo({ search }: { search: string }) {
+  try {
+    const results = (await api.get(`/api/v2/todo/search?q=${search}`)).data;
+    console.log(results);
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function deleteTodo(id: string) {
   try {
     await api.delete(`/api/v2/todo/${id}`);
