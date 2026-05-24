@@ -9,6 +9,7 @@ import { generateSortKey } from "../../../utils/todo-ordering.js";
 import prisma from "../../../db/index.js";
 import constructPatchPayload from "../../../utils/construct-patch-payload.js";
 import { bulkTodoRouter } from "./bulk.js";
+import { searchService } from "../../../services/search/index.js";
 
 const todoRouter = Router();
 
@@ -168,6 +169,67 @@ todoRouter.post("/", requireLogin, async (req, res) => {
     return res.status(500).json({
       msg: "internal Server Error",
     });
+  }
+});
+
+todoRouter.get("/search", requireLogin, async (req, res) => {
+  const userId = req.session.userId;
+  if (!userId) {
+    return res.status(401).json({ msg: "unauthorized" });
+  }
+
+  const query = req.query.q;
+  if (typeof query !== "string" || !query.trim()) {
+    return res.status(400).json({ msg: "Query parameter 'q' is required" });
+  }
+
+  try {
+    const results = await searchService.search(userId, query.trim());
+    return res.status(200).json({ results });
+  } catch (error) {
+    console.error("Search failed", error);
+    return res.status(500).json({ msg: "Search failed" });
+  }
+});
+
+todoRouter.post("/search/reindex", requireLogin, async (req, res) => {
+  const userId = req.session.userId;
+  if (!userId) {
+    return res.status(401).json({ msg: "unauthorized" });
+  }
+
+  try {
+    const todos = await prisma.todo.findMany({
+      where: { userId },
+      include: {
+        tags: {
+          select: { tag: { select: { name: true } } },
+        },
+      },
+    });
+
+    const documents = todos.map((todo) => ({
+      id: todo.id,
+      title: todo.title,
+      description: todo.description,
+      tagNames: todo.tags.map(({ tag }) => tag.name),
+      userId: todo.userId,
+      completed: todo.completed,
+      priority: todo.priority,
+      parentId: todo.parentId,
+      dueDate: todo.dueDate,
+      createdAt: todo.createdAt.toISOString(),
+    }));
+
+    await searchService.bulkUpsert(documents);
+
+    return res.status(200).json({
+      msg: "Reindex started",
+      count: documents.length,
+    });
+  } catch (error) {
+    console.error("Reindex failed", error);
+    return res.status(500).json({ msg: "Reindex failed" });
   }
 });
 
