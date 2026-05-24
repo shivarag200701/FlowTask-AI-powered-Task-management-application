@@ -10,6 +10,7 @@ import randomValue from "../../../utils/random-value.js";
 import prisma from "../../../db/index.js";
 import { Prisma } from "@prisma/client";
 import bulkTagRouter from "./bulk.js";
+import { searchService } from "../../../services/search/index.js";
 
 const tagRouter = Router();
 tagRouter.use("/bulk", bulkTagRouter);
@@ -174,6 +175,40 @@ tagRouter.patch("/:id", requireLogin, async (req, res) => {
         ...updateData,
       },
     });
+
+    // If tag name changed, re-sync affected todos in Meilisearch
+    if (name !== undefined) {
+      prisma.todoTag
+        .findMany({
+          where: { tagId: idParam },
+          select: {
+            todo: {
+              include: { tags: { select: { tag: { select: { name: true } } } } },
+            },
+          },
+        })
+        .then((todoTags) => {
+          const docs = todoTags.map(({ todo }) => ({
+            id: todo.id,
+            title: todo.title,
+            description: todo.description,
+            tagNames: todo.tags.map(({ tag }) => tag.name),
+            userId: todo.userId,
+            completed: todo.completed,
+            priority: todo.priority,
+            parentId: todo.parentId,
+            dueDate: todo.dueDate,
+            createdAt: todo.createdAt.toISOString(),
+          }));
+          if (docs.length > 0) {
+            return searchService.bulkUpsert(docs);
+          }
+        })
+        .catch((err) => {
+          console.error("Meilisearch sync failed (tag rename)", err);
+        });
+    }
+
     return res.status(200).json({
       tag: updatedTag,
     });

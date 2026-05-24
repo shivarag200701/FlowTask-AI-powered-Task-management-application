@@ -3,6 +3,7 @@ import { requireLogin } from "../../../middleware.js";
 import { TodoBulkDeleteSchema, UpdateTodoSchema } from "@shiva200701/todotypes";
 import prisma from "../../../db/index.js";
 import constructPatchPayload from "../../../utils/construct-patch-payload.js";
+import { searchService } from "../../../services/search/index.js";
 
 export const bulkTodoRouter = Router();
 
@@ -33,11 +34,23 @@ bulkTodoRouter.delete("/", requireLogin, async (req, res) => {
   }
 
   try {
+    // Get children before deleting (cascade removes them)
+    const children = await prisma.todo.findMany({
+      where: { parentId: { in: todoIds } },
+      select: { id: true },
+    });
+
     const { count: deletedCount } = await prisma.todo.deleteMany({
       where: {
         userId,
         id: { in: todoIds },
       },
+    });
+
+    // Sync to Meilisearch (fire-and-forget)
+    const allIds = [...todoIds, ...children.map((c) => c.id)];
+    searchService.deleteTodos(allIds).catch((err) => {
+      console.error("Meilisearch sync failed (bulk delete)", err);
     });
 
     return res.status(200).json({ deletedCount });
@@ -125,6 +138,31 @@ bulkTodoRouter.patch("/", requireLogin, async (req, res) => {
 
       return result;
     });
+
+    // Sync to Meilisearch (fire-and-forget)
+    prisma.todo
+      .findMany({
+        where: { userId, id: { in: todoIds } },
+        include: { tags: { select: { tag: { select: { name: true } } } } },
+      })
+      .then((todos) => {
+        const docs = todos.map((todo) => ({
+          id: todo.id,
+          title: todo.title,
+          description: todo.description,
+          tagNames: todo.tags.map(({ tag }) => tag.name),
+          userId: todo.userId,
+          completed: todo.completed,
+          priority: todo.priority,
+          parentId: todo.parentId,
+          dueDate: todo.dueDate,
+          createdAt: todo.createdAt.toISOString(),
+        }));
+        return searchService.bulkUpsert(docs);
+      })
+      .catch((err) => {
+        console.error("Meilisearch sync failed (bulk update)", err);
+      });
 
     return res.status(200).json({
       todos: updatedCount,

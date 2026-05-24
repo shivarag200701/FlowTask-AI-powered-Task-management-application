@@ -160,6 +160,19 @@ todoRouter.post("/", requireLogin, async (req, res) => {
       },
     });
 
+    const tagNames = tags
+      ? await prisma.tag
+          .findMany({
+            where: { id: { in: tags } },
+            select: { name: true },
+          })
+          .then((t) => t.map((t) => t.name))
+      : [];
+
+    searchService.upsertTodo(todo, tagNames).catch((err) => {
+      console.error("Meilisearch sync failed (create)", err);
+    });
+
     return res.status(201).json({
       msg: "todo added sucessfully",
       todo,
@@ -297,6 +310,49 @@ todoRouter.patch("/:id", requireLogin, async (req, res) => {
       });
     }
 
+    // Sync to Meilisearch (fire-and-forget)
+    const todoWithTags = await prisma.todo.findUnique({
+      where: { id: idParam },
+      include: { tags: { select: { tag: { select: { name: true } } } } },
+    });
+    if (todoWithTags) {
+      const tagNames = todoWithTags.tags.map(({ tag }) => tag.name);
+      searchService.upsertTodo(todoWithTags, tagNames).catch((err) => {
+        console.error("Meilisearch sync failed (update)", err);
+      });
+
+      // If completing parent, also sync children
+      if (updateData.completed) {
+        prisma.todo
+          .findMany({
+            where: { parentId: updatedTodo.id, userId },
+            include: { tags: { select: { tag: { select: { name: true } } } } },
+          })
+          .then((children) => {
+            const docs = children.map((child) => ({
+              id: child.id,
+              title: child.title,
+              description: child.description,
+              tagNames: child.tags.map(({ tag }) => tag.name),
+              userId: child.userId,
+              completed: child.completed,
+              priority: child.priority,
+              parentId: child.parentId,
+              dueDate: child.dueDate,
+              createdAt: child.createdAt.toISOString(),
+            }));
+            if (docs.length > 0) {
+              searchService.bulkUpsert(docs).catch((err) => {
+                console.error("Meilisearch sync failed (children)", err);
+              });
+            }
+          })
+          .catch((err) => {
+            console.error("Meilisearch child sync failed", err);
+          });
+      }
+    }
+
     return res.status(200).json({
       todo: updatedTodo,
     });
@@ -327,8 +383,20 @@ todoRouter.delete("/:id", requireLogin, async (req, res) => {
   }
 
   try {
+    // Get children IDs before deleting (cascade will remove them)
+    const children = await prisma.todo.findMany({
+      where: { parentId: idParam },
+      select: { id: true },
+    });
+
     await prisma.todo.delete({
       where: { id: idParam },
+    });
+
+    // Sync to Meilisearch (fire-and-forget)
+    const idsToDelete = [idParam, ...children.map((c) => c.id)];
+    searchService.deleteTodos(idsToDelete).catch((err) => {
+      console.error("Meilisearch sync failed (delete)", err);
     });
 
     return res.status(200).json({
