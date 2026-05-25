@@ -47,6 +47,7 @@ export function useSearchTodos(search: string) {
   return useQuery({
     queryKey: todosQueryKeys.search(search),
     queryFn: () => serachTodo({ search }),
+    enabled: search.length > 0,
     staleTime: 60000,
   });
 }

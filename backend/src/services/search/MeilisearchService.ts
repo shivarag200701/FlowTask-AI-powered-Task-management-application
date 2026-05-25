@@ -1,21 +1,9 @@
 import { Meilisearch, type Index } from "meilisearch";
-
-interface TodoDocument {
-  id: string;
-  title: string;
-  description: string | null;
-  tagNames: string[];
-  userId: string;
-  completed: boolean;
-  priority: string | null;
-  parentId: string | null;
-  dueDate: string | null;
-  createdAt: string;
-}
+import type { TodoSearchDocument } from "@shiva200701/todotypes";
 
 class MeilisearchService {
   private client: Meilisearch;
-  private todosIndex: Index<TodoDocument>;
+  private todosIndex: Index<TodoSearchDocument>;
 
   constructor() {
     this.client = new Meilisearch({
@@ -56,7 +44,7 @@ class MeilisearchService {
     },
     tagNames: string[]
   ) {
-    const document: TodoDocument = {
+    const document: TodoSearchDocument = {
       id: todo.id,
       title: todo.title,
       description: todo.description,
@@ -88,7 +76,7 @@ class MeilisearchService {
     return results.hits;
   }
 
-  async bulkUpsert(documents: TodoDocument[]) {
+  async bulkUpsert(documents: TodoSearchDocument[]) {
     await this.todosIndex.addDocuments(documents);
   }
 }

@@ -11,6 +11,7 @@ import {
   GalleryVerticalEnd,
   Map,
   PieChart,
+  Search,
   Settings2,
   SquareTerminal,
   Tag,
@@ -27,9 +28,9 @@ import {
 import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
 import TodayCalendarIcon from "../TodayCalendarIcon";
-import { Input } from "../ui/input";
-import { useDebounce } from "use-debounce";
-import { useSearchTodos } from "@/hooks/use-todos";
+
+import { ModalContext } from "../modals/ModalProvider";
+import { useHotkeys } from "react-hotkeys-hook";
 
 // This is sample data.
 const data = {
@@ -163,12 +164,10 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navigate = useNavigate();
-
-  const [searchValue, setSearchValue] = React.useState("");
-  const [debouncedValue] = useDebounce(searchValue, 500);
-
-  const {} = useSearchTodos(debouncedValue);
-
+  const { setShowSearchModal } = React.useContext(ModalContext);
+  useHotkeys("mod+k", () => {
+    setShowSearchModal(true);
+  });
   return (
     <Sidebar collapsible="offcanvas" {...props} className="p-2 bg-neutral-200">
       <SidebarHeader>
@@ -176,6 +175,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <div className="p-2">
+          <Button
+            Initial="Search"
+            icon={<Search strokeWidth={1.5} />}
+            variant="ghost"
+            className="flex justify-start"
+            onClick={() => {
+              setShowSearchModal(true);
+            }}
+          />
           <Button
             Initial="Tags"
             icon={<Tag strokeWidth={1.5} />}
@@ -202,10 +210,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             onClick={() => {
               navigate("app/upcoming");
             }}
-          />
-          <Input
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
           />
         </div>
       </SidebarContent>

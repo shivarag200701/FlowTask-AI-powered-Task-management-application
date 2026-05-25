@@ -36,5 +36,19 @@ export const TodoBulkDeleteSchema = z.object({
   todoIds: z.string(),
 });
 
+export const TodoSearchDocumentSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  description: z.string().nullable(),
+  tagNames: z.array(z.string()),
+  userId: z.string(),
+  completed: z.boolean(),
+  priority: z.string().nullable(),
+  parentId: z.string().nullable(),
+  dueDate: z.string().nullable(),
+  createdAt: z.string(),
+});
+
 export type CreateTodo = z.infer<typeof CreateTodoSchema>;
 export type UpdateTodo = z.infer<typeof UpdateTodoSchema>;
+export type TodoSearchDocument = z.infer<typeof TodoSearchDocumentSchema>;

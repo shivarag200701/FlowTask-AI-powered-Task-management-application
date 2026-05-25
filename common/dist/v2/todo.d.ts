@@ -41,6 +41,19 @@ export declare const UpdateTodoSchema: z.ZodObject<{
 export declare const TodoBulkDeleteSchema: z.ZodObject<{
     todoIds: z.ZodString;
 }, z.core.$strip>;
+export declare const TodoSearchDocumentSchema: z.ZodObject<{
+    id: z.ZodString;
+    title: z.ZodString;
+    description: z.ZodNullable<z.ZodString>;
+    tagNames: z.ZodArray<z.ZodString>;
+    userId: z.ZodString;
+    completed: z.ZodBoolean;
+    priority: z.ZodNullable<z.ZodString>;
+    parentId: z.ZodNullable<z.ZodString>;
+    dueDate: z.ZodNullable<z.ZodString>;
+    createdAt: z.ZodString;
+}, z.core.$strip>;
 export type CreateTodo = z.infer<typeof CreateTodoSchema>;
 export type UpdateTodo = z.infer<typeof UpdateTodoSchema>;
+export type TodoSearchDocument = z.infer<typeof TodoSearchDocumentSchema>;
 //# sourceMappingURL=todo.d.ts.map

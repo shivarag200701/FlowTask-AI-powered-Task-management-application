@@ -1,7 +1,11 @@
 import { api } from "@/utils/functions/api";
 import type { Todo, TodoWithCompleteAtDateTime } from "@/types";
 import { DateTime } from "luxon";
-import type { CreateTodo, UpdateTodo } from "@shiva200701/todotypes";
+import type {
+  CreateTodo,
+  TodoSearchDocument,
+  UpdateTodo,
+} from "@shiva200701/todotypes";
 
 export async function fetchTodos(
   params?: Record<string, string | number | boolean | string[] | undefined>
@@ -43,8 +47,10 @@ export async function updateTodo(
 
 export async function serachTodo({ search }: { search: string }) {
   try {
-    const results = (await api.get(`/api/v2/todo/search?q=${search}`)).data;
-    console.log(results);
+    const { results }: { results: TodoSearchDocument[] } = (
+      await api.get(`/api/v2/todo/search?q=${search}`)
+    ).data;
+    return results;
   } catch (error) {
     throw error;
   }
