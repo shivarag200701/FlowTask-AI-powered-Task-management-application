@@ -39,10 +39,7 @@ function Todos() {
 
   return (
     <div className={cn("")}>
-      <PageContentHeader
-        title="Todos"
-        controls={<div>This is the control</div>}
-      />
+      <PageContentHeader title="Todos" />
       <PageWidthWrapper className="pt-6 px-3 lg:pt-12 flex flex-col overflow-x-auto ">
         {urlTags && (
           <div className="flex items-center justify-between gap-4 mb-4">
@@ -71,7 +68,11 @@ function Todos() {
         ) : (
           <>
             {filteredTodos?.map((todo) => (
-              <TaskList key={todo.id} todo={todo} />
+              <TaskList
+                key={todo.id}
+                todo={todo}
+                taskCompleted={todo.completed}
+              />
             ))}
           </>
         )}

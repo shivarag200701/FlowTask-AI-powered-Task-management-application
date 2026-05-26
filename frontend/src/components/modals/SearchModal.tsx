@@ -15,7 +15,7 @@ import ScrollContainer from "../ui/scroll-container";
 import { cn } from "@/lib/utils";
 import type { TodoSearchDocument } from "@shiva200701/todotypes";
 import { SpinnerCustom } from "../ui/spinner";
-import { CalendarDays, History, Tag } from "lucide-react";
+import { CalendarDays, History, Tag, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import TodayCalendarIcon from "../TodayCalendarIcon";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -113,21 +113,29 @@ function SearchModal({
                 </Command.Empty>
               ))}
 
-            {searchValue.length === 0 && (
-              <>
-                <RecentSearches
-                  searches={recentSearches}
-                  onSelect={(term) => {
-                    setSearchValue(term);
-                  }}
-                />
-              </>
-            )}
-
-            <Command.Separator
-              className="border-t border-neutral-100 my-1"
-              alwaysRender
-            />
+            {searchValue.length === 0 &&
+              recentSearches &&
+              recentSearches.length > 0 && (
+                <>
+                  <RecentSearches
+                    searches={recentSearches}
+                    onSelect={(term) => {
+                      setSearchValue(term);
+                    }}
+                    onClear={() => setRecentSearches(undefined)}
+                    onRemove={(term) => {
+                      const updated = recentSearches?.filter((s) => s !== term);
+                      setRecentSearches(
+                        updated && updated.length > 0 ? updated : undefined
+                      );
+                    }}
+                  />
+                  <Command.Separator
+                    className="border-t border-neutral-100 my-1"
+                    alwaysRender
+                  />
+                </>
+              )}
 
             <NavigationGroup
               onNavigate={(path) => {
@@ -165,15 +173,32 @@ function TaskOption({ option }: { option: TodoSearchDocument }) {
 function RecentSearches({
   searches,
   onSelect,
+  onClear,
+  onRemove,
 }: {
   searches: string[] | undefined;
   onSelect: (term: string) => void;
+  onClear: () => void;
+  onRemove: (term: string) => void;
 }) {
   if (!searches || searches.length === 0) return null;
 
   return (
     <Command.Group
-      heading="Recent searches"
+      heading={
+        <div className="flex justify-between items-center">
+          <span>Recent Searches</span>
+          <button
+            className="text-xs text-neutral-400 hover:text-neutral-600 cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              onClear();
+            }}
+          >
+            Clear
+          </button>
+        </div>
+      }
       className="text-xs px-2 text-neutral-400"
     >
       <Command.List className="text-neutral-900">
@@ -181,14 +206,23 @@ function RecentSearches({
           <Command.Item
             key={term}
             className={cn(
-              "hover:cursor-pointer py-2 px-1 hover:bg-accent rounded-md text-sm flex gap-3 items-center",
+              "hover:cursor-pointer py-2 px-1 hover:bg-accent rounded-md text-sm flex gap-3 items-center group",
               "data-[selected=true]:bg-accent"
             )}
             value={`recent-${term}`}
             onSelect={() => onSelect(term)}
           >
-            <History className="w-4 h-4 text-neutral-500" />
-            <span>{term}</span>
+            <History className="w-4 h-4 text-neutral-500 flex-none" />
+            <span className="flex-1">{term}</span>
+            <button
+              className="opacity-0 group-hover:opacity-100 group-data-[selected=true]:opacity-100 text-neutral-400 hover:text-neutral-600 cursor-pointer p-0.5"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemove(term);
+              }}
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
           </Command.Item>
         ))}
       </Command.List>

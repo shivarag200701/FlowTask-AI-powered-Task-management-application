@@ -24,7 +24,11 @@ export function useLocalStorage<T>(
 
   const setValue = (value: T) => {
     setItem(value);
-    window.localStorage.setItem(key, JSON.stringify(value));
+    if (value === undefined || value === null) {
+      window.localStorage.removeItem(key);
+    } else {
+      window.localStorage.setItem(key, JSON.stringify(value));
+    }
   };
 
   return [item, setValue];
