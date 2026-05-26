@@ -13,7 +13,10 @@ import { useSearchTodos } from "@/hooks/use-todos";
 import AnimatedSizeContainer from "../ui/animated-size-container";
 import ScrollContainer from "../ui/scroll-container";
 import { cn } from "@/lib/utils";
-import type { TodoSearchDocument } from "@shiva200701/todotypes";
+import type {
+  TodoSearchDocument,
+  TagSearchDocument,
+} from "@shiva200701/todotypes";
 import { SpinnerCustom } from "../ui/spinner";
 import { CalendarDays, History, Tag, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -37,8 +40,11 @@ function SearchModal({
   const [debouncedValue] = useDebounce(searchValue, 300);
   const navigate = useNavigate();
 
-  const { data: searchResults, isLoading: loading } =
+  const { data: searchData, isLoading: loading } =
     useSearchTodos(debouncedValue);
+
+  const searchResults = searchData?.todos;
+  const tagResults = searchData?.tags;
 
   const [recentSearches, setRecentSearches] = useLocalStorage<
     string[] | undefined
@@ -90,9 +96,8 @@ function SearchModal({
                 </div>
               </Command.Loading>
             ) : (
-              searchResults &&
-              searchResults.length > 0 && (
-                <>
+              <>
+                {searchResults && searchResults.length > 0 && (
                   <Command.Group
                     heading="Tasks"
                     className="text-xs px-2 text-neutral-400"
@@ -103,15 +108,34 @@ function SearchModal({
                       ))}
                     </Command.List>
                   </Command.Group>
-                </>
-              )
+                )}
+                {tagResults && tagResults.length > 0 && (
+                  <Command.Group
+                    heading="Tags"
+                    className="text-xs px-2 text-neutral-400"
+                  >
+                    <Command.List className="text-neutral-900">
+                      {tagResults.map((tag) => (
+                        <TagOption
+                          key={tag.id}
+                          tag={tag}
+                          onSelect={() => {
+                            navigate(`app/todos?tagIds=${tag.id}`);
+                            setShow(false);
+                          }}
+                        />
+                      ))}
+                    </Command.List>
+                  </Command.Group>
+                )}
+                {(!searchResults || searchResults.length === 0) &&
+                  (!tagResults || tagResults.length === 0) && (
+                    <Command.Empty className="flex justify-center items-center h-12 text-neutral-500 text-sm">
+                      No matches
+                    </Command.Empty>
+                  )}
+              </>
             )}
-            {!searchResults ||
-              (searchResults.length === 0 && (
-                <Command.Empty className="flex justify-center items-center h-12 text-neutral-500 text-sm">
-                  No matches
-                </Command.Empty>
-              ))}
 
             {searchValue.length === 0 &&
               recentSearches &&
@@ -147,6 +171,28 @@ function SearchModal({
         </Command>
       </AnimatedSizeContainer>
     </Modal>
+  );
+}
+
+function TagOption({
+  tag,
+  onSelect,
+}: {
+  tag: TagSearchDocument;
+  onSelect: () => void;
+}) {
+  return (
+    <Command.Item
+      className={cn(
+        "hover:cursor-pointer px-1 py-2 hover:bg-accent rounded-md text-sm flex gap-3 items-center",
+        "data-[selected=true]:bg-accent"
+      )}
+      value={`tag-${tag.id}`}
+      onSelect={onSelect}
+    >
+      <Tag className="w-4 h-4 text-neutral-500" />
+      <span>{tag.name}</span>
+    </Command.Item>
   );
 }
 

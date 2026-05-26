@@ -160,16 +160,7 @@ todoRouter.post("/", requireLogin, async (req, res) => {
       },
     });
 
-    const tagNames = tags
-      ? await prisma.tag
-          .findMany({
-            where: { id: { in: tags } },
-            select: { name: true },
-          })
-          .then((t) => t.map((t) => t.name))
-      : [];
-
-    searchService.upsertTodo(todo, tagNames).catch((err) => {
+    searchService.upsertTodo(todo).catch((err) => {
       console.error("Meilisearch sync failed (create)", err);
     });
 
@@ -197,8 +188,8 @@ todoRouter.get("/search", requireLogin, async (req, res) => {
   }
 
   try {
-    const results = await searchService.search(userId, query.trim());
-    return res.status(200).json({ results });
+    const { todos, tags } = await searchService.search(userId, query.trim());
+    return res.status(200).json({ todos, tags });
   } catch (error) {
     console.error("Search failed", error);
     return res.status(500).json({ msg: "Search failed" });
@@ -212,20 +203,18 @@ todoRouter.post("/search/reindex", requireLogin, async (req, res) => {
   }
 
   try {
-    const todos = await prisma.todo.findMany({
-      where: { userId },
-      include: {
-        tags: {
-          select: { tag: { select: { name: true } } },
-        },
-      },
-    });
+    const [todos, tags] = await Promise.all([
+      prisma.todo.findMany({ where: { userId } }),
+      prisma.tag.findMany({
+        where: { userId },
+        select: { id: true, name: true, color: true },
+      }),
+    ]);
 
-    const documents = todos.map((todo) => ({
+    const todoDocuments = todos.map((todo) => ({
       id: todo.id,
       title: todo.title,
       description: todo.description,
-      tagNames: todo.tags.map(({ tag }) => tag.name),
       userId: todo.userId,
       completed: todo.completed,
       priority: todo.priority,
@@ -234,11 +223,22 @@ todoRouter.post("/search/reindex", requireLogin, async (req, res) => {
       createdAt: todo.createdAt.toISOString(),
     }));
 
-    await searchService.bulkUpsert(documents);
+    const tagDocuments = tags.map((tag) => ({
+      id: tag.id,
+      name: tag.name,
+      color: tag.color,
+      userId,
+    }));
+
+    await Promise.all([
+      searchService.bulkUpsert(todoDocuments),
+      searchService.bulkUpsertTags(tagDocuments),
+    ]);
 
     return res.status(200).json({
       msg: "Reindex started",
-      count: documents.length,
+      todosCount: todoDocuments.length,
+      tagsCount: tagDocuments.length,
     });
   } catch (error) {
     console.error("Reindex failed", error);
@@ -311,46 +311,37 @@ todoRouter.patch("/:id", requireLogin, async (req, res) => {
     }
 
     // Sync to Meilisearch (fire-and-forget)
-    const todoWithTags = await prisma.todo.findUnique({
-      where: { id: idParam },
-      include: { tags: { select: { tag: { select: { name: true } } } } },
+    searchService.upsertTodo(updatedTodo).catch((err) => {
+      console.error("Meilisearch sync failed (update)", err);
     });
-    if (todoWithTags) {
-      const tagNames = todoWithTags.tags.map(({ tag }) => tag.name);
-      searchService.upsertTodo(todoWithTags, tagNames).catch((err) => {
-        console.error("Meilisearch sync failed (update)", err);
-      });
 
-      // If completing parent, also sync children
-      if (updateData.completed) {
-        prisma.todo
-          .findMany({
-            where: { parentId: updatedTodo.id, userId },
-            include: { tags: { select: { tag: { select: { name: true } } } } },
-          })
-          .then((children) => {
-            const docs = children.map((child) => ({
-              id: child.id,
-              title: child.title,
-              description: child.description,
-              tagNames: child.tags.map(({ tag }) => tag.name),
-              userId: child.userId,
-              completed: child.completed,
-              priority: child.priority,
-              parentId: child.parentId,
-              dueDate: child.dueDate,
-              createdAt: child.createdAt.toISOString(),
-            }));
-            if (docs.length > 0) {
-              searchService.bulkUpsert(docs).catch((err) => {
-                console.error("Meilisearch sync failed (children)", err);
-              });
-            }
-          })
-          .catch((err) => {
-            console.error("Meilisearch child sync failed", err);
-          });
-      }
+    // If completing parent, also sync children
+    if (updateData.completed) {
+      prisma.todo
+        .findMany({
+          where: { parentId: updatedTodo.id, userId },
+        })
+        .then((children) => {
+          const docs = children.map((child) => ({
+            id: child.id,
+            title: child.title,
+            description: child.description,
+            userId: child.userId,
+            completed: child.completed,
+            priority: child.priority,
+            parentId: child.parentId,
+            dueDate: child.dueDate,
+            createdAt: child.createdAt.toISOString(),
+          }));
+          if (docs.length > 0) {
+            searchService.bulkUpsert(docs).catch((err) => {
+              console.error("Meilisearch sync failed (children)", err);
+            });
+          }
+        })
+        .catch((err) => {
+          console.error("Meilisearch child sync failed", err);
+        });
     }
 
     return res.status(200).json({

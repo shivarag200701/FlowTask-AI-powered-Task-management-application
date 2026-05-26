@@ -13,14 +13,14 @@ type Tab = (typeof tabs)[number];
 export default function Search() {
   const { "*": searchQuery } = useParams();
   const [selectedTab, setSelectedTab] = useState<Tab>("Tasks");
-  const { data: searchResults } = useSearchTodos(searchQuery ?? "");
+  const { data: searchData } = useSearchTodos(searchQuery ?? "");
   const { data: allTodos } = useTodos();
 
   const matchedTodos = useMemo(() => {
-    if (!searchResults || !allTodos) return [];
-    const resultIds = new Set(searchResults.map((r) => r.id));
+    if (!searchData?.todos || !allTodos) return [];
+    const resultIds = new Set(searchData.todos.map((r) => r.id));
     return allTodos.filter((todo) => resultIds.has(todo.id));
-  }, [searchResults, allTodos]);
+  }, [searchData, allTodos]);
 
   return (
     <>

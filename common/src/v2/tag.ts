@@ -65,3 +65,12 @@ export const GetTagsQuerySchema = z.object({
 export const TagBulkDeleteSchema = z.object({
   tagIds: z.string(),
 });
+
+export const TagSearchDocumentSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  color: z.string(),
+  userId: z.string(),
+});
+
+export type TagSearchDocument = z.infer<typeof TagSearchDocumentSchema>;

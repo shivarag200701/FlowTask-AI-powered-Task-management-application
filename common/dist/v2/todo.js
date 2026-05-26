@@ -35,7 +35,6 @@ export const TodoSearchDocumentSchema = z.object({
     id: z.string(),
     title: z.string(),
     description: z.string().nullable(),
-    tagNames: z.array(z.string()),
     userId: z.string(),
     completed: z.boolean(),
     priority: z.string().nullable(),

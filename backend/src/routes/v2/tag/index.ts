@@ -114,6 +114,13 @@ tagRouter.post("/", requireLogin, async (req, res) => {
       },
     });
 
+    // Sync to Meilisearch (fire-and-forget)
+    searchService
+      .upsertTag({ id: tag.id, name: tag.name, color: tag.color, userId })
+      .catch((err) => {
+        console.error("Meilisearch sync failed (tag create)", err);
+      });
+
     return res.status(201).json({
       msg: "todo added sucessfully",
       tag,
@@ -176,38 +183,17 @@ tagRouter.patch("/:id", requireLogin, async (req, res) => {
       },
     });
 
-    // If tag name changed, re-sync affected todos in Meilisearch
-    if (name !== undefined) {
-      prisma.todoTag
-        .findMany({
-          where: { tagId: idParam },
-          select: {
-            todo: {
-              include: { tags: { select: { tag: { select: { name: true } } } } },
-            },
-          },
-        })
-        .then((todoTags) => {
-          const docs = todoTags.map(({ todo }) => ({
-            id: todo.id,
-            title: todo.title,
-            description: todo.description,
-            tagNames: todo.tags.map(({ tag }) => tag.name),
-            userId: todo.userId,
-            completed: todo.completed,
-            priority: todo.priority,
-            parentId: todo.parentId,
-            dueDate: todo.dueDate,
-            createdAt: todo.createdAt.toISOString(),
-          }));
-          if (docs.length > 0) {
-            return searchService.bulkUpsert(docs);
-          }
-        })
-        .catch((err) => {
-          console.error("Meilisearch sync failed (tag rename)", err);
-        });
-    }
+    // Sync tag to Meilisearch (fire-and-forget)
+    searchService
+      .upsertTag({
+        id: updatedTag.id,
+        name: updatedTag.name,
+        color: updatedTag.color,
+        userId,
+      })
+      .catch((err) => {
+        console.error("Meilisearch sync failed (tag update)", err);
+      });
 
     return res.status(200).json({
       tag: updatedTag,

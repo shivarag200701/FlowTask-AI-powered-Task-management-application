@@ -143,14 +143,12 @@ bulkTodoRouter.patch("/", requireLogin, async (req, res) => {
     prisma.todo
       .findMany({
         where: { userId, id: { in: todoIds } },
-        include: { tags: { select: { tag: { select: { name: true } } } } },
       })
       .then((todos) => {
         const docs = todos.map((todo) => ({
           id: todo.id,
           title: todo.title,
           description: todo.description,
-          tagNames: todo.tags.map(({ tag }) => tag.name),
           userId: todo.userId,
           completed: todo.completed,
           priority: todo.priority,

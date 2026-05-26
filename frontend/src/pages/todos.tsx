@@ -35,8 +35,6 @@ function Todos() {
     query: { tagIds: searchParams.get("tagIds") ?? "" },
   });
 
-  console.log("filtered Todos", filteredTodos);
-
   return (
     <div className={cn("")}>
       <PageContentHeader title="Todos" />

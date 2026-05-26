@@ -4,6 +4,7 @@ import { DateTime } from "luxon";
 import type {
   CreateTodo,
   TodoSearchDocument,
+  TagSearchDocument,
   UpdateTodo,
 } from "@shiva200701/todotypes";
 
@@ -47,10 +48,13 @@ export async function updateTodo(
 
 export async function serachTodo({ search }: { search: string }) {
   try {
-    const { results }: { results: TodoSearchDocument[] } = (
+    const {
+      todos,
+      tags,
+    }: { todos: TodoSearchDocument[]; tags: TagSearchDocument[] } = (
       await api.get(`/api/v2/todo/search?q=${search}`)
     ).data;
-    return results;
+    return { todos, tags };
   } catch (error) {
     throw error;
   }

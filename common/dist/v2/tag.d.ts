@@ -63,4 +63,11 @@ export declare const GetTagsQuerySchema: z.ZodObject<{
 export declare const TagBulkDeleteSchema: z.ZodObject<{
     tagIds: z.ZodString;
 }, z.core.$strip>;
+export declare const TagSearchDocumentSchema: z.ZodObject<{
+    id: z.ZodString;
+    name: z.ZodString;
+    color: z.ZodString;
+    userId: z.ZodString;
+}, z.core.$strip>;
+export type TagSearchDocument = z.infer<typeof TagSearchDocumentSchema>;
 //# sourceMappingURL=tag.d.ts.map

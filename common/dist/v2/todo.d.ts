@@ -45,7 +45,6 @@ export declare const TodoSearchDocumentSchema: z.ZodObject<{
     id: z.ZodString;
     title: z.ZodString;
     description: z.ZodNullable<z.ZodString>;
-    tagNames: z.ZodArray<z.ZodString>;
     userId: z.ZodString;
     completed: z.ZodBoolean;
     priority: z.ZodNullable<z.ZodString>;

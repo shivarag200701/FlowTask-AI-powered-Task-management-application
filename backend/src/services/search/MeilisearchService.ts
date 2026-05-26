@@ -1,9 +1,13 @@
 import { Meilisearch, type Index } from "meilisearch";
-import type { TodoSearchDocument } from "@shiva200701/todotypes";
+import type {
+  TodoSearchDocument,
+  TagSearchDocument,
+} from "@shiva200701/todotypes";
 
 class MeilisearchService {
   private client: Meilisearch;
   private todosIndex: Index<TodoSearchDocument>;
+  private tagsIndex: Index<TagSearchDocument>;
 
   constructor() {
     this.client = new Meilisearch({
@@ -12,43 +16,50 @@ class MeilisearchService {
     });
 
     this.todosIndex = this.client.index("todos");
-    this.configureIndex();
+    this.tagsIndex = this.client.index("tags");
+    this.configureIndexes();
   }
 
-  private async configureIndex() {
+  private async configureIndexes() {
     try {
       await this.client.createIndex("todos", { primaryKey: "id" });
     } catch {
       // Index already exists
     }
-    this.todosIndex.updateSettings;
+
+    try {
+      await this.client.createIndex("tags", { primaryKey: "id" });
+    } catch {
+      // Index already exists
+    }
 
     await this.todosIndex.updateSettings({
-      searchableAttributes: ["title", "description", "tagNames"],
+      searchableAttributes: ["title", "description"],
       filterableAttributes: ["userId", "completed", "priority", "parentId"],
       sortableAttributes: ["createdAt", "dueDate"],
     });
+
+    await this.tagsIndex.updateSettings({
+      searchableAttributes: ["name"],
+      filterableAttributes: ["userId"],
+    });
   }
 
-  async upsertTodo(
-    todo: {
-      id: string;
-      title: string;
-      description: string | null;
-      userId: string;
-      completed: boolean;
-      priority: string | null;
-      parentId: string | null;
-      dueDate: string | null;
-      createdAt: Date;
-    },
-    tagNames: string[]
-  ) {
+  async upsertTodo(todo: {
+    id: string;
+    title: string;
+    description: string | null;
+    userId: string;
+    completed: boolean;
+    priority: string | null;
+    parentId: string | null;
+    dueDate: string | null;
+    createdAt: Date;
+  }) {
     const document: TodoSearchDocument = {
       id: todo.id,
       title: todo.title,
       description: todo.description,
-      tagNames,
       userId: todo.userId,
       completed: todo.completed,
       priority: todo.priority,
@@ -69,15 +80,42 @@ class MeilisearchService {
   }
 
   async search(userId: string, query: string) {
-    const results = await this.todosIndex.search(query, {
-      filter: `userId = "${userId}"`,
-      limit: 20,
-    });
-    return results.hits;
+    const [todoResults, tagResults] = await Promise.all([
+      this.todosIndex.search(query, {
+        filter: `userId = "${userId}"`,
+        limit: 20,
+      }),
+      this.tagsIndex.search(query, {
+        filter: `userId = "${userId}"`,
+        limit: 10,
+      }),
+    ]);
+
+    return {
+      todos: todoResults.hits,
+      tags: tagResults.hits,
+    };
   }
 
   async bulkUpsert(documents: TodoSearchDocument[]) {
     await this.todosIndex.addDocuments(documents);
+  }
+
+  // Tag methods
+  async upsertTag(tag: TagSearchDocument) {
+    await this.tagsIndex.addDocuments([tag]);
+  }
+
+  async deleteTag(tagId: string) {
+    await this.tagsIndex.deleteDocument(tagId);
+  }
+
+  async deleteTags(tagIds: string[]) {
+    await this.tagsIndex.deleteDocuments(tagIds);
+  }
+
+  async bulkUpsertTags(documents: TagSearchDocument[]) {
+    await this.tagsIndex.addDocuments(documents);
   }
 }
 

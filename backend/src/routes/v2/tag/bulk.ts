@@ -2,6 +2,7 @@ import { Router } from "express";
 import { requireLogin } from "../../../middleware.js";
 import { TagBulkDeleteSchema } from "@shiva200701/todotypes";
 import prisma from "../../../db/index.js";
+import { searchService } from "../../../services/search/index.js";
 
 const bulkTagRouter = Router();
 
@@ -39,6 +40,11 @@ bulkTagRouter.delete("/", requireLogin, async (req, res) => {
         userId,
         id: { in: tagIds },
       },
+    });
+
+    // Sync to Meilisearch (fire-and-forget)
+    searchService.deleteTags(tagIds).catch((err) => {
+      console.error("Meilisearch sync failed (bulk tag delete)", err);
     });
 
     return res.status(200).json({ deletedCount });
