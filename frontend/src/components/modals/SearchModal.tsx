@@ -15,6 +15,16 @@ import ScrollContainer from "../ui/scroll-container";
 import { cn } from "@/lib/utils";
 import type { TodoSearchDocument } from "@shiva200701/todotypes";
 import { SpinnerCustom } from "../ui/spinner";
+import { CalendarDays, History, Tag } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import TodayCalendarIcon from "../TodayCalendarIcon";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+
+const navigationItems = [
+  { label: "Go to Today", icon: TodayCalendarIcon, path: "app/today" },
+  { label: "Go to Upcoming", icon: CalendarDays, path: "app/upcoming" },
+  { label: "Go to Tags", icon: Tag, path: "app/tags" },
+];
 
 function SearchModal({
   show,
@@ -25,26 +35,54 @@ function SearchModal({
 }) {
   const [searchValue, setSearchValue] = useState("");
   const [debouncedValue] = useDebounce(searchValue, 300);
+  const navigate = useNavigate();
 
   const { data: searchResults, isLoading: loading } =
     useSearchTodos(debouncedValue);
 
-  console.log(searchResults);
+  const [recentSearches, setRecentSearches] = useLocalStorage<
+    string[] | undefined
+  >("recentSearches", undefined);
+
+  function handleClick() {
+    const updated = [
+      searchValue,
+      ...(recentSearches || []).filter((s) => s !== searchValue),
+    ].slice(0, 5);
+    setRecentSearches(updated);
+    navigate(`app/search/${searchValue}`);
+    setShow(false);
+  }
 
   return (
-    <Modal showModal={show} setShowModal={setShow}>
-      <AnimatedSizeContainer height>
+    <Modal
+      showModal={show}
+      setShowModal={setShow}
+      className="scrollbar-hidden max-w-xl"
+    >
+      <AnimatedSizeContainer height className="overflow-hidden">
         <Command shouldFilter={false}>
           <div className="relative flex items-center">
             <Command.Input
-              className=" pl-4 py-3 focus:outline-none text-sm"
+              className=" pl-4 py-3 focus:outline-none text-sm w-full"
               placeholder="search todos"
               value={searchValue}
               onValueChange={setSearchValue}
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  if (searchValue.length > 0) handleClick();
+                }
+              }}
             />
-            <Kbd className="absolute right-2 w-fit">⌘K</Kbd>
+            <Kbd className="absolute right-4 w-fit">⌘K</Kbd>
           </div>
-          <ScrollContainer className="max-h-[300px]">
+          <Command.Separator
+            className="border-t border-neutral-100"
+            alwaysRender
+          />
+          <ScrollContainer className="max-h-[300px] py-2">
             {loading ? (
               <Command.Loading>
                 <div className="h-12 flex items-center justify-center">
@@ -54,13 +92,49 @@ function SearchModal({
             ) : (
               searchResults &&
               searchResults.length > 0 && (
-                <Command.List className="p-1">
-                  {searchResults.map((result) => (
-                    <Option option={result} key={result.id} />
-                  ))}
-                </Command.List>
+                <>
+                  <Command.Group
+                    heading="Tasks"
+                    className="text-xs px-2 text-neutral-400"
+                  >
+                    <Command.List className=" text-neutral-900">
+                      {searchResults.map((result) => (
+                        <TaskOption option={result} key={result.id} />
+                      ))}
+                    </Command.List>
+                  </Command.Group>
+                </>
               )
             )}
+            {!searchResults ||
+              (searchResults.length === 0 && (
+                <Command.Empty className="flex justify-center items-center h-12 text-neutral-500 text-sm">
+                  No matches
+                </Command.Empty>
+              ))}
+
+            {searchValue.length === 0 && (
+              <>
+                <RecentSearches
+                  searches={recentSearches}
+                  onSelect={(term) => {
+                    setSearchValue(term);
+                  }}
+                />
+              </>
+            )}
+
+            <Command.Separator
+              className="border-t border-neutral-100 my-1"
+              alwaysRender
+            />
+
+            <NavigationGroup
+              onNavigate={(path) => {
+                navigate(path);
+                setShow(false);
+              }}
+            />
           </ScrollContainer>
         </Command>
       </AnimatedSizeContainer>
@@ -68,11 +142,11 @@ function SearchModal({
   );
 }
 
-function Option({ option }: { option: TodoSearchDocument }) {
+function TaskOption({ option }: { option: TodoSearchDocument }) {
   return (
     <Command.Item
       className={cn(
-        "hover:cursor-pointer px-3 py-2 hover:bg-accent rounded-md text-sm flex gap-4 items-center justify-between",
+        "hover:cursor-pointer px-1 py-2 hover:bg-accent rounded-md text-sm flex gap-4 items-center justify-between",
         "data-[selected=true]:bg-accent "
       )}
       value={option.id}
@@ -80,10 +154,75 @@ function Option({ option }: { option: TodoSearchDocument }) {
     >
       <div className="flex gap-4 items-center">
         <div className="flex gap-4 items-center justify-between">
+          <div className="h-4 w-4 rounded-full border" />
           <span>{option.title}</span>
         </div>
       </div>
     </Command.Item>
+  );
+}
+
+function RecentSearches({
+  searches,
+  onSelect,
+}: {
+  searches: string[] | undefined;
+  onSelect: (term: string) => void;
+}) {
+  if (!searches || searches.length === 0) return null;
+
+  return (
+    <Command.Group
+      heading="Recent searches"
+      className="text-xs px-2 text-neutral-400"
+    >
+      <Command.List className="text-neutral-900">
+        {searches.map((term) => (
+          <Command.Item
+            key={term}
+            className={cn(
+              "hover:cursor-pointer py-2 px-1 hover:bg-accent rounded-md text-sm flex gap-3 items-center",
+              "data-[selected=true]:bg-accent"
+            )}
+            value={`recent-${term}`}
+            onSelect={() => onSelect(term)}
+          >
+            <History className="w-4 h-4 text-neutral-500" />
+            <span>{term}</span>
+          </Command.Item>
+        ))}
+      </Command.List>
+    </Command.Group>
+  );
+}
+
+function NavigationGroup({
+  onNavigate,
+}: {
+  onNavigate: (path: string) => void;
+}) {
+  return (
+    <Command.Group
+      heading="Navigation"
+      className="text-xs px-2 text-neutral-400"
+    >
+      <Command.List className="text-neutral-900">
+        {navigationItems.map((item) => (
+          <Command.Item
+            key={item.path}
+            className={cn(
+              "hover:cursor-pointer px-1 py-2 hover:bg-accent rounded-md text-sm flex gap-3 items-center",
+              "data-[selected=true]:bg-accent"
+            )}
+            value={item.label}
+            onSelect={() => onNavigate(item.path)}
+          >
+            <item.icon className="w-4 h-4 text-neutral-500" />
+            <span>{item.label}</span>
+          </Command.Item>
+        ))}
+      </Command.List>
+    </Command.Group>
   );
 }
 

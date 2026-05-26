@@ -5,13 +5,14 @@ type EmptyStateProps = {
   title?: string;
   description?: string;
   addButton?: ReactNode;
+  icon?: ReactNode;
 };
 
-function EmptyState({ title, description, addButton }: EmptyStateProps) {
+function EmptyState({ title, description, addButton, icon }: EmptyStateProps) {
   return (
     <div className=" w-full py-10 px-4 gap-y-6 sm:h-[500px] border border-border rounded-md flex flex-col items-center  justify-center overflow-hidden">
       <div className="h-[144px] overflow-hidden">
-        <AnimatedScrollContainer />
+        <AnimatedScrollContainer icon={icon} />
       </div>
       <div className="text-center">
         <div className="text-base font-medium text-neutral-900">{title}</div>

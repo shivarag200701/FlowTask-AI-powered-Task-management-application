@@ -1,6 +1,15 @@
+import type { ReactNode } from "react";
 import TagBadge from "../TagBadge";
 
-function AnimatedScrollContainer() {
+const defaultIcon = (
+  <TagBadge
+    color="gray"
+    withIcon
+    className="bg-accent size-7 items-center justify-center"
+  />
+);
+
+function AnimatedScrollContainer({ icon = defaultIcon }: { icon?: ReactNode }) {
   return (
     <div className="flex flex-col gap-3 animate-scroll  ">
       {Array.from({ length: 6 }, (_, index) => (
@@ -8,11 +17,7 @@ function AnimatedScrollContainer() {
           key={index}
           className="h-15.5 w-60 border border-border rounded-lg shadow-xs flex-none flex items-center justify-start p-4 gap-4"
         >
-          <TagBadge
-            color="gray"
-            withIcon
-            className="bg-accent size-7 items-center justify-center"
-          />
+          {icon}
           <div className="h-3 w-[50%] bg-neutral-200 rounded-xs" />
         </div>
       ))}

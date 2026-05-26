@@ -23,6 +23,7 @@ import Tags from "./pages/Tags";
 import SuccessIcon from "./components/icons/success-icon";
 import Todos from "./pages/todos";
 import { TaskSelectionProvider } from "./context/TaskSelectionContext";
+import Search from "./pages/Search";
 
 const queryClient = new QueryClient();
 
@@ -112,6 +113,7 @@ function App() {
                         />
                         <Route path="/app/tags" element={<Tags />} />
                         <Route path="/app/todos" element={<Todos />} />
+                        <Route path="/app/search/*" element={<Search />} />
                       </Route>
                     </Route>
                   </Routes>
