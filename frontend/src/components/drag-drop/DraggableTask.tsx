@@ -4,12 +4,12 @@ import { useSortable } from "@dnd-kit/react/sortable";
 import { AlarmClock, Check, MoreHorizontal, Workflow } from "lucide-react";
 import { useUpdateTodo } from "@/hooks/use-todos";
 import { Popover } from "@/components/ui/popover";
-import { useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import MoreOptionsDropDown from "@/components/popovers/MoreTodoOptionsDropDown";
 import { useDeleteTodoConfirmModal } from "@/hooks/use-delete-todo-confirm-modal";
 import TimeDisplayer from "@/components/TimeDisplayer";
 import completed from "@/assets/completed.mp3";
-import { useTodoDetailModal } from "@/components/modals/TodoDetailModal";
+import { ModalContext } from "@/components/modals/ModalProvider";
 import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
@@ -33,7 +33,7 @@ function DraggableTask({
   const { mutate: updateTodo } = useUpdateTodo();
   const { selectedTaskIds } = useTaskSelectionContext();
 
-  const { setShowTodoDetailModal, TodoDetailModal } = useTodoDetailModal(todo);
+  const { openTodoDetailModal } = useContext(ModalContext);
 
   const {
     setShowConfirmModal: setShowDeleteConfirmModal,
@@ -87,7 +87,7 @@ function DraggableTask({
             onSelect?.(id);
             return;
           }
-          setShowTodoDetailModal(true);
+          openTodoDetailModal(todo);
         }}
       >
         <Popover
@@ -101,7 +101,7 @@ function DraggableTask({
               }}
               onEdit={() => {
                 setIsMoreOptionsOpen(false);
-                setShowTodoDetailModal(true);
+                openTodoDetailModal(todo);
               }}
             />
           }
@@ -146,7 +146,6 @@ function DraggableTask({
         </div>
         {DeleteConfirmModal}
       </div>
-      <TodoDetailModal />
     </>
   );
 }

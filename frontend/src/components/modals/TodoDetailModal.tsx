@@ -266,7 +266,7 @@ function TodoDetailForm({
   );
 }
 
-function TodoDetailModal({
+export function TodoDetailModal({
   show,
   setShow,
   todo,

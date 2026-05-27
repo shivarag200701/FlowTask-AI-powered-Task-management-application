@@ -9,7 +9,7 @@ import { Modal } from "../ui/modal";
 import { Command } from "cmdk";
 import { Kbd } from "../ui/kbd";
 import { useDebounce } from "use-debounce";
-import { useSearchTodos } from "@/hooks/use-todos";
+import { useSearchTodos, useTodos } from "@/hooks/use-todos";
 import AnimatedSizeContainer from "../ui/animated-size-container";
 import ScrollContainer from "../ui/scroll-container";
 import { cn } from "@/lib/utils";
@@ -19,9 +19,10 @@ import type {
 } from "@shiva200701/todotypes";
 import { SpinnerCustom } from "../ui/spinner";
 import { CalendarDays, History, Tag, X } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import TodayCalendarIcon from "../TodayCalendarIcon";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { createTodoSlug } from "@/utils/functions/slug";
 
 const navigationItems = [
   { label: "Go to Today", icon: TodayCalendarIcon, path: "app/today" },
@@ -39,6 +40,8 @@ function SearchModal({
   const [searchValue, setSearchValue] = useState("");
   const [debouncedValue] = useDebounce(searchValue, 300);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { data: todos } = useTodos();
 
   const { data: searchData, isLoading: loading } =
     useSearchTodos(debouncedValue);
@@ -104,7 +107,22 @@ function SearchModal({
                   >
                     <Command.List className=" text-neutral-900">
                       {searchResults.map((result) => (
-                        <TaskOption option={result} key={result.id} />
+                        <TaskOption
+                          option={result}
+                          key={result.id}
+                          onSelect={() => {
+                            const todo = todos?.find((t) => t.id === result.id);
+                            if (todo) {
+                              const slug = createTodoSlug(todo.title, todo.id);
+                              navigate(`/app/task/${slug}`, {
+                                state: {
+                                  backgroundLocation: location,
+                                },
+                              });
+                              setShow(false);
+                            }
+                          }}
+                        />
                       ))}
                     </Command.List>
                   </Command.Group>
@@ -196,7 +214,13 @@ function TagOption({
   );
 }
 
-function TaskOption({ option }: { option: TodoSearchDocument }) {
+function TaskOption({
+  option,
+  onSelect,
+}: {
+  option: TodoSearchDocument;
+  onSelect: () => void;
+}) {
   return (
     <Command.Item
       className={cn(
@@ -204,7 +228,7 @@ function TaskOption({ option }: { option: TodoSearchDocument }) {
         "data-[selected=true]:bg-accent "
       )}
       value={option.id}
-      // onSelect={}
+      onSelect={onSelect}
     >
       <div className="flex gap-4 items-center">
         <div className="flex gap-4 items-center justify-between">

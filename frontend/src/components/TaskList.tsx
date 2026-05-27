@@ -1,7 +1,7 @@
 import { useUpdateTodo } from "@/hooks/use-todos";
 import type { TodoTag, TodoWithCompleteAtDateTime } from "@/types";
 import { AlarmClock, Check, MoreVertical } from "lucide-react";
-import { useMemo, useState, type ReactNode } from "react";
+import { useContext, useMemo, useState, type ReactNode } from "react";
 import MoreOptionsTodoDropDown from "./popovers/MoreTodoOptionsDropDown";
 import { Popover } from "./ui/popover";
 import { cn } from "@/lib/utils";
@@ -13,7 +13,7 @@ import TagBadge from "./TagBadge";
 import { Tooltip, TooltipContent } from "./ui/tooltip";
 import { TooltipTrigger } from "@radix-ui/react-tooltip";
 import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
-import { useTodoDetailModal } from "./modals/TodoDetailModal";
+import { ModalContext } from "./modals/ModalProvider";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
 function TaskList({
@@ -44,7 +44,7 @@ function TaskList({
     ConfirmModal: DeleteConfirmModal,
   } = useDeleteTodoConfirmModal(todo);
 
-  const { TodoDetailModal, setShowTodoDetailModal } = useTodoDetailModal(todo);
+  const { openTodoDetailModal } = useContext(ModalContext);
 
   const { tags } = todo;
   const { isMobile } = useMediaQuery();
@@ -75,7 +75,7 @@ function TaskList({
         if (onClick) {
           onClick();
         } else {
-          setShowTodoDetailModal(true);
+          openTodoDetailModal(todo);
         }
       }}
     >
@@ -140,7 +140,7 @@ function TaskList({
               //todo need to implement
               onEdit={() => {
                 setIsMoreOptionsOpen(false);
-                setShowTodoDetailModal(true);
+                openTodoDetailModal(todo);
               }}
             />
           }
@@ -159,7 +159,6 @@ function TaskList({
         </Popover>
       </div>
       {DeleteConfirmModal}
-      <TodoDetailModal />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import "@/App.css";
 import SignIn from "@/pages/SignIn";
 import Signup from "@/pages/Signup";
@@ -24,8 +24,61 @@ import SuccessIcon from "./components/icons/success-icon";
 import Todos from "./pages/todos";
 import { TaskSelectionProvider } from "./context/TaskSelectionContext";
 import Search from "./pages/Search";
+import TaskDetail from "./pages/TaskDetail";
 
 const queryClient = new QueryClient();
+
+function AppRoutes() {
+  const location = useLocation();
+  const backgroundLocation = (location.state as { backgroundLocation?: Location })
+    ?.backgroundLocation;
+
+  return (
+    <>
+      <Routes location={backgroundLocation || location}>
+        <Route element={<PublicRoute />}>
+          <Route path="/" element={<Landing />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<Signup />} />
+        </Route>
+        <Route element={<ProtectedRoute />}>
+          <Route path="/onboarding/welcome" element={<Welcome />} />
+          <Route path="/onboarding/user-profile" element={<UserProfile />} />
+          <Route path="/onboarding/completed" element={<Completed />} />
+          <Route element={<AppLayout />}>
+            <Route
+              path="/app/today"
+              element={
+                <TaskSelectionProvider>
+                  <Today />
+                </TaskSelectionProvider>
+              }
+            />
+            <Route
+              path="/app/upcoming"
+              element={
+                <TaskSelectionProvider>
+                  <Upcoming />
+                </TaskSelectionProvider>
+              }
+            />
+            <Route path="/app/tags" element={<Tags />} />
+            <Route path="/app/todos" element={<Todos />} />
+            <Route path="/app/search/*" element={<Search />} />
+            <Route path="/app/task/:slug" element={<TaskDetail />} />
+          </Route>
+        </Route>
+      </Routes>
+
+      {/* Modal overlay on top of the background page when navigated from within the app */}
+      {backgroundLocation && (
+        <Routes>
+          <Route path="/app/task/:slug" element={<TaskDetail />} />
+        </Routes>
+      )}
+    </>
+  );
+}
 
 function App() {
   // Add scroll detection for custom scrollbars
@@ -78,45 +131,7 @@ function App() {
             <BrowserRouter>
               <AuthProvider>
                 <SignupProvider>
-                  <Routes>
-                    <Route element={<PublicRoute />}>
-                      <Route path="/" element={<Landing />} />
-                      <Route path="/signin" element={<SignIn />} />
-                      <Route path="/signup" element={<Signup />} />
-                    </Route>
-                    <Route element={<ProtectedRoute />}>
-                      <Route path="/onboarding/welcome" element={<Welcome />} />
-                      <Route
-                        path="/onboarding/user-profile"
-                        element={<UserProfile />}
-                      />
-                      <Route
-                        path="/onboarding/completed"
-                        element={<Completed />}
-                      />
-                      <Route element={<AppLayout />}>
-                        <Route
-                          path="/app/today"
-                          element={
-                            <TaskSelectionProvider>
-                              <Today />
-                            </TaskSelectionProvider>
-                          }
-                        />
-                        <Route
-                          path="/app/upcoming"
-                          element={
-                            <TaskSelectionProvider>
-                              <Upcoming />
-                            </TaskSelectionProvider>
-                          }
-                        />
-                        <Route path="/app/tags" element={<Tags />} />
-                        <Route path="/app/todos" element={<Todos />} />
-                        <Route path="/app/search/*" element={<Search />} />
-                      </Route>
-                    </Route>
-                  </Routes>
+                  <AppRoutes />
                 </SignupProvider>
               </AuthProvider>
             </BrowserRouter>
