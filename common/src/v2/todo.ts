@@ -23,6 +23,7 @@ export const CreateTodoSchema = z.object({
 
 export const todoQuerySchema = z.object({
   tagIds: z.string().optional(),
+  completed: z.enum(["true", "false"]).optional(),
 });
 
 export const UpdateTodoSchema = CreateTodoSchema.partial().extend({

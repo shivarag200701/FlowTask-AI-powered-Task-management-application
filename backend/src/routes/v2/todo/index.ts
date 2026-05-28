@@ -27,7 +27,7 @@ todoRouter.get("/", requireLogin, async (req, res) => {
     });
   }
 
-  const { tagIds } = data;
+  const { tagIds, completed } = data;
 
   const tagIdArray = tagIds?.split(",");
 
@@ -45,6 +45,9 @@ todoRouter.get("/", requireLogin, async (req, res) => {
               tags: { some: { tagId: { in: tagIdArray } } },
             }
           : {}),
+        ...(completed !== undefined
+          ? { completed: completed === "true" }
+          : {}),
       },
       include: {
         notifications: true,
@@ -61,6 +64,9 @@ todoRouter.get("/", requireLogin, async (req, res) => {
           },
         },
       },
+      ...(completed === "true"
+        ? { orderBy: { completedAt: "desc" as const } }
+        : {}),
     });
 
     const todos = rawTodos.map((todo) => ({

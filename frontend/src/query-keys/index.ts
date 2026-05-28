@@ -11,6 +11,8 @@ export const todosQueryKeys = {
   all: ["todos"] as const,
   filtered: ({ tagIds }: TodosQuery) => ["todos", "filtered", tagIds] as const,
   search: (q: string) => ["todos", "search", q] as const,
+  completed: (params?: Record<string, string>) =>
+    ["todos", "completed", params] as const,
 };
 
 export const onboardingQueryKeys = {

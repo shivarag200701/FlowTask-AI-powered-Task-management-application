@@ -17,6 +17,10 @@ export declare const CreateTodoSchema: z.ZodObject<{
 }, z.core.$strip>;
 export declare const todoQuerySchema: z.ZodObject<{
     tagIds: z.ZodOptional<z.ZodString>;
+    completed: z.ZodOptional<z.ZodEnum<{
+        true: "true";
+        false: "false";
+    }>>;
 }, z.core.$strip>;
 export declare const UpdateTodoSchema: z.ZodObject<{
     title: z.ZodOptional<z.ZodString>;

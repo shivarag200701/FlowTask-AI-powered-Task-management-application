@@ -154,6 +154,7 @@ function TaskList({
               className="w-fit"
               icon={<MoreVertical color="#808080" strokeWidth={2.5} />}
               size="icon-sm"
+              onClick={(e) => e.stopPropagation()}
             />
           )}
         </Popover>

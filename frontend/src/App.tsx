@@ -13,7 +13,8 @@ import { useEffect } from "react";
 
 import Welcome from "@/pages/onboarding/pages/Welcome";
 import UserProfile from "@/pages/onboarding/pages/UserProfile";
-import { Completed } from "@/pages/onboarding/pages/Completed";
+import { Completed as OnboardingCompleted } from "@/pages/onboarding/pages/Completed";
+import CompletedTasks from "@/pages/CompletedTasks";
 import PublicRoute from "@/routes/PublicRoute";
 import AppLayout from "./layouts/AppLayout";
 import Today from "./pages/Today";
@@ -45,7 +46,7 @@ function AppRoutes() {
         <Route element={<ProtectedRoute />}>
           <Route path="/onboarding/welcome" element={<Welcome />} />
           <Route path="/onboarding/user-profile" element={<UserProfile />} />
-          <Route path="/onboarding/completed" element={<Completed />} />
+          <Route path="/onboarding/completed" element={<OnboardingCompleted />} />
           <Route element={<AppLayout />}>
             <Route
               path="/app/today"
@@ -65,6 +66,14 @@ function AppRoutes() {
             />
             <Route path="/app/tags" element={<Tags />} />
             <Route path="/app/todos" element={<Todos />} />
+            <Route
+              path="/app/completed"
+              element={
+                <TaskSelectionProvider>
+                  <CompletedTasks />
+                </TaskSelectionProvider>
+              }
+            />
             <Route path="/app/search/*" element={<Search />} />
             <Route path="/app/task/:slug" element={<TaskDetail />} />
           </Route>

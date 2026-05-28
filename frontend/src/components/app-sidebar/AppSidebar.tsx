@@ -6,6 +6,7 @@ import {
   BookOpen,
   Bot,
   CalendarDays,
+  CircleCheckBig,
   Command,
   Frame,
   GalleryVerticalEnd,
@@ -209,6 +210,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             className="flex justify-start"
             onClick={() => {
               navigate("app/upcoming");
+            }}
+          />
+          <Button
+            Initial="Completed"
+            variant="ghost"
+            icon={<CircleCheckBig strokeWidth={1.5} />}
+            className="flex justify-start"
+            onClick={() => {
+              navigate("app/completed");
             }}
           />
         </div>

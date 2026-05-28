@@ -17,6 +17,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { DateTime } from "luxon";
 import { toast } from "sonner";
+import { groupByCompletionDate } from "@/utils/functions/group-by-completion-date";
 
 const selectOverdueTodos = (todos: TodoWithCompleteAtDateTime[]) => {
   const startOfToday = DateTime.now().startOf("day");
@@ -93,6 +94,15 @@ export function useTodayTodos() {
         return 0;
       });
     },
+  });
+}
+
+export function useCompletedTodos() {
+  return useQuery({
+    queryKey: todosQueryKeys.completed(),
+    queryFn: () => fetchTodos({ completed: "true" }),
+    staleTime: 60000,
+    select: groupByCompletionDate,
   });
 }
 
