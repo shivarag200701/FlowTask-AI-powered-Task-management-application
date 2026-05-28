@@ -203,42 +203,11 @@ todoRouter.post("/search/reindex", requireLogin, async (req, res) => {
   }
 
   try {
-    const [todos, tags] = await Promise.all([
-      prisma.todo.findMany({ where: { userId } }),
-      prisma.tag.findMany({
-        where: { userId },
-        select: { id: true, name: true, color: true },
-      }),
-    ]);
-
-    const todoDocuments = todos.map((todo) => ({
-      id: todo.id,
-      title: todo.title,
-      description: todo.description,
-      userId: todo.userId,
-      completed: todo.completed,
-      priority: todo.priority,
-      parentId: todo.parentId,
-      dueDate: todo.dueDate,
-      createdAt: todo.createdAt.toISOString(),
-    }));
-
-    const tagDocuments = tags.map((tag) => ({
-      id: tag.id,
-      name: tag.name,
-      color: tag.color,
-      userId,
-    }));
-
-    await Promise.all([
-      searchService.bulkUpsert(todoDocuments),
-      searchService.bulkUpsertTags(tagDocuments),
-    ]);
+    const result = await searchService.reindexUser(userId);
 
     return res.status(200).json({
       msg: "Reindex started",
-      todosCount: todoDocuments.length,
-      tagsCount: tagDocuments.length,
+      ...result,
     });
   } catch (error) {
     console.error("Reindex failed", error);

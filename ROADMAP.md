@@ -123,11 +123,11 @@ Meilisearch is kept in sync with Postgres via fire-and-forget `.catch()` calls i
 
 **Frontend:**
 
-[ ]Search input in the sidebar or top navigation
-[ ]Results displayed as a filtered task list
-[ ]Debounced input (300ms) to avoid excessive API calls
-[ ]Highlight matching text in results
-[ ]Empty state: "No tasks match your search"
+[x]Search input in the sidebar or top navigation
+[x]Results displayed as a filtered task list
+[x]Debounced input (300ms) to avoid excessive API calls
+[x]Highlight matching text in results
+[x]Empty state: "No tasks match your search"
 
 #### TODO Later: Migrate to Queue-Based Sync
 

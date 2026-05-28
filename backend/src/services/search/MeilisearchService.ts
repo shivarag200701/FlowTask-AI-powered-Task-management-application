@@ -3,6 +3,7 @@ import type {
   TodoSearchDocument,
   TagSearchDocument,
 } from "@shiva200701/todotypes";
+import prisma from "../../db/index.js";
 
 class MeilisearchService {
   private client: Meilisearch;
@@ -116,6 +117,42 @@ class MeilisearchService {
 
   async bulkUpsertTags(documents: TagSearchDocument[]) {
     await this.tagsIndex.addDocuments(documents);
+  }
+
+  async reindexUser(userId: string) {
+    const [todos, tags] = await Promise.all([
+      prisma.todo.findMany({ where: { userId } }),
+      prisma.tag.findMany({
+        where: { userId },
+        select: { id: true, name: true, color: true },
+      }),
+    ]);
+
+    const todoDocuments: TodoSearchDocument[] = todos.map((todo) => ({
+      id: todo.id,
+      title: todo.title,
+      description: todo.description,
+      userId: todo.userId,
+      completed: todo.completed,
+      priority: todo.priority,
+      parentId: todo.parentId,
+      dueDate: todo.dueDate,
+      createdAt: todo.createdAt.toISOString(),
+    }));
+
+    const tagDocuments: TagSearchDocument[] = tags.map((tag) => ({
+      id: tag.id,
+      name: tag.name,
+      color: tag.color,
+      userId,
+    }));
+
+    await Promise.all([
+      this.bulkUpsert(todoDocuments),
+      this.bulkUpsertTags(tagDocuments),
+    ]);
+
+    return { todosCount: todoDocuments.length, tagsCount: tagDocuments.length };
   }
 }
 
