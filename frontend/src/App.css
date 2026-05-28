@@ -235,3 +235,9 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Override sonner close button hover */
+[data-sonner-toast] [data-close-button]:hover {
+  background: var(--muted) !important;
+  border-color: var(--border) !important;
+}

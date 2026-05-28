@@ -30,8 +30,9 @@ const queryClient = new QueryClient();
 
 function AppRoutes() {
   const location = useLocation();
-  const backgroundLocation = (location.state as { backgroundLocation?: Location })
-    ?.backgroundLocation;
+  const backgroundLocation = (
+    location.state as { backgroundLocation?: Location }
+  )?.backgroundLocation;
 
   return (
     <>
@@ -139,9 +140,10 @@ function App() {
           <Toaster
             closeButton
             toastOptions={{
-              className: "border-none",
+              className: "!border-none",
               classNames: {
                 actionButton: "!bg-primary",
+                closeButton: "!hover:bg-red-500 !border-accent",
               },
             }}
             icons={{
