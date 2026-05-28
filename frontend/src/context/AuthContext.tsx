@@ -9,6 +9,7 @@ import {
 } from "react";
 import api from "@/utils/functions/api";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { toast } from "sonner";
 
 export const authMethods = ["google", "email"] as const;
 
@@ -65,6 +66,36 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }
   useEffect(() => {
     fetchUserSession();
+  }, []);
+
+  // 401 interceptor — show toast when session expires
+  useEffect(() => {
+    const interceptor = api.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (
+          error.response?.status === 401 &&
+          !error.config?.url?.includes("auth-check")
+        ) {
+          setIsAuthenticated(false);
+          toast.error("Your session has expired", {
+            id: "session-expired",
+            duration: Infinity,
+            action: {
+              label: "Go to login",
+              onClick: () => {
+                window.location.href = "/signin";
+              },
+            },
+          });
+        }
+        return Promise.reject(error);
+      },
+    );
+
+    return () => {
+      api.interceptors.response.eject(interceptor);
+    };
   }, []);
 
   const refreshAuth = useCallback(async () => {
