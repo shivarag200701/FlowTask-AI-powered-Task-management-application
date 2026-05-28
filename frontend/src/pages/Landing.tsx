@@ -454,12 +454,12 @@ const Landing = () => {
                 <h3 className="text-sm xl:text-base mb-1 text-gray-800 text-left font-medium ">
                   Visual Planning
                 </h3>
-                <p className="text-base xl:text-xl text-accent font-medium mb-8">
+                <p className="text-base xl:text-xl text-primary font-medium mb-8">
                   See your entire schedule at a glance
                 </p>
               </div>
               <div className="flex justify-center items-center w-full lg:w-auto ">
-                <div className="w-full max-w-xs lg:min-w-xs flex justify-center">
+                <div className="w-full max-w-xs  lg:min-w-xs flex justify-center">
                   <Calendar
                     className="w-full"
                     mode="multiple"
@@ -516,14 +516,14 @@ const Landing = () => {
                 <h3 className="text-sm mb-1 text-gray-800 text-left font-medium ">
                   Visual Planning
                 </h3>
-                <p className="text-lg text-accent font-semibold mb-8">
+                <p className="text-lg text-primary font-semibold mb-8">
                   See your entire schedule at a glance
                 </p>
               </div>
               <div className="flex justify-center items-center w-full lg:w-auto ">
                 <div className="w-full max-w-xs lg:min-w-xs flex justify-center">
                   <Calendar
-                    className="w-full"
+                    className="w-full "
                     mode="multiple"
                     selected={selectedDates}
                     onSelect={(dates) => {
@@ -594,7 +594,7 @@ const Landing = () => {
                 onClick={() => {
                   navigate("/signup");
                 }}
-                className="w-full rounded-full bg-linear-to-r from-accent to-accent/60 hover:bg-emerald-600 text-white py-3 text-sm font-medium"
+                className="w-full rounded-full bg-linear-to-r from-primary to-primary/60 hover:bg-emerald-600 text-white py-3 text-sm font-medium"
               >
                 Get started in 30 seconds
               </button>

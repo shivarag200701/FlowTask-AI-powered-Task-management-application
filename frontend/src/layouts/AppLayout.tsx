@@ -9,7 +9,7 @@ function AppLayout() {
   return (
     <TaskDisplayProvider>
       <ModalProvider>
-        <SidebarProvider>
+        <SidebarProvider className="md:h-dvh md:overflow-hidden">
           <AppSidebar />
           <div className="min-h-0 w-full min-w-0 flex-1 bg-neutral-200 lg:py-2 lg:pr-2">
             <div
