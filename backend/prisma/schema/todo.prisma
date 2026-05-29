@@ -24,4 +24,8 @@ model Todo {
   parentId String?
   parent   Todo? @relation("SubTasks",fields: [parentId],references: [id],onDelete: Cascade)
   children Todo[] @relation("SubTasks")
+
+  //project
+  projectId   String?
+  project     Project?     @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }

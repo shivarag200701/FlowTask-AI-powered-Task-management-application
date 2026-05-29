@@ -6,8 +6,10 @@ import {
   BookOpen,
   Bot,
   CalendarDays,
+  ChevronRight,
   CircleCheckBig,
   Command,
+  Users,
   Frame,
   GalleryVerticalEnd,
   Map,
@@ -26,9 +28,11 @@ import {
   SidebarFooter,
   SidebarHeader,
 } from "@/components/ui/sidebar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "../ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import TodayCalendarIcon from "../TodayCalendarIcon";
+import { useUserProfile } from "@/hooks/use-users";
 
 import { ModalContext } from "../modals/ModalProvider";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -165,7 +169,10 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { setShowSearchModal } = React.useContext(ModalContext);
+  const { data: userProfile } = useUserProfile();
+  const isMyProjectsActive = location.pathname.includes("/app/projects");
   useHotkeys("mod+k", () => {
     setShowSearchModal(true);
   });
@@ -175,12 +182,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <div className="p-2">
+        <div className="p-2 ">
           <Button
             Initial="Search"
             icon={<Search strokeWidth={1.5} />}
             variant="ghost"
-            className="flex justify-start"
+            className="flex justify-start hover:bg-neutral-200"
             onClick={() => {
               setShowSearchModal(true);
             }}
@@ -189,7 +196,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             Initial="Tags"
             icon={<Tag strokeWidth={1.5} />}
             variant="ghost"
-            className="flex justify-start"
+            className={`flex justify-start hover:bg-neutral-200 ${location.pathname.includes("/app/tags") ? "bg-primary/10 text-primary" : ""}`}
             onClick={() => {
               navigate("app/tags");
             }}
@@ -198,7 +205,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             Initial="Today"
             variant="ghost"
             icon={<TodayCalendarIcon />}
-            className="flex justify-start"
+            className={`flex justify-start hover:bg-neutral-200 ${location.pathname.includes("/app/today") ? "bg-primary/10 text-primary" : ""}`}
             onClick={() => {
               navigate("app/today");
             }}
@@ -207,7 +214,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             Initial="Upcoming"
             variant="ghost"
             icon={<CalendarDays />}
-            className="flex justify-start"
+            className={`flex justify-start hover:bg-neutral-200 ${location.pathname.includes("/app/upcoming") ? "bg-primary/10 text-primary" : ""}`}
             onClick={() => {
               navigate("app/upcoming");
             }}
@@ -216,11 +223,61 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             Initial="Completed"
             variant="ghost"
             icon={<CircleCheckBig strokeWidth={1.5} />}
-            className="flex justify-start"
+            className={`flex justify-start hover:bg-neutral-200 ${location.pathname.includes("/app/completed") ? "bg-primary/10 text-primary" : ""}`}
             onClick={() => {
               navigate("app/completed");
             }}
           />
+
+          {/* My Projects */}
+          <div className="mt-6 pt-4 border-t border-neutral-300">
+            <p className="text-xs font-medium text-neutral-500 uppercase tracking-wider px-2 mb-2">
+              Projects
+            </p>
+            <button
+              onClick={() => navigate("app/projects")}
+              className={`flex items-center gap-3 w-full rounded-lg px-2 py-2.5 transition-all hover:bg-neutral-200 cursor-pointer ${
+                isMyProjectsActive ? "bg-primary/10 text-primary" : ""
+              }`}
+            >
+              <Avatar className="h-6 w-6 rounded-full ring-2 ring-neutral-300">
+                {userProfile?.image && (
+                  <AvatarImage
+                    src={userProfile.image}
+                    alt={userProfile?.name ?? "User"}
+                    referrerPolicy="no-referrer"
+                  />
+                )}
+                <AvatarFallback className="rounded-full text-xs">
+                  {userProfile?.name?.charAt(0)?.toUpperCase() ?? "U"}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-sm font-medium truncate">My Projects</span>
+              <ChevronRight className="ml-auto h-4 w-4 text-neutral-400" />
+            </button>
+          </div>
+
+          {/* Workspaces */}
+          {/* Workspaces */}
+          <div className="mt-4 pt-4 border-t border-neutral-300">
+            <p className="text-xs font-medium text-neutral-500 uppercase tracking-wider px-2 mb-2">
+              Workspaces
+            </p>
+            <button
+              onClick={() => navigate("app/workspace")}
+              className={`flex items-center gap-3 w-full rounded-lg px-2 py-2.5 transition-all hover:bg-neutral-200 cursor-pointer ${
+                location.pathname.includes("/app/workspace")
+                  ? "bg-primary/10 text-primary"
+                  : ""
+              }`}
+            >
+              <div className="flex h-6 w-6 items-center justify-center rounded-md bg-neutral-300">
+                <Users className="size-3.5 text-neutral-500" />
+              </div>
+              <span className="text-sm font-medium truncate">Workspaces</span>
+              <ChevronRight className="ml-auto h-4 w-4 text-neutral-400" />
+            </button>
+          </div>
         </div>
       </SidebarContent>
       <SidebarFooter>

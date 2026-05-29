@@ -1,0 +1,12 @@
+model Project{
+    id                  String           @id @default(cuid())
+    name                String
+    slug                String           @unique
+    
+    todos               Todo[]
+
+    //Need to implement an Database level or application level check that a project can either be users personal project or related to an workspace and cannot be alone
+    personalProjectId   String?
+    workSpaceId         String?
+    personalProject     PersonalProject? @relation(fields: [personalProjectId], references: [id], onDelete: Cascade)
+}

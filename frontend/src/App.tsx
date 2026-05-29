@@ -26,6 +26,8 @@ import Todos from "./pages/todos";
 import { TaskSelectionProvider } from "./context/TaskSelectionContext";
 import Search from "./pages/Search";
 import TaskDetail from "./pages/TaskDetail";
+import MyProjects from "./pages/MyProjects";
+import Workspaces from "./pages/Workspaces";
 
 const queryClient = new QueryClient();
 
@@ -74,6 +76,8 @@ function AppRoutes() {
                 </TaskSelectionProvider>
               }
             />
+            <Route path="/app/projects" element={<MyProjects />} />
+            <Route path="/app/workspace" element={<Workspaces />} />
             <Route path="/app/search/*" element={<Search />} />
             <Route path="/app/task/:slug" element={<TaskDetail />} />
           </Route>

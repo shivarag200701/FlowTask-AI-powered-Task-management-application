@@ -79,7 +79,7 @@ Todo model additions:
 
 ---
 
-### [ ] 1.3 Search
+### [x] 1.3 Search
 
 **Description:**
 Full-text search across all tasks using Meilisearch as a dedicated search engine.
@@ -142,7 +142,7 @@ The current Meilisearch sync uses a fire-and-forget `.catch()` pattern directly 
 
 ---
 
-### [ ] 1.4 Completed Tasks View
+### [x] 1.4 Completed Tasks View
 
 **Description:**
 A dedicated view to see tasks that have been marked as complete, with the ability to restore them.
@@ -156,18 +156,18 @@ A dedicated view to see tasks that have been marked as complete, with the abilit
 
 **API changes (v2):**
 
-[ ]`GET /api/v2/todo?completed=true` — filter for completed tasks
-[ ]`GET /api/v2/todo?completed=true&from=2026-05-01&to=2026-05-17` — date range filter on `completedAt`
-[ ]Response should include `completedAt` timestamp
+[x]`GET /api/v2/todo?completed=true` — filter for completed tasks
+[ ]`GET /api/v2/todo?completed=true&from=2026-05-01&to=2026-05-17` — date range filter on `completedAt`(Implement Later)
+[x]Response should include `completedAt` timestamp
 
 **Frontend:**
 
-[ ]New route: `/app/completed`
-[ ]Sidebar nav link
-[ ]Group completed tasks by completion date (Today, Yesterday, This Week, Older)
-[ ]"Restore" action to mark a task as incomplete again
-[ ]"Delete permanently" action
-[ ]Task count in the header
+[x]New route: `/app/completed`
+[x]Sidebar nav link
+[x]Group completed tasks by completion date (Today, Yesterday, This Week, Older)
+[x]"Restore" action to mark a task as incomplete again
+[x]"Delete permanently" action
+[x]Task count in the header
 
 **Dependencies:** None.
 
