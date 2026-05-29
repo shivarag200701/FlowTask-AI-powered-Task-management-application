@@ -31,9 +31,7 @@ model User {
   notfications    Notifications[]
   tags            Tag[]
   
-  personalProjects PersonalProject?
-  
-  
+  projects        Project[]
 }
 
 
