@@ -9,4 +9,6 @@ model Project{
     //Need to implement an Database level or application level check that a project can either be users personal project or related to an workspace and cannot be alone
     workSpaceId         String?
     todos               Todo[]
+
+    taskDisplayPreferences    Json?
 }

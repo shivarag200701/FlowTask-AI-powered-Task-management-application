@@ -119,6 +119,11 @@ export declare const changeEmailSchema: z.ZodObject<{
 export declare const ChangeNameSchema: z.ZodObject<{
     name: z.ZodString;
 }, z.core.$strip>;
+export declare const taskViewModes: z.ZodEnum<{
+    list: "list";
+    board: "board";
+    calendar: "calendar";
+}>;
 export declare const changePreferencesSchema: z.ZodObject<{
     emailEnabled: z.ZodOptional<z.ZodBoolean>;
     smsEnabled: z.ZodOptional<z.ZodBoolean>;

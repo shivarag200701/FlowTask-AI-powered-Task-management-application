@@ -475,7 +475,7 @@ export const ChangeNameSchema = z.object({
   name: z.string(),
 });
 
-const taskViewModes = z.enum(["list", "board", "calendar"]);
+export const taskViewModes = z.enum(["list", "board", "calendar"]);
 
 export const changePreferencesSchema = z.object({
   emailEnabled: z.boolean().optional(),
