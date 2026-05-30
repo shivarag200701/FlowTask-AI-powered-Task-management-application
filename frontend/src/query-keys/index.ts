@@ -28,3 +28,10 @@ export const tagsQueryKeys = {
   filtered: ({ search }: TagsQuery) => ["tags", "filtered", search] as const,
   count: ["tagCount"] as const,
 };
+
+export const projectKeys = {
+  all: ["projects"] as const,
+  personal: (search: string) => ["projects", "personal", search] as const,
+  workspace: (workspaceId: string) =>
+    ["projects", "workspace", workspaceId] as const,
+};

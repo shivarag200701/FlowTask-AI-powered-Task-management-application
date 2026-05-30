@@ -2,6 +2,7 @@ import { Router } from "express";
 import { requireLogin } from "../../../middleware.js";
 import prisma from "../../../db/index.js";
 import { CreateProjectSchema } from "@shiva200701/todotypes";
+import z from "zod";
 
 export const projectRouter = Router();
 
@@ -13,11 +14,32 @@ projectRouter.get("/personal", requireLogin, async (req, res) => {
     });
   }
 
+  const querySchema = z.object({
+    search: z.string(),
+  });
+
+  const { data, success, error } = querySchema.safeParse(req.query);
+
+  if (!success) {
+    return res.status(400).json({
+      msg: "Send proper data",
+      error,
+    });
+  }
+
+  const { search } = data;
+
   try {
     const personalProjects = await prisma.project.findMany({
       where: {
         userId,
         personal: true,
+        ...(search && {
+          name: {
+            contains: search,
+            mode: "insensitive",
+          },
+        }),
       },
     });
 
@@ -49,16 +71,16 @@ projectRouter.post("/", requireLogin, async (req, res) => {
     });
   }
 
-  const { name, personal, workSpaceId } = data;
+  const { name, personal, workspaceId } = data;
 
-  if (!personal && !workSpaceId) {
+  if (!personal && !workspaceId) {
     return res.status(400).json({
       message:
         "The project should be part of personalProject or workspace project",
     });
   }
 
-  if (personal && workSpaceId) {
+  if (personal && workspaceId) {
     return res.status(400).json({
       message: "A project can't be a personal project and in workspace",
     });
@@ -70,7 +92,7 @@ projectRouter.post("/", requireLogin, async (req, res) => {
         userId,
         name,
         personal: personal ?? false,
-        workSpaceId: workSpaceId ?? null,
+        workSpaceId: workspaceId ?? null,
       },
     });
 

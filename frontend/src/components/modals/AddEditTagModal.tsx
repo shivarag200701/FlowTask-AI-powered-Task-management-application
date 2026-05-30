@@ -78,7 +78,7 @@ function AddEditTagModal({
           <img src="/logo.png" className="size-15" />
           <h3 className="font-medium text-lg">Create tag</h3>
           <p className="text-neutral-500 text-sm">
-            Use tags to organize your links
+            Use tags to organize your Tasks
           </p>
         </div>
       </div>

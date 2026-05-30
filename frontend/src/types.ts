@@ -51,12 +51,18 @@ export type TagsQuery = z.infer<typeof GetTagsQuerySchema>;
 
 export type TodosQuery = z.infer<typeof todoQuerySchema>;
 
-export type ChildTodoWithDateTime = Omit<Todo, "dueTime" | "dueDate" | "children"> & {
+export type ChildTodoWithDateTime = Omit<
+  Todo,
+  "dueTime" | "dueDate" | "children"
+> & {
   dueDate: DateTime | null;
   dueTime: DateTime | null;
 };
 
-export type TodoWithCompleteAtDateTime = Omit<Todo, "dueTime" | "dueDate" | "children"> & {
+export type TodoWithCompleteAtDateTime = Omit<
+  Todo,
+  "dueTime" | "dueDate" | "children"
+> & {
   dueDate: DateTime | null;
   dueTime: DateTime | null;
   children?: ChildTodoWithDateTime[];
@@ -78,4 +84,13 @@ export type CreateTodoWithDateTime = Omit<
   dueTime: DateTime | null;
   dueDate: DateTime | null;
   tags?: TodoTag[];
+};
+
+export type Project = {
+  id: string;
+  name: string;
+  personal: boolean;
+  slug: string | null;
+  userId: string;
+  workspaceId: string | null;
 };
