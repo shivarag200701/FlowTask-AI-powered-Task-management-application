@@ -73,6 +73,7 @@ export function AddProjectModal({
           <div className="flex flex-col space-y-2">
             <p className="text-sm font-medium">Project name</p>
             <Input
+              autoFocus
               placeholder="Project name"
               {...register("name", { required: "Project name is required" })}
             />

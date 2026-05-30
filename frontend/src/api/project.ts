@@ -1,3 +1,4 @@
+import type { Project } from "@/types";
 import api from "@/utils/functions/api";
 import type { CreateProject } from "@shiva200701/todotypes";
 
@@ -12,6 +13,17 @@ export async function createProject({
       name,
       workspaceId,
     });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getProject(id: string) {
+  try {
+    const { project }: { project: Project } = (
+      await api.get(`/api/v2/projects/${id}`)
+    ).data;
+    return project;
   } catch (error) {
     throw error;
   }

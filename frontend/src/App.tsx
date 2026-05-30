@@ -28,6 +28,7 @@ import Search from "./pages/Search";
 import TaskDetail from "./pages/TaskDetail";
 import MyProjects from "./pages/MyProjects";
 import Workspaces from "./pages/Workspaces";
+import Projects from "./pages/Projects";
 
 const queryClient = new QueryClient();
 
@@ -48,7 +49,10 @@ function AppRoutes() {
         <Route element={<ProtectedRoute />}>
           <Route path="/onboarding/welcome" element={<Welcome />} />
           <Route path="/onboarding/user-profile" element={<UserProfile />} />
-          <Route path="/onboarding/completed" element={<OnboardingCompleted />} />
+          <Route
+            path="/onboarding/completed"
+            element={<OnboardingCompleted />}
+          />
           <Route element={<AppLayout />}>
             <Route
               path="/app/today"
@@ -80,6 +84,7 @@ function AppRoutes() {
             <Route path="/app/workspace" element={<Workspaces />} />
             <Route path="/app/search/*" element={<Search />} />
             <Route path="/app/task/:slug" element={<TaskDetail />} />
+            <Route path="/app/projects/*" element={<Projects />} />
           </Route>
         </Route>
       </Routes>

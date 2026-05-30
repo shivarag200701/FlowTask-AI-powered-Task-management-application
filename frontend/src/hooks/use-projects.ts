@@ -1,4 +1,4 @@
-import { createProject, getPersonalProject } from "@/api/project";
+import { createProject, getPersonalProject, getProject } from "@/api/project";
 import { projectKeys } from "@/query-keys";
 import type { CreateProject } from "@shiva200701/todotypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -32,6 +32,14 @@ export function usePersonalProject(search: string) {
   return useQuery({
     queryKey: projectKeys.personal(search),
     queryFn: () => getPersonalProject({ query: { search } }),
+    enabled: true,
+  });
+}
+
+export function useProject(id: string) {
+  return useQuery({
+    queryKey: projectKeys.project(id),
+    queryFn: () => getProject(id),
     enabled: true,
   });
 }
