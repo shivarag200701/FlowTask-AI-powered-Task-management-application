@@ -18,6 +18,7 @@ export const CreateTodoSchema = z.object({
         description: "ids of tags associated with the todo",
     }),
     parentId: z.string().nullish(),
+    projectId: z.string().nullish(),
 });
 export const todoQuerySchema = z.object({
     tagIds: z.string().optional(),

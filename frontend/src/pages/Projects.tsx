@@ -11,7 +11,7 @@ import ListView from "@/features/projects/components/ListView";
 import TaskDisplaySelector from "@/features/projects/components/TaskDisplaySelector";
 import { useProject } from "@/hooks/use-projects";
 import PageContentHeader from "@/layouts/PageContentHeader";
-import type { Project, ViewMode } from "@/types";
+import type { ViewMode } from "@/types";
 import { extractIdFromSlug } from "@shiva200701/todotypes";
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -41,7 +41,7 @@ function ProjectDetail({ id }: { id: string }) {
     <div>
       {/*Need to implement a bread crumb like structure for this titlte of the PageContentHeader */}
       <PageContentHeader
-        title={<BreadCrumb project={project} />}
+        title={<BreadCrumb projectName={project?.name} />}
         controls={
           <TaskDisplaySelector
             isDirty={isDirty}
@@ -58,7 +58,7 @@ function ProjectDetail({ id }: { id: string }) {
   );
 }
 
-function BreadCrumb({ project }: { project?: Project }) {
+function BreadCrumb({ projectName }: { projectName?: string }) {
   const navigate = useNavigate();
 
   return (
@@ -75,7 +75,7 @@ function BreadCrumb({ project }: { project?: Project }) {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbPage>{project?.name}</BreadcrumbPage>
+          <BreadcrumbPage>{projectName}</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>

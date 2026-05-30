@@ -145,6 +145,9 @@ projectRouter.get("/:id", requireLogin, async (req, res) => {
       where: {
         id: idParam,
       },
+      include: {
+        todos: true,
+      },
     });
 
     return res.status(200).json({

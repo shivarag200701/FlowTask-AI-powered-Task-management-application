@@ -36,6 +36,7 @@ export interface Todo {
   tags?: TodoTag[];
   parentId: string | undefined;
   children?: Omit<Todo, "children">[];
+  projectId?: string;
 }
 
 export type TodoTag = Omit<TagProps, "_count">;
@@ -94,4 +95,9 @@ export type Project = {
   userId: string;
   workspaceId: string | null;
   taskDisplayPreferences?: { viewMode: ViewMode };
+  todos: Todo[];
+};
+
+export type ProjectWithDateTime = Omit<Project, "todos"> & {
+  todos: TodoWithCompleteAtDateTime[];
 };

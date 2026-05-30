@@ -45,9 +45,7 @@ todoRouter.get("/", requireLogin, async (req, res) => {
               tags: { some: { tagId: { in: tagIdArray } } },
             }
           : {}),
-        ...(completed !== undefined
-          ? { completed: completed === "true" }
-          : {}),
+        ...(completed !== undefined ? { completed: completed === "true" } : {}),
       },
       include: {
         notifications: true,
@@ -115,6 +113,7 @@ todoRouter.post("/", requireLogin, async (req, res) => {
     isAllDay,
     tags,
     parentId,
+    projectId,
   } = data;
 
   try {
@@ -155,6 +154,7 @@ todoRouter.post("/", requireLogin, async (req, res) => {
         sortKey,
         isAllDay: isAllDay ?? null,
         parentId: parentId ?? null,
+        projectId: projectId ?? null,
         tags: {
           create:
             tags?.map((tagId) => ({

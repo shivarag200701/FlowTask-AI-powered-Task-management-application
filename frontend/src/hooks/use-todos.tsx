@@ -5,7 +5,7 @@ import {
   createTodo,
   serachTodo,
 } from "@/api/todos";
-import { todosQueryKeys } from "@/query-keys";
+import { projectKeys, todosQueryKeys } from "@/query-keys";
 import {
   toastMessages,
   type moveTodo,
@@ -163,7 +163,7 @@ export function useBulkUpdateTodos() {
   });
 }
 
-export function useUpdateTodo() {
+export function useUpdateTodo(projectId?: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -224,6 +224,11 @@ export function useUpdateTodo() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
+      if (projectId) {
+        queryClient.invalidateQueries({
+          queryKey: projectKeys.project(projectId),
+        });
+      }
     },
 
     onError: (_err, _newTodo, context) => {
@@ -247,13 +252,19 @@ export function useDeleteTodo() {
   });
 }
 
-export function useCreateTodo() {
+export function useCreateTodo(projectId?: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (todo: CreateTodo) => createTodo(todo),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
+      if (projectId) {
+        queryClient.invalidateQueries({
+          queryKey: projectKeys.project(projectId),
+        });
+      }
+
       toast.success("todo created successfully");
     },
     onError: (error) => {

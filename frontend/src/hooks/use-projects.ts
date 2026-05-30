@@ -47,6 +47,10 @@ export function useProject(id: string) {
     queryFn: () => getProject(id),
     enabled: true,
     staleTime: 60000,
+    select: (data) => ({
+      ...data,
+      todos: data.todos.filter((t) => !t.completed),
+    }),
   });
 }
 

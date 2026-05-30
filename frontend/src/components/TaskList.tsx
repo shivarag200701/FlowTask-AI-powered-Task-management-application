@@ -23,6 +23,7 @@ function TaskList({
   compact = false,
   onClick,
   taskCompleted = false,
+  projectId,
 }: {
   todo: TodoWithCompleteAtDateTime;
   className?: string;
@@ -30,8 +31,9 @@ function TaskList({
   compact?: boolean;
   onClick?: () => void;
   taskCompleted?: boolean;
+  projectId?: string;
 }) {
-  const { mutate: updateTodo } = useUpdateTodo();
+  const { mutate: updateTodo } = useUpdateTodo(projectId);
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
   const { selectedTaskIds, isSelectMode } = useTaskSelectionContext();
 
@@ -83,7 +85,7 @@ function TaskList({
         <button
           type="button"
           className={cn(
-            "h-5 w-5 border border-border/50 rounded-full bg-linear-to-t from-neutral-100 hover:bg-none hover:cursor-pointer hover:border-border hover:ring-3 hover:ring-border/30 flex items-center justify-center group/circle",
+            "h-5 w-5 border border-border/50 shrink-0 rounded-full bg-linear-to-t from-neutral-100 hover:bg-none hover:cursor-pointer hover:border-border hover:ring-3 hover:ring-border/30 flex items-center justify-center group/circle",
             taskCompleted && "opacity-50"
           )}
           onClick={(e) => {

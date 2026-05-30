@@ -1,6 +1,7 @@
-import type { Project } from "@/types";
+import type { Project, ProjectWithDateTime } from "@/types";
 import api from "@/utils/functions/api";
 import type { CreateProject, UpdateProject } from "@shiva200701/todotypes";
+import { DateTime } from "luxon";
 
 export async function createProject({
   personal,
@@ -18,12 +19,24 @@ export async function createProject({
   }
 }
 
-export async function getProject(id: string) {
+export async function getProject(id: string): Promise<ProjectWithDateTime> {
   try {
     const { project }: { project: Project } = (
       await api.get(`/api/v2/projects/${id}`)
     ).data;
-    return project;
+    return {
+      ...project,
+      todos: project.todos.map((todo) => ({
+        ...todo,
+        dueDate: todo.dueDate ? DateTime.fromISO(todo.dueDate) : null,
+        dueTime: todo.dueTime ? DateTime.fromISO(todo.dueTime) : null,
+        children: todo.children?.map((child) => ({
+          ...child,
+          dueDate: child.dueDate ? DateTime.fromISO(child.dueDate) : null,
+          dueTime: child.dueTime ? DateTime.fromISO(child.dueTime) : null,
+        })),
+      })),
+    };
   } catch (error) {
     throw error;
   }
