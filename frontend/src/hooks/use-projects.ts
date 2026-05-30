@@ -1,6 +1,11 @@
-import { createProject, getPersonalProject, getProject } from "@/api/project";
+import {
+  createProject,
+  getPersonalProject,
+  getProject,
+  updateProject,
+} from "@/api/project";
 import { projectKeys } from "@/query-keys";
-import type { CreateProject } from "@shiva200701/todotypes";
+import type { CreateProject, UpdateProject } from "@shiva200701/todotypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
@@ -41,5 +46,27 @@ export function useProject(id: string) {
     queryKey: projectKeys.project(id),
     queryFn: () => getProject(id),
     enabled: true,
+    staleTime: 60000,
+  });
+}
+
+export function useUpdateProject(id: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: UpdateProject }) =>
+      updateProject(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: projectKeys.project(id) });
+      queryClient.invalidateQueries({ queryKey: projectKeys.personal("") });
+      toast.success("Project updated successfully!");
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        const errorMsg = error.response?.data.msg;
+        toast.error(errorMsg);
+        return;
+      }
+      toast.error("something went wrong");
+    },
   });
 }

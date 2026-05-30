@@ -10,6 +10,7 @@ import { Toaster } from "./components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { useEffect } from "react";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import Welcome from "@/pages/onboarding/pages/Welcome";
 import UserProfile from "@/pages/onboarding/pages/UserProfile";
@@ -141,6 +142,7 @@ function App() {
   return (
     <div>
       <QueryClientProvider client={queryClient}>
+        <ReactQueryDevtools initialIsOpen={false} position="bottom" />
         <ThemeProvider
           attribute="data-theme"
           defaultTheme="dark"

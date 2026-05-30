@@ -93,4 +93,5 @@ export type Project = {
   slug: string | null;
   userId: string;
   workspaceId: string | null;
+  taskDisplayPreferences?: { viewMode: ViewMode };
 };
