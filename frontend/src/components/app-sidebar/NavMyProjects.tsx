@@ -73,8 +73,8 @@ export function NavMyProjects() {
                     <SidebarMenuSkeleton />
                   </SidebarMenuItem>
                 ))
-              ) : projects?.length > 0 ? (
-                projects.map((project: Project) => (
+              ) : projects && projects?.length > 0 ? (
+                projects?.map((project: Project) => (
                   <SidebarMenuItem key={project.id}>
                     <SidebarMenuButton
                       className="hover:bg-neutral-200"

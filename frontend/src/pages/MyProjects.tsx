@@ -30,7 +30,7 @@ function MyProjects() {
   );
 
   useEffect(() => {
-    setProjects(filteredProjects);
+    setProjects(filteredProjects!);
   }, [filteredProjects]);
 
   return (

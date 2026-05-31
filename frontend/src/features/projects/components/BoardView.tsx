@@ -1,7 +1,7 @@
 import { AnimatedEmptyState } from "@/components/ui/animated-empty-state";
 import { Columns3 } from "lucide-react";
 
-function BoardView({ id }: { id: string }) {
+function BoardView() {
   return (
     <div className="h-full">
       <AnimatedEmptyState

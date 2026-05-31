@@ -53,7 +53,7 @@ function ProjectDetail({ id }: { id: string }) {
         }
       />
       {viewMode === "list" && <ListView id={id} />}
-      {viewMode === "board" && <BoardView id={id} />}
+      {viewMode === "board" && <BoardView />}
     </div>
   );
 }
