@@ -60,7 +60,7 @@ export async function getPersonalProject({
     any
   >).toString();
   try {
-    const { personalProjects } = (
+    const { personalProjects }: { personalProjects: Project[] } = (
       await api.get(`/api/v2/projects/personal?${searchParams}`)
     ).data;
     return personalProjects;

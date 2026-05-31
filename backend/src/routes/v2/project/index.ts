@@ -45,6 +45,7 @@ projectRouter.get("/personal", requireLogin, async (req, res) => {
           },
         }),
       },
+      include: { todos: true },
     });
 
     return res.status(200).json({

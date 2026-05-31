@@ -10,8 +10,9 @@ function ProjectCard({ project }: { project: Project }) {
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
   const navigate = useNavigate();
 
-  const todoCount =
-    (project as Project & { _count?: { todos: number } })._count?.todos ?? 0;
+  const todoCount = project?.todos?.length;
+
+  console.log("project", project);
 
   return (
     <div

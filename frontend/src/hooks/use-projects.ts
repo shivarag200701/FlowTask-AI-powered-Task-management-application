@@ -38,6 +38,8 @@ export function usePersonalProject(search: string) {
     queryKey: projectKeys.personal(search),
     queryFn: () => getPersonalProject({ query: { search } }),
     enabled: true,
+    staleTime: 60000,
+    select: (data) => data.sort((a, b) => a.name.localeCompare(b.name)),
   });
 }
 
