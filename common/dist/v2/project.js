@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { taskViewModes } from "../v1";
+import { taskViewModes } from "../v1.js";
 export const CreateProjectSchema = z.object({
     name: z.string().min(1),
     personal: z.boolean().default(false).optional(),
