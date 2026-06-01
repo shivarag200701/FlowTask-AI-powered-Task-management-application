@@ -17,6 +17,7 @@ import { SerializeFormData } from "@/utils/functions/serialize-form-data";
 import type { UpdateTodo } from "@shiva200701/todotypes";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { useProjectContext } from "@/context/ProjectContext";
 
 type TodoFormValues = CreateTodoWithDateTime & { id?: string };
 
@@ -25,14 +26,12 @@ function InlineTaskForm({
   setIsOpen,
   mode = "default",
   parentId,
-  projectId,
   sectionId,
 }: {
   todo?: TodoWithCompleteAtDateTime;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   mode?: "default" | "modal";
   parentId?: string;
-  projectId?: string;
   sectionId?: string;
 }) {
   const {
@@ -43,6 +42,7 @@ function InlineTaskForm({
     watch,
   } = useFormContext<TodoFormValues>();
 
+  const { projectId } = useProjectContext();
   console.log("project Id", projectId);
   console.log("section id", sectionId);
 

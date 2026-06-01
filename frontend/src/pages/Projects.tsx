@@ -6,6 +6,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { ProjectProvider } from "@/context/ProjectContext";
 import BoardView from "@/features/projects/components/BoardView";
 import ListView from "@/features/projects/components/ListView";
 import TaskDisplaySelector from "@/features/projects/components/TaskDisplaySelector";
@@ -46,21 +47,23 @@ function ProjectDetail({ id }: { id: string }) {
 
   return (
     <div>
-      {/*Need to implement a bread crumb like structure for this titlte of the PageContentHeader */}
-      <PageContentHeader
-        title={!isMobile && <BreadCrumb projectName={project?.name} />}
-        controls={
-          <TaskDisplaySelector
-            isDirty={isDirty}
-            viewMode={viewMode}
-            persisted={persisted}
-            setViewMode={setViewMode}
-            id={id}
-          />
-        }
-      />
-      {viewMode === "list" && <ListView id={id} />}
-      {viewMode === "board" && <BoardView id={id} />}
+      <ProjectProvider id={id}>
+        {/*Need to implement a bread crumb like structure for this titlte of the PageContentHeader */}
+        <PageContentHeader
+          title={!isMobile && <BreadCrumb projectName={project?.name} />}
+          controls={
+            <TaskDisplaySelector
+              isDirty={isDirty}
+              viewMode={viewMode}
+              persisted={persisted}
+              setViewMode={setViewMode}
+              id={id}
+            />
+          }
+        />
+        {viewMode === "list" && <ListView id={id} />}
+        {viewMode === "board" && <BoardView />}
+      </ProjectProvider>
     </div>
   );
 }

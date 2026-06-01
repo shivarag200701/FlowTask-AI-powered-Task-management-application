@@ -10,16 +10,13 @@ function DraggableColumn({
   index,
   todos,
   column,
-  projectId,
 }: {
   id: string;
   index: number;
   todos: TodoWithCompleteAtDateTime[];
   column: string;
-  projectId: string;
 }) {
   const { setShowAddEditTodoModal, AddEditTodoModal } = useAddEditTodoModal({
-    projectId,
     sectionId: id,
   });
 

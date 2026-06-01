@@ -1,11 +1,14 @@
 import DraggableColumn from "@/components/drag-drop/DraggableColumn";
 import DragOverlayColumn from "@/components/drag-drop/DragOverlayColumn";
+import { useProjectContext } from "@/context/ProjectContext";
 import { useProject, useProjectSections } from "@/hooks/use-projects";
 import PageWidthWrapper from "@/layouts/PageWidthWrapper";
 import { DragDropProvider } from "@dnd-kit/react";
 import { isSortable } from "@dnd-kit/react/sortable";
 
-function BoardView({ id }: { id: string }) {
+function BoardView() {
+  const { projectId: id } = useProjectContext();
+
   const { data: project } = useProject(id);
   const { data: sections } = useProjectSections(id);
 
@@ -31,7 +34,6 @@ function BoardView({ id }: { id: string }) {
               key={section.id}
               todos={section.todos}
               column={section.name}
-              projectId={id}
             />
           ))}
         </div>
