@@ -39,7 +39,7 @@ function DraggableColumn({
   return (
     <div
       ref={ref}
-      className="min-w-[260px] min-h-[200px] hover:shadow-[0_3px_5px_rgba(0.15,0.15,0.15,0.15)] duration-200 transition-all cursor-grab rounded-lg flex flex-col gap-1 items-center text-sm font-semibold  p-2"
+      className="min-w-[260px] min-h-[200px] hover:shadow-[0_3px_5px_rgba(0.15,0.15,0.15,0.15)] duration-200 transition-all cursor-grab rounded-lg flex flex-col gap-1.5 items-center text-sm font-semibold  p-2"
     >
       <div className="text-left w-full">{column}</div>
       <div className="p-2">
