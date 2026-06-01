@@ -13,12 +13,14 @@ function DragOverlayCard({ todos }: { todos: TodoWithCompleteAtDateTime[] }) {
         }
 
         return (
-          <div className="border border-border rounded-lg p-2.5 w-[260px] min-h-[70px] bg-white shadow-lg rotate-3">
+          <div className="border border-border rounded-lg p-2.5 w-[260px] min-h-[70px] bg-white shadow-lg rotate-3 overflow-hidden">
             <div className="flex gap-2">
-              <div className="border border-border rounded-full h-5 w-5" />
+              <div className="border border-border rounded-full h-5 w-5 shrink-0" />
               <div className="flex flex-col">
-                <div className="text-md">{todo.title}</div>
-                <div className="text-xs font-light">{todo.description}</div>
+                <div className="text-md truncate">{todo.title}</div>
+                <div className="text-xs font-light truncate">
+                  {todo.description}
+                </div>
                 <div className="flex items-center gap-2 pt-2">
                   {todo.dueTime?.isValid && (
                     <TimeDisplayer className="text-xs" dueTime={todo.dueTime} />

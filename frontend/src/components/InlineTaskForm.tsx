@@ -26,12 +26,14 @@ function InlineTaskForm({
   mode = "default",
   parentId,
   projectId,
+  sectionId,
 }: {
   todo?: TodoWithCompleteAtDateTime;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   mode?: "default" | "modal";
   parentId?: string;
   projectId?: string;
+  sectionId?: string;
 }) {
   const {
     register,
@@ -41,7 +43,10 @@ function InlineTaskForm({
     watch,
   } = useFormContext<TodoFormValues>();
 
-  const { mutate: createTodo } = useCreateTodo(projectId);
+  console.log("project Id", projectId);
+  console.log("section id", sectionId);
+
+  const { mutate: createTodo } = useCreateTodo(projectId, sectionId);
   const { mutate: updateTodo } = useUpdateTodo(projectId);
   const todoId = watch("id");
 
@@ -81,7 +86,12 @@ function InlineTaskForm({
     if (isEdit && todoId) {
       updateTodo({ id: todoId, data: serialized as UpdateTodo });
     } else {
-      createTodo({ ...SerializeFormData(data), parentId, projectId });
+      createTodo({
+        ...SerializeFormData(data),
+        parentId,
+        projectId,
+        projectSectionId: sectionId,
+      });
     }
     reset();
     setIsOpen(false);

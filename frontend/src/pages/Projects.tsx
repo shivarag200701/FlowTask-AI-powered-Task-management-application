@@ -9,11 +9,12 @@ import {
 import BoardView from "@/features/projects/components/BoardView";
 import ListView from "@/features/projects/components/ListView";
 import TaskDisplaySelector from "@/features/projects/components/TaskDisplaySelector";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import { useProject } from "@/hooks/use-projects";
 import PageContentHeader from "@/layouts/PageContentHeader";
 import type { ViewMode } from "@/types";
 import { extractIdFromSlug } from "@shiva200701/todotypes";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Projects() {
@@ -31,17 +32,23 @@ function ProjectDetail({ id }: { id: string }) {
 
   const persisted = project?.taskDisplayPreferences?.viewMode ?? "list";
 
-  const [viewMode, setViewMode] = useState<ViewMode>(
-    () => project?.taskDisplayPreferences?.viewMode ?? "list"
-  );
+  const [viewMode, setViewMode] = useState<ViewMode>("list");
+
+  useEffect(() => {
+    if (project?.taskDisplayPreferences?.viewMode) {
+      setViewMode(project.taskDisplayPreferences.viewMode);
+    }
+  }, [project?.taskDisplayPreferences?.viewMode]);
 
   const isDirty = viewMode !== persisted;
+
+  const { isMobile } = useMediaQuery();
 
   return (
     <div>
       {/*Need to implement a bread crumb like structure for this titlte of the PageContentHeader */}
       <PageContentHeader
-        title={<BreadCrumb projectName={project?.name} />}
+        title={!isMobile && <BreadCrumb projectName={project?.name} />}
         controls={
           <TaskDisplaySelector
             isDirty={isDirty}
@@ -53,7 +60,7 @@ function ProjectDetail({ id }: { id: string }) {
         }
       />
       {viewMode === "list" && <ListView id={id} />}
-      {viewMode === "board" && <BoardView />}
+      {viewMode === "board" && <BoardView id={id} />}
     </div>
   );
 }

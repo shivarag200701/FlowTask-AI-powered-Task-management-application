@@ -35,4 +35,5 @@ export const projectKeys = {
   personal: (search: string) => ["projects", "personal", search] as const,
   workspace: (workspaceId: string) =>
     ["projects", "workspace", workspaceId] as const,
+  sections: (projectId: string) => ["projects", projectId, "sections"] as const,
 };

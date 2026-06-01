@@ -19,6 +19,7 @@ export const CreateTodoSchema = z.object({
     }),
     parentId: z.string().nullish(),
     projectId: z.string().nullish(),
+    projectSectionId: z.string().nullish(),
 });
 export const todoQuerySchema = z.object({
     tagIds: z.string().optional(),

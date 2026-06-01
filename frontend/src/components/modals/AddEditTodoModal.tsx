@@ -18,15 +18,24 @@ function AddEditTodoModal({
   show,
   setShow,
   todo,
+  projectId,
+  sectionId,
 }: {
   show: boolean;
   setShow: Dispatch<SetStateAction<boolean>>;
   todo?: TodoWithCompleteAtDateTime;
+  projectId?: string;
+  sectionId?: string;
 }) {
   return (
     <Modal showModal={show} setShowModal={setShow} className="max-w-2xl">
       <TaskBuilderProvider todo={todo}>
-        <InlineTaskForm setIsOpen={setShow} mode="modal" />
+        <InlineTaskForm
+          setIsOpen={setShow}
+          mode="modal"
+          projectId={projectId}
+          sectionId={sectionId}
+        />
       </TaskBuilderProvider>
     </Modal>
   );
@@ -57,11 +66,27 @@ function CreateTodoButton({
   );
 }
 
-export function useAddEditTodoModal(todo?: TodoWithCompleteAtDateTime) {
+export function useAddEditTodoModal({
+  todo,
+  projectId,
+  sectionId,
+}: {
+  todo?: TodoWithCompleteAtDateTime;
+  projectId?: string;
+  sectionId?: string;
+}) {
   const [show, setShow] = useState(false);
 
   const AddEditTodoModalCallback = useCallback(() => {
-    return <AddEditTodoModal show={show} setShow={setShow} todo={todo} />;
+    return (
+      <AddEditTodoModal
+        show={show}
+        setShow={setShow}
+        todo={todo}
+        projectId={projectId}
+        sectionId={sectionId}
+      />
+    );
   }, [show, setShow, todo]);
 
   const CreateTodoButtonCallback = useCallback(() => {

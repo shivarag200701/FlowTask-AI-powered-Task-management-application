@@ -7,6 +7,7 @@ import {
   UpdateProjectSchema,
 } from "@shiva200701/todotypes";
 import z from "zod";
+import { sectionRouter } from "./section/index.js";
 
 export const projectRouter = Router();
 
@@ -59,6 +60,31 @@ projectRouter.get("/personal", requireLogin, async (req, res) => {
   }
 });
 
+projectRouter.get("/", requireLogin, async (req, res) => {
+  const userId = req.session.userId;
+  if (!userId) {
+    return res.status(401).json({
+      msg: "unauthorized",
+    });
+  }
+
+  try {
+    const projects = await prisma.project.findMany({
+      where: {
+        userId,
+      },
+    });
+    return res.status(200).json({
+      projects,
+    });
+  } catch (error) {
+    console.error("Failed Getting Projects", error);
+    return res.status(500).json({
+      msg: "internal Server Error",
+    });
+  }
+});
+
 projectRouter.post("/", requireLogin, async (req, res) => {
   const userId = req.session.userId;
   if (!userId) {
@@ -71,7 +97,7 @@ projectRouter.post("/", requireLogin, async (req, res) => {
 
   if (!success) {
     return res.status(400).json({
-      msg: "Send proper query params",
+      msg: "Send proper body",
       error,
     });
   }
@@ -213,3 +239,5 @@ projectRouter.put("/:id", requireLogin, async (req, res) => {
     });
   }
 });
+
+projectRouter.use("/:id/sections", sectionRouter);

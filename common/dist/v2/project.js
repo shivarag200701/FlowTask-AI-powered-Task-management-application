@@ -13,4 +13,7 @@ export const UpdateProjectSchema = z.object({
     })
         .optional(),
 });
+export const CreateProjectSectionSchema = z.object({
+    name: z.string().min(1),
+});
 //# sourceMappingURL=project.js.map

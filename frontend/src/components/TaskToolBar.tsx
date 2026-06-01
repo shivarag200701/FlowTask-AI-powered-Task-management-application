@@ -19,7 +19,7 @@ function TaskToolBar() {
 
   const { TagTodoModal, setShowTagTodoModal } = useTagTodoModal();
 
-  const { CreateTodoButton, AddEditTodoModal } = useAddEditTodoModal();
+  const { CreateTodoButton, AddEditTodoModal } = useAddEditTodoModal({});
   const { isMobile } = useMediaQuery();
 
   const numberOfTaskSelected = useMemo(() => {

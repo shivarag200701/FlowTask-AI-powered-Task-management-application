@@ -35,7 +35,7 @@ function BoardView() {
   const snapshot = useRef(structuredClone(items));
   const dragInitialColumn = useRef<UniqueIdentifier | undefined>(undefined);
 
-  const { AddEditTodoModal, CreateTodoButton } = useAddEditTodoModal();
+  const { AddEditTodoModal, CreateTodoButton } = useAddEditTodoModal({});
   const { setSelectedTaskIds, setIsSelectMode } = useTaskSelectionContext();
 
   useEffect(() => {

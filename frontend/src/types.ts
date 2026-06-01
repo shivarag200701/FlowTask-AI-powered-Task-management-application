@@ -98,6 +98,18 @@ export type Project = {
   todos: Todo[];
 };
 
+export type Section = {
+  id: string;
+  name: string;
+  sortKey: string;
+  projectId: string;
+  todos: Todo[];
+};
+
+export type SectionWithDateTime = Omit<Section, "todos"> & {
+  todos: TodoWithCompleteAtDateTime[];
+};
+
 export type ProjectWithDateTime = Omit<Project, "todos"> & {
   todos: TodoWithCompleteAtDateTime[];
 };

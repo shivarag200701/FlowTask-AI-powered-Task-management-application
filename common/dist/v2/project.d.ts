@@ -14,6 +14,10 @@ export declare const UpdateProjectSchema: z.ZodObject<{
         }>;
     }, z.core.$strip>>;
 }, z.core.$strip>;
+export declare const CreateProjectSectionSchema: z.ZodObject<{
+    name: z.ZodString;
+}, z.core.$strip>;
 export type UpdateProject = z.infer<typeof UpdateProjectSchema>;
 export type CreateProject = z.infer<typeof CreateProjectSchema>;
+export type CreateProjectSection = z.infer<typeof CreateProjectSectionSchema>;
 //# sourceMappingURL=project.d.ts.map

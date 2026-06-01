@@ -252,7 +252,7 @@ export function useDeleteTodo() {
   });
 }
 
-export function useCreateTodo(projectId?: string) {
+export function useCreateTodo(projectId?: string, sectionId?: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -262,6 +262,11 @@ export function useCreateTodo(projectId?: string) {
       if (projectId) {
         queryClient.invalidateQueries({
           queryKey: projectKeys.project(projectId),
+        });
+      }
+      if (sectionId) {
+        queryClient.invalidateQueries({
+          queryKey: projectKeys.sections(sectionId),
         });
       }
 

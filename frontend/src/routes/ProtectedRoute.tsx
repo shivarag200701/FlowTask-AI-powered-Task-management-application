@@ -29,6 +29,8 @@ const ProtectedRoute = () => {
     staleTime: 60000,
   });
 
+  // const { isLoading: projectLoading } = useProjects();
+
   // Fetch todos - this ensures todos are loaded before showing dashboard
   const { isLoading: todosLoading } = useQuery({
     queryKey: todosQueryKeys.all,

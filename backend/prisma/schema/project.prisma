@@ -6,9 +6,21 @@ model Project{
     userId              String
     user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    //Need to implement an Database level or application level check that a project can either be users personal project or related to an workspace and cannot be alone
     workSpaceId         String?
     todos               Todo[]
 
     taskDisplayPreferences    Json?
+
+    sections        ProjectSection[]
+}
+
+model ProjectSection{
+    id              String              @id @default(cuid())
+    name            String
+    sortKey         String
+
+    projectId       String
+    project         Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+    todos           Todo[]
 }

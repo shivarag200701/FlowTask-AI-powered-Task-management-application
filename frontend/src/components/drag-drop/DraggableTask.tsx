@@ -27,6 +27,7 @@ function DraggableTask({
   column,
   className,
   onSelect,
+  draggable = true,
 }: {
   id: string;
   index: number;
@@ -34,6 +35,7 @@ function DraggableTask({
   column: string;
   className?: string;
   onSelect?: (taskId: string) => void;
+  draggable?: boolean;
 }) {
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
 
@@ -86,7 +88,7 @@ function DraggableTask({
           className,
           taskSelected && "bg-accent"
         )}
-        ref={ref}
+        ref={draggable ? ref : null}
         onClick={(e) => {
           e.preventDefault();
           if (e.shiftKey) {

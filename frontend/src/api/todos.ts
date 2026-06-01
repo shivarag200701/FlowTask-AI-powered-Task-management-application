@@ -93,6 +93,8 @@ export async function bulkUpdateTodos({
 }
 
 export async function createTodo(todo: CreateTodo) {
+  console.log("todo", todo);
+
   await api.post(`/api/v2/todo`, {
     ...todo,
   });

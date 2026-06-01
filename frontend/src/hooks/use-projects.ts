@@ -2,6 +2,8 @@ import {
   createProject,
   getPersonalProject,
   getProject,
+  getProjects,
+  getProjectSections,
   updateProject,
 } from "@/api/project";
 import { projectKeys } from "@/query-keys";
@@ -53,6 +55,23 @@ export function useProject(id: string) {
       ...data,
       todos: data.todos.filter((t) => !t.completed),
     }),
+  });
+}
+
+export function useProjects() {
+  return useQuery({
+    queryKey: projectKeys.all,
+    queryFn: () => getProjects(),
+    enabled: true,
+    staleTime: 60000,
+  });
+}
+
+export function useProjectSections(id: string) {
+  return useQuery({
+    queryKey: projectKeys.sections(id),
+    queryFn: () => getProjectSections(id),
+    staleTime: 60000,
   });
 }
 

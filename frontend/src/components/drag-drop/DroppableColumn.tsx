@@ -29,7 +29,7 @@ function DroppableColumn({
   const [atTop, setAtTop] = useState(true);
   const [atBottom, setAtBottom] = useState(false);
 
-  const { setShowAddEditTodoModal, AddEditTodoModal } = useAddEditTodoModal();
+  const { setShowAddEditTodoModal, AddEditTodoModal } = useAddEditTodoModal({});
 
   if (id === "Overdue" && numberofTodos === 0) {
     return null;

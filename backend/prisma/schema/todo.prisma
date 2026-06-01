@@ -1,31 +1,33 @@
 model Todo {
-  id            String         @id @default(cuid())
-  title         String
-  description   String?
-  priority      String?    
-  dueDate       String?
-  dueTime         DateTime? @db.Timestamp(3)
-  user          User        @relation(fields: [userId], references: [id])
-  userId        String    
-  completed     Boolean     @default(false)
-  completedAt   DateTime?
-  color         String?
-  isAllDay      Boolean?     @default(true)
-  sortKey       String
+  id                String         @id @default(cuid())
+  title             String
+  description       String?
+  priority          String?    
+  dueDate           String?
+  dueTime           DateTime? @db.Timestamp(3)
+  user              User        @relation(fields: [userId], references: [id])
+  userId            String    
+  completed         Boolean     @default(false)
+  completedAt       DateTime?
+  color             String?
+  isAllDay          Boolean?     @default(true)
+  sortKey           String
   
-  createdAt DateTime @default(now())
-  updatedAt DateTime? @updatedAt
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime? @updatedAt
   
 
-  notifications Notifications[]
-  tags         TodoTag[]
+  notifications     Notifications[]
+  tags              TodoTag[]
 
   //child task
-  parentId String?
-  parent   Todo? @relation("SubTasks",fields: [parentId],references: [id],onDelete: Cascade)
-  children Todo[] @relation("SubTasks")
+  parentId          String?
+  parent            Todo? @relation("SubTasks",fields: [parentId],references: [id],onDelete: Cascade)
+  children          Todo[] @relation("SubTasks")
 
   //project
-  projectId   String?
-  project     Project?     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId         String?
+  project           Project?     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectSectionId  String?
+  projectSection    ProjectSection?   @relation(fields: [projectSectionId],references: [id], onDelete: SetNull)
 }

@@ -15,6 +15,7 @@ export declare const CreateTodoSchema: z.ZodObject<{
     tags: z.ZodOptional<z.ZodPipe<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>, z.ZodTransform<string[], string | string[]>>>;
     parentId: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     projectId: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    projectSectionId: z.ZodOptional<z.ZodNullable<z.ZodString>>;
 }, z.core.$strip>;
 export declare const todoQuerySchema: z.ZodObject<{
     tagIds: z.ZodOptional<z.ZodString>;
@@ -39,6 +40,7 @@ export declare const UpdateTodoSchema: z.ZodObject<{
     tags: z.ZodOptional<z.ZodOptional<z.ZodPipe<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>, z.ZodTransform<string[], string | string[]>>>>;
     parentId: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
     projectId: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
+    projectSectionId: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
     prevIndex: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     nextIndex: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     completed: z.ZodOptional<z.ZodBoolean>;

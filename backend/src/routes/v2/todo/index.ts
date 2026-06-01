@@ -114,6 +114,7 @@ todoRouter.post("/", requireLogin, async (req, res) => {
     tags,
     parentId,
     projectId,
+    projectSectionId,
   } = data;
 
   try {
@@ -155,6 +156,7 @@ todoRouter.post("/", requireLogin, async (req, res) => {
         isAllDay: isAllDay ?? null,
         parentId: parentId ?? null,
         projectId: projectId ?? null,
+        projectSectionId: projectSectionId ?? null,
         tags: {
           create:
             tags?.map((tagId) => ({

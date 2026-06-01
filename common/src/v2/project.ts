@@ -16,6 +16,12 @@ export const UpdateProjectSchema = z.object({
     .optional(),
 });
 
+export const CreateProjectSectionSchema = z.object({
+  name: z.string().min(1),
+});
+
 export type UpdateProject = z.infer<typeof UpdateProjectSchema>;
 
 export type CreateProject = z.infer<typeof CreateProjectSchema>;
+
+export type CreateProjectSection = z.infer<typeof CreateProjectSectionSchema>;
