@@ -1,14 +1,20 @@
 import {
   createProject,
   createProjectSection,
+  deleteProjectSection,
   getPersonalProject,
   getProject,
   getProjects,
   getProjectSections,
   updateProject,
+  updateProjectSection,
 } from "@/api/project";
 import { projectKeys } from "@/query-keys";
-import type { CreateProject, UpdateProject } from "@shiva200701/todotypes";
+import type {
+  CreateProject,
+  UpdateProject,
+  UpdateProjectSectionSchema,
+} from "@shiva200701/todotypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
@@ -46,11 +52,11 @@ export function usePersonalProject(search: string) {
   });
 }
 
-export function useProject(id: string) {
+export function useProject(id: string | null) {
   return useQuery({
-    queryKey: projectKeys.project(id),
-    queryFn: () => getProject(id),
-    enabled: true,
+    queryKey: projectKeys.project(id ?? ""),
+    queryFn: () => getProject(id!),
+    enabled: !!id,
     staleTime: 60000,
     select: (data) => ({
       ...data,
@@ -68,25 +74,34 @@ export function useProjects() {
   });
 }
 
-export function useProjectSections(id: string) {
+export function useProjectSections(id: string | null) {
   return useQuery({
-    queryKey: projectKeys.sections(id),
-    queryFn: () => getProjectSections(id),
+    queryKey: projectKeys.sections(id ?? ""),
+    queryFn: () => getProjectSections(id!),
+    enabled: !!id,
     staleTime: 60000,
   });
 }
 
-export function useCreateProjectSection({ projectId }: { projectId: string }) {
+export function useCreateProjectSection({
+  projectId,
+}: {
+  projectId: string | null;
+}) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ name }: { name: string }) =>
-      createProjectSection({ projectId, name }),
+    mutationFn: ({ name }: { name: string }) => {
+      if (!projectId) throw new Error("projectId is required");
+      return createProjectSection({ projectId, name });
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: projectKeys.sections(projectId),
-      });
-      toast.success("Project created successfully!");
+      if (projectId) {
+        queryClient.invalidateQueries({
+          queryKey: projectKeys.sections(projectId),
+        });
+      }
+      toast.success("Section created successfully!");
     },
     onError: (error) => {
       if (isAxiosError(error)) {
@@ -99,14 +114,82 @@ export function useCreateProjectSection({ projectId }: { projectId: string }) {
   });
 }
 
-export function useUpdateProject(id: string) {
+export function useUpdateProjectSection({
+  projectId,
+  sectionId,
+}: {
+  projectId: string | null;
+  sectionId: string;
+}) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ data }: { data: UpdateProjectSectionSchema }) => {
+      if (!projectId) throw new Error("projectId is required");
+      return updateProjectSection({ projectId, sectionId, data });
+    },
+    onSuccess: () => {
+      if (projectId) {
+        queryClient.invalidateQueries({
+          queryKey: projectKeys.sections(projectId),
+        });
+      }
+      toast.success("Section updated successfully!");
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        const errorMsg = error.response?.data.msg;
+        toast.error(errorMsg);
+        return;
+      }
+      toast.error("something went wrong");
+    },
+  });
+}
+
+export function useDeleteProjectSection({
+  projectId,
+  sectionId,
+}: {
+  projectId: string | null;
+  sectionId: string;
+}) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => {
+      if (!projectId) throw new Error("projectId is required");
+      return deleteProjectSection({ projectId, sectionId });
+    },
+    onSuccess: () => {
+      if (projectId) {
+        queryClient.invalidateQueries({
+          queryKey: projectKeys.sections(projectId),
+        });
+      }
+      toast.success("Section deleted successfully!");
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        const errorMsg = error.response?.data.msg;
+        toast.error(errorMsg);
+        return;
+      }
+      toast.error("something went wrong");
+    },
+  });
+}
+
+export function useUpdateProject(id: string | null) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: UpdateProject }) =>
       updateProject(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: projectKeys.project(id) });
-      queryClient.invalidateQueries({ queryKey: projectKeys.personal("") });
+      if (id) {
+        queryClient.invalidateQueries({ queryKey: projectKeys.project(id) });
+        queryClient.invalidateQueries({ queryKey: projectKeys.personal("") });
+      }
       toast.success("Project updated successfully!");
     },
     onError: (error) => {

@@ -1,11 +1,11 @@
 import { createContext, useContext, type PropsWithChildren } from "react";
 
 type ProjectContext = {
-  projectId: string;
+  projectId: string | null;
 };
 
 const projectContext = createContext<ProjectContext>({
-  projectId: "",
+  projectId: null,
 });
 
 export function ProjectProvider({

@@ -20,8 +20,18 @@ export const CreateProjectSectionSchema = z.object({
   name: z.string().min(1),
 });
 
+export const UpdateProjectSectionSchema = z.object({
+  name: z.string().min(1).optional(),
+  sortKey: z.string().nullish(),
+  projectId: z.string().nullish(),
+});
+
 export type UpdateProject = z.infer<typeof UpdateProjectSchema>;
 
 export type CreateProject = z.infer<typeof CreateProjectSchema>;
+
+export type UpdateProjectSectionSchema = z.infer<
+  typeof UpdateProjectSectionSchema
+>;
 
 export type CreateProjectSection = z.infer<typeof CreateProjectSectionSchema>;

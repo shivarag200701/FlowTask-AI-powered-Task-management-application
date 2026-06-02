@@ -17,7 +17,13 @@ export declare const UpdateProjectSchema: z.ZodObject<{
 export declare const CreateProjectSectionSchema: z.ZodObject<{
     name: z.ZodString;
 }, z.core.$strip>;
+export declare const UpdateProjectSectionSchema: z.ZodObject<{
+    name: z.ZodOptional<z.ZodString>;
+    sortKey: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    projectId: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+}, z.core.$strip>;
 export type UpdateProject = z.infer<typeof UpdateProjectSchema>;
 export type CreateProject = z.infer<typeof CreateProjectSchema>;
+export type UpdateProjectSectionSchema = z.infer<typeof UpdateProjectSectionSchema>;
 export type CreateProjectSection = z.infer<typeof CreateProjectSectionSchema>;
 //# sourceMappingURL=project.d.ts.map

@@ -1,6 +1,10 @@
 import type { Project, ProjectWithDateTime, Section } from "@/types";
 import api from "@/utils/functions/api";
-import type { CreateProject, UpdateProject } from "@shiva200701/todotypes";
+import type {
+  CreateProject,
+  UpdateProject,
+  UpdateProjectSectionSchema,
+} from "@shiva200701/todotypes";
 import { DateTime } from "luxon";
 
 export async function createProject({
@@ -74,6 +78,41 @@ export async function createProjectSection({
 }) {
   try {
     await api.post(`/api/v2/projects/${projectId}/sections`, { name });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function deleteProjectSection({
+  projectId,
+  sectionId,
+}: {
+  projectId: string | null;
+  sectionId: string | null;
+}) {
+  try {
+    await api.delete(`/api/v2/projects/${projectId}/sections/${sectionId}`);
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function updateProjectSection({
+  projectId,
+  sectionId,
+  data,
+}: {
+  projectId: string | null;
+  sectionId: string;
+  data: UpdateProjectSectionSchema;
+}) {
+  if (!projectId) {
+    throw new Error("projectId is null");
+  }
+  try {
+    await api.patch(`/api/v2/projects/${projectId}/sections/${sectionId}`, {
+      ...data,
+    });
   } catch (error) {
     throw error;
   }

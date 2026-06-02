@@ -163,7 +163,7 @@ export function useBulkUpdateTodos() {
   });
 }
 
-export function useUpdateTodo(projectId?: string) {
+export function useUpdateTodo(projectId?: string | null) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -252,7 +252,7 @@ export function useDeleteTodo() {
   });
 }
 
-export function useCreateTodo(projectId?: string, sectionId?: string) {
+export function useCreateTodo(projectId?: string | null, sectionId?: string) {
   const queryClient = useQueryClient();
 
   return useMutation({

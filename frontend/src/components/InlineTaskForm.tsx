@@ -43,8 +43,8 @@ function InlineTaskForm({
   } = useFormContext<TodoFormValues>();
 
   const { projectId } = useProjectContext();
-  console.log("project Id", projectId);
-  console.log("section id", sectionId);
+
+  console.log("projectId", projectId);
 
   const { mutate: createTodo } = useCreateTodo(projectId, sectionId);
   const { mutate: updateTodo } = useUpdateTodo(projectId);

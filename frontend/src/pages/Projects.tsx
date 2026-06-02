@@ -46,7 +46,7 @@ function ProjectDetail({ id }: { id: string }) {
   const { isMobile } = useMediaQuery();
 
   return (
-    <div>
+    <div className="h-full">
       <ProjectProvider id={id}>
         {/*Need to implement a bread crumb like structure for this titlte of the PageContentHeader */}
         <PageContentHeader

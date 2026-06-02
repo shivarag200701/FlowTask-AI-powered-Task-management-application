@@ -262,8 +262,6 @@ todoRouter.patch("/:id", requireLogin, async (req, res) => {
 
     const updateData = constructPatchPayload(patch);
 
-    console.log(updateData);
-
     const updatedTodo = await prisma.todo.update({
       where: { id: idParam, userId },
       data: {

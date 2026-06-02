@@ -4,6 +4,13 @@ import DraggableTask from "./DraggableTask";
 import { CirclePlus, MoreHorizontal } from "lucide-react";
 import { Button } from "../ui/button";
 import { useAddEditTodoModal } from "../modals/AddEditTodoModal";
+import { useState } from "react";
+import { Popover } from "../ui/popover";
+import MoreSectionOptionsDropDown from "../popovers/MoreSectionOptionsDropDown";
+import { useDeleteProjectSection } from "@/hooks/use-projects";
+import { useProjectContext } from "@/context/ProjectContext";
+import { AddEditSection } from "@/features/projects/components/AddEditSection";
+import { useConfirmModal } from "../modals/ConfirmModal";
 
 function DraggableColumn({
   id,
@@ -19,6 +26,25 @@ function DraggableColumn({
   const { setShowAddEditTodoModal, AddEditTodoModal } = useAddEditTodoModal({
     sectionId: id,
   });
+
+  const { projectId } = useProjectContext();
+
+  const { mutateAsync } = useDeleteProjectSection({ projectId, sectionId: id });
+  const { ConfirmModal, setShowConfirmModal } = useConfirmModal({
+    title: "Delete section?",
+    description: (
+      <div className="text-sm">
+        The <span className="font-semibold">{column}</span> section will be
+        deleted permanently
+      </div>
+    ),
+    confirmText: "Delete",
+    onConfirm: mutateAsync,
+    variant: "destructive",
+  });
+
+  const [IsMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
+  const [isEditing, SetIsEditing] = useState(false);
 
   const { ref, isDragging } = useSortable({
     id,
@@ -42,12 +68,44 @@ function DraggableColumn({
       className="min-w-[290px] h-fit hover:shadow-[0_5px_10px_rgba(0,0,0,0.15)] duration-200 transition-all cursor-grab rounded-lg flex flex-col gap-1.5 items-center text-sm font-semibold  p-2"
     >
       <div className="text-left flex justify-between w-full">
-        <span>{column}</span>
-        <MoreHorizontal
-          size={22}
-          strokeWidth={2}
-          className="hover:bg-accent cursor-pointer rounded-md"
-        />
+        {isEditing ? (
+          <AddEditSection
+            setIsAddSectionOpen={SetIsEditing}
+            projectId={projectId}
+            editing
+            sectionId={id}
+            sectionName={column}
+          />
+        ) : (
+          <span>{column}</span>
+        )}
+        <Popover
+          openPopover={IsMoreOptionsOpen}
+          setOpenPopover={setIsMoreOptionsOpen}
+          content={
+            <MoreSectionOptionsDropDown
+              onDelete={() => {
+                setIsMoreOptionsOpen(false);
+                setShowConfirmModal(true);
+              }}
+              onEdit={() => {
+                SetIsEditing(true);
+                setIsMoreOptionsOpen(false);
+              }}
+            />
+          }
+          sideOffset={5}
+        >
+          <Button
+            className="w-fit hover:bg-accent"
+            variant="custom"
+            icon={<MoreHorizontal color="#808080" strokeWidth={2.5} />}
+            size="icon-sm"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          />
+        </Popover>
       </div>
       <div className="p-2">
         {todos.map((todo, index) => (
@@ -74,6 +132,7 @@ function DraggableColumn({
         </span>
       </Button>
       <AddEditTodoModal />
+      {ConfirmModal}
     </div>
   );
 }

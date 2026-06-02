@@ -36,4 +36,11 @@ export const projectKeys = {
   workspace: (workspaceId: string) =>
     ["projects", "workspace", workspaceId] as const,
   sections: (projectId: string) => ["projects", projectId, "sections"] as const,
+  section: ({
+    projectId,
+    sectionId,
+  }: {
+    projectId: string;
+    sectionId: string;
+  }) => ["projects", projectId, "sections", sectionId] as const,
 };
