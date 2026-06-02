@@ -98,10 +98,10 @@ function DisplaySettingsDropdown({
     },
   });
 
-  const { mutate } = useUpdateProject(id);
+  const { mutateAsync } = useUpdateProject(id);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    mutate({
+    mutateAsync({
       id,
       data: { taskDisplayPreferences: { viewMode: data.viewMode } },
     });

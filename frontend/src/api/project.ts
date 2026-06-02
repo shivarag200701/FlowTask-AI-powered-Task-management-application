@@ -65,6 +65,20 @@ export async function getProjectSections(id: string) {
   }
 }
 
+export async function createProjectSection({
+  projectId,
+  name,
+}: {
+  projectId: string;
+  name: string;
+}) {
+  try {
+    await api.post(`/api/v2/projects/${projectId}/sections`, { name });
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function getProjects(): Promise<ProjectWithDateTime[]> {
   try {
     const { projects }: { projects: Project[] } = (

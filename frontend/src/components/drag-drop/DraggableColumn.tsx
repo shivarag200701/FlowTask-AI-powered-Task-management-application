@@ -1,7 +1,7 @@
 import type { TodoWithCompleteAtDateTime } from "@/types";
 import { useSortable } from "@dnd-kit/react/sortable";
 import DraggableTask from "./DraggableTask";
-import { CirclePlus } from "lucide-react";
+import { CirclePlus, MoreHorizontal } from "lucide-react";
 import { Button } from "../ui/button";
 import { useAddEditTodoModal } from "../modals/AddEditTodoModal";
 
@@ -39,9 +39,16 @@ function DraggableColumn({
   return (
     <div
       ref={ref}
-      className="min-w-[260px] min-h-[200px] hover:shadow-[0_3px_5px_rgba(0.15,0.15,0.15,0.15)] duration-200 transition-all cursor-grab rounded-lg flex flex-col gap-1.5 items-center text-sm font-semibold  p-2"
+      className="min-w-[290px] h-fit hover:shadow-[0_5px_10px_rgba(0,0,0,0.15)] duration-200 transition-all cursor-grab rounded-lg flex flex-col gap-1.5 items-center text-sm font-semibold  p-2"
     >
-      <div className="text-left w-full">{column}</div>
+      <div className="text-left flex justify-between w-full">
+        <span>{column}</span>
+        <MoreHorizontal
+          size={22}
+          strokeWidth={2}
+          className="hover:bg-accent cursor-pointer rounded-md"
+        />
+      </div>
       <div className="p-2">
         {todos.map((todo, index) => (
           <DraggableTask
@@ -49,6 +56,7 @@ function DraggableColumn({
             id={todo.id}
             index={index}
             todo={todo}
+            key={todo.id}
           />
         ))}
       </div>

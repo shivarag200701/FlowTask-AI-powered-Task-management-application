@@ -43,7 +43,7 @@ export function SearchBox({
     { preventDefault: true, enableOnFormTags: true }
   );
   return (
-    <div className="relative mb-5 w-full">
+    <div className="mb-5 w-fit relative">
       <div className="absolute inset-y-0 pl-4 flex items-center">
         <Search className="w-4 h-5 text-neutral-400" strokeWidth={1} />
       </div>

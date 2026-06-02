@@ -1,5 +1,6 @@
 import {
   createProject,
+  createProjectSection,
   getPersonalProject,
   getProject,
   getProjects,
@@ -72,6 +73,29 @@ export function useProjectSections(id: string) {
     queryKey: projectKeys.sections(id),
     queryFn: () => getProjectSections(id),
     staleTime: 60000,
+  });
+}
+
+export function useCreateProjectSection({ projectId }: { projectId: string }) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ name }: { name: string }) =>
+      createProjectSection({ projectId, name }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: projectKeys.sections(projectId),
+      });
+      toast.success("Project created successfully!");
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        const errorMsg = error.response?.data.msg;
+        toast.error(errorMsg);
+        return;
+      }
+      toast.error("something went wrong");
+    },
   });
 }
 
