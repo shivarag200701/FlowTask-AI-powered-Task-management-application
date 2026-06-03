@@ -20,7 +20,7 @@ function ListView() {
   const { setIsSelectMode, setSelectedTaskIds } = useTaskSelectionContext();
 
   return (
-    <PageWidthWrapper className="grid pt-6 lg:pt-1">
+    <PageWidthWrapper className="grid p-10 lg:pt-1">
       <div className="max-w-4xl w-full mx-auto">
         {overdueTodos && <OverDueListView />}
         {todos && (
