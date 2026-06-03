@@ -7,7 +7,7 @@ function ListView({ id }: { id: string }) {
   const { data: sections } = useProjectSections(id);
 
   return (
-    <PageWidthWrapper className="max-w-4xl pt-10">
+    <PageWidthWrapper className="max-w-3xl p-10">
       <h1 className="text-3xl font-semibold">{project?.name}</h1>
       <div className="mt-5 flex flex-col gap-2">
         {sections?.map((section) => (
