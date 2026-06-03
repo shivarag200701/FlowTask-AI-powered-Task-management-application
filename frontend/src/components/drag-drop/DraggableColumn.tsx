@@ -108,15 +108,19 @@ function DraggableColumn({
           </Popover>
         </div>
         <div className="p-2">
-          {todos.map((todo, index) => (
-            <DraggableTask
-              column={id}
-              id={todo.id}
-              index={index}
-              todo={todo}
-              key={todo.id}
-            />
-          ))}
+          {todos.length === 0 ? (
+            <EmptyColumn columnId={id} />
+          ) : (
+            todos.map((todo, index) => (
+              <DraggableTask
+                column={id}
+                id={todo.id}
+                index={index}
+                todo={todo}
+                key={todo.id}
+              />
+            ))
+          )}
         </div>
         <Button
           className="flex gap-2 justify-start items-center w-full px-2 hover:bg-accent cursor-pointer rounded-md hover:text-primary group"
@@ -136,6 +140,18 @@ function DraggableColumn({
       {ConfirmModal}
     </>
   );
+}
+
+function EmptyColumn({ columnId }: { columnId: string }) {
+  const { ref } = useSortable({
+    id: `empty-${columnId}`,
+    index: 0,
+    accept: "item",
+    type: "item",
+    group: columnId,
+  });
+
+  return <div ref={ref} className="w-[260px] min-h-[70px] max-h-[90px]"></div>;
 }
 
 export default DraggableColumn;
