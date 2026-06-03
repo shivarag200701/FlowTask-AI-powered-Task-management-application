@@ -20,7 +20,7 @@ function DragOverlayColumn({ sections }: { sections: SectionWithDateTime[] }) {
               <div className="p-2">
                 {section.todos.map((todo, index) => (
                   <DraggableTask
-                    column={section.name}
+                    column={section.id}
                     key={todo.id}
                     id={todo.id}
                     index={index}

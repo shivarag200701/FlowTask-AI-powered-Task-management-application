@@ -13,6 +13,8 @@ import { isSortable } from "@dnd-kit/react/sortable";
 import { SquarePlus } from "lucide-react";
 import { useState } from "react";
 import { AddEditSection } from "./AddEditSection";
+import { useUpdateTodo } from "@/hooks/use-todos";
+import type { UpdateTodo } from "@shiva200701/todotypes";
 
 type DragEndPayload = DragEndEvent;
 
@@ -21,6 +23,7 @@ function BoardView() {
 
   const { data: project } = useProject(id);
   const { data: sections } = useProjectSections(id);
+  const { mutateAsync } = useUpdateTodo();
 
   const { mutateAsync: updateSection } = useUpdateProjectSection({
     projectId: id,
@@ -29,8 +32,8 @@ function BoardView() {
   const [IsAddSectionOpen, setIsAddSectionOpen] = useState(false);
 
   function handleDragEnd(event: DragEndPayload) {
-    const { source } = event.operation;
-    if (source && isSortable(source)) {
+    const { source, target } = event.operation;
+    if (source && target && isSortable(source) && isSortable(target)) {
       const { index, data, type } = source;
       if (type === "column" && sections) {
         //Reorder logic
@@ -46,13 +49,65 @@ function BoardView() {
           sectionId: data.id,
         });
       }
+      if (type === "item" && sections) {
+        const { index, group, initialGroup } = source;
+        const { data } = target;
+        //reoderinng among same column
+        const targetSection = sections?.find((s) => s.id === group);
+        const sourceSection = sections?.find((s) => s.id === initialGroup);
+
+        if (group === initialGroup) {
+          const todos = targetSection?.todos;
+          const reorderedTodos = [...todos!];
+          const [moved] = reorderedTodos.splice(
+            source.initialIndex as number,
+            1
+          );
+          reorderedTodos.splice(index as number, 0, moved);
+
+          const prevIndex =
+            reorderedTodos[(index as number) - 1]?.sortKey ?? null;
+          const nextIndex =
+            reorderedTodos[(index as number) + 1]?.sortKey ?? null;
+
+          const payload: UpdateTodo = { prevIndex, nextIndex };
+
+          mutateAsync({ id: data.id, data: payload, type: "updateOrder" });
+          return;
+        } else {
+          //consider the case where there are no todos in the section
+          const targetTodos = [...targetSection?.todos!];
+          const draggedTodo = sourceSection!.todos.find(
+            (t) => t.id === source.id
+          );
+
+          targetTodos.splice(index as number, 0, draggedTodo!);
+
+          const prevIndex = targetTodos[(index as number) - 1]?.sortKey ?? null;
+          const nextIndex = targetTodos[(index as number) + 1]?.sortKey ?? null;
+          const newSectionId = source.group as string; // target section ID
+
+          const payload: UpdateTodo = {
+            prevIndex,
+            nextIndex,
+            projectSectionId: newSectionId,
+          };
+
+          mutateAsync({ data: payload, id: data.id, type: "updateOrder" });
+        }
+      }
     }
   }
 
   return (
     <PageWidthWrapper className="pt-10 overflow-x-auto scrollbar-none max-w-none !px-0 h-full">
       <h1 className="font-semibold text-3xl px-5 md:px-6">{project?.name}</h1>
-      <DragDropProvider onDragEnd={handleDragEnd}>
+      <DragDropProvider
+        onDragEnd={handleDragEnd}
+        onDragOver={(event) => {
+          console.group(event);
+        }}
+      >
         <div className="flex gap-2 p-5 md:px-6 min-w-fit">
           {sections?.map((section, index) => (
             <DraggableColumn

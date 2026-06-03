@@ -18,6 +18,13 @@ function constructPatchPayload(patch: UpdateTodo) {
     updateData.completed = patch.completed;
     updateData.completedAt = patch.completed ? new Date() : null;
   }
+  if (patch.projectSectionId !== undefined) {
+    if (patch.projectSectionId === null) {
+      updateData.projectSection = { disconnect: true };
+    } else {
+      updateData.projectSection = { connect: { id: patch.projectSectionId } };
+    }
+  }
 
   if (patch.sortKey !== undefined) {
     updateData.sortKey = patch.sortKey;

@@ -81,11 +81,20 @@ export function useProjectSections(id: string | null) {
     enabled: !!id,
     staleTime: 60000,
     select: (data) =>
-      data.sort((a, b) => {
-        if (a.sortKey < b.sortKey) return -1;
-        if (a.sortKey > b.sortKey) return 1;
-        return 0;
-      }),
+      data
+        .sort((a, b) => {
+          if (a.sortKey < b.sortKey) return -1;
+          if (a.sortKey > b.sortKey) return 1;
+          return 0;
+        })
+        .map((section) => ({
+          ...section,
+          todos: section.todos.sort((a, b) => {
+            if (a.sortKey < b.sortKey) return -1;
+            if (a.sortKey > b.sortKey) return 1;
+            return 0;
+          }),
+        })),
   });
 }
 
