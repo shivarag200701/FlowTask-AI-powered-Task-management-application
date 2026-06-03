@@ -12,7 +12,7 @@ import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
 import { isSortable } from "@dnd-kit/react/sortable";
 import { SquarePlus } from "lucide-react";
 import { useState } from "react";
-import { AddEditSection } from "./AddEditSection";
+import { AddEditSection } from "../AddEditSection";
 import { useUpdateTodo } from "@/hooks/use-todos";
 import type { UpdateTodo } from "@shiva200701/todotypes";
 

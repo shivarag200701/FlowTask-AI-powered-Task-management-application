@@ -7,8 +7,8 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { ProjectProvider } from "@/context/ProjectContext";
-import BoardView from "@/features/projects/components/BoardView";
-import ListView from "@/features/projects/components/ListView";
+import BoardView from "@/features/projects/components/board-view/BoardView";
+import ListView from "@/features/projects/components/list-view/ListView";
 import TaskDisplaySelector from "@/features/projects/components/TaskDisplaySelector";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useProject } from "@/hooks/use-projects";

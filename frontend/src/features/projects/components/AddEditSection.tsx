@@ -4,6 +4,7 @@ import {
   useCreateProjectSection,
   useUpdateProjectSection,
 } from "@/hooks/use-projects";
+import { cn } from "@/lib/utils";
 import type { Dispatch, SetStateAction } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 
@@ -17,12 +18,14 @@ export function AddEditSection({
   editing = false,
   sectionId,
   sectionName = "",
+  className,
 }: {
   setIsAddSectionOpen: Dispatch<SetStateAction<boolean>>;
   projectId: string | null;
   editing?: boolean;
   sectionId?: string;
   sectionName?: string;
+  className?: string;
 }) {
   const {
     register,
@@ -55,7 +58,7 @@ export function AddEditSection({
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Input
-          className="shadow-none w-[250px]"
+          className={cn("shadow-none w-[250px]", className)}
           {...register("sectionName", { required: "tag name is required" })}
         />
         <div className="flex gap-2 mt-2">
