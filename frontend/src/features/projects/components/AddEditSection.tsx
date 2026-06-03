@@ -37,7 +37,6 @@ export function AddEditSection({
   const { mutateAsync: createSection } = useCreateProjectSection({ projectId });
   const { mutateAsync: updateSection } = useUpdateProjectSection({
     projectId,
-    sectionId: sectionId ?? "",
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
@@ -46,6 +45,7 @@ export function AddEditSection({
     } else if (editing && sectionId) {
       updateSection({
         data: { name: data.sectionName },
+        sectionId: sectionId ?? "",
       });
     }
     setIsAddSectionOpen(false);

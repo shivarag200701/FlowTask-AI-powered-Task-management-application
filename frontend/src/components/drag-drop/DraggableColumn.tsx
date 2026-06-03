@@ -17,11 +17,13 @@ function DraggableColumn({
   index,
   todos,
   column,
+  sortKey,
 }: {
   id: string;
   index: number;
   todos: TodoWithCompleteAtDateTime[];
   column: string;
+  sortKey: string;
 }) {
   const { setShowAddEditTodoModal, AddEditTodoModal } = useAddEditTodoModal({
     sectionId: id,
@@ -51,6 +53,7 @@ function DraggableColumn({
     index,
     type: "column",
     accept: "column",
+    data: { id, column, sortKey },
   });
 
   if (isDragging) {

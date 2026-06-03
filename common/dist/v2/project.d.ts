@@ -19,8 +19,9 @@ export declare const CreateProjectSectionSchema: z.ZodObject<{
 }, z.core.$strip>;
 export declare const UpdateProjectSectionSchema: z.ZodObject<{
     name: z.ZodOptional<z.ZodString>;
-    sortKey: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     projectId: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    prevIndex: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    nextIndex: z.ZodOptional<z.ZodNullable<z.ZodString>>;
 }, z.core.$strip>;
 export type UpdateProject = z.infer<typeof UpdateProjectSchema>;
 export type CreateProject = z.infer<typeof CreateProjectSchema>;

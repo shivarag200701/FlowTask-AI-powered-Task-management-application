@@ -80,6 +80,12 @@ export function useProjectSections(id: string | null) {
     queryFn: () => getProjectSections(id!),
     enabled: !!id,
     staleTime: 60000,
+    select: (data) =>
+      data.sort((a, b) => {
+        if (a.sortKey < b.sortKey) return -1;
+        if (a.sortKey > b.sortKey) return 1;
+        return 0;
+      }),
   });
 }
 
@@ -116,15 +122,19 @@ export function useCreateProjectSection({
 
 export function useUpdateProjectSection({
   projectId,
-  sectionId,
 }: {
   projectId: string | null;
-  sectionId: string;
 }) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ data }: { data: UpdateProjectSectionSchema }) => {
+    mutationFn: ({
+      data,
+      sectionId,
+    }: {
+      data: UpdateProjectSectionSchema;
+      sectionId: string;
+    }) => {
       if (!projectId) throw new Error("projectId is required");
       return updateProjectSection({ projectId, sectionId, data });
     },

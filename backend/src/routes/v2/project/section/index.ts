@@ -160,15 +160,19 @@ sectionRouter.patch("/:sectionId", requireLogin, async (req, res) => {
     });
   }
 
-  const { name, projectId: updatedProjectId, sortKey } = data;
+  const { name, projectId: updatedProjectId, prevIndex, nextIndex } = data;
 
   let updateData: Prisma.ProjectSectionUpdateInput = {};
 
   updateData = {
     ...(name && { name }),
-    ...(sortKey && { sortKey }),
     ...(updatedProjectId && { project: { connect: { id: updatedProjectId } } }),
+    ...((prevIndex !== undefined || nextIndex !== undefined) && {
+      sortKey: generateSortKey(prevIndex ?? null, nextIndex ?? null),
+    }),
   };
+
+  console.log("updatedData", updateData);
 
   try {
     const updatedSection = await prisma.projectSection.update({
