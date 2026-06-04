@@ -65,6 +65,21 @@ export function useProject(id: string | null) {
   });
 }
 
+export function useNoSectionProjectTodos(id: string | null) {
+  return useQuery({
+    queryKey: projectKeys.project(id ?? ""),
+    queryFn: () => getProject(id!),
+    enabled: !!id,
+    staleTime: 60000,
+    select: (data) => ({
+      ...data,
+      todos: data.todos.filter(
+        (t) => !t.completed && t.projectSectionId === null
+      ),
+    }),
+  });
+}
+
 export function useProjects() {
   return useQuery({
     queryKey: projectKeys.all,

@@ -86,7 +86,6 @@ function TodoDetailForm({
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col sm:flex-row min-h-[500px] overflow-y-auto sm:min-h-[700px]">
-        {/* Left column - Title & Description */}
         <div className="flex-1 p-4 sm:border-r border-b sm:border-b-0 border-border/50 ">
           <div className="flex items-start gap-3">
             <button
@@ -214,8 +213,12 @@ function TodoDetailForm({
           </div>
         </div>
 
-        {/* Right column - Metadata */}
         <div className="w-full sm:w-[200px] p-4 flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
+            <span className="text-xs font-medium text-muted-foreground">
+              Project
+            </span>
+          </div>
           <div className="flex flex-col gap-1">
             <span className="text-xs font-medium text-muted-foreground">
               Due Date
@@ -241,7 +244,6 @@ function TodoDetailForm({
         </div>
       </div>
 
-      {/* Footer */}
       <div className="border-t border-border/50 p-3 flex justify-end gap-2">
         <Button
           variant="secondary"

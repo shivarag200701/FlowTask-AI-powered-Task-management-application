@@ -81,6 +81,18 @@ export function useUpcomingTodos(dateRange: DateTime[]) {
   });
 }
 
+export function useUpcomingCount() {
+  return useQuery({
+    queryKey: todosQueryKeys.all,
+    queryFn: () => fetchTodos(),
+    staleTime: 60000,
+    select: (data) =>
+      data.filter(
+        (t) => !t.completed && t.dueDate && t.dueDate > DateTime.now()
+      ).length,
+  });
+}
+
 export function useTodayTodos() {
   return useQuery({
     queryKey: todosQueryKeys.all,
@@ -202,31 +214,34 @@ export function useUpdateTodo(projectId?: string | null) {
           })
       );
 
-      if (newTodo.type) {
-        toast.success(toastMessages[newTodo.type], {
-          action: {
-            label: "Undo",
-            onClick: () => {
-              queryClient.setQueryData(todosQueryKeys.all, previousTodos);
-              updateTodo(
-                {
-                  sortKey: oldTodo?.sortKey,
-                  dueDate: oldTodo?.dueDate?.toISODate(),
-                  dueTime: oldTodo?.dueTime?.toISO(),
-                },
-                newTodo.id
-              );
-            },
-          },
-        });
-      }
-      return { previousTodos };
+      return { previousTodos, oldTodo };
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables, context) => {
       queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
       if (projectId) {
         queryClient.invalidateQueries({
           queryKey: projectKeys.project(projectId),
+        });
+      }
+      if (variables.type) {
+        toast.success(toastMessages[variables.type], {
+          action: {
+            label: "Undo",
+            onClick: () => {
+              queryClient.setQueryData(
+                todosQueryKeys.all,
+                context?.previousTodos
+              );
+              updateTodo(
+                {
+                  sortKey: context?.oldTodo?.sortKey,
+                  dueDate: context?.oldTodo?.dueDate?.toISODate(),
+                  dueTime: context?.oldTodo?.dueTime?.toISO(),
+                },
+                variables.id
+              );
+            },
+          },
         });
       }
     },

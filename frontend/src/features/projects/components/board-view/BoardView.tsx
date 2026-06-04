@@ -3,6 +3,7 @@ import DragOverlayColumn from "@/components/drag-drop/DragOverlayColumn";
 import { Button } from "@/components/ui/button";
 import { useProjectContext } from "@/context/ProjectContext";
 import {
+  useNoSectionProjectTodos,
   useProject,
   useProjectSections,
   useUpdateProjectSection,
@@ -15,6 +16,9 @@ import { useState } from "react";
 import { AddEditSection } from "../AddEditSection";
 import { useUpdateTodo } from "@/hooks/use-todos";
 import type { UpdateTodo } from "@shiva200701/todotypes";
+import type { TodoWithCompleteAtDateTime } from "@/types";
+import StaticColumn from "@/components/drag-drop/StaticColumn";
+import DraggableTask from "@/components/drag-drop/DraggableTask";
 
 type DragEndPayload = DragEndEvent;
 
@@ -24,6 +28,7 @@ function BoardView() {
   const { data: project } = useProject(id);
   const { data: sections } = useProjectSections(id);
   const { mutateAsync } = useUpdateTodo();
+  const { data: noSection } = useNoSectionProjectTodos(id);
 
   const { mutateAsync: updateSection } = useUpdateProjectSection({
     projectId: id,
@@ -55,10 +60,11 @@ function BoardView() {
         //reoderinng among same column
         const targetSection = sections?.find((s) => s.id === group);
         const sourceSection = sections?.find((s) => s.id === initialGroup);
+        const sourceTodos = sourceSection?.todos ?? noSection?.todos ?? [];
 
         if (group === initialGroup) {
-          const todos = targetSection?.todos;
-          const reorderedTodos = [...todos!];
+          const todos = targetSection?.todos ?? noSection?.todos ?? [];
+          const reorderedTodos = [...todos];
           const [moved] = reorderedTodos.splice(
             source.initialIndex as number,
             1
@@ -75,17 +81,20 @@ function BoardView() {
           mutateAsync({ id: data.id, data: payload, type: "updateOrder" });
           return;
         } else {
-          //consider the case where there are no todos in the section
-          const targetTodos = [...targetSection?.todos!];
-          const draggedTodo = sourceSection!.todos.find(
-            (t) => t.id === source.id
-          );
+          const targetTodos: TodoWithCompleteAtDateTime[] = [
+            ...(targetSection?.todos ?? []),
+          ];
+          const draggedTodo = sourceTodos.find((t) => t.id === source.id);
 
           targetTodos.splice(index as number, 0, draggedTodo!);
 
           const prevIndex = targetTodos[(index as number) - 1]?.sortKey ?? null;
           const nextIndex = targetTodos[(index as number) + 1]?.sortKey ?? null;
-          const newSectionId = source.group as string; // target section ID
+          let newSectionId = source.group as string | null; // target section ID
+
+          if (source.group === "(No Section)") {
+            newSectionId = null;
+          }
 
           const payload: UpdateTodo = {
             prevIndex,
@@ -109,6 +118,21 @@ function BoardView() {
         }}
       >
         <div className="flex gap-2 p-5 md:px-6 min-w-fit">
+          <StaticColumn title="(No Section)">
+            {noSection?.todos.length === 0 ? (
+              <div className="w-[260px] min-h-[70px] max-h-[90px]" />
+            ) : (
+              noSection?.todos.map((todo, index) => (
+                <DraggableTask
+                  column="(No Section)"
+                  id={todo.id}
+                  index={index}
+                  todo={todo}
+                  key={todo.id}
+                />
+              ))
+            )}
+          </StaticColumn>
           {sections?.map((section, index) => (
             <DraggableColumn
               id={section.id}
@@ -138,7 +162,10 @@ function BoardView() {
             />
           )}
         </div>
-        <DragOverlayColumn sections={sections ?? []} />
+        <DragOverlayColumn
+          sections={sections ?? []}
+          noSectionTodos={noSection?.todos ?? []}
+        />
       </DragDropProvider>
     </PageWidthWrapper>
   );

@@ -1,10 +1,16 @@
-import type { SectionWithDateTime } from "@/types";
+import type { SectionWithDateTime, TodoWithCompleteAtDateTime } from "@/types";
 import { DragOverlay } from "@dnd-kit/react";
 import DraggableTask from "./DraggableTask";
 import TimeDisplayer from "../TimeDisplayer";
 import { AlarmClock } from "lucide-react";
 
-function DragOverlayColumn({ sections }: { sections: SectionWithDateTime[] }) {
+function DragOverlayColumn({
+  sections,
+  noSectionTodos = [],
+}: {
+  sections: SectionWithDateTime[];
+  noSectionTodos?: TodoWithCompleteAtDateTime[];
+}) {
   return (
     <DragOverlay dropAnimation={null}>
       {(source) => {
@@ -33,7 +39,10 @@ function DragOverlayColumn({ sections }: { sections: SectionWithDateTime[] }) {
           );
         }
         if (source.type === "item") {
-          const allTodos = sections.flatMap((s) => s.todos);
+          const allTodos = [
+            ...noSectionTodos,
+            ...sections.flatMap((s) => s.todos),
+          ];
           const todo = allTodos.find((todo) => todo.id === source.id);
           if (!todo) return null;
 

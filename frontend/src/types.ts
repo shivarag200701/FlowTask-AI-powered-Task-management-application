@@ -37,6 +37,7 @@ export interface Todo {
   parentId: string | undefined;
   children?: Omit<Todo, "children">[];
   projectId?: string;
+  projectSectionId: string | null;
 }
 
 export type TodoTag = Omit<TagProps, "_count">;
