@@ -173,7 +173,43 @@ A dedicated view to see tasks that have been marked as complete, with the abilit
 
 ---
 
-### [ ] 1.5 Recurring Tasks
+### [x] 1.5 Projects
+
+**Description:**
+Organize tasks into projects with customizable sections. Users can create personal projects, divide them into sections, and view tasks in multiple layouts (list, board, calendar).
+
+**Why it's needed:**
+
+- Tasks without grouping become unmanageable at scale — projects provide the organizational layer above tags
+- Enables board-style (Kanban) workflows where sections represent stages
+- Foundation for future workspace/collaboration features (Phase 4)
+
+**Data model changes:**
+
+```
+New models:
+  - Project       (name, slug, personal, userId, workSpaceId, taskDisplayPreferences)
+  - ProjectSection (name, sortKey, projectId, todos[])
+```
+
+**API (v2):**
+
+[x] CRUD endpoints for projects under `/api/v2/projects`
+[x] Section management endpoints (create, read, update, delete) under `/api/v2/projects/:id/sections`
+
+**Frontend:**
+
+[x] "My Projects" page with searchable project list
+[x] Project detail page with list view and board view (Kanban via @dnd-kit)
+[x] Section management: create, rename, delete, reorder
+[x] Task display selector (List / Board / Calendar) with persisted preference
+[x] Inline task creation within sections
+
+**Dependencies:** None.
+
+---
+
+### [ ] 1.6 Recurring Tasks
 
 **Description:**
 Tasks that automatically regenerate on a schedule (daily, weekly, monthly, custom).
@@ -614,9 +650,10 @@ Multi-user real-time collaboration with shared todo lists, team workspaces, live
 | --- | ------------------------- | ----- | ---------- | ------ |
 | 1.1 | Finish Upcoming View      | 1     | —          | [X]    |
 | 1.2 | Subtasks                  | 1     | —          | [X]    |
-| 1.3 | Search                    | 1     | —          | [ ]    |
-| 1.4 | Completed Tasks View      | 1     | —          | [ ]    |
-| 1.5 | Recurring Tasks           | 1     | —          | [ ]    |
+| 1.3 | Search                    | 1     | —          | [X]    |
+| 1.4 | Completed Tasks View      | 1     | —          | [X]    |
+| 1.5 | Projects                  | 1     | —          | [X]    |
+| 1.6 | Recurring Tasks           | 1     | —          | [ ]    |
 | 2.1 | NLP Task Creation         | 2     | —          | [ ]    |
 | 2.2 | AI Task Breakdown         | 2     | 1.2        | [ ]    |
 | 2.3 | Auto-Tagging              | 2     | —          | [ ]    |
