@@ -1,5 +1,5 @@
 import { useContext, useMemo } from "react";
-import { CalendarDays, CircleCheckBig, Search, Tag } from "lucide-react";
+import { CalendarDays, CircleCheckBig, Search, Tag, Inbox } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   SidebarGroup,
@@ -14,6 +14,7 @@ import { useOverDueTodos, useTodayTodos } from "@/hooks/use-todos";
 
 const quickLinks = [
   { label: "Tags", icon: Tag, path: "/app/tags" },
+  { label: "Inbox", icon: Inbox, path: "/app/inbox" },
   { label: "Today", path: "/app/today" },
   { label: "Upcoming", icon: CalendarDays, path: "/app/upcoming" },
   { label: "Completed", icon: CircleCheckBig, path: "/app/completed" },

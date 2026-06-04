@@ -85,6 +85,36 @@ projectRouter.get("/", requireLogin, async (req, res) => {
   }
 });
 
+projectRouter.get("/inbox", requireLogin, async (req, res) => {
+  const userId = req.session.userId;
+  if (!userId) {
+    return res.status(401).json({
+      msg: "unauthorized",
+    });
+  }
+
+  try {
+    const inbox = await prisma.project.findFirst({
+      where: {
+        userId,
+        isDefault: true,
+      },
+      include: {
+        todos: true,
+      },
+    });
+
+    return res.status(200).json({
+      inbox,
+    });
+  } catch (error) {
+    console.error("Failed Getting Inbox", error);
+    return res.status(500).json({
+      msg: "internal Server Error",
+    });
+  }
+});
+
 projectRouter.post("/", requireLogin, async (req, res) => {
   const userId = req.session.userId;
   if (!userId) {

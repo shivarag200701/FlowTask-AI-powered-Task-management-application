@@ -1,10 +1,11 @@
 import { cn } from "@/lib/utils";
 import { useDroppable } from "@dnd-kit/react";
-import { useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { CollisionPriority } from "@dnd-kit/abstract";
 import { CirclePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAddEditTodoModal } from "@/components/modals/AddEditTodoModal";
+import { useScrollBoundary } from "@/utils/functions/use-scroll-boundary";
 
 function DroppableColumn({
   id,
@@ -26,28 +27,12 @@ function DroppableColumn({
     collisionPriority: CollisionPriority.Low,
   });
 
-  const [atTop, setAtTop] = useState(true);
-  const [atBottom, setAtBottom] = useState(false);
-
   const { setShowAddEditTodoModal, AddEditTodoModal } = useAddEditTodoModal({});
+  const { atBottom, atTop, handleScroll } = useScrollBoundary();
 
   if (id === "Overdue" && numberofTodos === 0) {
     return null;
   }
-
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const scrollTop = e.currentTarget.scrollTop;
-    setAtBottom(
-      e.currentTarget.scrollHeight - e.currentTarget.clientHeight - scrollTop <=
-        1
-    );
-
-    if (scrollTop === 0) {
-      setAtTop(true);
-    } else {
-      setAtTop(false);
-    }
-  };
 
   return (
     <div ref={ref} className={cn("p-1 min-w-[300px] h-[700px]", className)}>
@@ -68,7 +53,7 @@ function DroppableColumn({
           "scrollbar-none overflow-x-hidden overflow-y-auto scrollbar-thin hover:scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent flex flex-col items-center  transition-all duration-50",
           {
             "border-t": !atTop,
-            "border-b": !atBottom,
+            "border-b ": !atBottom,
           }
         )}
         onScroll={handleScroll}

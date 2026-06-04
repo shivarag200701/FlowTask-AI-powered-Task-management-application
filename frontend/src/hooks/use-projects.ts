@@ -2,6 +2,7 @@ import {
   createProject,
   createProjectSection,
   deleteProjectSection,
+  getInbox,
   getPersonalProject,
   getProject,
   getProjects,
@@ -57,6 +58,18 @@ export function useProject(id: string | null) {
     queryKey: projectKeys.project(id ?? ""),
     queryFn: () => getProject(id!),
     enabled: !!id,
+    staleTime: 60000,
+    select: (data) => ({
+      ...data,
+      todos: data.todos.filter((t) => !t.completed),
+    }),
+  });
+}
+
+export function useInbox() {
+  return useQuery({
+    queryKey: projectKeys.inbox,
+    queryFn: () => getInbox(),
     staleTime: 60000,
     select: (data) => ({
       ...data,
@@ -214,7 +227,7 @@ export function useDeleteProjectSection({
   });
 }
 
-export function useUpdateProject(id: string | null) {
+export function useUpdateProject(id: string | null, isInbox = false) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: UpdateProject }) =>
@@ -223,6 +236,9 @@ export function useUpdateProject(id: string | null) {
       if (id) {
         queryClient.invalidateQueries({ queryKey: projectKeys.project(id) });
         queryClient.invalidateQueries({ queryKey: projectKeys.personal("") });
+        if (isInbox) {
+          queryClient.invalidateQueries({ queryKey: projectKeys.inbox });
+        }
       }
       toast.success("Project updated successfully!");
     },

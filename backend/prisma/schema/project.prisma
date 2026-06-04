@@ -12,6 +12,10 @@ model Project{
     taskDisplayPreferences    Json?
 
     sections        ProjectSection[]
+
+    isDefault           Boolean        @default(false)
+
+    @@unique([userId, isDefault])
 }
 
 model ProjectSection{

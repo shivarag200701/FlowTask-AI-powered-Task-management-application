@@ -117,6 +117,16 @@ todoRouter.post("/", requireLogin, async (req, res) => {
     projectSectionId,
   } = data;
 
+  let InboxProjectId: string = "";
+
+  if (!projectId) {
+    const inbox = await prisma.project.findFirst({
+      where: { userId, isDefault: true },
+      select: { id: true },
+    });
+    InboxProjectId = inbox?.id!;
+  }
+
   try {
     if (parentId) {
       const parent = await prisma.todo.findFirst({
@@ -155,7 +165,7 @@ todoRouter.post("/", requireLogin, async (req, res) => {
         sortKey,
         isAllDay: isAllDay ?? null,
         parentId: parentId ?? null,
-        projectId: projectId ?? null,
+        projectId: projectId ?? InboxProjectId ?? null,
         projectSectionId: projectSectionId ?? null,
         tags: {
           create:

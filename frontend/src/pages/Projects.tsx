@@ -13,6 +13,7 @@ import TaskDisplaySelector from "@/features/projects/components/TaskDisplaySelec
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useProject } from "@/hooks/use-projects";
 import PageContentHeader from "@/layouts/PageContentHeader";
+import { cn } from "@/lib/utils";
 import type { ViewMode } from "@/types";
 import { extractIdFromSlug } from "@shiva200701/todotypes";
 import { useEffect, useMemo, useState } from "react";
@@ -46,7 +47,11 @@ function ProjectDetail({ id }: { id: string }) {
   const { isMobile } = useMediaQuery();
 
   return (
-    <div className="h-full">
+    <div
+      className={cn("h-full ", {
+        "overflow-hidden": viewMode === "board",
+      })}
+    >
       <ProjectProvider id={id}>
         {/*Need to implement a bread crumb like structure for this titlte of the PageContentHeader */}
         <PageContentHeader

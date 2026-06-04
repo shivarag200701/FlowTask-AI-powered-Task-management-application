@@ -274,6 +274,7 @@ export function useCreateTodo(projectId?: string | null, sectionId?: string) {
     mutationFn: (todo: CreateTodo) => createTodo(todo),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
+      queryClient.invalidateQueries({ queryKey: projectKeys.inbox });
       if (projectId) {
         queryClient.invalidateQueries({
           queryKey: projectKeys.project(projectId),

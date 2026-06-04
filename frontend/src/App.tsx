@@ -30,6 +30,7 @@ import TaskDetail from "./pages/TaskDetail";
 import MyProjects from "./pages/MyProjects";
 import Workspaces from "./pages/Workspaces";
 import Projects from "./pages/Projects";
+import Inbox from "./pages/Inbox";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,14 @@ function AppRoutes() {
               element={
                 <TaskSelectionProvider>
                   <Upcoming />
+                </TaskSelectionProvider>
+              }
+            />
+            <Route
+              path="/app/inbox"
+              element={
+                <TaskSelectionProvider>
+                  <Inbox />
                 </TaskSelectionProvider>
               }
             />

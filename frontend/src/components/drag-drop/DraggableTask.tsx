@@ -138,7 +138,7 @@ function DraggableTask({
           </button>
           <div className="flex flex-col justify-between w-full h-full">
             <div>
-              <div className="text-sm sm:text-[13px] truncate ">
+              <div className="text-sm font-medium sm:text-[13px] truncate ">
                 {todo.title}
               </div>
               <div className="text-xs font-light truncate">
@@ -161,7 +161,10 @@ function DraggableTask({
                 </div>
               )}
               {todo.dueTime?.isValid && (
-                <TimeDisplayer className="text-xs" dueTime={todo.dueTime} />
+                <TimeDisplayer
+                  className="text-xs font-light"
+                  dueTime={todo.dueTime}
+                />
               )}
               {todo.dueTime?.isValid && <AlarmClock size={13} />}
             </div>

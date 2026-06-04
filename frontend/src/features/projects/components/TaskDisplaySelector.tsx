@@ -24,6 +24,7 @@ type TaskDisplaySelector = {
   setViewMode: Dispatch<SetStateAction<ViewMode>>;
   persisted: ViewMode;
   id: string;
+  isInbox?: boolean;
 };
 
 function TaskDisplaySelector({
@@ -33,8 +34,11 @@ function TaskDisplaySelector({
   setViewMode,
   persisted,
   id,
+  isInbox,
 }: TaskDisplaySelector) {
   const [isOpen, setIsOpen] = useState(false);
+
+  // console.log("task display selectore inbox", id);
 
   return (
     <Popover
@@ -47,6 +51,7 @@ function TaskDisplaySelector({
           setViewMode={setViewMode}
           persisted={persisted}
           id={id}
+          isInbox={isInbox}
         />
       }
       sideOffset={4}
@@ -91,6 +96,7 @@ function DisplaySettingsDropdown({
   setViewMode,
   persisted,
   id,
+  isInbox,
 }: TaskDisplaySelector) {
   const { reset, control, handleSubmit } = useForm<FormValues>({
     defaultValues: {
@@ -98,7 +104,7 @@ function DisplaySettingsDropdown({
     },
   });
 
-  const { mutate } = useUpdateProject(id);
+  const { mutate } = useUpdateProject(id, isInbox);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     mutate({

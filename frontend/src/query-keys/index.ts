@@ -32,6 +32,7 @@ export const tagsQueryKeys = {
 export const projectKeys = {
   all: ["projects"] as const,
   project: (projectId: string) => ["projects", projectId] as const,
+  inbox: ["projects", "inbox"],
   personal: (search: string) => ["projects", "personal", search] as const,
   workspace: (workspaceId: string) =>
     ["projects", "workspace", workspaceId] as const,

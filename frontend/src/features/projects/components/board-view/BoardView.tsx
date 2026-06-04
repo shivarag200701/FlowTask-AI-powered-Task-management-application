@@ -26,6 +26,8 @@ function BoardView() {
   const { projectId: id } = useProjectContext();
 
   const { data: project } = useProject(id);
+  console.log("project in boardView", project);
+
   const { data: sections } = useProjectSections(id);
   const { mutateAsync } = useUpdateTodo();
   const { data: noSection } = useNoSectionProjectTodos(id);
@@ -109,30 +111,27 @@ function BoardView() {
   }
 
   return (
-    <PageWidthWrapper className="pt-10 overflow-x-auto scrollbar-none max-w-none !px-0 h-full">
+    <PageWidthWrapper className="pt-10 overflow-x-auto overflow-y-hidden scrollbar-none max-w-none !px-0 h-full">
       <h1 className="font-semibold text-3xl px-5 md:px-6">{project?.name}</h1>
-      <DragDropProvider
-        onDragEnd={handleDragEnd}
-        onDragOver={(event) => {
-          console.group(event);
-        }}
-      >
+      <DragDropProvider onDragEnd={handleDragEnd}>
         <div className="flex gap-2 p-5 md:px-6 min-w-fit">
-          <StaticColumn title="(No Section)">
-            {noSection?.todos.length === 0 ? (
-              <div className="w-[260px] min-h-[70px] max-h-[90px]" />
-            ) : (
-              noSection?.todos.map((todo, index) => (
-                <DraggableTask
-                  column="(No Section)"
-                  id={todo.id}
-                  index={index}
-                  todo={todo}
-                  key={todo.id}
-                />
-              ))
-            )}
-          </StaticColumn>
+          {noSection?.todos.length !== 0 && (
+            <StaticColumn title="(No Section)">
+              {noSection?.todos.length === 0 ? (
+                <div className="w-[260px] min-h-[70px] max-h-[90px]" />
+              ) : (
+                noSection?.todos.map((todo, index) => (
+                  <DraggableTask
+                    column="(No Section)"
+                    id={todo.id}
+                    index={index}
+                    todo={todo}
+                    key={todo.id}
+                  />
+                ))
+              )}
+            </StaticColumn>
+          )}
           {sections?.map((section, index) => (
             <DraggableColumn
               id={section.id}

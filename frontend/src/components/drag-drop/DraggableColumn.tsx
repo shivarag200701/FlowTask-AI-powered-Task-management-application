@@ -11,6 +11,8 @@ import { useDeleteProjectSection } from "@/hooks/use-projects";
 import { useProjectContext } from "@/context/ProjectContext";
 import { AddEditSection } from "@/features/projects/components/AddEditSection";
 import { useConfirmModal } from "../modals/ConfirmModal";
+import { cn } from "@/lib/utils";
+import { useScrollBoundary } from "@/utils/functions/use-scroll-boundary";
 
 function DraggableColumn({
   id,
@@ -47,6 +49,8 @@ function DraggableColumn({
 
   const [IsMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
   const [isEditing, SetIsEditing] = useState(false);
+  const { atTop, atBottom, handleScroll } = useScrollBoundary();
+
   const { ref, isDragging } = useSortable({
     id,
     index,
@@ -65,7 +69,7 @@ function DraggableColumn({
     <>
       <div
         ref={ref}
-        className="min-w-[290px] h-fit hover:shadow-[0_5px_10px_rgba(0,0,0,0.15)] duration-200 transition-all cursor-grab rounded-lg flex flex-col gap-1.5 items-center text-sm font-semibold  p-2"
+        className="min-w-[290px] h-full max-h-[calc(100vh-200px)] hover:shadow-[0_5px_10px_rgba(0,0,0,0.15)] duration-200 transition-all cursor-grab rounded-lg flex flex-col gap-1.5 items-center text-sm font-semibold p-2"
       >
         <div className="text-left flex justify-between w-full">
           {isEditing ? (
@@ -107,7 +111,16 @@ function DraggableColumn({
             />
           </Popover>
         </div>
-        <div className="p-2">
+        <div
+          className={cn(
+            "p-2 overflow-y-auto scrollbar-none hover:scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent",
+            {
+              "border-t": !atTop,
+              "border-b": !atBottom,
+            }
+          )}
+          onScroll={handleScroll}
+        >
           {todos.length === 0 ? (
             <EmptyColumn columnId={id} />
           ) : (

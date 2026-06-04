@@ -190,6 +190,17 @@ userRouter.post("/signup/verify", async (req, res) => {
     req.session.userId = user.id;
     req.session.email = user.email;
 
+    //create Inbox project whenever a user signs in
+    const existingInbox = await prisma.project.findFirst({
+      where: { userId: user.id, isDefault: true },
+    });
+
+    if (!existingInbox) {
+      await prisma.project.create({
+        data: { name: "Inbox", userId: user.id, isDefault: true },
+      });
+    }
+
     return res.status(200).json({
       msg: "accout created sucessfully",
     });

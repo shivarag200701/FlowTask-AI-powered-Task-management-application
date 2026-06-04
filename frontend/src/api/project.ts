@@ -46,6 +46,29 @@ export async function getProject(id: string): Promise<ProjectWithDateTime> {
   }
 }
 
+export async function getInbox(): Promise<ProjectWithDateTime> {
+  try {
+    const { inbox }: { inbox: Project } = (
+      await api.get(`/api/v2/projects/inbox`)
+    ).data;
+    return {
+      ...inbox,
+      todos: inbox.todos.map((todo) => ({
+        ...todo,
+        dueDate: todo.dueDate ? DateTime.fromISO(todo.dueDate) : null,
+        dueTime: todo.dueTime ? DateTime.fromISO(todo.dueTime) : null,
+        children: todo.children?.map((child) => ({
+          ...child,
+          dueDate: child.dueDate ? DateTime.fromISO(child.dueDate) : null,
+          dueTime: child.dueTime ? DateTime.fromISO(child.dueTime) : null,
+        })),
+      })),
+    };
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function getProjectSections(id: string) {
   try {
     const { sections }: { sections: Section[] } = (
