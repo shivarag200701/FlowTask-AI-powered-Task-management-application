@@ -46,6 +46,14 @@ export async function getProject(id: string): Promise<ProjectWithDateTime> {
   }
 }
 
+export async function deleteProject(id: string) {
+  try {
+    await api.delete(`/api/v2/projects/${id}`);
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function getInbox(): Promise<ProjectWithDateTime> {
   try {
     const { inbox }: { inbox: Project } = (

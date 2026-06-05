@@ -8,6 +8,7 @@ import {
 } from "@shiva200701/todotypes";
 import z from "zod";
 import { sectionRouter } from "./section/index.js";
+import { id } from "zod/v4/locales";
 
 export const projectRouter = Router();
 
@@ -263,6 +264,41 @@ projectRouter.put("/:id", requireLogin, async (req, res) => {
       project: updatedProject,
     });
   } catch (e) {
+    console.error("failed to updated project", e);
+    return res.status(500).json({
+      msg: "failed to updated project",
+    });
+  }
+});
+
+projectRouter.delete("/:id", requireLogin, async (req, res) => {
+  const userId = req.session.userId;
+  if (!userId) {
+    return res.status(401).json({
+      msg: "unauthorized",
+    });
+  }
+
+  const idParam = Array.isArray(req.params.id)
+    ? req.params.id[0]
+    : req.params.id;
+  if (!idParam) {
+    return res.status(400).json({
+      msg: "No project id found in path",
+    });
+  }
+
+  try {
+    await prisma.project.delete({
+      where: {
+        id: idParam,
+      },
+    });
+
+    return res.status(200).json({
+      msg: "project deleted successfully",
+    });
+  } catch (error) {
     console.error("failed to updated project", error);
     return res.status(500).json({
       msg: "failed to updated project",

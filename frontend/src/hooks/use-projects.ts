@@ -1,6 +1,7 @@
 import {
   createProject,
   createProjectSection,
+  deleteProject,
   deleteProjectSection,
   getInbox,
   getPersonalProject,
@@ -99,6 +100,31 @@ export function useProjects() {
     queryFn: () => getProjects(),
     enabled: true,
     staleTime: 60000,
+  });
+}
+
+export function useDeleteProject(id: string | null) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => {
+      if (!id) throw new Error("projectId is required");
+      return deleteProject(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: projectKeys.all,
+      });
+
+      toast.success("Project deleted successfully!");
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        const errorMsg = error.response?.data.msg;
+        toast.error(errorMsg);
+        return;
+      }
+      toast.error("something went wrong");
+    },
   });
 }
 

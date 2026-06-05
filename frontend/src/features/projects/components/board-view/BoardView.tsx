@@ -19,6 +19,8 @@ import type { UpdateTodo } from "@shiva200701/todotypes";
 import type { TodoWithCompleteAtDateTime } from "@/types";
 import StaticColumn from "@/components/drag-drop/StaticColumn";
 import DraggableTask from "@/components/drag-drop/DraggableTask";
+import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
+import { useCallback } from "react";
 
 type DragEndPayload = DragEndEvent;
 
@@ -26,11 +28,24 @@ function BoardView() {
   const { projectId: id } = useProjectContext();
 
   const { data: project } = useProject(id);
-  console.log("project in boardView", project);
 
   const { data: sections } = useProjectSections(id);
   const { mutateAsync } = useUpdateTodo();
   const { data: noSection } = useNoSectionProjectTodos(id);
+  const { setIsSelectMode, setSelectedTaskIds } = useTaskSelectionContext();
+
+  const handleSelect = useCallback(
+    (todoId: string) => {
+      setIsSelectMode(true);
+      setSelectedTaskIds((prev) => {
+        if (prev.includes(todoId)) {
+          return prev.filter((id) => id !== todoId);
+        }
+        return [...prev, todoId];
+      });
+    },
+    [setIsSelectMode, setSelectedTaskIds]
+  );
 
   const { mutateAsync: updateSection } = useUpdateProjectSection({
     projectId: id,
@@ -127,6 +142,7 @@ function BoardView() {
                     index={index}
                     todo={todo}
                     key={todo.id}
+                    onSelect={handleSelect}
                   />
                 ))
               )}
@@ -140,6 +156,7 @@ function BoardView() {
               todos={section.todos}
               column={section.name}
               sortKey={section.sortKey}
+              onSelect={handleSelect}
             />
           ))}
           {!IsAddSectionOpen ? (

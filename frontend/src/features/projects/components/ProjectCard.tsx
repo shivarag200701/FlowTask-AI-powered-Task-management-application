@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Popover } from "@/components/ui/popover";
+import { useDeleteProject, useUpdateProject } from "@/hooks/use-projects";
 import type { Project } from "@/types";
 import pluralize from "@/utils/functions/pluralize";
 import { Hash, ListTodo, MoreVertical } from "lucide-react";
@@ -8,11 +10,14 @@ import { useNavigate } from "react-router-dom";
 
 function ProjectCard({ project }: { project: Project }) {
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
   const navigate = useNavigate();
+
+  const { mutate: updateProject } = useUpdateProject(project.id);
 
   const todoCount = project?.todos?.length;
 
-  console.log("project", project);
+  const { mutate: deleteTodo } = useDeleteProject(project.id);
 
   return (
     <div
@@ -28,7 +33,38 @@ function ProjectCard({ project }: { project: Project }) {
           <Hash className="size-4" />
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-medium truncate">{project.name}</p>
+          {isEditMode ? (
+            <Input
+              autoFocus
+              defaultValue={project.name}
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => {
+                e.stopPropagation();
+                if (e.key === "Enter") {
+                  updateProject({
+                    id: project.id,
+                    data: { name: e.currentTarget.value },
+                  });
+                  setIsEditMode(false);
+                }
+                if (e.key === "Escape") {
+                  setIsEditMode(false);
+                }
+              }}
+              onBlur={(e) => {
+                if (e.target.value !== project.name) {
+                  updateProject({
+                    id: project.id,
+                    data: { name: e.target.value },
+                  });
+                }
+                setIsEditMode(false);
+              }}
+              className="h-7 text-sm font-medium px-1"
+            />
+          ) : (
+            <p className="text-sm font-medium truncate">{project.name}</p>
+          )}
         </div>
       </div>
       <div className="flex gap-4 items-center shrink-0">
@@ -49,6 +85,7 @@ function ProjectCard({ project }: { project: Project }) {
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsMoreOptionsOpen(false);
+                  setIsEditMode(true);
                 }}
               >
                 Rename
@@ -58,6 +95,7 @@ function ProjectCard({ project }: { project: Project }) {
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsMoreOptionsOpen(false);
+                  deleteTodo();
                 }}
               >
                 Delete

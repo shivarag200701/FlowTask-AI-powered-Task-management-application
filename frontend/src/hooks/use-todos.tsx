@@ -135,6 +135,7 @@ export function useBulkDeleteTodos() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
+      queryClient.invalidateQueries({ queryKey: projectKeys.all });
       toast.success("Successfully deleted todos!");
     },
     onError: (error) => {
@@ -262,6 +263,7 @@ export function useDeleteTodo() {
     mutationFn: (id: string) => deleteTodo(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
+      queryClient.invalidateQueries({ queryKey: projectKeys.inbox });
       toast.success("Todo deleted successfully");
     },
   });

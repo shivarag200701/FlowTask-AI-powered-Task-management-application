@@ -7,16 +7,18 @@ import type { ViewMode } from "@/types";
 import ListView from "@/features/projects/components/list-view/ListView";
 import BoardView from "@/features/projects/components/board-view/BoardView";
 import { ProjectProvider } from "@/context/ProjectContext";
+import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import TaskToolBar from "@/components/TaskToolBar";
 
 export default function Inbox({ className }: { className?: string }) {
   const { data: inbox } = useInbox();
+  const { isSelectMode } = useTaskSelectionContext();
+  const { isMobile } = useMediaQuery();
 
   const persisted = inbox?.taskDisplayPreferences?.viewMode ?? "list";
 
   const [viewMode, setViewMode] = useState<ViewMode>("list");
-
-  console.log("viewMode", viewMode);
-  console.log("persisted", persisted);
 
   useEffect(() => {
     if (inbox?.taskDisplayPreferences?.viewMode) {
@@ -47,6 +49,7 @@ export default function Inbox({ className }: { className?: string }) {
         {viewMode === "list" && <ListView id={inbox?.id!} />}
         {viewMode === "board" && <BoardView />}
       </ProjectProvider>
+      {(isSelectMode || isMobile) && <TaskToolBar />}
     </div>
   );
 }

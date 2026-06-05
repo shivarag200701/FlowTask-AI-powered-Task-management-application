@@ -20,12 +20,14 @@ function DraggableColumn({
   todos,
   column,
   sortKey,
+  onSelect,
 }: {
   id: string;
   index: number;
   todos: TodoWithCompleteAtDateTime[];
   column: string;
   sortKey: string;
+  onSelect?: (taskId: string) => void;
 }) {
   const { setShowAddEditTodoModal, AddEditTodoModal } = useAddEditTodoModal({
     sectionId: id,
@@ -131,6 +133,7 @@ function DraggableColumn({
                 index={index}
                 todo={todo}
                 key={todo.id}
+                onSelect={onSelect}
               />
             ))
           )}

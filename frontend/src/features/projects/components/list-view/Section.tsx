@@ -12,6 +12,7 @@ import TaskBuilderProvider from "@/components/task-builder-provider";
 import InlineTaskForm from "@/components/InlineTaskForm";
 import { Button } from "@/components/ui/button";
 import { AddEditSection } from "../AddEditSection";
+import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
 
 function Section({
   section,
@@ -22,6 +23,17 @@ function Section({
 }) {
   const [isAddTodoOpen, setIsAddTodoOpen] = useState(false);
   const [isAddSectionOpen, setIsAddSectionOpen] = useState(false);
+  const { setIsSelectMode, setSelectedTaskIds } = useTaskSelectionContext();
+
+  const handleSelect = (todoId: string) => {
+    setIsSelectMode(true);
+    setSelectedTaskIds((prev) => {
+      if (prev.includes(todoId)) {
+        return prev.filter((id) => id !== todoId);
+      }
+      return [...prev, todoId];
+    });
+  };
 
   return (
     <>
@@ -48,15 +60,7 @@ function Section({
                   key={todo.id}
                   todo={todo}
                   projectId={projectId}
-                  // onSelect={(todoId) => {
-                  //   setIsSelectMode(true);
-                  //   setSelectedTaskIds((prev) => {
-                  //     if (prev.includes(todoId)) {
-                  //       return prev.filter((id) => id !== todoId);
-                  //     }
-                  //     return [...prev, todoId];
-                  //   });
-                  // }}
+                  onSelect={handleSelect}
                 />
               ))}
             {!isAddTodoOpen ? (
