@@ -50,7 +50,7 @@ function ListView({ id }: { id: string }) {
           {!isAddTodoOpen ? (
             <Button
               variant="outline"
-              className="flex justify-start border-none shadow-none hover:text-primary gap-2"
+              className="flex justify-start border-none shadow-none hover:text-primary gap-2 "
               onClick={() => {
                 setIsAddTodoOpen(true);
               }}
