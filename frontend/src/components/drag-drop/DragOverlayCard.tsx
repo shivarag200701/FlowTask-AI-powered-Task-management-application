@@ -17,7 +17,9 @@ function DragOverlayCard({ todos }: { todos: TodoWithCompleteAtDateTime[] }) {
             <div className="flex gap-2">
               <div className="border border-border rounded-full h-5 w-5 shrink-0" />
               <div className="flex flex-col">
-                <div className="text-md truncate">{todo.title}</div>
+                <div className="text-sm sm:text-[13px] truncate">
+                  {todo.title}
+                </div>
                 <div className="text-xs font-light truncate">
                   {todo.description}
                 </div>

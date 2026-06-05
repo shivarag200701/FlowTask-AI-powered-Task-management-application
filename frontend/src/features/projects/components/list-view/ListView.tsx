@@ -7,12 +7,18 @@ import PageWidthWrapper from "@/layouts/PageWidthWrapper";
 import Section from "./Section";
 import TaskList from "@/components/TaskList";
 import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
+import { Button } from "@/components/ui/button";
+import TaskBuilderProvider from "@/components/task-builder-provider";
+import InlineTaskForm from "@/components/InlineTaskForm";
+import { useState } from "react";
+import { CirclePlus } from "lucide-react";
 
 function ListView({ id }: { id: string }) {
   const { data: project } = useProject(id);
   const { data: sections } = useProjectSections(id);
   const { data: noSection } = useNoSectionProjectTodos(id);
   const { setIsSelectMode, setSelectedTaskIds } = useTaskSelectionContext();
+  const [isAddTodoOpen, setIsAddTodoOpen] = useState(false);
 
   const handleSelect = (todoId: string) => {
     setIsSelectMode(true);
@@ -40,6 +46,24 @@ function ListView({ id }: { id: string }) {
             ))}
           </div>
         )}
+        <div className="mt-5">
+          {!isAddTodoOpen ? (
+            <Button
+              variant="outline"
+              className="flex justify-start border-none shadow-none hover:text-primary gap-2"
+              onClick={() => {
+                setIsAddTodoOpen(true);
+              }}
+            >
+              <CirclePlus />
+              Add Task
+            </Button>
+          ) : (
+            <TaskBuilderProvider>
+              <InlineTaskForm setIsOpen={setIsAddTodoOpen} />
+            </TaskBuilderProvider>
+          )}
+        </div>
         {sections?.map((section) => (
           <Section key={section.id} section={section} projectId={id} />
         ))}
