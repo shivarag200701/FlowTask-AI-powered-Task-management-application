@@ -1,5 +1,10 @@
 <div align="center">
 
+<p align="center">
+  <img src="/frontend/public/logo.png" alt="Company Logo" width="100" height="100" />
+</p>
+<h1 align="center">FlowTask</h1>
+
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
@@ -11,6 +16,11 @@
 
 [Overview](#-overview) • [API versions](#-api-versions-v1--v2) • [Architecture](#-architecture) • [Features](#-features) • [Getting started](#-getting-started) • [Roadmap](#-roadmap)
 
+<p align="center">
+  <a href="https://flowtask.shiva-raghav.com/">Use FlowTask Platform</a>
+  •
+  <a href="https://docs.flowtask.shiva-raghav.com/">Documentation</a>
+</p>
 </div>
 
 ---
