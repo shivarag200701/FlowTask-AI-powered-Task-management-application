@@ -79,7 +79,7 @@ const UserProfile = () => {
                   )}
                 />
                 <div className="pt-3 text-center">
-                  <span className="text-accent uppercase font-semibold tracking-widest">
+                  <span className="text-primary uppercase font-semibold tracking-widest">
                     Change Photo
                   </span>
                   <p className="p-2 text-gray-400 text-center text-xs">

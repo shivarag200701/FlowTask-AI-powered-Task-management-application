@@ -26,7 +26,7 @@ export const Completed = () => {
         >
           <div className="h-40 w-40 bg-white rounded-full shadow-lg relative flex justify-center">
             <CircleCheckBig
-              className="absolute top-1/2 -translate-y-1/2  left-1/2 -translate-x-1/2 text-accent"
+              className="absolute top-1/2 -translate-y-1/2  left-1/2 -translate-x-1/2 text-primary"
               size={80}
             />
             <Sparkles
@@ -49,6 +49,7 @@ export const Completed = () => {
           </div>
           <Button
             Initial="Go to your dashboard"
+            type="button"
             onClick={() => {
               navigate("/app/today");
             }}

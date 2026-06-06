@@ -11,7 +11,7 @@ const Wordmark = ({
   return (
     <motion.h1
       className={cn(
-        "text-6xl sm:text-8xl text-accent font-extrabold",
+        "text-6xl sm:text-8xl text-primary font-extrabold",
         className
       )}
       variants={variants}

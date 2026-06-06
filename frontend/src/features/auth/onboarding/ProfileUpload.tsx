@@ -35,9 +35,9 @@ const ProfileUpload = ({ className, onChange }: ProfileUploadProps) => {
           toast.error(message);
         }}
       >
-        <FileUploadDropzone className="h-30 w-30 rounded-full hover:border-accent cursor-pointer">
+        <FileUploadDropzone className="h-30 w-30 rounded-full hover:border-primary cursor-pointer group transition-all duration-300">
           {files.length === 0 && (
-            <div className="text-gray-400 flex flex-col gap-1 items-center">
+            <div className="text-gray-400 flex flex-col gap-1 items-center group-hover:text-primary transition-all duration-300">
               <CloudUpload size={25} />
               <p>Upload</p>
             </div>
