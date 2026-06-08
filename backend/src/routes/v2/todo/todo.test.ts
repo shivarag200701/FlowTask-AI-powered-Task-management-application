@@ -33,7 +33,7 @@ function createMockReqRes(sessionData?: { userId?: string }) {
   return { req, res, next };
 }
 
-describe("requireLogin middleware", () => {
+describe("requireLogin  middleware", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Default: pretend user already indexed so we don't trigger reindex
