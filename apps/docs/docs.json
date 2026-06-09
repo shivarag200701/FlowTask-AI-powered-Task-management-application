@@ -36,11 +36,7 @@
             "group": "Get Started",
             "icon": "rocket",
             "expanded": true,
-            "pages": [
-              "introduction",
-              "quickstart",
-              "account-setup"
-            ]
+            "pages": ["introduction", "quickstart", "account-setup"]
           },
           {
             "group": "Core Concepts",
@@ -71,6 +67,10 @@
               "settings/preferences",
               "settings/notifications"
             ]
+          },
+          {
+            "group": "Changelog",
+            "pages": ["changelog"]
           }
         ]
       },
@@ -80,20 +80,12 @@
           {
             "group": "Overview",
             "icon": "code",
-            "pages": [
-              "api/overview",
-              "api/authentication"
-            ]
+            "pages": ["api/overview", "api/authentication"]
           },
           {
             "group": "Endpoints",
             "icon": "terminal",
-            "pages": [
-              "api/tasks",
-              "api/projects",
-              "api/tags",
-              "api/users"
-            ]
+            "pages": ["api/tasks", "api/projects", "api/tags", "api/users"]
           }
         ]
       }
