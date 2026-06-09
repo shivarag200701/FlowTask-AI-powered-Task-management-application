@@ -1,0 +1,221 @@
+---
+title: "Tags API: Create and Manage Task Labels in Flowtask"
+sidebarTitle: "Tags"
+description: "Reference for the Flowtask Tags API. Create, update, list, count, and bulk-delete tags used to categorize your tasks via /api/v2/tag."
+---
+
+Tags are colorful labels you can assign to any task in Flowtask, letting you group and filter work across every view — by project, priority, context, or any scheme that fits your workflow. All Tags API endpoints require an authenticated session and live under the base path `/api/v2/tag`.
+
+<Note>
+  All Tags API endpoints require an active authenticated session. Requests without a valid session cookie receive a `401 Unauthorized` response.
+</Note>
+
+---
+
+## GET /api/v2/tag
+
+Returns an array of tag objects belonging to the authenticated user. You can filter the results by name substring or by a list of specific IDs.
+
+<ParamField query="search" type="string">
+  Filter results to tags whose name contains this substring (case-insensitive). Omit to return all tags.
+</ParamField>
+
+<ParamField query="ids" type="string[]">
+  An array of tag IDs. When provided, only tags whose IDs appear in this list are returned.
+</ParamField>
+
+**Example request**
+
+```javascript
+const response = await fetch('/api/v2/tag?search=front', {
+  credentials: 'include',
+});
+const { tags } = await response.json();
+```
+
+**Example response**
+
+```json
+{
+  "tags": [
+    {
+      "id": "tag_01hx9z2k3m",
+      "name": "Frontend",
+      "color": "blue",
+      "_count": { "todos": 14 }
+    },
+    {
+      "id": "tag_01hx9z4p7q",
+      "name": "Bug",
+      "color": "red",
+      "_count": { "todos": 3 }
+    }
+  ]
+}
+```
+
+<ResponseField name="id" type="string">
+  Unique identifier for the tag.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Display name of the tag.
+</ResponseField>
+
+<ResponseField name="color" type="string">
+  Color assigned to the tag. One of `blue`, `red`, `green`, `yellow`, `purple`, `orange`, or `pink`.
+</ResponseField>
+
+<ResponseField name="_count" type="object">
+  Usage summary for this tag.
+
+  <Expandable title="properties">
+    <ResponseField name="todos" type="number">
+      Number of tasks that currently have this tag applied.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+---
+
+## POST /api/v2/tag
+
+Creates a new tag for the authenticated user. You may optionally specify a color; if you omit it, Flowtask assigns one at random.
+
+<ParamField body="name" type="string" required>
+  The display name for the new tag. Must be unique within your account.
+</ParamField>
+
+<ParamField body="color" type="string">
+  The color for the tag. Must be one of: `blue`, `red`, `green`, `yellow`, `purple`, `orange`, `pink`. A random color is chosen when omitted.
+</ParamField>
+
+**Example request**
+
+```javascript
+const response = await fetch('/api/v2/tag', {
+  method: 'POST',
+  credentials: 'include',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ name: 'Design', color: 'purple' }),
+});
+
+const { tag } = await response.json();
+```
+
+**Example response**
+
+```json
+{
+  "msg": "todo added sucessfully",
+  "tag": {
+    "id": "tag_01hx9z8r2n",
+    "name": "Design",
+    "color": "purple"
+  }
+}
+```
+
+---
+
+## PATCH /api/v2/tag/:id
+
+Updates the name, color, or both for an existing tag. Send only the fields you want to change.
+
+<ParamField path="id" type="string" required>
+  The unique ID of the tag to update.
+</ParamField>
+
+<ParamField body="name" type="string">
+  New display name for the tag.
+</ParamField>
+
+<ParamField body="color" type="string">
+  New color for the tag. Must be one of: `blue`, `red`, `green`, `yellow`, `purple`, `orange`, `pink`.
+</ParamField>
+
+**Example request**
+
+```javascript
+const response = await fetch('/api/v2/tag/tag_01hx9z8r2n', {
+  method: 'PATCH',
+  credentials: 'include',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ color: 'orange' }),
+});
+
+const { tag } = await response.json();
+```
+
+**Example response**
+
+```json
+{
+  "tag": {
+    "id": "tag_01hx9z8r2n",
+    "name": "Design",
+    "color": "orange"
+  }
+}
+```
+
+---
+
+## GET /api/v2/tag/count
+
+Returns the total number of tags in your account. Useful for quota checks or displaying a summary in your UI.
+
+**Example request**
+
+```javascript
+const response = await fetch('/api/v2/tag/count', {
+  credentials: 'include',
+});
+const { count } = await response.json();
+```
+
+**Example response**
+
+```json
+{
+  "count": 7
+}
+```
+
+<ResponseField name="count" type="number">
+  Total number of tags belonging to the authenticated user.
+</ResponseField>
+
+---
+
+## DELETE /api/v2/tag/bulk
+
+Permanently deletes one or more tags by their IDs, supplied as a comma-separated query parameter.
+
+<ParamField query="tagIds" type="string" required>
+  A comma-separated list of tag IDs to delete. For example: `tag_01hx9z2k3m,tag_01hx9z4p7q`.
+</ParamField>
+
+**Example request**
+
+```javascript
+const ids = ['tag_01hx9z2k3m', 'tag_01hx9z4p7q'].join(',');
+
+const response = await fetch(`/api/v2/tag/bulk?tagIds=${encodeURIComponent(ids)}`, {
+  method: 'DELETE',
+  credentials: 'include',
+});
+const { deletedCount } = await response.json();
+```
+
+**Example response**
+
+```json
+{
+  "deletedCount": 2
+}
+```
+
+<Warning>
+  Deleting a tag removes it from **every task** that currently uses it. This action is permanent and cannot be undone. Make sure you intend to detach the tag from all associated tasks before proceeding.
+</Warning>

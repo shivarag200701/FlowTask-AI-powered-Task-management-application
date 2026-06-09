@@ -1,0 +1,80 @@
+---
+title: "Flowtask REST API: Base URL, Versions, and Error Codes"
+sidebarTitle: "Overview"
+description: "Flowtask exposes a versioned REST API for tasks, projects, and tags. Learn the base URL, versioning, request format, and error codes."
+---
+
+The Flowtask REST API gives you programmatic access to tasks, projects, tags, and user operations. All communication is over HTTPS, all request and response bodies are JSON, and every data request requires an active session established through the authentication endpoints.
+
+## Base URL
+
+All API endpoints are relative to your Flowtask instance URL:
+
+```text
+https://your-flowtask-instance.com/api
+```
+
+Replace `your-flowtask-instance.com` with the domain of your Flowtask deployment. Every path in this documentation is shown relative to this base URL — for example, `/v2/todo` maps to `https://your-flowtask-instance.com/api/v2/todo`.
+
+## API Versions
+
+Flowtask's API is split across two versions, each responsible for a distinct set of resources:
+
+| Version | Scope |
+|---|---|
+| **v1** | Authentication and user operations — sign-up, sign-in, session check (`GET /api/v1/auth-check`), and logout |
+| **v2** | Data operations — tasks, projects, and tags |
+
+Use **v2** for all task, project, and tag operations. The v1 prefix covers all authentication flows documented in [Authentication](/api/authentication), including the session-check endpoint `GET /api/v1/auth-check`.
+
+## Request Format
+
+All request bodies must be JSON. Set the `Content-Type` header on any request that includes a body:
+
+```http
+Content-Type: application/json
+```
+
+Every request to a protected endpoint must also include your session cookie. After you sign in, the cookie is set automatically in browser environments. For non-browser clients, capture the `Set-Cookie` header from the sign-in response and forward it on all subsequent requests.
+
+## Response Format
+
+All responses are JSON. A successful response returns either the requested resource object or an array of resources. Error responses follow a consistent shape:
+
+```json
+{
+  "message": "A human-readable description of the error"
+}
+```
+
+Some error responses may include additional fields alongside `message` to give more context about what went wrong.
+
+## Error Codes
+
+| HTTP Status | Meaning |
+|---|---|
+| `200` / `201` | Success |
+| `400` | Bad request — check your request body for missing or invalid fields |
+| `401` | Unauthorized — you are not signed in or your session has expired |
+| `403` | Forbidden — you do not have access to this resource |
+| `404` | Not found — the requested resource does not exist |
+| `429` | Too many requests — you have been rate limited |
+| `500` | Internal server error — something went wrong on our end |
+
+## Example Request
+
+The following example fetches your task list using the browser `fetch` API. Notice `credentials: 'include'` — this is required on every request so the session cookie is sent automatically.
+
+```javascript
+const response = await fetch('https://your-instance.com/api/v2/todo', {
+  credentials: 'include',
+  headers: { 'Content-Type': 'application/json' }
+});
+const tasks = await response.json();
+```
+
+<Note>
+  All API requests must include your session cookie. Authenticate first using
+  `POST /api/v1/user/signin`, then include `credentials: 'include'` (or your
+  cookie jar) on all subsequent requests.
+</Note>

@@ -1,0 +1,289 @@
+---
+title: "Users API: Profile and Preferences Endpoints in Flowtask"
+sidebarTitle: "Users"
+description: "Reference for the Flowtask Users API. Get and update your display name, avatar, password, and notification preferences via /api/v1/user."
+---
+
+The Users API lets you read and update everything tied to your Flowtask account — your display name, avatar, password, and notification preferences. Profile endpoints live under `/api/v1/user` and require an active authenticated session (cookie-based).
+
+<Note>
+  All Users API endpoints require an active authenticated session. Requests without a valid session cookie receive a `401 Unauthorized` response.
+</Note>
+
+---
+
+## GET /api/v1/user/profile
+
+Returns the full profile of the currently authenticated user.
+
+**Example request**
+
+```javascript
+const response = await fetch('/api/v1/user/profile', {
+  credentials: 'include',
+});
+const { user } = await response.json();
+```
+
+**Example response**
+
+```json
+{
+  "user": {
+    "id": "clx0a1b2c3d4e5f6g",
+    "name": "Jordan Rivera",
+    "email": "jordan@example.com",
+    "image": "https://cdn.flowtask.app/avatars/clx0a1b2c3d4e5f6g_abc1234",
+    "isPasswordSet": true,
+    "isOAuthLinked": false,
+    "provider": null,
+    "createdAt": "2024-01-15T10:30:00.000Z"
+  }
+}
+```
+
+<ResponseField name="id" type="string">
+  Unique identifier for your account.
+</ResponseField>
+
+<ResponseField name="name" type="string | null">
+  Your current display name, or `null` if not yet set.
+</ResponseField>
+
+<ResponseField name="email" type="string | null">
+  The email address associated with your account.
+</ResponseField>
+
+<ResponseField name="image" type="string | null">
+  URL of your avatar image, or `null` if no avatar has been uploaded.
+</ResponseField>
+
+<ResponseField name="isPasswordSet" type="boolean">
+  `true` if you have a password set on your account. Accounts created via OAuth start with `false`.
+</ResponseField>
+
+<ResponseField name="isOAuthLinked" type="boolean">
+  `true` if your account is linked to an OAuth provider (e.g. Google).
+</ResponseField>
+
+<ResponseField name="provider" type="string | null">
+  The name of the linked OAuth provider (e.g. `"google"`), or `null` if no OAuth account is linked.
+</ResponseField>
+
+<ResponseField name="createdAt" type="string | null">
+  ISO 8601 datetime at which your account was created.
+</ResponseField>
+
+---
+
+## POST /api/v1/user/profile
+
+Updates your display name and/or avatar image in a single request. Because this endpoint accepts a file upload, the request must use `multipart/form-data` encoding.
+
+<ParamField body="name" type="string" required>
+  New display name. This field is required; send the current name to leave it unchanged.
+</ParamField>
+
+<ParamField body="image" type="file">
+  New avatar image file (JPEG or PNG). After upload, the processed image is stored and the resulting URL is returned in the `image` field of subsequent profile responses.
+</ParamField>
+
+<Note>
+  Your uploaded avatar is stored on Flowtask's CDN and returned as a URL in the `image` field. You do not need to host the image yourself. Maximum file size is 5 MB.
+</Note>
+
+**Example request**
+
+```javascript
+const form = new FormData();
+form.append('name', 'Jordan Rivera');
+form.append('image', fileInput.files[0]);
+
+const response = await fetch('/api/v1/user/profile', {
+  method: 'POST',
+  credentials: 'include',
+  body: form,
+  // Do NOT set Content-Type manually — the browser sets it with the correct boundary.
+});
+const result = await response.json();
+```
+
+**Example response**
+
+```json
+{
+  "msg": "user profile updated successfully"
+}
+```
+
+---
+
+## PUT /api/v1/user/name
+
+Updates your display name without affecting any other profile fields.
+
+<ParamField body="name" type="string" required>
+  The new display name to set for your account.
+</ParamField>
+
+**Example request**
+
+```javascript
+const response = await fetch('/api/v1/user/name', {
+  method: 'PUT',
+  credentials: 'include',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ name: 'Jordan Rivera' }),
+});
+const result = await response.json();
+```
+
+**Example response**
+
+```json
+{
+  "msg": "Name updated sucessfully to Jordan Rivera"
+}
+```
+
+---
+
+## PUT /api/v1/user/password
+
+Sets a new password or changes your existing one. If your account already has a password (`isPasswordSet: true`), you must supply `currentPassword` to authenticate the change. You must also confirm the new password by repeating it in `confirmNewPassword`.
+
+<ParamField body="currentPassword" type="string">
+  Your current password. Required when `isPasswordSet` is `true` on your account.
+</ParamField>
+
+<ParamField body="newPassword" type="string" required>
+  The password you want to set. We recommend at least 12 characters.
+</ParamField>
+
+<ParamField body="confirmNewPassword" type="string" required>
+  Must match `newPassword` exactly. The request fails if the two values differ.
+</ParamField>
+
+**Example request**
+
+```javascript
+await fetch('/api/v1/user/password', {
+  method: 'PUT',
+  credentials: 'include',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    currentPassword: 'hunter2',
+    newPassword: 'c0rrectH0rseBatteryStaple!',
+    confirmNewPassword: 'c0rrectH0rseBatteryStaple!',
+  }),
+});
+```
+
+**Example response**
+
+```json
+{
+  "msg": "Password updated sucessfully"
+}
+```
+
+<Note>
+  If your account was created via OAuth and `isPasswordSet` is `false`, you can omit `currentPassword` when setting a password for the first time.
+</Note>
+
+---
+
+## GET /api/v1/user/user-preferences
+
+Returns the notification and reminder preferences for your account.
+
+**Example request**
+
+```javascript
+const response = await fetch('/api/v1/user/user-preferences', {
+  credentials: 'include',
+});
+const preferences = await response.json();
+```
+
+**Example response**
+
+```json
+{
+  "emailEnabled": true,
+  "reminderBefore": 30,
+  "taskRemainders": true,
+  "automaticRemainder": false,
+  "dailyDigest": true,
+  "digestTime": "08:00"
+}
+```
+
+<ResponseField name="emailEnabled" type="boolean">
+  Whether email notifications are enabled for your account.
+</ResponseField>
+
+<ResponseField name="reminderBefore" type="number">
+  How many minutes before a task's due time Flowtask sends a reminder.
+</ResponseField>
+
+<ResponseField name="taskRemainders" type="boolean">
+  Whether per-task reminder notifications are active.
+</ResponseField>
+
+<ResponseField name="automaticRemainder" type="boolean">
+  When `true`, Flowtask automatically schedules reminders for newly created tasks.
+</ResponseField>
+
+<ResponseField name="dailyDigest" type="boolean">
+  Whether you receive a daily summary email of upcoming tasks.
+</ResponseField>
+
+<ResponseField name="digestTime" type="string | null">
+  The local time at which your daily digest is sent (e.g. `"08:00"`), or `null` if not configured.
+</ResponseField>
+
+---
+
+## PUT /api/v1/user/user-preferences
+
+Updates one or more of your notification and reminder preferences. Send only the fields you want to change — unspecified fields keep their current values. At least one field must be provided.
+
+<ParamField body="emailEnabled" type="boolean">
+  Set to `true` to enable email notifications, or `false` to disable them.
+</ParamField>
+
+<ParamField body="reminderBefore" type="number">
+  Number of minutes before a task is due to send a reminder. Common values: `15`, `30`, `60`.
+</ParamField>
+
+<ParamField body="taskRemainders" type="boolean">
+  Enable or disable per-task reminder notifications.
+</ParamField>
+
+<ParamField body="dailyDigest" type="boolean">
+  Enable or disable the daily summary email.
+</ParamField>
+
+**Example request**
+
+```javascript
+const response = await fetch('/api/v1/user/user-preferences', {
+  method: 'PUT',
+  credentials: 'include',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    reminderBefore: 15,
+    dailyDigest: false,
+  }),
+});
+const result = await response.json();
+```
+
+**Example response**
+
+```json
+{
+  "msg": "successfully updated the user preferences"
+}
+```

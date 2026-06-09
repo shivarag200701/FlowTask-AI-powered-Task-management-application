@@ -1,0 +1,128 @@
+---
+title: "Create, Edit, and Manage Tasks in Flowtask"
+sidebarTitle: "Task Management"
+description: "A complete guide to creating, editing, completing, and organizing tasks in Flowtask, including subtasks and bulk operations."
+---
+
+Tasks are the core building block of Flowtask. Every task you create can carry a title, description, priority, due date, color, tags, and a reminder — giving you full context at a glance. This guide walks through everything you can do with tasks, from quick creation to bulk operations.
+
+<Tip>Press `C` anywhere in the app to quickly open the task creation form.</Tip>
+
+## Creating a task
+
+Click the inline task form at the top of any view — Today, Upcoming, or a project list — and start typing. At minimum, a task requires a title. Once you're happy with it, press `Enter` or click **Add Task** to save.
+
+The quick-add form supports the most common fields. For full options, open the task detail panel after saving.
+
+**Fields available at creation:**
+
+- **Title** *(required)* — a short, descriptive name for the task
+- **Description** — optional notes, context, or acceptance criteria
+- **Due date** — supports natural language input (see [Setting a due date](#setting-a-due-date))
+- **Priority** — high, medium, or low
+- **Color** — assign a color label for quick visual identification
+- **Tags** — one or more color-coded tags
+- **Reminder** — toggle to receive an email notification at the due time
+- **Project** — assign the task to a project or leave it in your Inbox
+
+## Editing a task
+
+Click any task's title to open the task detail panel on the right side of the screen. Every field is editable inline — click a field to activate it, make your change, and click away or press `Enter` to save. Changes sync instantly across all views.
+
+## Setting a due date
+
+<Steps>
+  <Step title="Open the date picker">
+    Click the **Due date** field in the task creation form or detail panel, or press `D` with a task selected.
+  </Step>
+  <Step title="Type a natural language date">
+    Enter a date in plain English. Flowtask parses it automatically:
+
+    ```text
+    tomorrow
+    next Monday
+    in 3 days
+    Dec 15
+    ```
+  </Step>
+  <Step title="Set a specific time (optional)">
+    After choosing a date, click the time field and enter a time. Toggle **All day** if the task has no specific time and you don't need a timed reminder.
+  </Step>
+</Steps>
+
+Flowtask understands flexible phrases like "end of next week" or "in 2 hours" in addition to standard date formats.
+
+## Priorities
+
+Every task can be assigned one of three priority levels:
+
+| Priority | Indicator |
+|----------|-----------|
+| High | Red label |
+| Medium | Orange label |
+| Low | Blue label |
+
+Set priority from the task creation form or the detail panel. Tasks are not automatically sorted by priority, so you can freely reorder them regardless of priority level.
+
+## Adding subtasks
+
+Open the task detail panel and click **Add subtask** near the bottom of the panel. A new inline form appears below the parent task. Subtasks support titles and due dates, and they appear nested under their parent in list view.
+
+<Note>Subtasks are limited to one level of nesting. You cannot create a subtask of a subtask.</Note>
+
+Completing a subtask checks it off independently of the parent. The parent task is not automatically completed when all subtasks are done — you complete it manually.
+
+## Completing a task
+
+Click the **circle checkbox** to the left of any task title to mark it complete. Flowtask plays a short completion sound and moves the task out of your active views into the **Completed** view. To find completed tasks, navigate to **Completed** in the sidebar.
+
+To undo a completion, navigate to the Completed view and click the checkmark again to restore the task to its original project or inbox.
+
+## Deleting a task
+
+<Steps>
+  <Step title="Open the options menu">
+    Hover over the task and click the **⋯** menu that appears on the right.
+  </Step>
+  <Step title="Click Delete">
+    Select **Delete** from the dropdown.
+  </Step>
+  <Step title="Confirm">
+    Click **Delete** in the confirmation dialog. This action cannot be undone.
+  </Step>
+</Steps>
+
+<Warning>Deleting a task also deletes all of its subtasks permanently. There is no trash or recovery option.</Warning>
+
+## Bulk operations
+
+When you need to act on several tasks at once, use bulk selection instead of editing tasks one by one.
+
+<Steps>
+  <Step title="Select multiple tasks">
+    Click the first task, then **Shift+click** any additional tasks. Each selected task shows a filled checkbox. You can Shift+click again to deselect.
+  </Step>
+  <Step title="Use the floating toolbar">
+    A floating toolbar appears at the bottom of the screen with the following actions:
+
+    | Action | Description |
+    |--------|-------------|
+    | **Bulk tag** | Add one or more tags to all selected tasks |
+    | **Bulk set date** | Assign the same due date to all selected tasks |
+    | **Bulk delete** (`X`) | Permanently delete all selected tasks |
+  </Step>
+</Steps>
+
+Press `Escape` to deselect all tasks and dismiss the toolbar.
+
+## Drag-and-drop reordering
+
+In list view, drag any task by its handle (visible on hover) and drop it in a new position to reorder it. In board view, drag task cards between columns to move them to a different section, or drag within a column to reorder.
+
+The order is saved automatically and persists across sessions. Sorting by due date or priority overrides your manual order, so switch back to **Custom order** if you want to restore drag-and-drop positioning.
+
+## Overdue tasks
+
+If a task's due date passes without being completed, it moves to the **Overdue** section inside your **Today** view. Overdue tasks are highlighted to make them easy to spot.
+
+To reschedule an overdue task, open it and update the due date. The task will move out of the Overdue section and back into the appropriate upcoming view.

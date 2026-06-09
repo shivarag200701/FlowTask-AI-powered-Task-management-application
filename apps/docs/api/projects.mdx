@@ -1,0 +1,580 @@
+---
+title: "Projects API: Manage Projects and Sections in Flowtask"
+sidebarTitle: "Projects"
+description: "Reference for the Flowtask Projects API. Create, list, update, and delete projects and their sections using the /api/v2/projects endpoints."
+---
+
+Projects let you group related tasks into focused workspaces. Every user starts with a default inbox project, and you can create as many additional projects as you need. The Projects API also exposes a **Sections** sub-resource so you can organize tasks into columns or phases within a project. All endpoints use the base path `/api/v2/projects` and require an authenticated session (cookie-based).
+
+<Note>
+  All Projects API endpoints require an active authenticated session. Requests without a valid session cookie receive a `401 Unauthorized` response.
+</Note>
+
+---
+
+## GET /api/v2/projects
+
+Retrieve all projects accessible to the authenticated user.
+
+**Example request**
+
+```javascript
+const response = await fetch('https://app.flowtask.com/api/v2/projects', {
+  method: 'GET',
+  credentials: 'include',
+});
+const { projects } = await response.json();
+```
+
+**Example response**
+
+```json
+{
+  "projects": [
+    {
+      "id": "clx3k2m0e0001abc",
+      "name": "Product Launch",
+      "personal": false,
+      "slug": "product-launch",
+      "isDefault": false,
+      "taskDisplayPreferences": {
+        "viewMode": "board"
+      }
+    },
+    {
+      "id": "clx0a1b2c0000inbox",
+      "name": "Inbox",
+      "personal": false,
+      "slug": "inbox",
+      "isDefault": true,
+      "taskDisplayPreferences": null
+    }
+  ]
+}
+```
+
+---
+
+## GET /api/v2/projects/inbox
+
+Fetch the authenticated user's default inbox project. The inbox is the catch-all project where tasks land when no other project is specified.
+
+<Note>
+  The inbox project always has `isDefault: true`. It cannot be deleted.
+</Note>
+
+**Example request**
+
+```javascript
+const response = await fetch(
+  'https://app.flowtask.com/api/v2/projects/inbox',
+  {
+    method: 'GET',
+    credentials: 'include',
+  }
+);
+const { inbox } = await response.json();
+```
+
+**Example response**
+
+```json
+{
+  "inbox": {
+    "id": "clx0a1b2c0000inbox",
+    "name": "Inbox",
+    "personal": false,
+    "slug": "inbox",
+    "isDefault": true,
+    "taskDisplayPreferences": null,
+    "todos": []
+  }
+}
+```
+
+---
+
+## GET /api/v2/projects/personal
+
+List the personal projects belonging to the authenticated user. You can optionally filter by name.
+
+<ParamField query="search" type="string" required>
+  A search string to filter personal projects by name (case-insensitive substring match). Pass an empty string to return all personal projects.
+</ParamField>
+
+**Example request**
+
+```javascript
+const response = await fetch(
+  'https://app.flowtask.com/api/v2/projects/personal?search=',
+  {
+    method: 'GET',
+    credentials: 'include',
+  }
+);
+const { personalProjects } = await response.json();
+```
+
+**Example response**
+
+```json
+{
+  "personalProjects": [
+    {
+      "id": "clx3k2m0e0001abc",
+      "name": "Side Projects",
+      "personal": true,
+      "slug": "side-projects",
+      "isDefault": false,
+      "taskDisplayPreferences": {
+        "viewMode": "list"
+      },
+      "todos": []
+    }
+  ]
+}
+```
+
+---
+
+## POST /api/v2/projects
+
+Create a new project. You must supply a `name` and declare whether the project is personal or belongs to a workspace.
+
+<ParamField body="name" type="string" required>
+  The display name of the project.
+</ParamField>
+
+<ParamField body="personal" type="boolean">
+  Set to `true` to create a personal project visible only to you. Mutually exclusive with `workspaceId`.
+</ParamField>
+
+<ParamField body="workspaceId" type="string">
+  The ID of the workspace this project belongs to. Mutually exclusive with `personal: true`.
+</ParamField>
+
+<Warning>
+  You must provide either `personal: true` or a `workspaceId`. Providing both, or neither, returns a `400 Bad Request` error.
+</Warning>
+
+**Example request**
+
+```javascript
+const response = await fetch('https://app.flowtask.com/api/v2/projects', {
+  method: 'POST',
+  credentials: 'include',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    name: 'Q4 Marketing Campaign',
+    personal: true,
+  }),
+});
+const { project } = await response.json();
+```
+
+**Example response**
+
+```json
+{
+  "message": "Successfully created project",
+  "project": {
+    "id": "clx8q5u0l0011rst",
+    "name": "Q4 Marketing Campaign",
+    "personal": true,
+    "slug": "q4-marketing-campaign",
+    "isDefault": false,
+    "taskDisplayPreferences": null
+  }
+}
+```
+
+---
+
+## GET /api/v2/projects/:id
+
+Fetch a single project by its ID.
+
+<ParamField path="id" type="string" required>
+  The ID of the project to retrieve.
+</ParamField>
+
+**Example request**
+
+```javascript
+const response = await fetch(
+  'https://app.flowtask.com/api/v2/projects/clx8q5u0l0011rst',
+  {
+    method: 'GET',
+    credentials: 'include',
+  }
+);
+const { project } = await response.json();
+```
+
+**Example response**
+
+```json
+{
+  "project": {
+    "id": "clx8q5u0l0011rst",
+    "name": "Q4 Marketing Campaign",
+    "personal": true,
+    "slug": "q4-marketing-campaign",
+    "isDefault": false,
+    "taskDisplayPreferences": {
+      "viewMode": "board"
+    },
+    "todos": []
+  }
+}
+```
+
+---
+
+## PUT /api/v2/projects/:id
+
+Update the name, task display preferences, or both for a project. Send at least one field — an empty body returns a `400 Bad Request`.
+
+<ParamField path="id" type="string" required>
+  The ID of the project to update.
+</ParamField>
+
+<ParamField body="name" type="string">
+  The new display name for the project.
+</ParamField>
+
+<ParamField body="taskDisplayPreferences" type="object">
+  Controls how tasks are displayed inside the project.
+
+  <Expandable title="taskDisplayPreferences fields">
+    <ParamField body="viewMode" type="string">
+      The default view for tasks in this project. Accepted values: `"list"`, `"board"`, or `"calendar"`.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+**Example request**
+
+```javascript
+const response = await fetch(
+  'https://app.flowtask.com/api/v2/projects/clx8q5u0l0011rst',
+  {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name: 'Q4 Marketing — Final',
+      taskDisplayPreferences: { viewMode: 'calendar' },
+    }),
+  }
+);
+const { project } = await response.json();
+```
+
+**Example response**
+
+```json
+{
+  "message": "project updated successfully",
+  "project": {
+    "id": "clx8q5u0l0011rst",
+    "name": "Q4 Marketing — Final",
+    "personal": true,
+    "slug": "q4-marketing-campaign",
+    "isDefault": false,
+    "taskDisplayPreferences": {
+      "viewMode": "calendar"
+    }
+  }
+}
+```
+
+---
+
+## DELETE /api/v2/projects/:id
+
+Permanently delete a project by its ID.
+
+<ParamField path="id" type="string" required>
+  The ID of the project to delete.
+</ParamField>
+
+<Warning>
+  Deleting a project permanently deletes **all tasks and sections** within it. This action cannot be undone. Make sure to export or reassign tasks before proceeding.
+</Warning>
+
+**Example request**
+
+```javascript
+const response = await fetch(
+  'https://app.flowtask.com/api/v2/projects/clx8q5u0l0011rst',
+  {
+    method: 'DELETE',
+    credentials: 'include',
+  }
+);
+// Returns 200 OK on success
+```
+
+**Example response**
+
+```json
+{
+  "msg": "project deleted successfully"
+}
+```
+
+---
+
+## Sections
+
+Sections let you subdivide a project into logical groups — for example, pipeline stages on a board or phases on a timeline. Each section belongs to exactly one project.
+
+---
+
+### GET /api/v2/projects/:id/sections
+
+List all sections within a project.
+
+<ParamField path="id" type="string" required>
+  The ID of the parent project.
+</ParamField>
+
+**Example request**
+
+```javascript
+const response = await fetch(
+  'https://app.flowtask.com/api/v2/projects/clx8q5u0l0011rst/sections',
+  {
+    method: 'GET',
+    credentials: 'include',
+  }
+);
+const { sections } = await response.json();
+```
+
+**Example response**
+
+```json
+{
+  "sections": [
+    {
+      "id": "clx9r6v0m0012uvw",
+      "name": "To Do",
+      "sortKey": "a0",
+      "projectId": "clx8q5u0l0011rst",
+      "todos": []
+    },
+    {
+      "id": "clxar7w0n0013xyz",
+      "name": "In Progress",
+      "sortKey": "a1",
+      "projectId": "clx8q5u0l0011rst",
+      "todos": []
+    }
+  ]
+}
+```
+
+---
+
+### POST /api/v2/projects/:id/sections
+
+Create a new section inside a project.
+
+<ParamField path="id" type="string" required>
+  The ID of the parent project.
+</ParamField>
+
+<ParamField body="name" type="string" required>
+  The display name for the new section.
+</ParamField>
+
+**Example request**
+
+```javascript
+const response = await fetch(
+  'https://app.flowtask.com/api/v2/projects/clx8q5u0l0011rst/sections',
+  {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: 'Done' }),
+  }
+);
+const { section } = await response.json();
+```
+
+**Example response**
+
+```json
+{
+  "msg": "project section created",
+  "section": {
+    "id": "clxbs8x0o0014abc",
+    "name": "Done",
+    "sortKey": "a2",
+    "projectId": "clx8q5u0l0011rst"
+  }
+}
+```
+
+---
+
+### PATCH /api/v2/projects/:id/sections/:sectionId
+
+Partially update a section — rename it, reorder it, or move it to another project.
+
+<ParamField path="id" type="string" required>
+  The ID of the parent project.
+</ParamField>
+
+<ParamField path="sectionId" type="string" required>
+  The ID of the section to update.
+</ParamField>
+
+<ParamField body="name" type="string">
+  The new display name for the section.
+</ParamField>
+
+<ParamField body="prevIndex" type="string">
+  The ordering key of the section that should appear immediately before this one. Used together with `nextIndex` to compute the new position. Pass `null` to move the section to the beginning.
+</ParamField>
+
+<ParamField body="nextIndex" type="string">
+  The ordering key of the section that should appear immediately after this one. Pass `null` to move the section to the end.
+</ParamField>
+
+<ParamField body="projectId" type="string">
+  Move this section to a different project.
+</ParamField>
+
+**Example request**
+
+```javascript
+const response = await fetch(
+  'https://app.flowtask.com/api/v2/projects/clx8q5u0l0011rst/sections/clx9r6v0m0012uvw',
+  {
+    method: 'PATCH',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: 'Backlog' }),
+  }
+);
+const { updatedSection } = await response.json();
+```
+
+**Example response**
+
+```json
+{
+  "msg": "project section updated sucessfully",
+  "updatedSection": {
+    "id": "clx9r6v0m0012uvw",
+    "name": "Backlog",
+    "sortKey": "a0",
+    "projectId": "clx8q5u0l0011rst"
+  }
+}
+```
+
+---
+
+### DELETE /api/v2/projects/:id/sections/:sectionId
+
+Delete a section from a project.
+
+<ParamField path="id" type="string" required>
+  The ID of the parent project.
+</ParamField>
+
+<ParamField path="sectionId" type="string" required>
+  The ID of the section to delete.
+</ParamField>
+
+<Note>
+  Tasks that belong to the deleted section are moved to the project root (their `projectSectionId` is set to `null`). They are **not** deleted.
+</Note>
+
+**Example request**
+
+```javascript
+const response = await fetch(
+  'https://app.flowtask.com/api/v2/projects/clx8q5u0l0011rst/sections/clx9r6v0m0012uvw',
+  {
+    method: 'DELETE',
+    credentials: 'include',
+  }
+);
+// Returns 200 OK on success
+```
+
+**Example response**
+
+```json
+{
+  "msg": "section deleted sucessfully"
+}
+```
+
+---
+
+## Project object reference
+
+<Expandable title="Project object fields">
+
+<ResponseField name="id" type="string">
+  Unique identifier for the project.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The display name of the project.
+</ResponseField>
+
+<ResponseField name="personal" type="boolean">
+  `true` for personal projects visible only to the owner; `false` for shared or workspace projects.
+</ResponseField>
+
+<ResponseField name="slug" type="string | null">
+  A URL-safe identifier derived from the project name, used in deep links.
+</ResponseField>
+
+<ResponseField name="isDefault" type="boolean">
+  `true` only for the inbox project. Each user has exactly one default project.
+</ResponseField>
+
+<ResponseField name="taskDisplayPreferences" type="object | null">
+  Display settings for tasks in this project, or `null` if the defaults have never been changed.
+
+  <Expandable title="taskDisplayPreferences fields">
+    <ResponseField name="viewMode" type="string">
+      The active view mode: `"list"`, `"board"`, or `"calendar"`.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+</Expandable>
+
+---
+
+## Section object reference
+
+<Expandable title="Section object fields">
+
+<ResponseField name="id" type="string">
+  Unique identifier for the section.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The display name of the section.
+</ResponseField>
+
+<ResponseField name="sortKey" type="string">
+  Ordering key that controls the section's position within its project.
+</ResponseField>
+
+<ResponseField name="projectId" type="string">
+  The ID of the project this section belongs to.
+</ResponseField>
+
+</Expandable>

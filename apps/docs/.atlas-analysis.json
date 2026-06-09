@@ -1,0 +1,121 @@
+{
+  "projectType": "saas",
+  "projectName": "Flowtask",
+  "projectDescription": "Flowtask is an AI-powered task management app that helps individuals organize tasks with projects, tags, smart views, and reminders.",
+  "theme": "almond",
+  "primaryColor": "#7e95ef",
+  "lightColor": null,
+  "darkColor": null,
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Guide",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "account-setup"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/tasks",
+              "concepts/projects",
+              "concepts/tags",
+              "concepts/views"
+            ]
+          },
+          {
+            "group": "Features",
+            "pages": [
+              "features/task-management",
+              "features/projects",
+              "features/search",
+              "features/reminders",
+              "features/keyboard-shortcuts"
+            ]
+          },
+          {
+            "group": "Account & Settings",
+            "pages": [
+              "settings/profile",
+              "settings/preferences",
+              "settings/notifications"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "api/overview",
+              "api/authentication"
+            ]
+          },
+          {
+            "group": "Endpoints",
+            "pages": [
+              "api/tasks",
+              "api/projects",
+              "api/tags",
+              "api/users"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Task creation with priorities, due dates, colors, and reminders",
+    "Project organization with list and board (Kanban) views",
+    "Tag-based task categorization and filtering",
+    "Today, Upcoming, and Completed smart views",
+    "Subtask support for hierarchical task breakdown",
+    "Full-text search powered by Meilisearch",
+    "Drag-and-drop task reordering and Kanban board",
+    "Email OTP and Google OAuth authentication",
+    "Dark and light theme support",
+    "Keyboard shortcuts for power users",
+    "Email reminders for due tasks",
+    "Natural language date input (e.g., 'tomorrow', 'next Monday')"
+  ],
+  "publicApiSurface": [
+    "GET /api/v1/auth-check",
+    "POST /api/v1/user/signup/send-otp",
+    "POST /api/v1/user/signup/verify",
+    "POST /api/v1/user/signin",
+    "POST /api/v1/user/logout",
+    "GET /api/v1/user/profile",
+    "POST /api/v1/user/profile",
+    "GET /api/v1/user/user-preferences",
+    "PUT /api/v1/user/user-preferences",
+    "GET /api/v1/oauth/google/connect",
+    "GET /api/v1/oauth/google/callback",
+    "GET /api/v2/todo/",
+    "POST /api/v2/todo/",
+    "PATCH /api/v2/todo/:id",
+    "DELETE /api/v2/todo/:id",
+    "DELETE /api/v2/todo/bulk/",
+    "PATCH /api/v2/todo/bulk/",
+    "GET /api/v2/todo/search",
+    "GET /api/v2/tag/",
+    "POST /api/v2/tag/",
+    "PATCH /api/v2/tag/:id",
+    "DELETE /api/v2/tag/bulk/",
+    "GET /api/v2/projects/",
+    "POST /api/v2/projects/",
+    "GET /api/v2/projects/:id",
+    "PUT /api/v2/projects/:id",
+    "DELETE /api/v2/projects/:id",
+    "GET /api/v2/projects/:id/sections/",
+    "POST /api/v2/projects/:id/sections/",
+    "PATCH /api/v2/projects/:id/sections/:sectionId",
+    "DELETE /api/v2/projects/:id/sections/:sectionId"
+  ]
+}

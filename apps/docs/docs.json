@@ -1,0 +1,117 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "almond",
+  "name": "Flowtask",
+  "description": "AI-powered task management — organize your work with projects, tags, smart views, and reminders.",
+  "colors": {
+    "primary": "#7e95ef",
+    "light": "#a0b4f4",
+    "dark": "#5c75d4"
+  },
+  "favicon": "https://media.brand.dev/87c33f2d-5500-45e4-a773-f8a3630c4736.png",
+  "icons": {
+    "library": "lucide"
+  },
+  "styling": {
+    "eyebrows": "breadcrumbs"
+  },
+  "contextual": {
+    "options": ["copy", "view", "assistant"]
+  },
+  "navigation": {
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Home",
+          "icon": "house",
+          "href": "/"
+        }
+      ]
+    },
+    "tabs": [
+      {
+        "tab": "Guide",
+        "groups": [
+          {
+            "group": "Get Started",
+            "icon": "rocket",
+            "expanded": true,
+            "pages": [
+              "introduction",
+              "quickstart",
+              "account-setup"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "icon": "book-open",
+            "pages": [
+              "concepts/tasks",
+              "concepts/projects",
+              "concepts/tags",
+              "concepts/views"
+            ]
+          },
+          {
+            "group": "Features",
+            "icon": "sparkles",
+            "pages": [
+              "features/task-management",
+              "features/projects",
+              "features/search",
+              "features/reminders",
+              "features/keyboard-shortcuts"
+            ]
+          },
+          {
+            "group": "Account & Settings",
+            "icon": "settings",
+            "pages": [
+              "settings/profile",
+              "settings/preferences",
+              "settings/notifications"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "icon": "code",
+            "pages": [
+              "api/overview",
+              "api/authentication"
+            ]
+          },
+          {
+            "group": "Endpoints",
+            "icon": "terminal",
+            "pages": [
+              "api/tasks",
+              "api/projects",
+              "api/tags",
+              "api/users"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "navbar": {
+    "links": [],
+    "primary": {
+      "type": "button",
+      "label": "Open App",
+      "href": "https://flowtask.shiva-raghav.com/"
+    }
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/flowtask",
+      "github": "https://github.com/shivarag200701/FlowTask-AI-powered-Task-management-application",
+      "linkedin": "https://www.linkedin.com/in/shiva-raghav"
+    }
+  }
+}

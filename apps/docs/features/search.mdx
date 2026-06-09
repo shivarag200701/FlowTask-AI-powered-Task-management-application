@@ -1,0 +1,56 @@
+---
+title: "Search Your Tasks Instantly with Flowtask Search"
+sidebarTitle: "Search"
+description: "Use Flowtask's full-text search to find any task by title or description. Open with Cmd+K or navigate to the Search page."
+---
+
+Flowtask's full-text search lets you find any task in seconds, no matter which project it lives in or how long ago you created it. Results appear as you type, so you rarely need to press `Enter` or dig through menus. Whether you use the quick modal or the dedicated search page, everything you've written across titles and descriptions is instantly reachable.
+
+## Opening search
+
+Press **`Cmd+K`** on Mac or **`Ctrl+K`** on Windows and Linux from anywhere in the app to open the search modal. You don't need to navigate to a specific page first — the shortcut works in all views.
+
+## Search modal
+
+The search modal opens as an overlay in the center of the screen. Start typing your query and results begin appearing within 300 milliseconds — fast enough that results feel instant as you type.
+
+Each result in the modal displays:
+
+- **Task title** — the full title with your query terms highlighted
+- **Description snippet** — a short excerpt from the task description showing context around matching text
+- **Tags** — any color-coded tags assigned to the task
+
+Click any result to open the task detail panel directly.
+
+<Tip>If your search returns no results for a task you just created, wait a few seconds for the index to update.</Tip>
+
+Press `Escape` to close the modal without navigating away.
+
+## Search page
+
+For a more focused search experience, navigate to **`/app/search`** in the sidebar or address bar. The search page gives you a full-screen layout with a persistent search bar and a **Tasks** tab showing all matching results.
+
+The search page is useful when you want to:
+
+- Browse a large set of results without the modal closing
+- Reference search results while working in the same tab
+- Return to a previous query by using your browser's back button
+
+## What's searchable
+
+Flowtask indexes the following fields for every task:
+
+| Field | Searchable |
+|-------|------------|
+| Task title | ✅ Yes |
+| Task description | ✅ Yes |
+| Tags | ❌ Not yet |
+| Project name | ❌ Not yet |
+| Comments / notes | ❌ Not yet |
+
+## Search tips
+
+- **Use keywords from the title or description.** Search matches against exact words and partial words, so "launch" will surface tasks containing "launch", "launcher", or "re-launch".
+- **Search is case-insensitive.** Typing `MEETING` or `meeting` returns the same results.
+- **Search across all projects.** The modal and search page return results from your Inbox and every project simultaneously — you don't need to be inside a specific project first.
+- **Search by tag name.** Type a tag name to find matching tags, which you can use to filter your task list.

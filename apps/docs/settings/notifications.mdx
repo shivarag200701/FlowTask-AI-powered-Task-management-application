@@ -1,0 +1,95 @@
+---
+title: "Manage Flowtask Notification Settings and Reminders"
+sidebarTitle: "Notifications"
+description: "Control how Flowtask notifies you about tasks that are due. Enable or disable email reminders and manage your notification preferences."
+---
+
+Flowtask can send you reminders so important tasks never slip past their due time. Notification settings let you choose whether to receive those reminders and control which tasks trigger them. Read on to understand how reminders work and how to configure them to suit your workflow.
+
+## How Flowtask notifies you
+
+When a task reminder is enabled and a due time is set, Flowtask sends you an **email notification** at the moment the task is due. The email arrives at the address associated with your Flowtask account.
+
+<Note>
+  SMS, push, and in-app notification channels are planned for a future release. Email is the only active delivery channel today.
+</Note>
+
+## Enabling email notifications
+
+Email notifications must be turned on in your settings for reminder emails to be delivered.
+
+<Steps>
+  <Step title="Open Settings">
+    Click your avatar in the sidebar footer and select **Settings**, then choose **Notifications** from the left menu.
+  </Step>
+  <Step title="Turn on email notifications">
+    Toggle **Email notifications** to the on position. The toggle turns green when enabled.
+  </Step>
+</Steps>
+
+## Disabling email notifications
+
+If you no longer want to receive reminder emails, you can turn off email notifications at any time. Existing task reminders are preserved — they will resume sending if you re-enable email notifications later.
+
+<Steps>
+  <Step title="Open Settings">
+    Click your avatar in the sidebar footer and select **Settings**, then choose **Notifications**.
+  </Step>
+  <Step title="Turn off email notifications">
+    Toggle **Email notifications** to the off position. You will not receive any reminder emails while this setting is disabled.
+  </Step>
+</Steps>
+
+## Task reminders
+
+You can enable a reminder on any individual task that has a specific due time. Reminders are set per task, giving you fine-grained control over which tasks notify you.
+
+<Steps>
+  <Step title="Open a task">
+    Click any task to open its detail view, or create a new task.
+  </Step>
+  <Step title="Set a due time">
+    Assign a specific due date and time to the task. Reminders require an exact time — all-day tasks cannot trigger a reminder email.
+  </Step>
+  <Step title="Enable the reminder">
+    Toggle the **Reminder** switch within the task detail. When enabled, Flowtask will send a reminder email at the task's due time.
+  </Step>
+  <Step title="Save the task">
+    Save or close the task. The reminder is now scheduled.
+  </Step>
+</Steps>
+
+<Warning>
+  A due **time** is required for reminders to fire. If your task has only a due date with no time, the reminder toggle will have no effect.
+</Warning>
+
+## What the reminder email includes
+
+Each reminder email contains the information you need to act on the task immediately:
+
+<CardGroup cols={3}>
+  <Card title="Task title" icon="tag">
+    The full name of the task so you know exactly what needs attention.
+  </Card>
+  <Card title="Due Now label" icon="clock">
+    A clear indicator that the task's due time has arrived.
+  </Card>
+  <Card title="Direct link" icon="arrow-up-right-from-square">
+    A one-click link that opens the task so you can mark it complete right away.
+  </Card>
+</CardGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="I enabled a reminder but didn't receive an email">
+    Try the following steps:
+
+    1. **Check your spam or junk folder.** Reminder emails can occasionally be filtered by your email provider. Mark the message as "Not spam" to prevent future filtering.
+    2. **Verify email notifications are enabled.** Go to **Settings → Notifications** and confirm the **Email notifications** toggle is on.
+    3. **Confirm the task has a specific due time.** Open the task and check that a time (not just a date) is set. All-day tasks do not trigger reminder emails.
+  </Accordion>
+  <Accordion title="I completed a task but still got a reminder email">
+    This is expected behavior in the current version of Flowtask. Reminders are scheduled at the time you enable them, and the scheduler does not yet cancel a pending reminder when a task is marked complete. If your task's due time passed before you completed it, the reminder email may still arrive. This will be addressed in a future update.
+  </Accordion>
+</AccordionGroup>

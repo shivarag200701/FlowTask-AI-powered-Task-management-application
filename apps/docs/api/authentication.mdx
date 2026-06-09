@@ -1,0 +1,178 @@
+---
+title: "Flowtask API Authentication: Sign Up, Sign In, and Sessions"
+sidebarTitle: "Authentication"
+description: "Learn how to sign up with OTP email verification, sign in with your credentials, check session status, and sign out of the Flowtask API."
+---
+
+Flowtask uses cookie-based sessions for authentication. You sign in once, receive a session cookie, and include that cookie on every subsequent request. This page walks you through creating an account, signing in, checking your session status, and signing out.
+
+## Sign Up (New Users)
+
+Creating a new Flowtask account is a two-step process. First, you request a one-time passcode (OTP) sent to your email. Then you verify the OTP along with your password to complete registration. A session is created for you automatically on success.
+
+<Warning>
+  OTP requests are rate-limited to **5 attempts per 24 hours per email address**. Plan your integration accordingly and avoid unnecessary OTP requests during testing.
+</Warning>
+
+<Steps>
+  <Step title="Send OTP to your email">
+    Submit your email address to receive a one-time passcode. The OTP is valid for **5 minutes**.
+
+    ```http
+    POST /api/v1/user/signup/send-otp
+    Content-Type: application/json
+    ```
+
+    ```json
+    {
+      "email": "you@example.com"
+    }
+    ```
+
+    **Response — `200 OK`**
+
+    ```json
+    {
+      "msg": "OTP sent successfully"
+    }
+    ```
+
+    Check your inbox for the six-digit code and proceed to the next step before it expires.
+  </Step>
+
+  <Step title="Verify OTP and create your account">
+    Submit the OTP code along with your email and a password of your choice. On success, your account is created and a session cookie is set automatically.
+
+    ```http
+    POST /api/v1/user/signup/verify
+    Content-Type: application/json
+    ```
+
+    ```json
+    {
+      "email": "you@example.com",
+      "code": "123456",
+      "password": "yourpassword"
+    }
+    ```
+
+    **Response — `200 OK`**
+
+    The response includes a `Set-Cookie` header containing your session cookie. In browser environments, the cookie is stored and sent automatically. For non-browser clients, capture and store this cookie for use in all subsequent requests.
+  </Step>
+</Steps>
+
+## Sign In (Existing Users)
+
+If you already have a Flowtask account, exchange your email and password for a session cookie directly — no OTP step required.
+
+```http
+POST /api/v1/user/signin
+Content-Type: application/json
+```
+
+```json
+{
+  "email": "you@example.com",
+  "password": "yourpassword"
+}
+```
+
+**Response — `200 OK`**
+
+A session cookie is set in the response. All protected API endpoints will recognise you as authenticated as long as this cookie is present and valid.
+
+<Tip>
+  If you are building a browser-based client, `credentials: 'include'` in your `fetch` calls is all you need — the browser handles the cookie automatically after sign-in.
+</Tip>
+
+## Check Authentication Status
+
+Use the auth-check endpoint to verify whether your current session is still valid. This is useful for conditionally redirecting users to a sign-in screen or refreshing UI state.
+
+```http
+GET /api/v1/auth-check
+```
+
+This endpoint always returns `200 OK`. Read the `isAuthenticated` field in the response body to determine session state:
+
+**Response — `200 OK` (authenticated)**
+
+```json
+{
+  "isAuthenticated": true,
+  "email": "you@example.com"
+}
+```
+
+**Response — `200 OK` (not authenticated)**
+
+```json
+{
+  "isAuthenticated": false
+}
+```
+
+When `isAuthenticated` is `false`, redirect the user to your sign-in screen. No request body is required.
+
+## Sign Out
+
+Sending a logout request destroys your server-side session and clears the session cookie. After this call, any further requests to protected endpoints will return `401` until you sign in again.
+
+```http
+POST /api/v1/user/logout
+```
+
+**Response — `200 OK`**
+
+No request body is required. The session cookie is cleared automatically.
+
+## Using the Session Cookie
+
+Once you are signed in, you need to include your session cookie on every request to a protected endpoint. All v2 endpoints (`/api/v2/...`) require authentication and will return `401` if the cookie is missing or expired.
+
+<Tabs>
+  <Tab title="Browser (fetch)">
+    Pass `credentials: 'include'` to every `fetch` call. The browser attaches the session cookie automatically.
+
+    ```javascript
+    const res = await fetch('/api/v2/todo', {
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const tasks = await res.json();
+    ```
+  </Tab>
+  <Tab title="Server-side / non-browser">
+    Capture the `Set-Cookie` header from the sign-in response and include it as a `Cookie` header on all subsequent requests.
+
+    ```javascript
+    // Step 1 — Sign in and capture the cookie
+    const signIn = await fetch('https://your-instance.com/api/v1/user/signin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'you@example.com', password: 'yourpassword' })
+    });
+    const cookie = signIn.headers.get('set-cookie');
+
+    // Step 2 — Use the cookie on subsequent requests
+    const res = await fetch('https://your-instance.com/api/v2/todo', {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': cookie
+      }
+    });
+    const tasks = await res.json();
+    ```
+
+    Many HTTP client libraries (such as `axios` with a cookie jar, or Python's `requests.Session`) handle this automatically when you configure a cookie jar.
+  </Tab>
+</Tabs>
+
+## Error Responses
+
+| Status | When it happens |
+|---|---|
+| `400` | Invalid credentials or missing required fields in the request body |
+| `401` | Session missing or expired — sign in again to get a new session cookie |
+| `429` | OTP rate limit exceeded — wait 24 hours before requesting another OTP for this email |

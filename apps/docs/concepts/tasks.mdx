@@ -1,0 +1,101 @@
+---
+title: "Tasks in Flowtask: Fields, Priorities, and Subtasks"
+sidebarTitle: "Tasks"
+description: "Understand every field on a Flowtask task — titles, due dates, priorities, colors, subtasks, and how drag-and-drop ordering works."
+---
+
+A task is the core unit of work in Flowtask. Every to-do, action item, or reminder you create lives as a task, and each task carries a rich set of fields that help you describe, schedule, and organize your work. Whether you're managing a solo project or collaborating across a team, understanding how tasks work gives you full control over your workflow.
+
+## What is a task?
+
+A task represents a single piece of work you want to track. At its most basic, a task has a title and a completion state — but Flowtask lets you enrich each task with due dates, priorities, colors, tags, subtasks, and more. Tasks live inside projects (or in your Inbox if no project is assigned) and can be arranged in any order you like using drag-and-drop.
+
+## Task fields
+
+The table below describes every field available on a Flowtask task.
+
+| Field | Type | Description |
+|---|---|---|
+| **Title** | Text | The name of the task. Required. |
+| **Description** | Text | Optional long-form notes or context for the task. |
+| **Due Date** | Date | The calendar date the task is due. Supports natural language input. |
+| **Due Time** | Time | A specific time on the due date. Leave blank for all-day tasks. |
+| **Is All-Day** | Toggle | Marks the task as an all-day item with no specific time. |
+| **Priority** | Enum | The urgency level: **High**, **Medium**, or **Low**. |
+| **Color** | Color | A visual color label to help you identify the task at a glance. |
+| **Tags** | Tag list | One or more tags for cross-project categorization. |
+| **Reminder** | Toggle | Enable to receive a notification before the task is due. |
+| **Project** | Project | The project this task belongs to. Defaults to Inbox. |
+| **Subtasks** | Task list | Child tasks nested one level beneath this task. |
+
+## Priorities
+
+Every task can be assigned one of three priority levels. Priorities appear as colored indicators next to the task title so you can scan your list at a glance.
+
+- 🔴 **High** — urgent or time-sensitive work that needs immediate attention.
+- 🟡 **Medium** — important but not immediately blocking; the default level.
+- 🔵 **Low** — nice-to-have items you can tackle when bandwidth allows.
+
+<Tip>
+  Use high priority sparingly. When everything is high priority, nothing is. Reserve it for tasks that are genuinely blocking other work.
+</Tip>
+
+You can sort or filter tasks by priority in any list view, making it easy to focus on what matters most.
+
+## Subtasks
+
+Flowtask supports one level of task nesting. You can break a complex task into smaller, trackable steps by adding subtasks to it.
+
+To add a subtask:
+
+1. Open the task detail view by clicking on any task.
+2. Scroll to the **Subtasks** section at the bottom of the detail panel.
+3. Click **Add subtask** and type the subtask title.
+4. Press **Enter** to save.
+
+<Note>
+  Subtasks support a maximum nesting depth of one level. A subtask cannot itself have subtasks. If you need deeper hierarchies, consider using project sections instead.
+</Note>
+
+Each subtask has its own completion state, due date, and priority. Completing all subtasks does not automatically complete the parent task — you must mark the parent complete manually.
+
+## Drag-and-drop ordering
+
+Tasks within a list or board column can be freely reordered by dragging them to a new position. Flowtask saves your custom order automatically — there's no "sort by" override needed after you arrange tasks manually.
+
+To reorder a task:
+- In **list view**, grab the drag handle (⠿) on the left side of any task row and drag it up or down.
+- In **board view**, drag a task card to a new position within the same column, or drop it into a different column to move it to another section.
+
+<Tip>
+  Your custom task order is saved automatically and syncs across devices. You won't lose your arrangement when you close and reopen Flowtask.
+</Tip>
+
+## Task colors
+
+Assign a color to any task to create an instant visual grouping without using tags or projects. Colors appear as a subtle accent on the task card, making it easy to spot related tasks in a long list.
+
+To assign a color, open the task detail view and click the color swatch in the toolbar. Choose from the available palette, or select **None** to remove the color.
+
+Colors are purely visual and do not affect sorting, filtering, or priority.
+
+## Natural language dates
+
+You don't need to pick from a calendar every time you set a due date. Flowtask understands natural language date expressions powered by [chrono-node](https://github.com/wanasit/chrono). Type directly into any due date field and Flowtask will parse your intent automatically.
+
+**Supported expressions include:**
+
+```text
+tomorrow
+next Monday
+in 3 days
+this Friday
+next week
+in 2 hours
+```
+
+<Note>
+  Natural language parsing is case-insensitive. "Tomorrow", "TOMORROW", and "tomorrow" all resolve to the same date.
+</Note>
+
+After you type a recognized expression and press **Enter** (or click away), Flowtask converts it to an exact date and displays it in your locale's standard format.
