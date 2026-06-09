@@ -87,7 +87,7 @@
       },
       {
         "tab": "Changelog",
-        "pages": ["changelog"]
+        "href": "/changelog"
       }
     ]
   },
