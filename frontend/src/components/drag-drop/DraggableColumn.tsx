@@ -61,17 +61,20 @@ function DraggableColumn({
     data: { id, column, sortKey },
   });
 
-  if (isDragging) {
-    return (
-      <div ref={ref} className={`min-w-[260px] mb-2 bg-accent rounded-lg`} />
-    );
-  }
+  // if (isDragging) {
+  //   return (
+  //     <div ref={ref} className={`min-w-[260px] mb-2 bg-accent rounded-lg`} />
+  //   );
+  // }
 
   return (
     <>
       <div
         ref={ref}
-        className="min-w-[290px] h-full max-h-[calc(100vh-200px)] hover:shadow-[0_5px_10px_rgba(0,0,0,0.15)] duration-200 transition-all cursor-grab rounded-lg flex flex-col gap-1.5 items-center text-sm font-semibold p-2"
+        className={cn(
+          `min-w-[290px] h-full max-h-[calc(100vh-200px)] hover:shadow-[0_5px_10px_rgba(0,0,0,0.15)] duration-200 transition-all cursor-grab rounded-lg flex flex-col gap-1.5 items-center text-sm font-semibold p-2`,
+          { "bg-accent opacity-50": isDragging }
+        )}
       >
         <div className="text-left flex justify-between w-full">
           {isEditing ? (

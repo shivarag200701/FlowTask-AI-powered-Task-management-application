@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { boolean, z } from "zod";
 import { taskViewModes } from "../v1.js";
 
 export const CreateProjectSchema = z.object({
@@ -27,6 +27,14 @@ export const UpdateProjectSectionSchema = z.object({
   nextIndex: z.string().nullish(),
 });
 
+export const ProjectSearchDocumentSchema = z.object({
+  name: z.string(),
+  id: z.string(),
+  slug: z.string().optional(),
+  userId: z.string(),
+  personal: boolean(),
+});
+
 export type UpdateProject = z.infer<typeof UpdateProjectSchema>;
 
 export type CreateProject = z.infer<typeof CreateProjectSchema>;
@@ -36,3 +44,5 @@ export type UpdateProjectSectionSchema = z.infer<
 >;
 
 export type CreateProjectSection = z.infer<typeof CreateProjectSectionSchema>;
+
+export type ProjectSearchDocument = z.infer<typeof ProjectSearchDocumentSchema>;

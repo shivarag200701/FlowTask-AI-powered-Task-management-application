@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { boolean, z } from "zod";
 import { taskViewModes } from "../v1.js";
 export const CreateProjectSchema = z.object({
     name: z.string().min(1),
@@ -21,5 +21,12 @@ export const UpdateProjectSectionSchema = z.object({
     projectId: z.string().nullish(),
     prevIndex: z.string().nullish(),
     nextIndex: z.string().nullish(),
+});
+export const ProjectSearchDocumentSchema = z.object({
+    name: z.string(),
+    id: z.string(),
+    slug: z.string().optional(),
+    userId: z.string(),
+    personal: boolean(),
 });
 //# sourceMappingURL=project.js.map

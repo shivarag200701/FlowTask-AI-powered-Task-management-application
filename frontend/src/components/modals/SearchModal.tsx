@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import type {
   TodoSearchDocument,
   TagSearchDocument,
+  ProjectSearchDocument,
 } from "@shiva200701/todotypes";
 import { SpinnerCustom } from "../ui/spinner";
 import { CalendarDays, History, Tag, X } from "lucide-react";
@@ -46,8 +47,11 @@ function SearchModal({
   const { data: searchData, isLoading: loading } =
     useSearchTodos(debouncedValue);
 
-  const searchResults = searchData?.todos;
+  const todoResults = searchData?.todos;
   const tagResults = searchData?.tags;
+  const projectResults = searchData?.projects;
+
+  console.log("projects", projectResults);
 
   const [recentSearches, setRecentSearches] = useLocalStorage<
     string[] | undefined
@@ -100,13 +104,13 @@ function SearchModal({
               </Command.Loading>
             ) : (
               <>
-                {searchResults && searchResults.length > 0 && (
+                {todoResults && todoResults.length > 0 && (
                   <Command.Group
                     heading="Tasks"
                     className="text-xs px-2 text-neutral-400"
                   >
                     <Command.List className=" text-neutral-900">
-                      {searchResults.map((result) => (
+                      {todoResults.map((result) => (
                         <TaskOption
                           option={result}
                           key={result.id}
@@ -146,8 +150,28 @@ function SearchModal({
                     </Command.List>
                   </Command.Group>
                 )}
-                {(!searchResults || searchResults.length === 0) &&
-                  (!tagResults || tagResults.length === 0) && (
+                {projectResults && projectResults.length > 0 && (
+                  <Command.Group
+                    heading="Projects"
+                    className="text-xs px-2 text-neutral-400"
+                  >
+                    <Command.List className="text-neutral-900">
+                      {projectResults.map((project) => (
+                        <ProjectOption
+                          key={project.id}
+                          option={project}
+                          onSelect={() => {
+                            navigate(`app/projects/${project.slug}`);
+                            setShow(false);
+                          }}
+                        />
+                      ))}
+                    </Command.List>
+                  </Command.Group>
+                )}
+                {(!todoResults || todoResults.length === 0) &&
+                  (!tagResults || tagResults.length === 0) &&
+                  (!projectResults || projectResults.length === 0) && (
                     <Command.Empty className="flex justify-center items-center h-12 text-neutral-500 text-sm">
                       No matches
                     </Command.Empty>
@@ -234,6 +258,32 @@ function TaskOption({
         <div className="flex gap-4 items-center justify-between">
           <div className="h-4 w-4 rounded-full border" />
           <span>{option.title}</span>
+        </div>
+      </div>
+    </Command.Item>
+  );
+}
+
+function ProjectOption({
+  option,
+  onSelect,
+}: {
+  option: ProjectSearchDocument;
+  onSelect: () => void;
+}) {
+  return (
+    <Command.Item
+      className={cn(
+        "hover:cursor-pointer px-1 py-2 hover:bg-accent rounded-md text-sm flex gap-4 items-center justify-between",
+        "data-[selected=true]:bg-accent "
+      )}
+      value={option.id}
+      onSelect={onSelect}
+    >
+      <div className="flex gap-4 items-center">
+        <div className="flex gap-4 items-center justify-between">
+          <div className="h-4 w-4 rounded-full border" />
+          <span>{option.name}</span>
         </div>
       </div>
     </Command.Item>

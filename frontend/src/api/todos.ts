@@ -6,6 +6,7 @@ import type {
   TodoSearchDocument,
   TagSearchDocument,
   UpdateTodo,
+  ProjectSearchDocument,
 } from "@shiva200701/todotypes";
 
 export async function fetchTodos(
@@ -51,10 +52,13 @@ export async function serachTodo({ search }: { search: string }) {
     const {
       todos,
       tags,
-    }: { todos: TodoSearchDocument[]; tags: TagSearchDocument[] } = (
-      await api.get(`/api/v2/todo/search?q=${search}`)
-    ).data;
-    return { todos, tags };
+      projects,
+    }: {
+      todos: TodoSearchDocument[];
+      tags: TagSearchDocument[];
+      projects: ProjectSearchDocument[];
+    } = (await api.get(`/api/v2/todo/search?q=${search}`)).data;
+    return { todos, tags, projects };
   } catch (error) {
     throw error;
   }

@@ -206,8 +206,11 @@ todoRouter.get("/search", requireLogin, async (req, res) => {
   }
 
   try {
-    const { todos, tags } = await searchService.search(userId, query.trim());
-    return res.status(200).json({ todos, tags });
+    const { todos, tags, projects } = await searchService.search(
+      userId,
+      query.trim()
+    );
+    return res.status(200).json({ todos, tags, projects });
   } catch (error) {
     console.error("Search failed", error);
     return res.status(500).json({ msg: "Search failed" });

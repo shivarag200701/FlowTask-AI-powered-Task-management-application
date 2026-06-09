@@ -2,6 +2,7 @@ import { Meilisearch, type Index } from "meilisearch";
 import type {
   TodoSearchDocument,
   TagSearchDocument,
+  ProjectSearchDocument,
 } from "@shiva200701/todotypes";
 import prisma from "../../db/index.js";
 
@@ -9,6 +10,7 @@ class MeilisearchService {
   private client: Meilisearch;
   private todosIndex: Index<TodoSearchDocument>;
   private tagsIndex: Index<TagSearchDocument>;
+  private projectIndex: Index<ProjectSearchDocument>;
 
   constructor() {
     this.client = new Meilisearch({
@@ -18,6 +20,7 @@ class MeilisearchService {
 
     this.todosIndex = this.client.index("todos");
     this.tagsIndex = this.client.index("tags");
+    this.projectIndex = this.client.index("projects");
     this.configureIndexes();
   }
 
@@ -34,6 +37,12 @@ class MeilisearchService {
       // Index already exists
     }
 
+    try {
+      await this.client.createIndex("projects", { primaryKey: "id" });
+    } catch {
+      // Index already exists
+    }
+
     await this.todosIndex.updateSettings({
       searchableAttributes: ["title", "description"],
       filterableAttributes: ["userId", "completed", "priority", "parentId"],
@@ -41,6 +50,11 @@ class MeilisearchService {
     });
 
     await this.tagsIndex.updateSettings({
+      searchableAttributes: ["name"],
+      filterableAttributes: ["userId"],
+    });
+
+    await this.projectIndex.updateSettings({
       searchableAttributes: ["name"],
       filterableAttributes: ["userId"],
     });
@@ -81,7 +95,7 @@ class MeilisearchService {
   }
 
   async search(userId: string, query: string) {
-    const [todoResults, tagResults] = await Promise.all([
+    const [todoResults, tagResults, projectResults] = await Promise.all([
       this.todosIndex.search(query, {
         filter: `userId = "${userId}"`,
         limit: 20,
@@ -90,11 +104,16 @@ class MeilisearchService {
         filter: `userId = "${userId}"`,
         limit: 10,
       }),
+      this.projectIndex.search(query, {
+        filter: `userId = "${userId}"`,
+        limit: 10,
+      }),
     ]);
 
     return {
       todos: todoResults.hits,
       tags: tagResults.hits,
+      projects: projectResults.hits,
     };
   }
 
@@ -119,12 +138,32 @@ class MeilisearchService {
     await this.tagsIndex.addDocuments(documents);
   }
 
+  //Project Methods
+  async upsertProject(project: ProjectSearchDocument) {
+    await this.projectIndex.addDocuments([project]);
+  }
+
+  async deleteProject(projectId: string) {
+    await this.projectIndex.deleteDocument(projectId);
+  }
+
+  async deleteProjects(projectIds: string[]) {
+    await this.projectIndex.deleteDocuments(projectIds);
+  }
+
+  async bulkUpsertProjects(documents: ProjectSearchDocument[]) {
+    await this.projectIndex.addDocuments(documents);
+  }
+
   async reindexUser(userId: string) {
-    const [todos, tags] = await Promise.all([
+    const [todos, tags, projects] = await Promise.all([
       prisma.todo.findMany({ where: { userId } }),
       prisma.tag.findMany({
         where: { userId },
         select: { id: true, name: true, color: true },
+      }),
+      prisma.project.findMany({
+        where: { userId },
       }),
     ]);
 
@@ -147,12 +186,27 @@ class MeilisearchService {
       userId,
     }));
 
+    const projectDocuments: ProjectSearchDocument[] = projects.map(
+      (project) => ({
+        id: project.id,
+        name: project.name,
+        personal: project.personal,
+        userId: project.userId,
+        slug: project.slug ?? "",
+      })
+    );
+
     await Promise.all([
       this.bulkUpsert(todoDocuments),
       this.bulkUpsertTags(tagDocuments),
+      this.bulkUpsertProjects(projectDocuments),
     ]);
 
-    return { todosCount: todoDocuments.length, tagsCount: tagDocuments.length };
+    return {
+      todosCount: todoDocuments.length,
+      tagsCount: tagDocuments.length,
+      projectCount: projectDocuments.length,
+    };
   }
 }
 
