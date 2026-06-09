@@ -67,7 +67,8 @@
               "settings/preferences",
               "settings/notifications"
             ]
-          }
+          },
+          "changelog"
         ]
       },
       {
@@ -84,10 +85,6 @@
             "pages": ["api/tasks", "api/projects", "api/tags", "api/users"]
           }
         ]
-      },
-      {
-        "tab": "Changelog",
-        "href": "/changelog"
       }
     ]
   },
