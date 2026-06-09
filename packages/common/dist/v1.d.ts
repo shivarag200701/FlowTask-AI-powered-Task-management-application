@@ -1,10 +1,27 @@
 import { z } from "zod";
 import { DateTime } from "luxon";
-export declare const emailSchema: any;
-export declare const passwordSchema: any;
-export declare const signUpSchema: any;
-export declare const signInSchema: any;
-export declare const todoSchema: any;
+export declare const emailSchema: z.ZodPipe<z.ZodEmail, z.ZodTransform<string, string>>;
+export declare const passwordSchema: z.ZodString;
+export declare const signUpSchema: z.ZodObject<{
+    password: z.ZodString;
+    email: z.ZodString;
+}, z.core.$strip>;
+export declare const signInSchema: z.ZodObject<{
+    username: z.ZodString;
+    password: z.ZodString;
+}, z.core.$strip>;
+export declare const todoSchema: z.ZodObject<{
+    title: z.ZodString;
+    description: z.ZodString;
+    completed: z.ZodBoolean;
+    priority: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    completeAt: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    isAllDay: z.ZodBoolean;
+    category: z.ZodOptional<z.ZodString>;
+    color: z.ZodOptional<z.ZodString>;
+    order: z.ZodOptional<z.ZodNullable<z.ZodNumber>>;
+    reminder: z.ZodDefault<z.ZodBoolean>;
+}, z.core.$strip>;
 export type SignUp = z.infer<typeof signUpSchema>;
 export type SignIn = z.infer<typeof signInSchema>;
 export type Todo = z.infer<typeof todoSchema>;
@@ -87,14 +104,58 @@ export declare function formatUpcomingDateHeader(date: Date): string;
  * Uses local date components for both dates to ensure timezone consistency
  */
 export declare function isTaskOnDate(taskDateString: string | null | undefined, targetDate: Date): boolean;
-export declare const changePasswordSchema: any;
-export declare const addPasswordSchema: any;
-export declare const changeEmailSchema: any;
-export declare const ChangeNameSchema: any;
-export declare const taskViewModes: any;
-export declare const changePreferencesSchema: any;
-export declare const OnboardingStepSchema: any;
+export declare const changePasswordSchema: z.ZodObject<{
+    currentPassword: z.ZodString;
+    newPassword: z.ZodString;
+    confirmNewPassword: z.ZodString;
+}, z.core.$strip>;
+export declare const addPasswordSchema: z.ZodObject<{
+    newPassword: z.ZodString;
+    confirmNewPassword: z.ZodString;
+}, z.core.$strip>;
+export declare const changeEmailSchema: z.ZodObject<{
+    email: z.ZodEmail;
+}, z.core.$strip>;
+export declare const ChangeNameSchema: z.ZodObject<{
+    name: z.ZodString;
+}, z.core.$strip>;
+export declare const taskViewModes: z.ZodEnum<{
+    list: "list";
+    board: "board";
+    calendar: "calendar";
+}>;
+export declare const changePreferencesSchema: z.ZodObject<{
+    emailEnabled: z.ZodOptional<z.ZodBoolean>;
+    smsEnabled: z.ZodOptional<z.ZodBoolean>;
+    pushEnabled: z.ZodOptional<z.ZodBoolean>;
+    inAppEnabled: z.ZodOptional<z.ZodBoolean>;
+    automaticRemainder: z.ZodOptional<z.ZodBoolean>;
+    reminderBefore: z.ZodOptional<z.ZodInt>;
+    dailyDigest: z.ZodOptional<z.ZodBoolean>;
+    digestTime: z.ZodOptional<z.ZodString>;
+    phoneNumber: z.ZodOptional<z.ZodString>;
+    taskDisplayPreferences: z.ZodOptional<z.ZodObject<{
+        viewMode: z.ZodEnum<{
+            list: "list";
+            board: "board";
+            calendar: "calendar";
+        }>;
+    }, z.core.$strip>>;
+}, z.core.$strip>;
+export declare const OnboardingStepSchema: z.ZodEnum<{
+    completed: "completed";
+    welcome: "welcome";
+    "user-profile": "user-profile";
+    "user-preferences": "user-preferences";
+}>;
 export type OnboardingStep = z.infer<typeof OnboardingStepSchema>;
-export declare const setOnboardingProgressSchema: any;
+export declare const setOnboardingProgressSchema: z.ZodObject<{
+    step: z.ZodEnum<{
+        completed: "completed";
+        welcome: "welcome";
+        "user-profile": "user-profile";
+        "user-preferences": "user-preferences";
+    }>;
+}, z.core.$strip>;
 export declare const ONBOARDING_WINDOW_SECONDS: number;
 //# sourceMappingURL=v1.d.ts.map

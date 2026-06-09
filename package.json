@@ -3,9 +3,8 @@
   "private": true,
   "packageManager": "npm@10.9.2",
   "workspaces": [
-    "frontend",
-    "backend",
-    "common"
+    "apps/*",
+    "packages/*"
   ],
   "scripts": {
     "dev": "turbo dev",

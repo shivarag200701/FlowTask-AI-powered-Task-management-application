@@ -1,35 +1,9 @@
 import { z } from "zod";
-export declare const CreateProjectSchema: z.ZodObject<{
-    name: z.ZodString;
-    personal: z.ZodOptional<z.ZodDefault<z.ZodBoolean>>;
-    workspaceId: z.ZodOptional<z.ZodString>;
-}, z.core.$strip>;
-export declare const UpdateProjectSchema: z.ZodObject<{
-    name: z.ZodOptional<z.ZodString>;
-    taskDisplayPreferences: z.ZodOptional<z.ZodObject<{
-        viewMode: z.ZodEnum<{
-            list: "list";
-            board: "board";
-            calendar: "calendar";
-        }>;
-    }, z.core.$strip>>;
-}, z.core.$strip>;
-export declare const CreateProjectSectionSchema: z.ZodObject<{
-    name: z.ZodString;
-}, z.core.$strip>;
-export declare const UpdateProjectSectionSchema: z.ZodObject<{
-    name: z.ZodOptional<z.ZodString>;
-    projectId: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-    prevIndex: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-    nextIndex: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-}, z.core.$strip>;
-export declare const ProjectSearchDocumentSchema: z.ZodObject<{
-    name: z.ZodString;
-    id: z.ZodString;
-    slug: z.ZodOptional<z.ZodString>;
-    userId: z.ZodString;
-    personal: z.ZodBoolean;
-}, z.core.$strip>;
+export declare const CreateProjectSchema: any;
+export declare const UpdateProjectSchema: any;
+export declare const CreateProjectSectionSchema: any;
+export declare const UpdateProjectSectionSchema: any;
+export declare const ProjectSearchDocumentSchema: any;
 export type UpdateProject = z.infer<typeof UpdateProjectSchema>;
 export type CreateProject = z.infer<typeof CreateProjectSchema>;
 export type UpdateProjectSectionSchema = z.infer<typeof UpdateProjectSectionSchema>;
