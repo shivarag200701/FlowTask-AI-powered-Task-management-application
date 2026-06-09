@@ -16,7 +16,7 @@
     "eyebrows": "breadcrumbs"
   },
   "contextual": {
-    "options": ["copy", "view", "assistant"]
+    "options": ["copy", "view", "claude"]
   },
   "navigation": {
     "global": {
@@ -24,7 +24,7 @@
         {
           "anchor": "Home",
           "icon": "house",
-          "href": "/"
+          "href": "https://docs.flowtask.shiva-raghav.com/"
         }
       ]
     },
@@ -68,7 +68,11 @@
               "settings/notifications"
             ]
           },
-          "changelog"
+          {
+            "group": "Changelog",
+            "icon": "clock",
+            "pages": ["changelog"]
+          }
         ]
       },
       {
