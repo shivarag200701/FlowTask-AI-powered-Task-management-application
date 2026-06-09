@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "migrate": "prisma migrate deploy",
-    "build": "prisma migrate deploy && npx prisma generate && tsc -b",
+    "build": "npx prisma generate && tsc -b",
     "start": "node dist/index.js",
     "email:preview": "email dev --dir src/services/email/templates --port 3001",
     "dev": "nodemon"
