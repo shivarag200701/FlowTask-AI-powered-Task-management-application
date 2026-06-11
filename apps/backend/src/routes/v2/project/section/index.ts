@@ -120,6 +120,51 @@ sectionRouter.get("/", requireLogin, async (req, res) => {
   }
 });
 
+sectionRouter.get("/:sectionId", requireLogin, async (req, res) => {
+  const userId = req.session.userId;
+
+  if (!userId) {
+    return res.status(401).json({
+      msg: "unauthorized",
+    });
+  }
+
+  const projectId = Array.isArray(req.params.id)
+    ? req.params.id[0]
+    : req.params.id;
+
+  if (!projectId) {
+    return res.status(400).json({
+      msg: "No project id found in path",
+    });
+  }
+
+  const sectionId = Array.isArray(req.params.sectionId)
+    ? req.params.sectionId[0]
+    : req.params.sectionId;
+
+  if (!sectionId) {
+    return res.status(400).json({
+      msg: "No section id found in path",
+    });
+  }
+
+  try {
+    const section = await prisma.projectSection.findUnique({
+      where: { id: sectionId },
+    });
+
+    return res.status(200).json({
+      section,
+    });
+  } catch (error) {
+    console.error("Failed getting project section", error);
+    return res.status(500).json({
+      msg: "internal Server Error",
+    });
+  }
+});
+
 sectionRouter.patch("/:sectionId", requireLogin, async (req, res) => {
   const userId = req.session.userId;
 
@@ -171,8 +216,6 @@ sectionRouter.patch("/:sectionId", requireLogin, async (req, res) => {
       sortKey: generateSortKey(prevIndex ?? null, nextIndex ?? null),
     }),
   };
-
-  console.log("updatedData", updateData);
 
   try {
     const updatedSection = await prisma.projectSection.update({

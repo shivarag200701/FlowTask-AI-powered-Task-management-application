@@ -187,6 +187,8 @@ export function useUpdateTodo(projectId?: string | null) {
       data: UpdateTodo;
       id: string;
       type?: moveTodo;
+      projectName?: string;
+      projectSlug?: string;
     }) => updateTodo(data, id),
     onMutate: async (newTodo) => {
       await queryClient.cancelQueries({ queryKey: todosQueryKeys.all });

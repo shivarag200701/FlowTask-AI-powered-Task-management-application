@@ -33,6 +33,7 @@ import type { ChildTodoWithDateTime } from "@/types";
 import InlineTaskForm from "../InlineTaskForm";
 import { cn } from "@/lib/utils";
 import completed from "@/assets/completed.mp3";
+import ProjectSelector from "../pill-buttons/ProjectSelector";
 
 type TodoFormValues = CreateTodoWithDateTime & { id?: string };
 
@@ -62,6 +63,7 @@ function TodoDetailForm({
   const [accordionValue, setAccordionValue] = useState<string | undefined>(
     undefined
   );
+  const [isProjectsDropDownOpen, setIsProjectsDropDownOpen] = useState(false);
 
   const onSubmit: SubmitHandler<TodoFormValues> = (data) => {
     const serialized = SerializeFormData(data);
@@ -218,6 +220,10 @@ function TodoDetailForm({
             <span className="text-xs font-medium text-muted-foreground">
               Project
             </span>
+            <ProjectSelector
+              open={isProjectsDropDownOpen}
+              setOpen={setIsProjectsDropDownOpen}
+            />
           </div>
           <div className="flex flex-col gap-1">
             <span className="text-xs font-medium text-muted-foreground">

@@ -73,6 +73,7 @@ function TagsSelector({
       setSearchValue={setSearchValue}
       shouldFilter
       multiple
+      inputBoxText="search or add tags..."
       trigger
       // multiple
       setSelectedOptions={(option) => {

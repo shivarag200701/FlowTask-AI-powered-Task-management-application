@@ -19,6 +19,7 @@ export type PopoverProps = PropsWithChildren<{
   align?: "start" | "center" | "end";
   mobileOnly?: boolean;
   collisionPadding?: number;
+  onWheel?: (e: React.WheelEvent) => void;
 }>;
 
 export const Popover = ({
@@ -34,6 +35,7 @@ export const Popover = ({
   align = "center",
   mobileOnly,
   collisionPadding = 8,
+  onWheel,
 }: PopoverProps) => {
   const { isMobile } = useMediaQuery();
 
@@ -95,6 +97,7 @@ export const Popover = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.1, ease: "easeOut" }}
+            onWheel={onWheel}
           >
             {content}
           </motion.div>

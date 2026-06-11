@@ -164,21 +164,22 @@ function App() {
                   <AppRoutes />
                 </SignupProvider>
               </AuthProvider>
+              <Toaster
+                closeButton
+                className="!z-[9999]"
+                toastOptions={{
+                  className: "!border-none !z-[9999]",
+                  classNames: {
+                    actionButton: "!bg-primary",
+                    closeButton: "!hover:bg-red-500 !border-accent",
+                  },
+                }}
+                icons={{
+                  success: <SuccessIcon />,
+                }}
+              />
             </BrowserRouter>
           </TooltipProvider>
-          <Toaster
-            closeButton
-            toastOptions={{
-              className: "!border-none",
-              classNames: {
-                actionButton: "!bg-primary",
-                closeButton: "!hover:bg-red-500 !border-accent",
-              },
-            }}
-            icons={{
-              success: <SuccessIcon />,
-            }}
-          />
         </ThemeProvider>
       </QueryClientProvider>
     </div>

@@ -11,7 +11,6 @@ import { Kbd } from "../ui/kbd";
 import { useDebounce } from "use-debounce";
 import { useSearchTodos, useTodos } from "@/hooks/use-todos";
 import AnimatedSizeContainer from "../ui/animated-size-container";
-import ScrollContainer from "../ui/scroll-container";
 import { cn } from "@/lib/utils";
 import type {
   TodoSearchDocument,
@@ -24,6 +23,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import TodayCalendarIcon from "../TodayCalendarIcon";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { createTodoSlug } from "@/utils/functions/slug";
+import { ScrollContainer } from "../ui/scroll-container";
 
 const navigationItems = [
   { label: "Go to Today", icon: TodayCalendarIcon, path: "app/today" },

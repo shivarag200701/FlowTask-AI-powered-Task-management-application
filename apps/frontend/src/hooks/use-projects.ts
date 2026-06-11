@@ -67,6 +67,18 @@ export function useProject(id: string | null) {
   });
 }
 
+export function useSection({
+  projectId,
+  sectionId,
+}: {
+  projectId: string;
+  sectionId: string;
+}) {
+  return useQuery({
+    queryKey: projectKeys.section({ projectId, sectionId }),
+  });
+}
+
 export function useInbox() {
   return useQuery({
     queryKey: projectKeys.inbox,

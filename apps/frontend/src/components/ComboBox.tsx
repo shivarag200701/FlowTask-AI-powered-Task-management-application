@@ -9,15 +9,24 @@ import { isValidElement, useState, type ReactNode } from "react";
 import { Checkbox } from "./ui/checkbox";
 import { getResourceColors } from "@/utils/functions/tag-colors";
 import AnimatedSizeContainer from "./ui/animated-size-container";
-import ScrollContainer from "./ui/scroll-container";
 import { SpinnerCustom } from "./ui/spinner";
+import { ScrollContainer } from "./ui/scroll-container";
 
 //kept sorting simple by using built in sorting from cmdk, need to upgrade later
+export type SubOption = {
+  value: string;
+  label: string;
+  icon: LucideIcon | ReactNode;
+};
+
 export type ComboBoxOptions<TMeta = any> = {
   value: string;
   label: string;
+  optionSelected?: boolean;
+  optionId?: string;
   meta?: TMeta;
   icon: LucideIcon | ReactNode;
+  subOptions?: SubOption[];
 };
 
 export type ComboBoxProps<TMeta extends any> = {
@@ -42,6 +51,8 @@ export type ComboBoxProps<TMeta extends any> = {
   loading?: boolean;
   isPending?: boolean;
   trigger?: boolean;
+  inputBoxText?: string;
+  icon?: ReactNode;
 };
 
 function ComboBox({
@@ -63,6 +74,8 @@ function ComboBox({
   onCreate,
   loading,
   trigger = false,
+  inputBoxText,
+  icon,
 }: ComboBoxProps<any>) {
   const handleSelect = (option: ComboBoxOptions<any>) => {
     if (!multiple) {
@@ -73,7 +86,6 @@ function ComboBox({
   };
 
   const [isCreating, setIsCreating] = useState(false);
-
   //Currenlty all the filtering is in client side, we need to implement a server side filtering
 
   return (
@@ -99,7 +111,7 @@ function ComboBox({
             <div className="relative flex items-center">
               <Command.Input
                 className=" pl-4 py-3 focus:outline-none text-sm"
-                placeholder="search or add tags..."
+                placeholder={inputBoxText}
                 value={searchValue}
                 onValueChange={setSearchValue}
               />
@@ -109,7 +121,12 @@ function ComboBox({
               className="border-t border-border"
               alwaysRender
             />
-            <ScrollContainer className="max-h-[300px]">
+            <ScrollContainer
+              className={cn(
+                "max-h-[min(50vh,250px)]",
+                onCreate && !multiple && "max-h-[calc(min(50vh,250px)-3.5rem)]"
+              )}
+            >
               <Command.List className="p-1">
                 {loading ? (
                   <Command.Loading>
@@ -135,7 +152,10 @@ function ComboBox({
                           ) ?? false
                         }
                         option={option}
-                        onSelect={() => handleSelect(option)}
+                        onSelect={({ option, subOption }) => {
+                          if (option) handleSelect(option);
+                          if (subOption) handleSelect(subOption);
+                        }}
                         key={option.value}
                         multiple={multiple}
                       />
@@ -152,16 +172,19 @@ function ComboBox({
           </Command>
         </AnimatedSizeContainer>
       }
+      onWheel={(e) => {
+        e.stopPropagation();
+      }}
     >
       {trigger ? (
         <Button
           variant="outline"
           className={cn(
-            "text-neutral-500  text-left flex justify-start hover:bg-none h-auto w-full",
+            "text-neutral-500  text-left flex justify-start hover:bg-none h-auto w-full overflow-hidden",
             outlinePopoverTriggerClasses,
             triggerClassName
           )}
-          icon={<Tag />}
+          icon={icon ? icon : <Tag />}
           type="button"
         >
           {children ? children : placeholder}
@@ -176,7 +199,13 @@ function ComboBox({
 type OptionsProps = {
   option: ComboBoxOptions;
   selected: boolean;
-  onSelect: () => void;
+  onSelect: ({
+    option,
+    subOption,
+  }: {
+    option?: ComboBoxOptions;
+    subOption?: SubOption;
+  }) => void;
   multiple?: boolean;
 };
 
@@ -223,31 +252,58 @@ function Option({ option, selected, onSelect, multiple }: OptionsProps) {
   return (
     <Command.Item
       className={cn(
-        "hover:cursor-pointer px-3 py-2 hover:bg-accent rounded-md text-sm flex gap-4 items-center justify-between",
-        "data-[selected=true]:bg-accent "
+        "hover:cursor-pointer py-1 text-sm flex flex-col gap-1 w-full overflow-hidden",
+        multiple
+          ? "px-3 rounded-md hover:bg-accent data-[selected=true]:bg-accent"
+          : "bg-transparent!"
       )}
       value={option.value + option.label}
-      onSelect={onSelect}
+      // onSelect={onSelect}
     >
-      <div className="flex gap-4 items-center">
+      <div
+        className={cn(
+          "flex gap-2 items-center rounded-md px-3 py-1 w-full",
+          !multiple && "hover:bg-accent/50 transition-colors"
+        )}
+        onClick={() => {
+          onSelect({ option });
+        }}
+      >
         {multiple && (
           <Checkbox
             className="size-3 rounded-xs border-border cursor-pointer"
             checked={selected}
           />
         )}
-        <div className="flex gap-4 items-center justify-between">
-          <div
-            className={`bg-${getResourceColors({ color: option.meta.color })?.tagVariants}`}
-          >
-            {option.icon && (
-              <span>{isValidElement(option.icon) && option.icon}</span>
-            )}
-          </div>
-          <span>{option.label}</span>
+        <div
+          className={`bg-${getResourceColors({ color: option?.meta?.color })?.tagVariants}`}
+        >
+          {option.icon && (
+            <span>{isValidElement(option.icon) && option.icon}</span>
+          )}
         </div>
+        <span className="flex-1">{option.label}</span>
+        <span className="text-neutral-500">{option.meta?.count?.todos}</span>
       </div>
-      <div className="text-neutral-500">{option.meta?.count?.todos}</div>
+      {option.subOptions && option.subOptions.length > 0 && (
+        <div className="flex flex-col gap-1 w-full">
+          {option.subOptions.map((subOption) => (
+            <div
+              className={cn(
+                "flex gap-2 items-center py-1 pl-9 pr-3 rounded-md",
+                !multiple && "hover:bg-accent/50 transition-colors"
+              )}
+              key={subOption.value}
+              onClick={() => onSelect({ subOption })}
+            >
+              {subOption.icon && (
+                <span>{isValidElement(subOption.icon) && subOption.icon}</span>
+              )}
+              <span>{subOption.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </Command.Item>
   );
 }

@@ -18,6 +18,13 @@ function constructPatchPayload(patch: UpdateTodo) {
     updateData.completed = patch.completed;
     updateData.completedAt = patch.completed ? new Date() : null;
   }
+  if (patch.projectId !== undefined) {
+    if (patch.projectId === null) {
+      updateData.project = { disconnect: true };
+    } else {
+      updateData.project = { connect: { id: patch.projectId } };
+    }
+  }
   if (patch.projectSectionId !== undefined) {
     if (patch.projectSectionId === null) {
       updateData.projectSection = { disconnect: true };

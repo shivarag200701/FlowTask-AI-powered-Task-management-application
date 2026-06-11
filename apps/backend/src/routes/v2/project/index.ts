@@ -47,7 +47,7 @@ projectRouter.get("/personal", requireLogin, async (req, res) => {
           },
         }),
       },
-      include: { todos: true },
+      include: { todos: true, sections: true },
     });
 
     return res.status(200).json({
@@ -73,6 +73,9 @@ projectRouter.get("/", requireLogin, async (req, res) => {
     const projects = await prisma.project.findMany({
       where: {
         userId,
+      },
+      include: {
+        sections: true,
       },
     });
     return res.status(200).json({
@@ -205,6 +208,7 @@ projectRouter.get("/:id", requireLogin, async (req, res) => {
       },
       include: {
         todos: true,
+        sections: true,
       },
     });
 

@@ -70,11 +70,12 @@ export type TodoWithCompleteAtDateTime = Omit<
   children?: ChildTodoWithDateTime[];
 };
 
-export type moveTodo = "updateDate" | "updateOrder";
+export type moveTodo = "updateDate" | "updateOrder" | "updateProject";
 
 export const toastMessages: Record<moveTodo, string> = {
   updateOrder: "Order Changed",
   updateDate: "Date updated",
+  updateProject: "Task moved",
 };
 
 export type ViewMode = "list" | "board" | "calendar";
@@ -97,6 +98,7 @@ export type Project = {
   workspaceId: string | null;
   taskDisplayPreferences?: { viewMode: ViewMode };
   todos: Todo[];
+  sections: SectionWithoutTodos[];
 };
 
 export type Section = {
@@ -110,6 +112,8 @@ export type Section = {
 export type SectionWithDateTime = Omit<Section, "todos"> & {
   todos: TodoWithCompleteAtDateTime[];
 };
+
+export type SectionWithoutTodos = Omit<Section, "todos">;
 
 export type ProjectWithDateTime = Omit<Project, "todos"> & {
   todos: TodoWithCompleteAtDateTime[];

@@ -149,25 +149,13 @@ export async function updateProjectSection({
   }
 }
 
-export async function getProjects(): Promise<ProjectWithDateTime[]> {
+export async function getProjects(): Promise<Project[]> {
   try {
     const { projects }: { projects: Project[] } = (
       await api.get("/api/v2/projects")
     ).data;
 
-    return projects.map((project) => ({
-      ...project,
-      todos: project.todos.map((todo) => ({
-        ...todo,
-        dueDate: todo.dueDate ? DateTime.fromISO(todo.dueDate) : null,
-        dueTime: todo.dueTime ? DateTime.fromISO(todo.dueTime) : null,
-        children: todo.children?.map((child) => ({
-          ...child,
-          dueDate: child.dueDate ? DateTime.fromISO(child.dueDate) : null,
-          dueTime: child.dueTime ? DateTime.fromISO(child.dueTime) : null,
-        })),
-      })),
-    }));
+    return projects;
   } catch (error) {
     throw error;
   }
