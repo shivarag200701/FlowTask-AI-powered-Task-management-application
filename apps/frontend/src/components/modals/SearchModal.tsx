@@ -51,8 +51,6 @@ function SearchModal({
   const tagResults = searchData?.tags;
   const projectResults = searchData?.projects;
 
-  console.log("projects", projectResults);
-
   const [recentSearches, setRecentSearches] = useLocalStorage<
     string[] | undefined
   >("recentSearches", undefined);
