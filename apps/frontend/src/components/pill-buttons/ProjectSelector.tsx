@@ -1,6 +1,6 @@
 import { useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import ComboBox from "../ComboBox";
-import { useProjects } from "@/hooks/use-projects";
+import { useCreateProject, useProjects } from "@/hooks/use-projects";
 import type { Project, SectionWithoutTodos } from "@/types";
 import { Hash, Inbox, PanelTop } from "lucide-react";
 import { useFormContext, useWatch } from "react-hook-form";
@@ -56,11 +56,22 @@ function ProjectSelector({
 
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { mutate } = useUpdateTodo(projectId);
+  const { mutate: updateTodo } = useUpdateTodo(projectId);
+  const { mutate: createProject } = useCreateProject();
 
   const options = useMemo(
     () => projects?.map((project) => getProjectOption(project)),
     [projects, getProjectOption, getSectionOption]
+  );
+
+  const selectedOption = useMemo(
+    () =>
+      section
+        ? getSectionOption(section)
+        : project
+          ? getProjectOption(project)
+          : null,
+    [section, project]
   );
   return (
     <ComboBox
@@ -72,9 +83,14 @@ function ProjectSelector({
       trigger
       triggerClassName="py-2 px-4 text-xs"
       inputBoxText="Type a project name"
+      loading={isLoading}
       contentClassName="w-[250px]"
       options={isLoading ? undefined : options}
       icon={<Hash className="size-3.5" />}
+      selectedOption={selectedOption}
+      onCreate={async (value) => {
+        createProject({ name: value, personal: true });
+      }}
       onSelect={(option) => {
         const newProjectId = option.optionSelected
           ? option.value
@@ -85,7 +101,7 @@ function ProjectSelector({
         setValue("projectSectionId", newSectionId);
         const targetProject = projects?.find((p) => p.id === newProjectId);
 
-        mutate(
+        updateTodo(
           {
             id: todoId,
             data: {

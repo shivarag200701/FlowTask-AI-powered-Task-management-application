@@ -21,14 +21,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
 
-export function useCreateProject({
-  personal,
-  name,
-  workspaceId,
-}: CreateProject) {
+export function useCreateProject() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async () => createProject({ name, personal, workspaceId }),
+    mutationFn: async (data: CreateProject) => createProject(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: projectKeys.all });
       toast.success("Project created successfully!");

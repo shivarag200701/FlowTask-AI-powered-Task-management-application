@@ -30,7 +30,6 @@ export function AddProjectModal({
 }) {
   const {
     register,
-    watch,
     handleSubmit,
     formState: { isValid, isSubmitting, isDirty },
   } = useForm<FormValues>({
@@ -39,19 +38,17 @@ export function AddProjectModal({
     },
   });
 
-  const name = watch("name");
-  const { mutateAsync: createProject } = useCreateProject({
-    name,
-    personal,
-    workspaceId,
-  });
+  const { mutateAsync: createProject } = useCreateProject();
 
-  const onSubmit: SubmitHandler<FormValues> = async () => {
-    await createProject(undefined, {
-      onSuccess: () => {
-        setShow(false);
-      },
-    });
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    await createProject(
+      { name: data.name, personal, workspaceId },
+      {
+        onSuccess: () => {
+          setShow(false);
+        },
+      }
+    );
   };
 
   return (

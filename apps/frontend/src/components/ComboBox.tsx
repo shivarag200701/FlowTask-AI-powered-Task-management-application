@@ -35,10 +35,12 @@ export type ComboBoxProps<TMeta extends any> = {
   placeholder?: string;
   children?: ReactNode;
   options?: ComboBoxOptions<TMeta>[];
+  //multiple
   selectedOptions?: ComboBoxOptions<TMeta>[];
-  //multiple select
   setSelectedOptions?: (value: ComboBoxOptions<any>) => void;
   //single select
+  selectedOption?: ComboBoxOptions<TMeta> | null;
+  setSelctedOption?: (value: ComboBoxOptions<any>) => void;
   onSelect?: (value: ComboBoxOptions<any>) => void;
   shouldFilter?: boolean;
   searchValue: string;
@@ -47,7 +49,7 @@ export type ComboBoxProps<TMeta extends any> = {
   matchTriggerWidth?: boolean;
   contentClassName?: string;
   multiple?: boolean;
-  onCreate?: (tagName: string) => Promise<void>;
+  onCreate?: (value: string) => Promise<void>;
   loading?: boolean;
   isPending?: boolean;
   trigger?: boolean;
@@ -71,6 +73,7 @@ function ComboBox({
   matchTriggerWidth,
   contentClassName,
   multiple = false,
+  selectedOption,
   onCreate,
   loading,
   trigger = false,
@@ -104,7 +107,7 @@ function ComboBox({
             className="w-full"
             shouldFilter={shouldFilter}
             filter={(value, search) => {
-              if (value.includes(search)) return 1;
+              if (value.toLocaleLowerCase().includes(search)) return 1;
               return 0;
             }}
           >
@@ -144,22 +147,26 @@ function ComboBox({
                         onCreate={onCreate}
                       />
                     )}
-                    {options?.map((option) => (
-                      <Option
-                        selected={
-                          selectedOptions?.some(
+                    {options?.map((option) => {
+                      const isSelected = !multiple
+                        ? option.value === selectedOption?.value
+                        : (selectedOptions?.some(
                             ({ value }) => option.value === value
-                          ) ?? false
-                        }
-                        option={option}
-                        onSelect={({ option, subOption }) => {
-                          if (option) handleSelect(option);
-                          if (subOption) handleSelect(subOption);
-                        }}
-                        key={option.value}
-                        multiple={multiple}
-                      />
-                    ))}
+                          ) ?? false);
+                      return (
+                        <Option
+                          selected={isSelected}
+                          option={option}
+                          onSelect={({ option, subOption }) => {
+                            if (option) handleSelect(option);
+                            if (subOption) handleSelect(subOption);
+                          }}
+                          key={option.value}
+                          multiple={multiple}
+                          selectedOption={selectedOption}
+                        />
+                      );
+                    })}
                   </>
                 )}
               </Command.List>
@@ -207,6 +214,7 @@ type OptionsProps = {
     subOption?: SubOption;
   }) => void;
   multiple?: boolean;
+  selectedOption?: ComboBoxOptions | null;
 };
 
 type CreateNewOptions = {
@@ -248,7 +256,15 @@ function CreateNewOption({
   );
 }
 
-function Option({ option, selected, onSelect, multiple }: OptionsProps) {
+function Option({
+  option,
+  selected,
+  onSelect,
+  multiple,
+  selectedOption,
+}: OptionsProps) {
+  console.log(option, selected);
+
   return (
     <Command.Item
       className={cn(
@@ -257,12 +273,17 @@ function Option({ option, selected, onSelect, multiple }: OptionsProps) {
           ? "px-3 rounded-md hover:bg-accent data-[selected=true]:bg-accent"
           : "bg-transparent!"
       )}
-      value={option.value + option.label}
+      value={
+        option.value +
+        option.label +
+        (option.subOptions?.map((s) => s.label).join("") ?? "")
+      }
       // onSelect={onSelect}
     >
       <div
         className={cn(
           "flex gap-2 items-center rounded-md px-3 py-1 w-full",
+          selected && "bg-sidebar-accent",
           !multiple && "hover:bg-accent/50 transition-colors"
         )}
         onClick={() => {
@@ -287,21 +308,27 @@ function Option({ option, selected, onSelect, multiple }: OptionsProps) {
       </div>
       {option.subOptions && option.subOptions.length > 0 && (
         <div className="flex flex-col gap-1 w-full">
-          {option.subOptions.map((subOption) => (
-            <div
-              className={cn(
-                "flex gap-2 items-center py-1 pl-9 pr-3 rounded-md",
-                !multiple && "hover:bg-accent/50 transition-colors"
-              )}
-              key={subOption.value}
-              onClick={() => onSelect({ subOption })}
-            >
-              {subOption.icon && (
-                <span>{isValidElement(subOption.icon) && subOption.icon}</span>
-              )}
-              <span>{subOption.label}</span>
-            </div>
-          ))}
+          {option.subOptions.map((subOption) => {
+            const isSelected = subOption.value === selectedOption?.value;
+            return (
+              <div
+                className={cn(
+                  "flex gap-2 items-center py-1 pl-9 pr-3 rounded-md",
+                  !multiple && "hover:bg-accent/50 transition-colors",
+                  isSelected && "bg-sidebar-accent"
+                )}
+                key={subOption.value}
+                onClick={() => onSelect({ subOption })}
+              >
+                {subOption.icon && (
+                  <span>
+                    {isValidElement(subOption.icon) && subOption.icon}
+                  </span>
+                )}
+                <span>{subOption.label}</span>
+              </div>
+            );
+          })}
         </div>
       )}
     </Command.Item>
