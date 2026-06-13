@@ -19,7 +19,7 @@ function ReminderDisplayer({
       {...props}
       variant="outline"
       className={cn(
-        "w-full md:w-fit text-sm h-8",
+        "w-full md:w-fit text-sm h-10",
         outlinePopoverTriggerClasses
       )}
       icon={<AlarmClock />}

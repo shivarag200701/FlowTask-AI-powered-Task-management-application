@@ -179,7 +179,7 @@ function DateTimeButton({
   return (
     <Button
       variant="outline"
-      className={cn("w-full md:w-fit text-xs h-8", className)}
+      className={cn("w-full md:w-fit text-xs h-10", className)}
       icon={<CalendarClockIcon />}
       type="button"
       onClick={() => {
