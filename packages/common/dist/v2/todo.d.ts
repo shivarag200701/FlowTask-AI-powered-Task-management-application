@@ -5,6 +5,7 @@ export declare const RecurrenceRuleSchema: z.ZodObject<{
         weekly: "weekly";
         montly: "montly";
         yearly: "yearly";
+        custom: "custom";
     }>;
     interval: z.ZodDefault<z.ZodInt>;
     daysOfWeek: z.ZodOptional<z.ZodArray<z.ZodInt>>;
@@ -33,6 +34,7 @@ export declare const CreateTodoSchema: z.ZodObject<{
             weekly: "weekly";
             montly: "montly";
             yearly: "yearly";
+            custom: "custom";
         }>;
         interval: z.ZodDefault<z.ZodInt>;
         daysOfWeek: z.ZodOptional<z.ZodArray<z.ZodInt>>;
@@ -70,6 +72,7 @@ export declare const UpdateTodoSchema: z.ZodObject<{
             weekly: "weekly";
             montly: "montly";
             yearly: "yearly";
+            custom: "custom";
         }>;
         interval: z.ZodDefault<z.ZodInt>;
         daysOfWeek: z.ZodOptional<z.ZodArray<z.ZodInt>>;

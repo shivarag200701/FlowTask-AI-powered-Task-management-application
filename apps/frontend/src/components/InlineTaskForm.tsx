@@ -18,6 +18,8 @@ import type { UpdateTodo } from "@shiva200701/todotypes";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useProjectContext } from "@/context/ProjectContext";
+import RecurrenceDisplayer from "./pill-buttons/RecurrenceDisplayer";
+import RecurrenceDropDown from "./popovers/RecurrenceDropDown";
 
 type TodoFormValues = CreateTodoWithDateTime & { id?: string };
 
@@ -80,8 +82,12 @@ function InlineTaskForm({
   const [isPriorityDropDownOpen, setIsPriorityDropDownOpen] = useState(false);
   const [isReminderDropDownOpen, setIsReminderDropDownOpen] = useState(false);
   const [isTagsDropDownOpen, setIsTagsDropDownOpen] = useState(false);
+  const [isRecurrenceDropDownOpen, setIsRecurrenceDropDownOpen] =
+    useState(false);
 
   const onSubmit: SubmitHandler<TodoFormValues> = (data) => {
+    console.log("data", data);
+
     const serialized = SerializeFormData(data);
     if (isEdit && todoId) {
       updateTodo({ id: todoId, data: serialized as UpdateTodo });
@@ -135,6 +141,13 @@ function InlineTaskForm({
             >
               <ReminderDisplayer remimder={todo?.reminder} />
             </Popover>
+            <Popover
+              openPopover={isRecurrenceDropDownOpen}
+              setOpenPopover={setIsRecurrenceDropDownOpen}
+              content={<RecurrenceDropDown />}
+            >
+              <RecurrenceDisplayer />
+            </Popover>
             <div className="col-span-2 w-full">
               <TagsSelector
                 open={isTagsDropDownOpen}
@@ -148,7 +161,8 @@ function InlineTaskForm({
             variant="secondary"
             className="w-fit"
             Initial="Cancel"
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               setIsOpen(false);
             }}
             type="button"

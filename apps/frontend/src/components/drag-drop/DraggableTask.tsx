@@ -5,7 +5,9 @@ import {
   AlarmClock,
   Check,
   Hash,
+  Inbox,
   MoreHorizontal,
+  Repeat,
   Workflow,
 } from "lucide-react";
 import { useUpdateTodo } from "@/hooks/use-todos";
@@ -19,6 +21,7 @@ import { ModalContext } from "@/components/modals/ModalProvider";
 import { useTaskSelectionContext } from "@/context/TaskSelectionContext";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useProject } from "@/hooks/use-projects";
+import { useAddEditTodoModal } from "../modals/AddEditTodoModal";
 
 function DraggableTask({
   id,
@@ -38,6 +41,9 @@ function DraggableTask({
   draggable?: boolean;
 }) {
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
+  const { setShowAddEditTodoModal, AddEditTodoModal } = useAddEditTodoModal({
+    todo,
+  });
 
   const { mutate: updateTodo } = useUpdateTodo();
   const { selectedTaskIds } = useTaskSelectionContext();
@@ -112,7 +118,7 @@ function DraggableTask({
               }}
               onEdit={() => {
                 setIsMoreOptionsOpen(false);
-                openTodoDetailModal(todo);
+                setShowAddEditTodoModal(true);
               }}
             />
           }
@@ -152,9 +158,14 @@ function DraggableTask({
                   <span className="text-xs text-neutral-500">{`${subTaskCompleted} / ${todo.children.length}`}</span>
                 </div>
               )}
+              {todo.recurrenceRule && <Repeat size={12} strokeWidth={1} />}
               {todo.projectId && (
                 <div className="flex items-center gap-0.5">
-                  <Hash size={12} strokeWidth={1} />
+                  {project?.name === "Inbox" ? (
+                    <Inbox size={12} strokeWidth={1} />
+                  ) : (
+                    <Hash size={12} strokeWidth={1} />
+                  )}
                   <span className="text-[12px] font-extralight">
                     {project?.name}
                   </span>
@@ -171,6 +182,7 @@ function DraggableTask({
           </div>
         </div>
         {DeleteConfirmModal}
+        <AddEditTodoModal />
       </div>
     </>
   );

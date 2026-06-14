@@ -27,13 +27,16 @@ function AddEditTodoModal({
 }) {
   return (
     <Modal showModal={show} setShowModal={setShow} className="max-w-2xl">
-      <TaskBuilderProvider todo={todo}>
-        <InlineTaskForm
-          setIsOpen={setShow}
-          mode="modal"
-          sectionId={sectionId}
-        />
-      </TaskBuilderProvider>
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+      <div onClick={(e) => e.stopPropagation()}>
+        <TaskBuilderProvider todo={todo}>
+          <InlineTaskForm
+            setIsOpen={setShow}
+            mode="modal"
+            sectionId={sectionId}
+          />
+        </TaskBuilderProvider>
+      </div>
     </Modal>
   );
 }

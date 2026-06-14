@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const RecurrenceRuleSchema = z.object({
-  pattern: z.enum(["daily", "weekly", "montly", "yearly"]),
+  pattern: z.enum(["daily", "weekly", "montly", "yearly", "custom"]),
   interval: z.int().min(1).max(365).default(1),
   //advanced recurrence rule
   daysOfWeek: z.array(z.int().min(1).max(6)).optional(),

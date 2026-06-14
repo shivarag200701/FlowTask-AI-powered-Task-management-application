@@ -2,6 +2,7 @@ import {
   GetTagsQuerySchema,
   todoQuerySchema,
   type CreateTodo,
+  type RecurrenceRule,
   type ResourceColorsEnum,
 } from "@shiva200701/todotypes";
 import type { DateTime } from "luxon";
@@ -37,7 +38,9 @@ export interface Todo {
   parentId: string | undefined;
   children?: Omit<Todo, "children">[];
   projectId?: string;
-  projectSectionId: string | null;
+  projectSectionId?: string | null;
+  recurrenceRule?: RecurrenceRule;
+  recurrenceEndDate?: string | null;
 }
 
 export type TodoTag = Omit<TagProps, "_count">;
