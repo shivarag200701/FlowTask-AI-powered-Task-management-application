@@ -14,7 +14,7 @@ import PriorityDropDown from "./popovers/PriorityDropDown";
 import { useCreateTodo, useUpdateTodo } from "@/hooks/use-todos";
 import { useDateTimeModal } from "./modals/DateTimeModal";
 import { SerializeFormData } from "@/utils/functions/serialize-form-data";
-import type { UpdateTodo } from "@shiva200701/todotypes";
+import type { CreateTodo, UpdateTodo } from "@shiva200701/todotypes";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useProjectContext } from "@/context/ProjectContext";
@@ -38,7 +38,7 @@ function InlineTaskForm({
 }) {
   const {
     register,
-    formState: { isValid, isDirty },
+    formState: { isValid, isDirty, dirtyFields },
     handleSubmit,
     reset,
     watch,
@@ -86,14 +86,21 @@ function InlineTaskForm({
     useState(false);
 
   const onSubmit: SubmitHandler<TodoFormValues> = (data) => {
-    console.log("data", data);
-
-    const serialized = SerializeFormData(data);
     if (isEdit && todoId) {
+      // Only send changed fields for updates
+      const changedData = Object.fromEntries(
+        Object.keys(dirtyFields).map((key) => [
+          key,
+          data[key as keyof TodoFormValues],
+        ])
+      );
+      const serialized = SerializeFormData({
+        ...changedData,
+      } as CreateTodoWithDateTime);
       updateTodo({ id: todoId, data: serialized as UpdateTodo });
     } else {
       createTodo({
-        ...SerializeFormData(data),
+        ...(SerializeFormData(data) as CreateTodo),
         parentId,
         projectId,
         projectSectionId: sectionId,
@@ -144,7 +151,13 @@ function InlineTaskForm({
             <Popover
               openPopover={isRecurrenceDropDownOpen}
               setOpenPopover={setIsRecurrenceDropDownOpen}
-              content={<RecurrenceDropDown />}
+              content={
+                <RecurrenceDropDown
+                  onClose={() => {
+                    setIsRecurrenceDropDownOpen(false);
+                  }}
+                />
+              }
             >
               <RecurrenceDisplayer />
             </Popover>

@@ -3,9 +3,9 @@ export declare const RecurrenceRuleSchema: z.ZodObject<{
     pattern: z.ZodEnum<{
         daily: "daily";
         weekly: "weekly";
-        montly: "montly";
         yearly: "yearly";
         custom: "custom";
+        montly: "montly";
     }>;
     interval: z.ZodDefault<z.ZodInt>;
     daysOfWeek: z.ZodOptional<z.ZodArray<z.ZodInt>>;
@@ -13,7 +13,7 @@ export declare const RecurrenceRuleSchema: z.ZodObject<{
 }, z.core.$strip>;
 export declare const CreateTodoSchema: z.ZodObject<{
     title: z.ZodString;
-    description: z.ZodOptional<z.ZodString>;
+    description: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     priority: z.ZodNullable<z.ZodEnum<{
         high: "high";
         medium: "medium";
@@ -23,7 +23,7 @@ export declare const CreateTodoSchema: z.ZodObject<{
     dueTime: z.ZodNullable<z.ZodString>;
     color: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     reminder: z.ZodDefault<z.ZodBoolean>;
-    isAllDay: z.ZodOptional<z.ZodBoolean>;
+    isAllDay: z.ZodOptional<z.ZodNullable<z.ZodBoolean>>;
     tags: z.ZodOptional<z.ZodPipe<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>, z.ZodTransform<string[], string | string[]>>>;
     parentId: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     projectId: z.ZodOptional<z.ZodNullable<z.ZodString>>;
@@ -32,9 +32,9 @@ export declare const CreateTodoSchema: z.ZodObject<{
         pattern: z.ZodEnum<{
             daily: "daily";
             weekly: "weekly";
-            montly: "montly";
             yearly: "yearly";
             custom: "custom";
+            montly: "montly";
         }>;
         interval: z.ZodDefault<z.ZodInt>;
         daysOfWeek: z.ZodOptional<z.ZodArray<z.ZodInt>>;
@@ -51,7 +51,7 @@ export declare const todoQuerySchema: z.ZodObject<{
 }, z.core.$strip>;
 export declare const UpdateTodoSchema: z.ZodObject<{
     title: z.ZodOptional<z.ZodString>;
-    description: z.ZodOptional<z.ZodOptional<z.ZodString>>;
+    description: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
     priority: z.ZodOptional<z.ZodNullable<z.ZodEnum<{
         high: "high";
         medium: "medium";
@@ -61,7 +61,7 @@ export declare const UpdateTodoSchema: z.ZodObject<{
     dueTime: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     color: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
     reminder: z.ZodOptional<z.ZodDefault<z.ZodBoolean>>;
-    isAllDay: z.ZodOptional<z.ZodOptional<z.ZodBoolean>>;
+    isAllDay: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodBoolean>>>;
     tags: z.ZodOptional<z.ZodOptional<z.ZodPipe<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>, z.ZodTransform<string[], string | string[]>>>>;
     parentId: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
     projectId: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
@@ -70,9 +70,9 @@ export declare const UpdateTodoSchema: z.ZodObject<{
         pattern: z.ZodEnum<{
             daily: "daily";
             weekly: "weekly";
-            montly: "montly";
             yearly: "yearly";
             custom: "custom";
+            montly: "montly";
         }>;
         interval: z.ZodDefault<z.ZodInt>;
         daysOfWeek: z.ZodOptional<z.ZodArray<z.ZodInt>>;

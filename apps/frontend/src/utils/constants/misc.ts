@@ -8,4 +8,6 @@ export const DEFAULT_TODO_PROPS = {
   color: null,
   reminder: undefined,
   tags: [],
+  recurrenceRule: undefined,
+  recurrenceEndDate: undefined,
 };

@@ -13,23 +13,26 @@ import { useHotkeys } from "react-hotkeys-hook";
 import TaskBuilderProvider from "../task-builder-provider";
 import type { TodoWithCompleteAtDateTime } from "@/types";
 import { cn } from "@/lib/utils";
+import type { DateTime } from "luxon";
 
 function AddEditTodoModal({
   show,
   setShow,
   todo,
   sectionId,
+  date,
 }: {
   show: boolean;
   setShow: Dispatch<SetStateAction<boolean>>;
   todo?: TodoWithCompleteAtDateTime;
   sectionId?: string;
+  date?: DateTime;
 }) {
   return (
     <Modal showModal={show} setShowModal={setShow} className="max-w-2xl">
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div onClick={(e) => e.stopPropagation()}>
-        <TaskBuilderProvider todo={todo}>
+        <TaskBuilderProvider todo={todo} date={date}>
           <InlineTaskForm
             setIsOpen={setShow}
             mode="modal"
@@ -69,9 +72,11 @@ function CreateTodoButton({
 export function useAddEditTodoModal({
   todo,
   sectionId,
+  date,
 }: {
   todo?: TodoWithCompleteAtDateTime;
   sectionId?: string;
+  date?: DateTime;
 }) {
   const [show, setShow] = useState(false);
 
@@ -82,9 +87,10 @@ export function useAddEditTodoModal({
         setShow={setShow}
         todo={todo}
         sectionId={sectionId}
+        date={date}
       />
     );
-  }, [show, setShow, todo]);
+  }, [show, setShow, todo, date]);
 
   const CreateTodoButtonCallback = useCallback(() => {
     return <CreateTodoButton setShow={setShow} />;

@@ -29,6 +29,8 @@ function calculateNextRecurrence({
       return currentDue.plus({ months: interval });
     case "yearly":
       return currentDue.plus({ years: interval });
+    default:
+      return currentDue.plus({ days: interval });
   }
 }
 export default calculateNextRecurrence;

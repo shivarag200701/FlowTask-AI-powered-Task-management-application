@@ -6,6 +6,7 @@ import { CirclePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAddEditTodoModal } from "@/components/modals/AddEditTodoModal";
 import { useScrollBoundary } from "@/utils/functions/use-scroll-boundary";
+import { DateTime } from "luxon";
 
 function DroppableColumn({
   id,
@@ -27,7 +28,9 @@ function DroppableColumn({
     collisionPriority: CollisionPriority.Low,
   });
 
-  const { setShowAddEditTodoModal, AddEditTodoModal } = useAddEditTodoModal({});
+  const { setShowAddEditTodoModal, AddEditTodoModal } = useAddEditTodoModal({
+    date: DateTime.fromFormat(id, "LLL dd"),
+  });
   const { atBottom, atTop, handleScroll } = useScrollBoundary();
 
   if (id === "Overdue" && numberofTodos === 0) {

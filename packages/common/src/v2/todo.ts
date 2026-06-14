@@ -10,13 +10,13 @@ export const RecurrenceRuleSchema = z.object({
 
 export const CreateTodoSchema = z.object({
   title: z.string().min(1, "title must be atleast one character"),
-  description: z.string().optional(),
+  description: z.string().nullish(),
   priority: z.enum(["high", "medium", "low"]).nullable(),
   dueDate: z.string().nullable(), //all todos with date will have this
   dueTime: z.string().nullable(), //only timed todos have this
   color: z.string().nullish(),
   reminder: z.boolean().default(false),
-  isAllDay: z.boolean().optional(), // send true only, if not sent, the database defaults to false
+  isAllDay: z.boolean().nullish(), // send true only, if not sent, the database defaults to false
   tags: z
     .union([z.string(), z.array(z.string())])
     .transform((v) => (Array.isArray(v) ? v : v.split(",")))
