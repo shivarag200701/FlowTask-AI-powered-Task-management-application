@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { type UpdateTodo } from "@shiva200701/todotypes";
 import { generateSortKey } from "./todo-ordering.js";
 import path from "path";
@@ -40,6 +40,16 @@ function constructPatchPayload(patch: UpdateTodo) {
       patch.prevIndex ?? null,
       patch.nextIndex ?? null
     );
+  }
+
+  //recurrence fields
+  if (patch.recurrenceRule !== undefined) {
+    updateData.recurrenceRule = patch.recurrenceRule
+      ? patch.recurrenceRule
+      : Prisma.DbNull;
+  }
+  if (patch.recurrenceEndDate !== undefined) {
+    updateData.recurrenceEndDate = patch.recurrenceEndDate;
   }
 
   return updateData;

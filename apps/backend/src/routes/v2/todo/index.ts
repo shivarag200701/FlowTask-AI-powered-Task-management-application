@@ -3,6 +3,7 @@ import {
   CreateTodoSchema,
   todoQuerySchema,
   UpdateTodoSchema,
+  type RecurrenceRule,
 } from "@shiva200701/todotypes";
 import { requireLogin } from "../../../middleware.js";
 import { generateSortKey } from "../../../utils/todo-ordering.js";
@@ -10,6 +11,8 @@ import prisma from "../../../db/index.js";
 import constructPatchPayload from "../../../utils/construct-patch-payload.js";
 import { bulkTodoRouter } from "./bulk.js";
 import { searchService } from "../../../services/search/index.js";
+import { Prisma } from "@prisma/client";
+import calculateNextRecurrence from "../../../utils/calculateNextRecurrence.js";
 
 const todoRouter = Router();
 
@@ -115,6 +118,8 @@ todoRouter.post("/", requireLogin, async (req, res) => {
     parentId,
     projectId,
     projectSectionId,
+    recurrenceRule,
+    recurrenceEndDate,
   } = data;
 
   let InboxProjectId: string = "";
@@ -167,6 +172,8 @@ todoRouter.post("/", requireLogin, async (req, res) => {
         parentId: parentId ?? null,
         projectId: projectId ?? InboxProjectId ?? null,
         projectSectionId: projectSectionId ?? null,
+        recurrenceRule: recurrenceRule ?? Prisma.DbNull,
+        recurrenceEndDate: recurrenceEndDate ?? null,
         tags: {
           create:
             tags?.map((tagId) => ({
@@ -274,6 +281,37 @@ todoRouter.patch("/:id", requireLogin, async (req, res) => {
     const patch = data;
 
     const updateData = constructPatchPayload(patch);
+
+    //reccurence rule check and task creation
+    if (patch.completed && existing.recurrenceRule && existing.dueDate) {
+      const recurrenceRule = existing.recurrenceRule as RecurrenceRule;
+      const nextDue = calculateNextRecurrence({
+        recurrenceRule,
+        dueDate: existing.dueDate,
+        dueTime: patch.dueTime,
+      });
+
+      //create new task
+      const recurringTask = await prisma.todo.create({
+        data: {
+          userId,
+          title: existing.title,
+          description: existing.description,
+          priority: existing.priority,
+          color: existing.color,
+          isAllDay: existing.isAllDay,
+          projectId: existing.projectId,
+          projectSectionId: existing.projectSectionId,
+          sortKey: existing.sortKey,
+          recurrenceRule: recurrenceRule,
+          recurrenceEndDate: existing.recurrenceEndDate,
+          dueDate: nextDue.toISODate(),
+          dueTime: existing.dueTime ? nextDue.toJSDate() : null,
+          originalTodoId: existing.id,
+          completed: false,
+        },
+      });
+    }
 
     const updatedTodo = await prisma.todo.update({
       where: { id: idParam, userId },

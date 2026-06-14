@@ -1,4 +1,15 @@
 import z from "zod";
+export declare const RecurrenceRuleSchema: z.ZodObject<{
+    pattern: z.ZodEnum<{
+        daily: "daily";
+        weekly: "weekly";
+        montly: "montly";
+        yearly: "yearly";
+    }>;
+    interval: z.ZodDefault<z.ZodInt>;
+    daysOfWeek: z.ZodOptional<z.ZodArray<z.ZodInt>>;
+    daysOfMonth: z.ZodOptional<z.ZodArray<z.ZodInt>>;
+}, z.core.$strip>;
 export declare const CreateTodoSchema: z.ZodObject<{
     title: z.ZodString;
     description: z.ZodOptional<z.ZodString>;
@@ -16,6 +27,18 @@ export declare const CreateTodoSchema: z.ZodObject<{
     parentId: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     projectId: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     projectSectionId: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    recurrenceRule: z.ZodOptional<z.ZodNullable<z.ZodObject<{
+        pattern: z.ZodEnum<{
+            daily: "daily";
+            weekly: "weekly";
+            montly: "montly";
+            yearly: "yearly";
+        }>;
+        interval: z.ZodDefault<z.ZodInt>;
+        daysOfWeek: z.ZodOptional<z.ZodArray<z.ZodInt>>;
+        daysOfMonth: z.ZodOptional<z.ZodArray<z.ZodInt>>;
+    }, z.core.$strip>>>;
+    recurrenceEndDate: z.ZodOptional<z.ZodNullable<z.ZodString>>;
 }, z.core.$strip>;
 export declare const todoQuerySchema: z.ZodObject<{
     tagIds: z.ZodOptional<z.ZodString>;
@@ -41,6 +64,18 @@ export declare const UpdateTodoSchema: z.ZodObject<{
     parentId: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
     projectId: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
     projectSectionId: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
+    recurrenceRule: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodObject<{
+        pattern: z.ZodEnum<{
+            daily: "daily";
+            weekly: "weekly";
+            montly: "montly";
+            yearly: "yearly";
+        }>;
+        interval: z.ZodDefault<z.ZodInt>;
+        daysOfWeek: z.ZodOptional<z.ZodArray<z.ZodInt>>;
+        daysOfMonth: z.ZodOptional<z.ZodArray<z.ZodInt>>;
+    }, z.core.$strip>>>>;
+    recurrenceEndDate: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
     prevIndex: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     nextIndex: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     completed: z.ZodOptional<z.ZodBoolean>;
@@ -63,4 +98,5 @@ export declare const TodoSearchDocumentSchema: z.ZodObject<{
 export type CreateTodo = z.infer<typeof CreateTodoSchema>;
 export type UpdateTodo = z.infer<typeof UpdateTodoSchema>;
 export type TodoSearchDocument = z.infer<typeof TodoSearchDocumentSchema>;
+export type RecurrenceRule = z.infer<typeof RecurrenceRuleSchema>;
 //# sourceMappingURL=todo.d.ts.map

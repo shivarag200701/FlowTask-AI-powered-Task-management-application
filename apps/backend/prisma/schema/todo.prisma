@@ -30,4 +30,9 @@ model Todo {
   project           Project?     @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectSectionId  String?
   projectSection    ProjectSection?   @relation(fields: [projectSectionId],references: [id], onDelete: SetNull)
+
+  //reccurence pattern
+  recurrenceRule    Json?
+  recurrenceEndDate String?
+  originalTodoId    String?
 }
