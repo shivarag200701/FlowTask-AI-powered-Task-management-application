@@ -209,51 +209,60 @@ New models:
 
 ---
 
-### [ ] 1.6 Recurring Tasks
+### [x] 1.6 Recurring Tasks
 
 **Description:**
-Tasks that automatically regenerate on a schedule (daily, weekly, monthly, custom).
+Tasks that automatically regenerate on a schedule (daily, weekly, monthly, yearly, custom intervals).
 
 **Why it's needed:**
 
 - Core feature for any production todo app (daily standup, weekly review, pay rent monthly)
-- Was in v1 and intentionally removed to stabilize the data model — time to bring it back with a cleaner design
+- Was in v1 and intentionally removed to stabilize the data model — brought back with a cleaner design
 - AI scheduling features (Phase 3) need to understand recurring patterns
 
 **Data model changes:**
 
 ```
 Todo model additions:
-  - recurrenceRule    String?    // RRULE format (RFC 5545): "FREQ=WEEKLY;BYDAY=MO,WE,FR"
-  - recurrenceEnd    DateTime?  // Optional end date for the recurrence
-  - isRecurring      Boolean    @default(false)
+  - recurrenceRule    Json?      // { pattern, interval, daysOfWeek?, daysOfMonth? }
+  - recurrenceEndDate String?    // ISO date string, optional end date for recurrence
+  - originalTodoId    String?    // Links to the previous instance in the recurrence chain
 ```
 
 **Recurrence strategy:**
 
-- Use the "generate next on completion" pattern: when a recurring task is completed, a BullMQ job creates the next instance with the appropriate due date
-- Do NOT pre-generate all future instances — this avoids data bloat and simplifies editing
-- Each generated instance is a standalone task with no link to previous instances (keeps the model simple)
+- "Generate next on completion" pattern: when a recurring task is completed, the route handler creates the next instance inline with the correct due date
+- No pre-generation of future instances — avoids data bloat and simplifies editing
+- Each generated instance links to its predecessor via `originalTodoId`
 - If a user edits the recurrence rule, it only affects future instances
+- If recurrence end date is set, no new instance is created after that date
 
 **API changes (v2):**
 
-[ ]`POST /api/v2/todo` — accept `recurrenceRule`, `recurrenceEnd`, `isRecurring`
-[ ]`PATCH /api/v2/todo/:id` — when completing a recurring task, trigger next instance generation
-[ ]`DELETE /api/v2/todo/:id?deleteAll=true` — stop recurrence and delete future scheduled jobs
+[x]`POST /api/v2/todo` — accept `recurrenceRule` (JSON) and `recurrenceEndDate`
+[x]`PATCH /api/v2/todo/:id` — when completing a recurring task, auto-creates the next instance with calculated due date
+[x]`PATCH /api/v2/todo/:id` — accept updates to `recurrenceRule` and `recurrenceEndDate` (uses `Prisma.DbNull` for JSON null handling)
+
+**Backend utilities:**
+
+[x]`calculateNextRecurrence({ recurrenceRule, dueDate, dueTime })` — calculates next due date using Luxon, supports daily/weekly/monthly/yearly patterns with custom intervals
+[x]`constructPatchPayload` — handles recurrence fields with proper Prisma JSON null conversion
 
 **Frontend:**
 
-[ ]Recurrence picker in task creation/edit: None, Daily, Weekly, Monthly, Custom
-[ ]Custom picker: select days of week, interval (every N days/weeks/months)
-[ ]Visual indicator on recurring tasks (repeat icon)
-[ ]"Stop recurring" option in task menu
-[ ]Recurrence label display (e.g., "Every Monday, Wednesday, Friday")
+[x]Recurrence picker in task creation/edit: None, Daily, Weekly, Monthly, Yearly, Custom
+[x]Custom picker: interval input and frequency selector (inline popover content swap, no stacked modals)
+[x]Visual indicator on recurring tasks (pattern-specific icons via RecurrenceDisplayer pill button)
+[x]Dynamic recurrence labels (e.g., "Daily", "Every 2 weeks", "Every 3 months")
+[x]Recurrence presets with context-aware labels based on task due date
+[ ]Weekday selection for weekly patterns (UI built with "Coming soon" indicator, backend not yet wired)
+[ ]Day-of-month selection for monthly patterns (UI built with "Coming soon" indicator, backend not yet wired)
 
-**BullMQ integration:**
+**Future enhancements:**
 
-[ ]On task completion, if `isRecurring` is true, add a job to generate the next task instance
-[ ]Calculate next due date from `recurrenceRule` using a library like `rrule`
+[ ]NLP-based recurrence input — allow users to type natural language recurrence patterns (e.g., "every 2 weeks on Monday") and parse them into recurrence rules
+[ ]"Stop recurring" option in task context menu
+[ ]Recurrence history view — see all past instances of a recurring task chain via `originalTodoId`
 
 **Dependencies:** None.
 
@@ -653,7 +662,7 @@ Multi-user real-time collaboration with shared todo lists, team workspaces, live
 | 1.3 | Search                    | 1     | —          | [X]    |
 | 1.4 | Completed Tasks View      | 1     | —          | [X]    |
 | 1.5 | Projects                  | 1     | —          | [X]    |
-| 1.6 | Recurring Tasks           | 1     | —          | [ ]    |
+| 1.6 | Recurring Tasks           | 1     | —          | [X]    |
 | 2.1 | NLP Task Creation         | 2     | —          | [ ]    |
 | 2.2 | AI Task Breakdown         | 2     | 1.2        | [ ]    |
 | 2.3 | Auto-Tagging              | 2     | —          | [ ]    |

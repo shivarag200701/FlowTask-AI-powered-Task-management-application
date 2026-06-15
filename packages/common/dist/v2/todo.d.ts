@@ -3,9 +3,9 @@ export declare const RecurrenceRuleSchema: z.ZodObject<{
     pattern: z.ZodEnum<{
         daily: "daily";
         weekly: "weekly";
+        montly: "montly";
         yearly: "yearly";
         custom: "custom";
-        montly: "montly";
     }>;
     interval: z.ZodDefault<z.ZodInt>;
     daysOfWeek: z.ZodOptional<z.ZodArray<z.ZodInt>>;
@@ -32,9 +32,9 @@ export declare const CreateTodoSchema: z.ZodObject<{
         pattern: z.ZodEnum<{
             daily: "daily";
             weekly: "weekly";
+            montly: "montly";
             yearly: "yearly";
             custom: "custom";
-            montly: "montly";
         }>;
         interval: z.ZodDefault<z.ZodInt>;
         daysOfWeek: z.ZodOptional<z.ZodArray<z.ZodInt>>;
@@ -70,9 +70,9 @@ export declare const UpdateTodoSchema: z.ZodObject<{
         pattern: z.ZodEnum<{
             daily: "daily";
             weekly: "weekly";
+            montly: "montly";
             yearly: "yearly";
             custom: "custom";
-            montly: "montly";
         }>;
         interval: z.ZodDefault<z.ZodInt>;
         daysOfWeek: z.ZodOptional<z.ZodArray<z.ZodInt>>;
