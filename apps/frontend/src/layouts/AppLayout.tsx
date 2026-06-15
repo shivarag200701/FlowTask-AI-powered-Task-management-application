@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar";
+import AiTaskFab from "@/components/AiTaskFab";
 import { ModalProvider } from "@/components/modals/ModalProvider";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { TaskDisplayProvider } from "@/context/TaskDisplayContext";
@@ -24,6 +25,7 @@ function AppLayout() {
               <Outlet />
             </div>
           </div>
+          <AiTaskFab />
         </SidebarProvider>
       </ModalProvider>
     </TaskDisplayProvider>

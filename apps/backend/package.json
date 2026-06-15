@@ -17,6 +17,7 @@
   "description": "",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1014.0",
+    "@openrouter/sdk": "^0.13.7",
     "@prisma/adapter-pg": "^7.0.1",
     "@prisma/client": "^6.19.0",
     "@react-email/components": "1.0.8",
