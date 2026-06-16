@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Sparkles, ArrowRight, X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useParseTask } from "@/hooks/use-ai";
-import type { ParsedTask } from "@shiva200701/todotypes/src/v2/ai";
+import type { ParsedTask } from "@shiva200701/todotypes";
 
 // ── Mock parsed result (replace with real API call later) ──────────────
 // const MOCK_DELAY = 1500;

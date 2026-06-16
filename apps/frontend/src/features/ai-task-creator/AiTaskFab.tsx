@@ -3,7 +3,7 @@ import { Sparkles, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Modal } from "../../components/ui/modal";
 import { useParseTask } from "@/hooks/use-ai";
-import type { ParsedTask } from "@shiva200701/todotypes/src/v2/ai.js";
+import type { ParsedTask } from "@shiva200701/todotypes";
 import AiParseInput from "./AiParseInput";
 import ParsedTaskPreview from "./ParsedTaskPreview";
 import { useHotkeys } from "react-hotkeys-hook";

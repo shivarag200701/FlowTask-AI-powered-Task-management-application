@@ -1,5 +1,5 @@
 import api from "@/utils/functions/api";
-import { type ParsedTask } from "@shiva200701/todotypes/src/v2/ai.js";
+import { type ParsedTask } from "@shiva200701/todotypes";
 
 export async function aiParseTask({ input }: { input: string }) {
   try {

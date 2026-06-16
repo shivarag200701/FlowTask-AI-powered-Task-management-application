@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { priorityStyles } from "@/utils/constants/priority";
-import type { ParsedTask } from "@shiva200701/todotypes/src/v2/ai.js";
+import type { ParsedTask } from "@shiva200701/todotypes";
 import { DateTime } from "luxon";
 import { Button } from "@/components/ui/button";
 

@@ -4,7 +4,7 @@ import openRouter from "../../../services/ai/OpenRouterService.js";
 import {
   AiParseTaskSchema,
   type ParsedTask,
-} from "@shiva200701/todotypes/src/v2/ai.js";
+} from "@shiva200701/todotypes";
 import prisma from "../../../db/index.js";
 
 const aiRouter = Router();

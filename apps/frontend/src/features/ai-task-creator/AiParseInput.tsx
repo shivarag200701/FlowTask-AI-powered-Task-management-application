@@ -1,6 +1,6 @@
 import { ArrowRight, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { ParsedTask } from "@shiva200701/todotypes/src/v2/ai.js";
+import type { ParsedTask } from "@shiva200701/todotypes";
 
 interface AiParseInputProps {
   input: string;
