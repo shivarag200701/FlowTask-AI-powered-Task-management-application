@@ -1,37 +1,33 @@
 import { useState } from "react";
 import { Sparkles, ArrowRight, X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useParseTask } from "@/hooks/use-ai";
+import type { ParsedTask } from "@shiva200701/todotypes/src/v2/ai";
 
 // ── Mock parsed result (replace with real API call later) ──────────────
-const MOCK_DELAY = 1500;
+// const MOCK_DELAY = 1500;
 
-interface ParsedTask {
-  title: string;
-  dueDate: string | null;
-  dueTime: string | null;
-  priority: "high" | "medium" | "low" | null;
-  tags: string[];
-  isAllDay: boolean;
-}
-
-function mockParseTask(input: string): Promise<ParsedTask> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        title: input.replace(/#\w+/g, "").replace(/by\s+\w+/gi, "").trim(),
-        dueDate: "2026-06-19",
-        dueTime: "17:00",
-        priority: input.toLowerCase().includes("high")
-          ? "high"
-          : input.toLowerCase().includes("low")
-            ? "low"
-            : "medium",
-        tags: (input.match(/#(\w+)/g) || []).map((t) => t.slice(1)),
-        isAllDay: false,
-      });
-    }, MOCK_DELAY);
-  });
-}
+// function mockParseTask(input: string): Promise<ParsedTask> {
+//   return new Promise((resolve) => {
+//     setTimeout(() => {
+//       resolve({
+//         title: input
+//           .replace(/#\w+/g, "")
+//           .replace(/by\s+\w+/gi, "")
+//           .trim(),
+//         dueDate: "2026-06-19",
+//         dueTime: "17:00",
+//         priority: input.toLowerCase().includes("high")
+//           ? "high"
+//           : input.toLowerCase().includes("low")
+//             ? "low"
+//             : "medium",
+//         tags: (input.match(/#(\w+)/g) || []).map((t) => t.slice(1)),
+//         isAllDay: false,
+//       });
+//     }, MOCK_DELAY);
+//   });
+// }
 
 // ── Priority badge colors ──────────────────────────────────────────────
 const priorityStyles: Record<string, string> = {
@@ -43,16 +39,16 @@ const priorityStyles: Record<string, string> = {
 // ── Component ──────────────────────────────────────────────────────────
 function QuickAddBar() {
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [parsed, setParsed] = useState<ParsedTask | null>(null);
   const [isFocused, setIsFocused] = useState(false);
+  const { mutateAsync, isPending } = useParseTask();
 
   const handleSubmit = async () => {
+    console.log("called", input);
     if (!input.trim()) return;
-    setIsLoading(true);
-    const result = await mockParseTask(input);
+
+    const result = await mutateAsync({ input });
     setParsed(result);
-    setIsLoading(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -78,12 +74,10 @@ function QuickAddBar() {
   const handleDismiss = () => {
     setInput("");
     setParsed(null);
-    setIsLoading(false);
   };
 
   return (
     <div className="w-full">
-      {/* ── Input bar ─────────────────────────────────────────────── */}
       <div
         className={cn(
           "flex items-center gap-3 rounded-xl border bg-white px-4 py-3 transition-all duration-200",
@@ -96,7 +90,7 @@ function QuickAddBar() {
         <Sparkles
           className={cn(
             "size-4 shrink-0 transition-colors",
-            isFocused || isLoading ? "text-primary" : "text-muted-foreground"
+            isFocused || isPending ? "text-primary" : "text-muted-foreground"
           )}
         />
         <input
@@ -111,9 +105,9 @@ function QuickAddBar() {
           onKeyDown={handleKeyDown}
           placeholder='Try: "Submit tax forms by Friday 5pm, high priority #finance"'
           className="flex-1 bg-transparent text-sm focus:outline-none placeholder:text-muted-foreground/60"
-          disabled={isLoading}
+          disabled={isPending}
         />
-        {input && !isLoading && !parsed && (
+        {input && !isPending && !parsed && (
           <button
             onClick={handleSubmit}
             className="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90"
@@ -122,13 +116,13 @@ function QuickAddBar() {
             <ArrowRight className="size-3" />
           </button>
         )}
-        {isLoading && (
+        {isPending && (
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Loader2 className="size-3.5 animate-spin text-primary" />
             <span>Parsing...</span>
           </div>
         )}
-        {input && !isLoading && (
+        {input && !isPending && (
           <button
             onClick={handleDismiss}
             className="rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
@@ -138,7 +132,6 @@ function QuickAddBar() {
         )}
       </div>
 
-      {/* ── Preview card ──────────────────────────────────────────── */}
       {parsed && (
         <div className="rounded-b-xl border border-t-0 border-border bg-neutral-50 px-4 py-3 space-y-3">
           <div className="flex items-start justify-between gap-3">
@@ -177,9 +170,16 @@ function QuickAddBar() {
 
           <div className="flex items-center justify-between pt-1 border-t border-border/50">
             <p className="text-xs text-muted-foreground">
-              Press <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px]">Enter</kbd> to confirm
+              Press{" "}
+              <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px]">
+                Enter
+              </kbd>{" "}
+              to confirm
               {" · "}
-              <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px]">Esc</kbd> to dismiss
+              <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px]">
+                Esc
+              </kbd>{" "}
+              to dismiss
             </p>
             <div className="flex gap-2">
               <button

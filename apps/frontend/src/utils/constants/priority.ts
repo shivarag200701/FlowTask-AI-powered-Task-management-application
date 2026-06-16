@@ -28,3 +28,9 @@ export const priorities: Priority[] = [
     fillColor: "#9ca3af",
   },
 ];
+
+export const priorityStyles: Record<string, string> = {
+  high: "bg-red-100 text-red-700",
+  medium: "bg-yellow-100 text-yellow-700",
+  low: "bg-blue-100 text-blue-700",
+};

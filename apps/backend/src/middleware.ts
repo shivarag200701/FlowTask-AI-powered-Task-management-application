@@ -25,13 +25,14 @@ function triggerSearchIndexIfNeeded(userId: string) {
   redisClient
     .get(redisKey)
     .then(async (value) => {
+      //key already present and indexed within thirty days
       if (value) return;
 
       console.log(`[Search] Auto-indexing for user ${userId}`);
       const result = await searchService.reindexUser(userId);
       await redisClient.set(redisKey, "1", { EX: REINDEX_EXPIRY });
       console.log(
-        `[Search] Indexed ${result.todosCount} todos and ${result.tagsCount} tags for user ${userId}`,
+        `[Search] Indexed ${result.todosCount} todos and ${result.tagsCount} tags and ${result.projectCount} projects for user ${userId}`
       );
     })
     .catch((err) => {

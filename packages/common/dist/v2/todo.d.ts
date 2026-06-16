@@ -3,9 +3,9 @@ export declare const RecurrenceRuleSchema: z.ZodObject<{
     pattern: z.ZodEnum<{
         daily: "daily";
         weekly: "weekly";
-        montly: "montly";
         yearly: "yearly";
         custom: "custom";
+        montly: "montly";
     }>;
     interval: z.ZodDefault<z.ZodInt>;
     daysOfWeek: z.ZodOptional<z.ZodArray<z.ZodInt>>;
@@ -22,7 +22,7 @@ export declare const CreateTodoSchema: z.ZodObject<{
     dueDate: z.ZodNullable<z.ZodString>;
     dueTime: z.ZodNullable<z.ZodString>;
     color: z.ZodOptional<z.ZodNullable<z.ZodString>>;
-    reminder: z.ZodDefault<z.ZodBoolean>;
+    reminder: z.ZodOptional<z.ZodNullable<z.ZodBoolean>>;
     isAllDay: z.ZodOptional<z.ZodNullable<z.ZodBoolean>>;
     tags: z.ZodOptional<z.ZodPipe<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>, z.ZodTransform<string[], string | string[]>>>;
     parentId: z.ZodOptional<z.ZodNullable<z.ZodString>>;
@@ -32,9 +32,9 @@ export declare const CreateTodoSchema: z.ZodObject<{
         pattern: z.ZodEnum<{
             daily: "daily";
             weekly: "weekly";
-            montly: "montly";
             yearly: "yearly";
             custom: "custom";
+            montly: "montly";
         }>;
         interval: z.ZodDefault<z.ZodInt>;
         daysOfWeek: z.ZodOptional<z.ZodArray<z.ZodInt>>;
@@ -60,7 +60,7 @@ export declare const UpdateTodoSchema: z.ZodObject<{
     dueDate: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     dueTime: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     color: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
-    reminder: z.ZodOptional<z.ZodDefault<z.ZodBoolean>>;
+    reminder: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodBoolean>>>;
     isAllDay: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodBoolean>>>;
     tags: z.ZodOptional<z.ZodOptional<z.ZodPipe<z.ZodUnion<readonly [z.ZodString, z.ZodArray<z.ZodString>]>, z.ZodTransform<string[], string | string[]>>>>;
     parentId: z.ZodOptional<z.ZodOptional<z.ZodNullable<z.ZodString>>>;
@@ -70,9 +70,9 @@ export declare const UpdateTodoSchema: z.ZodObject<{
         pattern: z.ZodEnum<{
             daily: "daily";
             weekly: "weekly";
-            montly: "montly";
             yearly: "yearly";
             custom: "custom";
+            montly: "montly";
         }>;
         interval: z.ZodDefault<z.ZodInt>;
         daysOfWeek: z.ZodOptional<z.ZodArray<z.ZodInt>>;

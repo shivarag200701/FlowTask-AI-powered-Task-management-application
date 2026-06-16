@@ -15,7 +15,7 @@ export const CreateTodoSchema = z.object({
   dueDate: z.string().nullable(), //all todos with date will have this
   dueTime: z.string().nullable(), //only timed todos have this
   color: z.string().nullish(),
-  reminder: z.boolean().default(false),
+  reminder: z.boolean().nullish(),
   isAllDay: z.boolean().nullish(), // send true only, if not sent, the database defaults to false
   tags: z
     .union([z.string(), z.array(z.string())])
