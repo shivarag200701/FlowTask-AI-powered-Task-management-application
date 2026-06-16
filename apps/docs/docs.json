@@ -53,6 +53,7 @@
             "icon": "sparkles",
             "pages": [
               "features/task-management",
+              "features/ai-task-parsing",
               "features/projects",
               "features/search",
               "features/reminders",

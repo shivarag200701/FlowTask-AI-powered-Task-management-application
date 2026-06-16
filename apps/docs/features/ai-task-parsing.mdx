@@ -1,0 +1,62 @@
+---
+title: "Create Tasks with AI-Powered Natural Language Parsing"
+sidebarTitle: "AI Task Parsing"
+description: "Type a sentence and let AI extract the title, due date, priority, and tags — creating structured tasks from plain English."
+---
+
+Flowtask's AI task parser lets you skip the form fields entirely. Instead of filling in title, date, priority, and tags one by one, type a single sentence and the AI extracts everything for you.
+
+<Tip>Press `Cmd+I` (Mac) or `Ctrl+I` (Windows/Linux) from anywhere in the app to open the AI task creator.</Tip>
+
+## How it works
+
+<Steps>
+  <Step title="Open the AI task creator">
+    Click the **sparkle button** in the bottom-right corner of any page, or use the `Cmd+I` / `Ctrl+I` keyboard shortcut.
+  </Step>
+  <Step title="Type your task in natural language">
+    Describe what you need to do in a single sentence. Include as much or as little detail as you want:
+
+    ```text
+    Submit tax forms by Friday 5pm, high priority #finance
+    Buy groceries tomorrow
+    Review PR for auth module #work #engineering
+    Call dentist next Monday morning
+    ```
+  </Step>
+  <Step title="Review the parsed result">
+    The AI extracts structured fields from your input and shows a preview card with the parsed title, due date, time, priority, and tags. Review the result before saving.
+  </Step>
+  <Step title="Confirm or re-type">
+    If the preview looks correct, click **Create Task** or press `Enter` to save. If something is off, click **Re-type** or press `Esc` to try again with different wording.
+  </Step>
+</Steps>
+
+## What the AI extracts
+
+The parser understands several types of information from your input:
+
+| Field | How to express it | Example |
+|-------|-------------------|---------|
+| **Title** | The core action — everything that isn't a date, priority, or tag | "Submit tax forms" |
+| **Due date** | Relative or absolute dates | "tomorrow", "next Friday", "June 20", "in 3 days" |
+| **Due time** | Specific times in natural language | "5pm", "at 9:00", "morning" |
+| **Priority** | Keywords indicating urgency | "high priority", "urgent", "important", "low priority" |
+| **Tags** | Hashtags referencing your existing tags | `#finance`, `#work`, `#personal` |
+
+<Note>Tags must already exist in your account. If the AI extracts a tag that doesn't match any of your existing tags, you'll be prompted to create it first.</Note>
+
+## Tips for better results
+
+- **Be specific with dates** — "next Tuesday at 3pm" works better than "sometime next week"
+- **Use hashtags for tags** — Write `#work` instead of "for work" to ensure the AI picks it up as a tag
+- **Priority keywords** — The AI looks for explicit words like "high priority", "urgent", or "low priority". Without these, priority is left unset
+- **Keep it in one sentence** — The parser works best with a single, clear sentence rather than multiple sentences
+
+## Timezone handling
+
+The AI respects your local timezone. When you say "tomorrow at 7am", it creates the task for 7:00 AM in your timezone, not UTC. Your timezone is detected automatically from your browser settings.
+
+## Fallback behavior
+
+If the AI cannot parse your input, you'll see a message asking you to rephrase or add the task manually. The standard task creation form is always available as a fallback — press `C` to open it.
