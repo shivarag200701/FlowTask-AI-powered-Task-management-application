@@ -41,10 +41,10 @@ function ParsedTaskPreview({
           )}
           {parsed.tags.map((tag) => (
             <span
-              key={tag}
+              key={tag.id}
               className="rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary"
             >
-              #{tag}
+              #{tag.name}
             </span>
           ))}
         </div>

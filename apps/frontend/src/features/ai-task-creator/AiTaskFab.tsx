@@ -31,7 +31,10 @@ function AiTaskFab() {
 
   const handleConfirm = async () => {
     if (parsed) {
-      await createTodo(parsed);
+      await createTodo({
+        ...parsed,
+        tags: parsed.tags.map((tag) => tag.id),
+      });
     }
     handleDismiss();
   };
