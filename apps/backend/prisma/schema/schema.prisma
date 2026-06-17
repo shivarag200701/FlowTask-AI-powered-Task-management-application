@@ -15,23 +15,26 @@ datasource db {
 
 
 model User {
-  id              String             @id @default(cuid())
-  name            String?          
-  email           String?          @unique
-  hashedPassword  String?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  todos           Todo[]
-  isPasswordSet   Boolean         @default(false)
-  emailVerified   DateTime?        
-  image           String?
+  id                String             @id @default(cuid())
+  name              String?          
+  email             String?          @unique
+  hashedPassword    String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  todos             Todo[]
+  isPasswordSet     Boolean         @default(false)
+  emailVerified     DateTime?        
+  image             String?
 
-  oauthAccounts   OAuthAccount[]
-  preference      UserPrefrence?
-  notfications    Notifications[]
-  tags            Tag[]
+  oauthAccounts     OAuthAccount[]
+  preference        UserPrefrence?
+  notfications      Notifications[]
+  tags              Tag[]
   
-  projects        Project[]
+  projects          Project[]
+
+  createdWorkspaces Workspace[]   @relation("CreatedWorkspaces")
+  memberships       WorkspaceMember[]
 }
 
 

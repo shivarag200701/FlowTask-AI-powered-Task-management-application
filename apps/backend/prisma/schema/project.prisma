@@ -7,6 +7,9 @@ model Project{
     user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     workSpaceId         String?
+    //Currently deleting a workspace deleted all its project, might need to change later
+    workspace           Workspace?       @relation(fields: [workSpaceId], references: [id], onDelete: Cascade)
+
     todos               Todo[]
 
     taskDisplayPreferences    Json?
