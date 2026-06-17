@@ -125,7 +125,7 @@ function DraggableTask({
           sideOffset={2}
         >
           <div
-            className="absolute top-2 right-2 hover:bg-accent rounded-sm data-[state=open]:bg-accent lg:hidden group-hover:block data-[state=open]:block"
+            className="absolute top-1 right-1 hover:bg-accent rounded-sm data-[state=open]:bg-accent lg:hidden group-hover:block data-[state=open]:block"
             onClick={(e) => e.stopPropagation()}
           >
             <MoreHorizontal color="#808080" />
@@ -142,9 +142,9 @@ function DraggableTask({
           >
             <Check size={15} className="hidden group-hover/circle:block" />
           </button>
-          <div className="flex flex-col justify-between w-full h-full">
+          <div className="flex flex-col justify-between w-[190px] h-full ">
             <div>
-              <div className="text-sm font-medium sm:text-[13px] truncate ">
+              <div className="text-sm font-medium sm:text-[13px] truncate text-wrap max-h-[40px] ">
                 {todo.title}
               </div>
               <div className="text-xs font-light truncate">
