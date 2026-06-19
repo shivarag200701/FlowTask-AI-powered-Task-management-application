@@ -33,7 +33,7 @@
     "luxon": "^3.7.2",
     "motion": "^12.38.0",
     "next-themes": "^0.4.6",
-    "radix-ui": "^1.4.3",
+    "radix-ui": "^1.6.0",
     "react": "^19.2.1",
     "react-day-picker": "^9.14.0",
     "react-dom": "^19.2.1",

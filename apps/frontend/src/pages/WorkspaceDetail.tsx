@@ -82,34 +82,6 @@ function WorkspaceDetailView({ id }: { id: string }) {
         }
       />
       <PageWidthWrapper className="max-w-4xl py-8 space-y-8">
-        {/* Invite Code */}
-        {workspace.inviteCode && (
-          <div className="rounded-lg border border-border bg-accent/30 p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium">Invite Code</p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Share this code with people you want to invite
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <code className="rounded-md bg-muted px-3 py-1.5 text-sm font-mono">
-                  {workspace.inviteCode}
-                </code>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-1.5 w-fit hover:bg-background"
-                  onClick={handleCopyInvite}
-                >
-                  <Copy className="size-3.5" />
-                  {copiedInvite ? "Copied" : "Copy"}
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Members */}
         <div>
           <div className="flex items-center justify-between mb-3">
