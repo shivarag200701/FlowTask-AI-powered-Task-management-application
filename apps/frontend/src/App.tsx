@@ -30,6 +30,7 @@ import TaskDetail from "./pages/TaskDetail";
 import MyProjects from "./pages/MyProjects";
 import Workspaces from "./pages/Workspaces";
 import Projects from "./pages/Projects";
+import WorkspaceDetail from "./pages/WorkspaceDetail";
 import Inbox from "./pages/Inbox";
 
 const queryClient = new QueryClient();
@@ -91,7 +92,8 @@ function AppRoutes() {
               }
             />
             <Route path="/app/projects" element={<MyProjects />} />
-            <Route path="/app/workspace" element={<Workspaces />} />
+            <Route path="/app/workspaces" element={<Workspaces />} />
+            <Route path="/app/workspaces/*" element={<WorkspaceDetail />} />
             <Route path="/app/search/*" element={<Search />} />
             <Route path="/app/task/:slug" element={<TaskDetail />} />
             <Route path="/app/projects/*" element={<Projects />} />

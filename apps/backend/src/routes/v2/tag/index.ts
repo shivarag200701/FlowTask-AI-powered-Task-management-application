@@ -17,13 +17,7 @@ tagRouter.use("/bulk", bulkTagRouter);
 
 //get all tags or use filter
 tagRouter.get("/", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   const { data, success, error } = GetTagsQuerySchema.safeParse(req.query);
 
@@ -75,13 +69,7 @@ tagRouter.get("/", requireLogin, async (req, res) => {
 });
 
 tagRouter.post("/", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   const { data, error, success } = CreateTagSchema.safeParse(req.body);
 
@@ -134,13 +122,7 @@ tagRouter.post("/", requireLogin, async (req, res) => {
 });
 
 tagRouter.patch("/:id", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   const idParam = Array.isArray(req.params.id)
     ? req.params.id[0]
@@ -207,13 +189,7 @@ tagRouter.patch("/:id", requireLogin, async (req, res) => {
 });
 
 tagRouter.get("/count", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   try {
     const count = await prisma.tag.count({

@@ -1,38 +1,50 @@
-import { AnimatedEmptyState } from "@/components/ui/animated-empty-state";
+import EmptyWorkspace from "@/features/workspace/components/EmptyWorkspace";
+import { useAddWorkspaceModal } from "@/components/modals/AddWorkspaceModal";
+import WorkspaceCard from "@/features/workspace/components/WorkspaceCard";
+import WorkspaceCardPlaceholder from "@/features/workspace/components/WorkspaceCardPlaceholder";
+import ProjectListWrapper from "@/features/projects/components/ProjectListWrapper";
+import { useWorkspaces } from "@/hooks/use-workspaces";
 import PageContentHeader from "@/layouts/PageContentHeader";
+import PageWidthWrapper from "@/layouts/PageWidthWrapper";
 import { Users } from "lucide-react";
 
 function Workspaces() {
+  const { data: workspaces, isLoading } = useWorkspaces();
+  const { CreateWorkspaceButton, AddWorkspaceModal } = useAddWorkspaceModal();
+
   return (
     <div className="h-full">
-      <PageContentHeader title="Workspaces" />
-      <AnimatedEmptyState
-        title="Collaborate with your team"
-        description="Create workspaces to invite team members and work on projects together"
-        className="border-none"
-        cardContent={(index) => {
-          const workspaces = [
-            { name: "Engineering", members: 5 },
-            { name: "Design", members: 3 },
-            { name: "Product", members: 4 },
-          ];
-          const ws = workspaces[index % workspaces.length];
-          return (
-            <>
-              <div className="flex h-6 w-6 items-center justify-center rounded-md bg-neutral-100">
-                <Users className="size-3.5 text-neutral-500" />
-              </div>
-              <div className="h-2.5 w-24 min-w-0 rounded-sm bg-neutral-200" />
-              <div className="flex grow items-center justify-end gap-1 text-xs text-neutral-400">
-                <Users className="size-3" />
-                <span>{ws.members}</span>
-              </div>
-            </>
-          );
-        }}
-        cardCount={3}
-        pillContent="Coming soon"
+      <PageContentHeader
+        title={
+          <div className="flex gap-2 items-center">
+            <Users className="size-5" />
+            <span>Workspaces</span>
+          </div>
+        }
+        controls={<CreateWorkspaceButton />}
       />
+      <PageWidthWrapper className="pt-10 max-w-3xl">
+        <div className="pt-6">
+          {isLoading ? (
+            <>
+              {Array.from({ length: 3 }, (_, index) => (
+                <ProjectListWrapper key={index} id={index}>
+                  <WorkspaceCardPlaceholder />
+                </ProjectListWrapper>
+              ))}
+            </>
+          ) : workspaces && workspaces.length > 0 ? (
+            workspaces.map((workspace) => (
+              <ProjectListWrapper key={workspace.id} id={workspace.id}>
+                <WorkspaceCard workspace={workspace} />
+              </ProjectListWrapper>
+            ))
+          ) : (
+            <EmptyWorkspace addButton={<CreateWorkspaceButton />} />
+          )}
+        </div>
+      </PageWidthWrapper>
+      <AddWorkspaceModal />
     </div>
   );
 }

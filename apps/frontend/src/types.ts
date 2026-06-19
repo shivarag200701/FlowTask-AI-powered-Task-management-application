@@ -121,3 +121,36 @@ export type SectionWithoutTodos = Omit<Section, "todos">;
 export type ProjectWithDateTime = Omit<Project, "todos"> & {
   todos: TodoWithCompleteAtDateTime[];
 };
+
+export type Workspace = {
+  id: string;
+  createdAt: string;
+  createdBy: string;
+  icon: string | null;
+  inviteCode: string | null;
+  name: string;
+  slug: string;
+  updatedAt: string;
+  _count: {
+    members: number;
+  };
+};
+
+export type Workspaces = Workspace[];
+
+export type WorkspaceMember = {
+  id: string;
+  role: "owner" | "admin" | "member";
+  userId: string;
+  workspaceId: string;
+  user: {
+    id: string;
+    name: string | null;
+    email: string | null;
+    image: string | null;
+  };
+};
+
+export type WorkspaceDetail = Omit<Workspace, "_count"> & {
+  members: WorkspaceMember[];
+};

@@ -45,3 +45,8 @@ export const projectKeys = {
     sectionId: string;
   }) => ["projects", projectId, "sections", sectionId] as const,
 };
+
+export const workspaceKeys = {
+  all: ["workspaces"] as const,
+  detail: (id: string) => ["workspaces", id] as const,
+};

@@ -11,13 +11,7 @@ import type { Prisma } from "@prisma/client";
 export const sectionRouter = Router({ mergeParams: true });
 
 sectionRouter.post("/", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   const projectId = Array.isArray(req.params.id)
     ? req.params.id[0]
@@ -81,13 +75,7 @@ sectionRouter.post("/", requireLogin, async (req, res) => {
 });
 
 sectionRouter.get("/", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   const projectId = Array.isArray(req.params.id)
     ? req.params.id[0]
@@ -121,13 +109,7 @@ sectionRouter.get("/", requireLogin, async (req, res) => {
 });
 
 sectionRouter.get("/:sectionId", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   const projectId = Array.isArray(req.params.id)
     ? req.params.id[0]
@@ -166,13 +148,7 @@ sectionRouter.get("/:sectionId", requireLogin, async (req, res) => {
 });
 
 sectionRouter.patch("/:sectionId", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   const projectId = Array.isArray(req.params.id)
     ? req.params.id[0]
@@ -236,13 +212,7 @@ sectionRouter.patch("/:sectionId", requireLogin, async (req, res) => {
 });
 
 sectionRouter.delete("/:sectionId", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   const projectId = Array.isArray(req.params.id)
     ? req.params.id[0]

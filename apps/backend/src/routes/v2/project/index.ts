@@ -13,12 +13,7 @@ import { id } from "zod/v4/locales";
 export const projectRouter = Router();
 
 projectRouter.get("/personal", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   const querySchema = z.object({
     search: z.string(),
@@ -62,12 +57,7 @@ projectRouter.get("/personal", requireLogin, async (req, res) => {
 });
 
 projectRouter.get("/", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   try {
     const projects = await prisma.project.findMany({
@@ -90,12 +80,7 @@ projectRouter.get("/", requireLogin, async (req, res) => {
 });
 
 projectRouter.get("/inbox", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   try {
     const inbox = await prisma.project.findFirst({
@@ -120,12 +105,7 @@ projectRouter.get("/inbox", requireLogin, async (req, res) => {
 });
 
 projectRouter.post("/", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   const { data, success, error } = CreateProjectSchema.safeParse(req.body);
 
@@ -185,12 +165,7 @@ projectRouter.post("/", requireLogin, async (req, res) => {
 });
 
 projectRouter.get("/:id", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   const idParam = Array.isArray(req.params.id)
     ? req.params.id[0]
@@ -224,12 +199,7 @@ projectRouter.get("/:id", requireLogin, async (req, res) => {
 });
 
 projectRouter.put("/:id", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   const idParam = Array.isArray(req.params.id)
     ? req.params.id[0]
@@ -276,12 +246,7 @@ projectRouter.put("/:id", requireLogin, async (req, res) => {
 });
 
 projectRouter.delete("/:id", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   const idParam = Array.isArray(req.params.id)
     ? req.params.id[0]

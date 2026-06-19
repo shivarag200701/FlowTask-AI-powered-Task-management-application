@@ -5,28 +5,23 @@ import {
   type Dispatch,
   type SetStateAction,
 } from "react";
-import { Button } from "../ui/button";
-import { Kbd } from "../ui/kbd";
-import { useHotkeys } from "react-hotkeys-hook";
-import { Modal } from "../ui/modal";
+import { Button } from "@/components/ui/button";
+import { Modal } from "@/components/ui/modal";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { Input } from "../ui/input";
-import { useCreateProject } from "@/hooks/use-projects";
+import { Input } from "@/components/ui/input";
+import { useCreateWorkspace } from "@/hooks/use-workspaces";
+import { Plus } from "lucide-react";
 
 type FormValues = {
   name: string;
 };
 
-export function AddProjectModal({
+export function AddWorkspaceModal({
   show,
   setShow,
-  personal,
-  workspaceId,
 }: {
   show: boolean;
   setShow: Dispatch<SetStateAction<boolean>>;
-  personal?: boolean;
-  workspaceId?: string;
 }) {
   const {
     register,
@@ -38,11 +33,11 @@ export function AddProjectModal({
     },
   });
 
-  const { mutateAsync: createProject } = useCreateProject();
+  const { mutateAsync: createWorkspace } = useCreateWorkspace();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    await createProject(
-      { name: data.name, personal, workspaceId },
+    await createWorkspace(
+      { name: data.name },
       {
         onSuccess: () => {
           setShow(false);
@@ -56,9 +51,9 @@ export function AddProjectModal({
       <div className="flex flex-col items-center justify-center space-y-4 border-b border-border">
         <div className="flex flex-col space-y-1 items-center justify-center px-4 py-8 sm:px-16 sm:py-8 w-full">
           <img src="/logo.png" className="size-15" />
-          <h3 className="font-medium text-lg">Create Project</h3>
+          <h3 className="font-medium text-lg">Create Workspace</h3>
           <p className="text-neutral-500 text-sm text-center">
-            Keep your tasks organized under one project
+            Create a workspace to collaborate with your team
           </p>
         </div>
       </div>
@@ -68,18 +63,18 @@ export function AddProjectModal({
           className="flex flex-col space-y-6 w-full"
         >
           <div className="flex flex-col space-y-2">
-            <p className="text-sm font-medium">Project name</p>
+            <p className="text-sm font-medium">Workspace name</p>
             <Input
               autoFocus
-              placeholder="Project name"
-              {...register("name", { required: "Project name is required" })}
+              placeholder="Workspace name"
+              {...register("name", { required: "Workspace name is required" })}
             />
           </div>
           <Button
-            Initial="Create Project"
+            Initial="Create Workspace"
             disabled={!isDirty || !isValid}
             isSubmitting={isSubmitting}
-            Loading="Create Project"
+            Loading="Create Workspace"
           />
         </form>
       </div>
@@ -87,56 +82,41 @@ export function AddProjectModal({
   );
 }
 
-export function CreateProjectButton({
+function CreateWorkspaceButton({
   setShow,
 }: {
   setShow: Dispatch<SetStateAction<boolean>>;
 }) {
-  useHotkeys("c", () => {
-    setShow(true);
-  });
   return (
     <Button
-      className="w-fit"
+      className="w-fit gap-1.5"
       onClick={() => {
         setShow(true);
       }}
     >
-      Create Project
-      <Kbd>C</Kbd>
+      <Plus className="size-4" />
+      Create Workspace
     </Button>
   );
 }
 
-export function useAddProjectModal({
-  personal,
-  workspaceId,
-}: {
-  personal?: boolean;
-  workspaceId?: string;
-}) {
+export function useAddWorkspaceModal() {
   const [show, setShow] = useState(false);
 
-  const CreateProjectButtonCallback = useCallback(
-    () => <CreateProjectButton setShow={setShow} />,
+  const CreateWorkspaceButtonCallback = useCallback(
+    () => <CreateWorkspaceButton setShow={setShow} />,
     [setShow]
   );
 
-  const AddProjectModalCallback = useCallback(() => {
-    return (
-      <AddProjectModal
-        show={show}
-        setShow={setShow}
-        personal={personal}
-        workspaceId={workspaceId}
-      />
-    );
+  const AddWorkspaceModalCallback = useCallback(() => {
+    return <AddWorkspaceModal show={show} setShow={setShow} />;
   }, [show, setShow]);
+
   return useMemo(
     () => ({
-      CreateProjectButton: CreateProjectButtonCallback,
-      AddProjectModal: AddProjectModalCallback,
+      CreateWorkspaceButton: CreateWorkspaceButtonCallback,
+      AddWorkspaceModal: AddWorkspaceModalCallback,
     }),
-    [setShow, CreateProjectButtonCallback, AddProjectModalCallback]
+    [setShow, CreateWorkspaceButtonCallback, AddWorkspaceModalCallback]
   );
 }

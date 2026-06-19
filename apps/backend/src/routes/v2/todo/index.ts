@@ -19,7 +19,7 @@ const todoRouter = Router();
 todoRouter.use("/bulk", bulkTodoRouter);
 
 todoRouter.get("/", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
+  const userId = req.userId;
 
   const { data, success, error } = todoQuerySchema.safeParse(req.query);
 
@@ -33,12 +33,6 @@ todoRouter.get("/", requireLogin, async (req, res) => {
   const { tagIds, completed } = data;
 
   const tagIdArray = tagIds?.split(",");
-
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
   try {
     const rawTodos = await prisma.todo.findMany({
       where: {
@@ -89,12 +83,7 @@ todoRouter.get("/", requireLogin, async (req, res) => {
 });
 
 todoRouter.post("/", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   const { data, success, error } = CreateTodoSchema.safeParse(req.body);
   if (!success) {
@@ -202,10 +191,7 @@ todoRouter.post("/", requireLogin, async (req, res) => {
 });
 
 todoRouter.get("/search", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-  if (!userId) {
-    return res.status(401).json({ msg: "unauthorized" });
-  }
+  const userId = req.userId;
 
   const query = req.query.q;
   if (typeof query !== "string" || !query.trim()) {
@@ -225,10 +211,7 @@ todoRouter.get("/search", requireLogin, async (req, res) => {
 });
 
 todoRouter.post("/search/reindex", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-  if (!userId) {
-    return res.status(401).json({ msg: "unauthorized" });
-  }
+  const userId = req.userId;
 
   try {
     const result = await searchService.reindexUser(userId);
@@ -245,12 +228,7 @@ todoRouter.post("/search/reindex", requireLogin, async (req, res) => {
 
 //fix string id for todo
 todoRouter.patch("/:id", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   const idParam = Array.isArray(req.params.id)
     ? req.params.id[0]
@@ -382,12 +360,7 @@ todoRouter.patch("/:id", requireLogin, async (req, res) => {
 });
 
 todoRouter.delete("/:id", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   const idParam = Array.isArray(req.params.id)
     ? req.params.id[0]

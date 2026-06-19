@@ -8,3 +8,11 @@ declare module "express-session" {
     email: string | null;
   }
 }
+
+declare global {
+  namespace Express {
+    interface Request {
+      userId: string;
+    }
+  }
+}

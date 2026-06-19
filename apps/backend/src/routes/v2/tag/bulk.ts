@@ -7,13 +7,7 @@ import { searchService } from "../../../services/search/index.js";
 const bulkTagRouter = Router();
 
 bulkTagRouter.delete("/", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   const { success, data, error } = TagBulkDeleteSchema.safeParse(req.query);
 

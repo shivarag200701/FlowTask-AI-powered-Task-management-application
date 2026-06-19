@@ -10,7 +10,8 @@ export function requireLogin(
   next: NextFunction
 ): Response<any, Record<string, any>> | void {
   if (req.session?.userId) {
-    triggerSearchIndexIfNeeded(req.session.userId);
+    req.userId = req.session.userId;
+    triggerSearchIndexIfNeeded(req.userId);
     next();
   } else {
     return res.status(401).json({

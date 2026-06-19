@@ -1,7 +1,7 @@
 model Workspace{
     id              String             @id  @default(cuid())
     name            String
-    slug            String             @unique
+    slug            String?             @unique
     icon            String?
     createdBy       String
     creator         User               @relation("CreatedWorkspaces",fields: [createdBy], references: [id])

@@ -8,13 +8,7 @@ import { searchService } from "../../../services/search/index.js";
 export const bulkTodoRouter = Router();
 
 bulkTodoRouter.delete("/", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   const { success, data, error } = TodoBulkDeleteSchema.safeParse(req.query);
 
@@ -63,13 +57,7 @@ bulkTodoRouter.delete("/", requireLogin, async (req, res) => {
 });
 
 bulkTodoRouter.patch("/", requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-
-  if (!userId) {
-    return res.status(401).json({
-      msg: "unauthorized",
-    });
-  }
+  const userId = req.userId;
 
   const BulkPatchSchema = UpdateTodoSchema.omit({
     color: true,
