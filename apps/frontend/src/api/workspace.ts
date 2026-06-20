@@ -37,15 +37,14 @@ export async function inviteWorkspaceCode(
   inviteCode: string
 ): Promise<Extract<InviteResult, { success: true }>> {
   try {
-    await new Promise((r) => setTimeout(r, 5000));
     const res = await api.post("/api/v2/workspaces/invite/code/accept", {
       inviteCode,
     });
-    return { success: true, msg: res.data.msg };
+    return { success: true, msg: res.data.msg, slug: res.data.workspaceSlug };
   } catch (error) {
     if (isAxiosError(error) && error.response) {
-      const { code, workspaceId } = error.response.data;
-      throw { success: false, code, workspaceId };
+      const { code, workspaceSlug } = error.response.data;
+      throw { success: false, code, slug: workspaceSlug };
     }
 
     throw { success: false, code: "UNKNOWN", msg: "Something went wrong" };

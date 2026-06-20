@@ -107,62 +107,59 @@ workspaceRouter.get("/", requireLogin, async (req, res) => {
   }
 });
 
-workspaceRouter.post(
-  "/invite/code/accept",
-  requireLogin,
-  async (req, res) => {
-    const userId = req.userId;
+workspaceRouter.post("/invite/code/accept", requireLogin, async (req, res) => {
+  const userId = req.userId;
 
-    const { success, data, error } = JoinWorkspaceSchema.safeParse(req.body);
-    if (!success) {
-      return res.status(400).json({
-        msg: "Send proper data",
-        error,
-      });
-    }
-
-    const { inviteCode } = data;
-
-    const workspace = await prisma.workspace.findUnique({
-      where: { inviteCode },
-      include: {
-        members: {
-          where: {
-            userId,
-          },
-        },
-      },
-    });
-
-    if (!workspace) {
-      return res.status(404).json({
-        code: INVITE_ERROR_CODES.INVALID_ERROR_CODE,
-        msg: "The invite link you are trying to use is invalid. Please contact the workspace owner for more information.",
-      });
-    }
-
-    if (workspace.members.length > 0) {
-      return res.status(409).json({
-        code: INVITE_ERROR_CODES.ALREADY_MEMBER,
-        msg: "You're already a member",
-        workspaceId: workspace.id,
-      });
-    }
-
-    //add a check in the future to check the limit of the number of users
-
-    await prisma.workspaceMember.create({
-      data: {
-        userId,
-        workspaceId: workspace.id,
-      },
-    });
-
-    return res.status(200).json({
-      msg: "sucessfully joined the workspace",
+  const { success, data, error } = JoinWorkspaceSchema.safeParse(req.body);
+  if (!success) {
+    return res.status(400).json({
+      msg: "Send proper data",
+      error,
     });
   }
-);
+
+  const { inviteCode } = data;
+
+  const workspace = await prisma.workspace.findUnique({
+    where: { inviteCode },
+    include: {
+      members: {
+        where: {
+          userId,
+        },
+      },
+    },
+  });
+
+  if (!workspace) {
+    return res.status(404).json({
+      code: INVITE_ERROR_CODES.INVALID_ERROR_CODE,
+      msg: "The invite link you are trying to use is invalid. Please contact the workspace owner for more information.",
+    });
+  }
+
+  if (workspace.members.length > 0) {
+    return res.status(409).json({
+      code: INVITE_ERROR_CODES.ALREADY_MEMBER,
+      msg: "You're already a member",
+      workspaceSlug: workspace.slug,
+    });
+  }
+
+  //add a check in the future to check the limit of the number of users
+
+  await prisma.workspaceMember.create({
+    data: {
+      userId,
+      workspaceId: workspace.id,
+    },
+  });
+
+  return res.status(200).json({
+    msg: "sucessfully joined the workspace",
+    workspaceSlug: workspace.slug,
+  });
+});
 
 workspaceRouter.get("/:id", requireLogin, async (req, res) => {
   const userId = req.userId;

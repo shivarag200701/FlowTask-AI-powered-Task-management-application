@@ -158,11 +158,11 @@ export type WorkspaceDetail = Omit<Workspace, "_count"> & {
 };
 
 export type InviteResult =
-  | { success: true; msg: string }
+  | { success: true; msg: string; slug: string }
   | {
       success: false;
       code: InviteErrorCode;
-      workspaceId?: string;
+      slug?: string;
     };
 
 export const INVITE_ERROR_MESSAGES = {

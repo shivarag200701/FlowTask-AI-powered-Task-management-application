@@ -37,3 +37,17 @@ inviteRouter.post("/code/reset", requireLogin, async (req, res) => {
     });
   }
 });
+
+inviteRouter.post("/email/send", requireLogin, async (req, res) => {
+  const userId = req.userId;
+
+  const workspaceId = Array.isArray(req.params.id)
+    ? req.params.id[0]
+    : req.params.id;
+
+  if (!workspaceId) {
+    return res.status(400).json({
+      msg: "No workspace id found in path",
+    });
+  }
+});
