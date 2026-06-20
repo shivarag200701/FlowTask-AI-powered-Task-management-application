@@ -2,9 +2,11 @@ import {
   GetTagsQuerySchema,
   todoQuerySchema,
   type CreateTodo,
+  type InviteErrorCode,
   type RecurrenceRule,
   type ResourceColorsEnum,
 } from "@shiva200701/todotypes";
+import { CircleAlert, Unlink, UserRoundCheck, Users } from "lucide-react";
 import type { DateTime } from "luxon";
 import type z from "zod";
 
@@ -127,7 +129,7 @@ export type Workspace = {
   createdAt: string;
   createdBy: string;
   icon: string | null;
-  inviteCode: string | null;
+  inviteCode: string;
   name: string;
   slug: string;
   updatedAt: string;
@@ -154,3 +156,43 @@ export type WorkspaceMember = {
 export type WorkspaceDetail = Omit<Workspace, "_count"> & {
   members: WorkspaceMember[];
 };
+
+export type InviteWorkspacePreview = {
+  name: string;
+  icon: string | null;
+  id: string;
+  memberCount: number;
+};
+
+export type InviteResult =
+  | { success: true; msg: string; workspace: InviteWorkspacePreview }
+  | {
+      success: false;
+      code: InviteErrorCode;
+      workspaceId?: string;
+      workspace?: InviteWorkspacePreview;
+    };
+
+export const INVITE_ERROR_MESSAGES = {
+  ALREADY_MEMBER: {
+    title: "You're already a member",
+    description: "You're already part of this workspace.",
+    icon: UserRoundCheck,
+  },
+  INVALID_ERROR_CODE: {
+    title: "Invalid Invite Link",
+    description:
+      "The invite link you are trying to use is invalid. Please contact the workspace owner for more information.",
+    icon: Unlink,
+  },
+  USER_LIMIT_REACHED: {
+    title: "Workspace is full",
+    description: "This workspace has reached its member limit.",
+    icon: Users,
+  },
+  UNKNOWN: {
+    title: "Something went wrong",
+    description: "Please try again later.",
+    icon: CircleAlert,
+  },
+} as const;

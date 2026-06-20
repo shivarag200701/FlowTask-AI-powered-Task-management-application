@@ -127,7 +127,7 @@ const SignUpForm = () => {
                 />
               </div>
             </form>
-            <div className="text-center text-muted-foreground mt-4 font-light">
+            <div className="text-center text-muted-foreground mt-4 text-sm font-light">
               Already have an account?{" "}
               <button
                 onClick={() => {

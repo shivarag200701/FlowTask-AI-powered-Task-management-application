@@ -1,5 +1,11 @@
-import { createWorkspace, getWorkspace, getWorkspaces } from "@/api/workspace";
+import {
+  createWorkspace,
+  getWorkspace,
+  getWorkspaces,
+  inviteWorkspaceCode,
+} from "@/api/workspace";
 import { workspaceKeys } from "@/query-keys";
+import type { InviteResult } from "@/types";
 import type { CreateWorkspace } from "@shiva200701/todotypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
@@ -39,5 +45,15 @@ export function useCreateWorkspace() {
       }
       toast.error("Something went wrong");
     },
+  });
+}
+
+export function useInviteWorkspaceCode() {
+  return useMutation<
+    Extract<InviteResult, { success: true }>,
+    Extract<InviteResult, { success: false }>,
+    string
+  >({
+    mutationFn: (inviteCode: string) => inviteWorkspaceCode(inviteCode),
   });
 }

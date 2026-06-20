@@ -2,7 +2,7 @@ import { LoaderIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
+export function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
   return (
     <LoaderIcon
       role="status"
@@ -13,9 +13,9 @@ function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
   );
 }
 
-export function SpinnerCustom() {
+export function SpinnerCustom({ className }: { className?: string }) {
   return (
-    <div className="flex items-center gap-4">
+    <div className={cn("flex items-center gap-4", className)}>
       <Spinner />
     </div>
   );

@@ -1,7 +1,6 @@
 import { isAxiosError } from "axios";
 import { useEffect, useRef } from "react";
 import InputBox from "@/features/_legacy/InputBox";
-import { ArrowLeft } from "lucide-react";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -9,13 +8,10 @@ import api from "@/utils/functions/api";
 import { Auth, type AuthMethod } from "@/context/AuthContext";
 import { GoogleSignInButton } from "@/features/_legacy/GoogleSignInButton";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { cn } from "@/lib/utils";
-import { Grid } from "@/components/ui/grid";
-import LogoCard from "@/features/_legacy/LogoCard";
 import { motion } from "motion/react";
 import { toast } from "sonner";
-import { Gradient } from "@/pages/onboarding/pages/Welcome";
 import { Button } from "@/components/ui/button";
+import AuthLayout from "@/layouts/AuthLayout";
 
 type Inputs = {
   username: string;
@@ -77,35 +73,7 @@ const SignInForm = () => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-white text-white flex flex-col items-center justify-center px-4">
-      <div
-        className={cn(
-          "absolute inset-y-0 left-1/2 w-full -translate-x-1/2",
-          "mask-intersect mask-[linear-gradient(black,transparent_1000px),linear-gradient(90deg,transparent,black_5%,black_100%,transparent)]"
-        )}
-      >
-        <Grid
-          cellSize={60}
-          patternOffset={[0.75, 0]}
-          className="text-neutral-200"
-        />
-      </div>
-      <button
-        onClick={() => {
-          navigate("/");
-        }}
-        className="text-slate-600 hidden lg:block hover:text-slate-900 absolute top-10 left-10 gap-2 px-4 py-3 rounded-xl border border-slate-200/50 hover:border-slate-300/50 shadow-sm backdrop-blur-2xl cursor-pointer bg-white/10 hover:bg-white hover:shadow-md"
-      >
-        <div className="flex items-center justify-center gap-2">
-          <ArrowLeft className="w-4 h-4" />
-          <p className="font-medium">Back to home</p>
-        </div>
-      </button>
-      <div className="grow max-h-50 sm:max-h-75  pt-6 sm:pt-10 relative">
-        <Gradient className="opacity-5 mix-blend-overlay" />
-        <LogoCard className="z-10" />
-        <Gradient className="opacity-10 mix-blend-hard-light" />
-      </div>
+    <AuthLayout showBackButton>
       <div className="relative z-10 w-full max-w-lg grow">
         <motion.div
           initial={{ opacity: 0 }}
@@ -197,7 +165,7 @@ const SignInForm = () => {
           </div>
         </motion.div>
       </div>
-    </div>
+    </AuthLayout>
   );
 };
 

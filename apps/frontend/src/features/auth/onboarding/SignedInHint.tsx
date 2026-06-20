@@ -30,7 +30,7 @@ const SignedInHint = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 m-5 z-40 flex flex-col items-start gap-2">
+    <div className="fixed bottom-0 left-0 m-5 z-40 flex flex-col items-start gap-2 text-black">
       <div className="flex items-center gap-1 text-xs">
         You're signed in as
         <span className="font-bold">{email}</span>

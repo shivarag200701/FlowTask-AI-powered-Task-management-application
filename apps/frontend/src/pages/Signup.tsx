@@ -1,13 +1,8 @@
 import { SignupProvider, useSignupContext } from "@/context/SingupContext";
 import SignUpForm from "@/features/auth/signup/SignUpForm";
-import LogoCard from "@/features/_legacy/LogoCard";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
 import VerfiyForm from "@/features/auth/signup/VerfiyForm";
-import { Grid } from "@/components/ui/grid";
-import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
-import { Gradient } from "@/pages/onboarding/pages/Welcome";
+import AuthLayout from "@/layouts/AuthLayout";
 
 const Signup = () => {
   return (
@@ -47,43 +42,12 @@ const Verify = () => {
 };
 
 const SignupFlow = () => {
-  const navigate = useNavigate();
   const { step } = useSignupContext();
   return (
-    <>
-      <div className="relative min-h-screen overflow-x-hidden bg-white text-white flex flex-col items-center justify-center px-4">
-        <div
-          className={cn(
-            "absolute inset-y-0 left-1/2 w-full -translate-x-1/2",
-            "mask-intersect mask-[linear-gradient(black,transparent_1000px),linear-gradient(90deg,transparent,black_5%,black_100%,transparent)]"
-          )}
-        >
-          <Grid
-            cellSize={60}
-            patternOffset={[0.75, 0]}
-            className="text-neutral-200"
-          />
-        </div>
-        <button
-          onClick={() => {
-            navigate("/");
-          }}
-          className="text-slate-600  hidden lg:block hover:text-slate-900  absolute z-10 top-10 left-10 gap-2 px-4 py-3 rounded-xl border border-slate-200/50 hover:border-slate-300/50 shadow-sm backdrop-blur-2xl cursor-pointer bg-white/10 hover:bg-white hover:shadow-md"
-        >
-          <div className="flex items-center justify-center gap-2">
-            <ArrowLeft className="w-4 h-4" />
-            <p className="font-medium">Back to home</p>
-          </div>
-        </button>
-        <div className="grow max-h-50 sm:max-h-75 pt-10 relative">
-          <Gradient className="opacity-5 mix-blend-overlay" />
-          <LogoCard className="z-10" />
-          <Gradient className="opacity-10 mix-blend-hard-light" />
-        </div>
-        {step === "signup" && <SignUpForm />}
-        {step === "verify" && <Verify />}
-      </div>
-    </>
+    <AuthLayout showBackButton>
+      {step === "signup" && <SignUpForm />}
+      {step === "verify" && <Verify />}
+    </AuthLayout>
   );
 };
 

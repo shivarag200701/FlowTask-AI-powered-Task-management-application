@@ -13,8 +13,8 @@ import PageWidthWrapper from "@/layouts/PageWidthWrapper";
 import { useWorkspace } from "@/hooks/use-workspaces";
 import { useUserProfile } from "@/hooks/use-users";
 import { extractIdFromSlug } from "@shiva200701/todotypes";
-import { Copy, Crown } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Crown } from "lucide-react";
+import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useInviteMemberModal } from "@/components/modals/InviteMemberModal";
@@ -35,17 +35,9 @@ function WorkspaceDetailView({ id }: { id: string }) {
   const { data: userProfile } = useUserProfile();
   const navigate = useNavigate();
   const { InviteMemberButton, InviteMemberModal } = useInviteMemberModal();
-  const { CopyInviteLinkButton, CopyInviteLinkModal } =
-    useCopyInviteLinkModal();
-  const [copiedInvite, setCopiedInvite] = useState(false);
-
-  const handleCopyInvite = () => {
-    if (workspace?.inviteCode) {
-      navigator.clipboard.writeText(workspace.inviteCode);
-      setCopiedInvite(true);
-      setTimeout(() => setCopiedInvite(false), 2000);
-    }
-  };
+  const { CopyInviteLinkButton, CopyInviteLinkModal } = useCopyInviteLinkModal({
+    inviteCode: workspace?.inviteCode,
+  });
 
   if (isLoading) {
     return <WorkspaceDetailSkeleton />;

@@ -13,9 +13,11 @@ import { CopyButton } from "../ui/copy-button";
 export function CopyInviteLinkModal({
   show,
   setShow,
+  inviteCode,
 }: {
   show: boolean;
   setShow: Dispatch<SetStateAction<boolean>>;
+  inviteCode?: string;
 }) {
   return (
     <Modal showModal={show} setShowModal={setShow}>
@@ -28,7 +30,9 @@ export function CopyInviteLinkModal({
         </div>
       </div>
       <div className="bg-accent/50 flex flex-col gap-y-4 p-2 sm:px-4 items-center justify-center">
-        <CopyButton value="https://app.dub.co/invites/qx5FULgZIsM6zcHcGoDE5vox" />
+        <CopyButton
+          value={`${import.meta.env.VITE_APP_DOMAIN}/app/invites/${inviteCode}`}
+        />
         <Button
           Initial="Reset invite link"
           variant="outline"
@@ -58,7 +62,11 @@ function CopyInviteLinkButton({
   );
 }
 
-export function useCopyInviteLinkModal() {
+export function useCopyInviteLinkModal({
+  inviteCode,
+}: {
+  inviteCode?: string;
+}) {
   const [show, setShow] = useState(false);
 
   const CopyInviteButtonCallback = useCallback(
@@ -67,7 +75,13 @@ export function useCopyInviteLinkModal() {
   );
 
   const CopyInviteModalCallback = useCallback(() => {
-    return <CopyInviteLinkModal show={show} setShow={setShow} />;
+    return (
+      <CopyInviteLinkModal
+        show={show}
+        setShow={setShow}
+        inviteCode={inviteCode}
+      />
+    );
   }, [show, setShow]);
 
   return useMemo(

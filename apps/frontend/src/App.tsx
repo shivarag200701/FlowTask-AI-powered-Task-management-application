@@ -32,6 +32,7 @@ import Workspaces from "./pages/Workspaces";
 import Projects from "./pages/Projects";
 import WorkspaceDetail from "./pages/WorkspaceDetail";
 import Inbox from "./pages/Inbox";
+import Invite from "./pages/Invite";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,7 @@ function AppRoutes() {
             path="/onboarding/completed"
             element={<OnboardingCompleted />}
           />
+          <Route path="app/invites/:inviteCode" element={<Invite />} />
           <Route element={<AppLayout />}>
             <Route
               path="/app/today"

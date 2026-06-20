@@ -1,8 +1,8 @@
-import Onboarding from "@/features/auth/onboarding/Onboarding";
-import { cn } from "@/lib/utils";
 import Wordmark from "@/components/ui/wordmark";
+import { Gradient } from "@/components/ui/gradient";
 import { motion } from "motion/react";
 import NextButton from "@/features/auth/onboarding/NextButton";
+import AuthLayout from "@/layouts/AuthLayout";
 
 export const container = {
   hidden: { opacity: 0 },
@@ -23,19 +23,25 @@ export const item = {
 
 const Welcome = () => {
   return (
-    <Onboarding>
+    <AuthLayout
+      gridCellSize={10}
+      showLogoHalo={false}
+      showSignedInHint
+      logoSlot={
+        <div className="relative w-auto flex items-center justify-center">
+          <Gradient className="opacity-25 size-[250px]" />
+          <Wordmark className="relative z-20" variants={item} />
+          <Gradient className="opacity-10  mix-blend-hard-light size-[250px]" />
+        </div>
+      }
+    >
       <motion.div
-        className="min-h-screen flex flex-col items-center justify-center"
+        className="flex flex-col items-center justify-center"
         variants={container}
         initial="hidden"
         animate="show"
       >
         <div className="flex flex-col items-center px-4 py-16 max-w-sm">
-          <div className="relative w-auto flex items-center justify-center">
-            <Gradient className="opacity-25 size-[250px]" />
-            <Wordmark className="relative z-20" variants={item} />
-            <Gradient className="opacity-10  mix-blend-hard-light size-[250px]" />
-          </div>
           <motion.h1
             className="text-xl text-center font-semibold z-20 relative mt-20 text-black"
             variants={item}
@@ -54,28 +60,8 @@ const Welcome = () => {
           </motion.div>
         </div>
       </motion.div>
-    </Onboarding>
+    </AuthLayout>
   );
 };
-
-export function Gradient({ className }: { className?: string }) {
-  return (
-    <div
-      className={cn(
-        "absolute inset-y-0 left-1/2 aspect-square -translate-x-1/2 -translate-y-20",
-        className
-      )}
-    >
-      <div className="-scale-x-[1.8] blur-2xl size-full">
-        <div
-          className={cn(
-            "size-full -rotate-90 saturate-[3]",
-            "bg-[conic-gradient(from_279deg,#EAB308_47deg,#F00_121deg,#00FFF9_190deg,#855AFC_251deg,#3A8BFD_267deg,#A3ECB3_314deg,#EAB308_360deg)]"
-          )}
-        />
-      </div>
-    </div>
-  );
-}
 
 export default Welcome;

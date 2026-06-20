@@ -6,7 +6,7 @@ model Workspace{
     createdBy       String
     creator         User               @relation("CreatedWorkspaces",fields: [createdBy], references: [id])
 
-    inviteCode      String?
+    inviteCode      String              @unique
 
     projects        Project[]
     members         WorkspaceMember[]
