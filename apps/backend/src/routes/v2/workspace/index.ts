@@ -8,6 +8,7 @@ import {
   JoinWorkspaceSchema,
 } from "@shiva200701/todotypes";
 import { nanoid } from "../../../utils/nanoid.js";
+import inviteRouter from "./invite/index.js";
 
 export const workspaceRouter = Router();
 
@@ -106,73 +107,62 @@ workspaceRouter.get("/", requireLogin, async (req, res) => {
   }
 });
 
-workspaceRouter.post("/invite", requireLogin, async (req, res) => {
-  const userId = req.userId;
+workspaceRouter.post(
+  "/invite/code/accept",
+  requireLogin,
+  async (req, res) => {
+    const userId = req.userId;
 
-  const { success, data, error } = JoinWorkspaceSchema.safeParse(req.body);
-  if (!success) {
-    return res.status(400).json({
-      msg: "Send proper data",
-      error,
-    });
-  }
+    const { success, data, error } = JoinWorkspaceSchema.safeParse(req.body);
+    if (!success) {
+      return res.status(400).json({
+        msg: "Send proper data",
+        error,
+      });
+    }
 
-  const { inviteCode } = data;
+    const { inviteCode } = data;
 
-  const workspace = await prisma.workspace.findUnique({
-    where: { inviteCode },
-    include: {
-      members: {
-        where: {
-          userId,
+    const workspace = await prisma.workspace.findUnique({
+      where: { inviteCode },
+      include: {
+        members: {
+          where: {
+            userId,
+          },
         },
       },
-      _count: {
-        select: { members: true },
+    });
+
+    if (!workspace) {
+      return res.status(404).json({
+        code: INVITE_ERROR_CODES.INVALID_ERROR_CODE,
+        msg: "The invite link you are trying to use is invalid. Please contact the workspace owner for more information.",
+      });
+    }
+
+    if (workspace.members.length > 0) {
+      return res.status(409).json({
+        code: INVITE_ERROR_CODES.ALREADY_MEMBER,
+        msg: "You're already a member",
+        workspaceId: workspace.id,
+      });
+    }
+
+    //add a check in the future to check the limit of the number of users
+
+    await prisma.workspaceMember.create({
+      data: {
+        userId,
+        workspaceId: workspace.id,
       },
-    },
-  });
+    });
 
-  if (!workspace) {
-    return res.status(404).json({
-      code: INVITE_ERROR_CODES.INVALID_ERROR_CODE,
-      msg: "The invite link you are trying to use is invalid. Please contact the workspace owner for more information.",
+    return res.status(200).json({
+      msg: "sucessfully joined the workspace",
     });
   }
-
-  const workspacePreview = {
-    name: workspace.name,
-    icon: workspace.icon,
-    id: workspace.id,
-    memberCount: workspace._count.members,
-  };
-
-  if (workspace.members.length > 0) {
-    return res.status(409).json({
-      code: INVITE_ERROR_CODES.ALREADY_MEMBER,
-      msg: "You're already a member",
-      workspaceId: workspace.id,
-      workspace: workspacePreview,
-    });
-  }
-
-  //add a check in the future to check the limit of the number of users
-
-  await prisma.workspaceMember.create({
-    data: {
-      userId,
-      workspaceId: workspace.id,
-    },
-  });
-
-  return res.status(200).json({
-    msg: "Successfully joined the workspace",
-    workspace: {
-      ...workspacePreview,
-      memberCount: workspacePreview.memberCount + 1,
-    },
-  });
-});
+);
 
 workspaceRouter.get("/:id", requireLogin, async (req, res) => {
   const userId = req.userId;
@@ -218,3 +208,5 @@ workspaceRouter.get("/:id", requireLogin, async (req, res) => {
     });
   }
 });
+
+workspaceRouter.use("/:id/invite", inviteRouter);

@@ -3,6 +3,7 @@ import {
   getWorkspace,
   getWorkspaces,
   inviteWorkspaceCode,
+  resetInviteCode,
 } from "@/api/workspace";
 import { workspaceKeys } from "@/query-keys";
 import type { InviteResult } from "@/types";
@@ -55,5 +56,25 @@ export function useInviteWorkspaceCode() {
     string
   >({
     mutationFn: (inviteCode: string) => inviteWorkspaceCode(inviteCode),
+  });
+}
+
+export function useInviteCodeReset({ workspaceId }: { workspaceId: string }) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => resetInviteCode({ workspaceId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: workspaceKeys.detail(workspaceId),
+      });
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        const errorMsg = error.response?.data.msg;
+        toast.error(errorMsg);
+        return;
+      }
+      toast.error("Something went wrong");
+    },
   });
 }

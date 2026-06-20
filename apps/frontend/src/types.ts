@@ -157,20 +157,12 @@ export type WorkspaceDetail = Omit<Workspace, "_count"> & {
   members: WorkspaceMember[];
 };
 
-export type InviteWorkspacePreview = {
-  name: string;
-  icon: string | null;
-  id: string;
-  memberCount: number;
-};
-
 export type InviteResult =
-  | { success: true; msg: string; workspace: InviteWorkspacePreview }
+  | { success: true; msg: string }
   | {
       success: false;
       code: InviteErrorCode;
       workspaceId?: string;
-      workspace?: InviteWorkspacePreview;
     };
 
 export const INVITE_ERROR_MESSAGES = {

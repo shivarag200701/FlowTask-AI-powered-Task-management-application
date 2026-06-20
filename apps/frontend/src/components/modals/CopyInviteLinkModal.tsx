@@ -9,16 +9,21 @@ import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { Link } from "lucide-react";
 import { CopyButton } from "../ui/copy-button";
+import { useInviteCodeReset } from "@/hooks/use-workspaces";
+import type { WorkspaceDetail } from "@/types";
 
 export function CopyInviteLinkModal({
   show,
   setShow,
-  inviteCode,
+  workspace,
 }: {
   show: boolean;
   setShow: Dispatch<SetStateAction<boolean>>;
-  inviteCode?: string;
+  workspace?: WorkspaceDetail;
 }) {
+  const { mutate, isPending } = useInviteCodeReset({
+    workspaceId: workspace?.id!,
+  });
   return (
     <Modal showModal={show} setShowModal={setShow}>
       <div className="flex flex-col items-center justify-center space-y-4 border-b border-border">
@@ -31,13 +36,18 @@ export function CopyInviteLinkModal({
       </div>
       <div className="bg-accent/50 flex flex-col gap-y-4 p-2 sm:px-4 items-center justify-center">
         <CopyButton
-          value={`${import.meta.env.VITE_APP_DOMAIN}/app/invites/${inviteCode}`}
+          value={`${import.meta.env.VITE_APP_DOMAIN}/app/invites/${workspace?.inviteCode}`}
         />
         <Button
           Initial="Reset invite link"
           variant="outline"
           size="lg"
           Loading="Reset invite link"
+          onClick={(e) => {
+            e.stopPropagation();
+            mutate();
+          }}
+          isSubmitting={isPending}
         />
       </div>
     </Modal>
@@ -63,9 +73,9 @@ function CopyInviteLinkButton({
 }
 
 export function useCopyInviteLinkModal({
-  inviteCode,
+  workspace,
 }: {
-  inviteCode?: string;
+  workspace?: WorkspaceDetail;
 }) {
   const [show, setShow] = useState(false);
 
@@ -79,10 +89,10 @@ export function useCopyInviteLinkModal({
       <CopyInviteLinkModal
         show={show}
         setShow={setShow}
-        inviteCode={inviteCode}
+        workspace={workspace}
       />
     );
-  }, [show, setShow]);
+  }, [show, setShow, workspace]);
 
   return useMemo(
     () => ({

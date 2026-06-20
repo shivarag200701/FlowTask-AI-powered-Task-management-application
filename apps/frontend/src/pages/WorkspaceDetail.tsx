@@ -36,7 +36,7 @@ function WorkspaceDetailView({ id }: { id: string }) {
   const navigate = useNavigate();
   const { InviteMemberButton, InviteMemberModal } = useInviteMemberModal();
   const { CopyInviteLinkButton, CopyInviteLinkModal } = useCopyInviteLinkModal({
-    inviteCode: workspace?.inviteCode,
+    workspace,
   });
 
   if (isLoading) {

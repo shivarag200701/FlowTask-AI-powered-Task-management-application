@@ -36,18 +36,26 @@ export async function createWorkspace(data: CreateWorkspace) {
 export async function inviteWorkspaceCode(
   inviteCode: string
 ): Promise<Extract<InviteResult, { success: true }>> {
-  await new Promise((r) => setTimeout(r, 5000));
   try {
-    const res = await api.post("/api/v2/workspaces/invite", {
+    await new Promise((r) => setTimeout(r, 5000));
+    const res = await api.post("/api/v2/workspaces/invite/code/accept", {
       inviteCode,
     });
-    return { success: true, msg: res.data.msg, workspace: res.data.workspace };
+    return { success: true, msg: res.data.msg };
   } catch (error) {
     if (isAxiosError(error) && error.response) {
-      const { code, workspaceId, workspace } = error.response.data;
-      throw { success: false, code, workspaceId, workspace };
+      const { code, workspaceId } = error.response.data;
+      throw { success: false, code, workspaceId };
     }
 
     throw { success: false, code: "UNKNOWN", msg: "Something went wrong" };
   }
+}
+
+export async function resetInviteCode({
+  workspaceId,
+}: {
+  workspaceId: string;
+}) {
+  await api.post(`/api/v2/workspaces/${workspaceId}/invite/code/reset`);
 }
