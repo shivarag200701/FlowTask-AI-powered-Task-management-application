@@ -6,7 +6,7 @@ export function createSlug(title, id) {
         .replace(/\s+/g, "-")
         .replace(/-+/g, "-")
         .replace(/^-|-$/g, "");
-    return `${slugTitle}-${id}`;
+    return id ? `${slugTitle}-${id}` : slugTitle;
 }
 export function extractIdFromSlug(slug) {
     const lastHyphenIndex = slug.lastIndexOf("-");

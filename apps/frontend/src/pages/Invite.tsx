@@ -5,7 +5,7 @@ import { useInviteWorkspaceCode } from "@/hooks/use-workspaces";
 import AuthLayout from "@/layouts/AuthLayout";
 import { INVITE_ERROR_MESSAGES } from "@/types";
 import { useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function Invite() {
   const { inviteCode } = useParams<{ inviteCode: string }>();

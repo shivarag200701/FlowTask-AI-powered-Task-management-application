@@ -1,5 +1,5 @@
 import InputBox from "@/features/_legacy/InputBox";
-import ProfileUpload from "@/features/auth/onboarding/ProfileUpload";
+import ImageUpload from "@/features/auth/onboarding/ImageUpload";
 import { motion } from "motion/react";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { Gradient } from "@/components/ui/gradient";
@@ -79,7 +79,7 @@ const UserProfile = () => {
                 control={control}
                 name="photo"
                 render={({ field }) => (
-                  <ProfileUpload onChange={field.onChange} />
+                  <ImageUpload onChange={field.onChange} />
                 )}
               />
               <div className="pt-3 text-center">

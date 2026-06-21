@@ -22,7 +22,7 @@ import { CalendarDays, History, Tag, X } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import TodayCalendarIcon from "../TodayCalendarIcon";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { createTodoSlug } from "@/utils/functions/slug";
+import { createSlug } from "@/utils/functions/slug";
 import { ScrollContainer } from "../ui/scroll-container";
 
 const navigationItems = [
@@ -115,7 +115,7 @@ function SearchModal({
                           onSelect={() => {
                             const todo = todos?.find((t) => t.id === result.id);
                             if (todo) {
-                              const slug = createTodoSlug(todo.title, todo.id);
+                              const slug = createSlug(todo.title, todo.id);
                               navigate(`/app/task/${slug}`, {
                                 state: {
                                   backgroundLocation: location,

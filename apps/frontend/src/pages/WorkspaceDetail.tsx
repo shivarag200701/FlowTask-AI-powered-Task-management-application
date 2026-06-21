@@ -12,9 +12,7 @@ import PageContentHeader from "@/layouts/PageContentHeader";
 import PageWidthWrapper from "@/layouts/PageWidthWrapper";
 import { useWorkspace } from "@/hooks/use-workspaces";
 import { useUserProfile } from "@/hooks/use-users";
-import { extractIdFromSlug } from "@shiva200701/todotypes";
 import { Crown } from "lucide-react";
-import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useInviteMemberModal } from "@/components/modals/InviteMemberModal";
@@ -23,11 +21,9 @@ import { useCopyInviteLinkModal } from "@/components/modals/CopyInviteLinkModal"
 export default function WorkspaceDetailPage() {
   const location = useLocation();
 
-  const id = useMemo(() => {
-    return extractIdFromSlug(location.pathname.split("/").at(-1) ?? "");
-  }, [location.pathname.split("/").at(-1)]);
+  const slug = location.pathname.split("/").at(-1) ?? "";
 
-  return <WorkspaceDetailView key={id} id={id} />;
+  return <WorkspaceDetailView key={slug} id={slug} />;
 }
 
 function WorkspaceDetailView({ id }: { id: string }) {

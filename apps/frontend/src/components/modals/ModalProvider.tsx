@@ -10,7 +10,7 @@ import { useDeleteModal } from "./DeleteModal";
 import { useAddEditTagModal } from "./AddEditTagModal";
 import { useSearchModal } from "./SearchModal";
 import type { TodoWithCompleteAtDateTime } from "@/types";
-import { createTodoSlug } from "@/utils/functions/slug";
+import { createSlug } from "@/utils/functions/slug";
 
 type ModalContext = {
   setShowDeleteTodoModal: Dispatch<SetStateAction<boolean>>;
@@ -35,7 +35,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
 
   const openTodoDetailModal = useCallback(
     (todo: TodoWithCompleteAtDateTime) => {
-      const slug = createTodoSlug(todo.title, todo.id);
+      const slug = createSlug(todo.title, todo.id);
       navigate(`/app/task/${slug}`, {
         state: { backgroundLocation: location },
       });

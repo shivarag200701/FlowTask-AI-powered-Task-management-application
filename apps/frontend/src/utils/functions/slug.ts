@@ -1,4 +1,4 @@
-export function createTodoSlug(title: string, id: string): string {
+export function createSlug(title: string, id?: string): string {
   const slugTitle = title
     .toLowerCase()
     .trim()
@@ -7,7 +7,7 @@ export function createTodoSlug(title: string, id: string): string {
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
 
-  return `${slugTitle}-${id}`;
+  return id ? `${slugTitle}-${id}` : slugTitle;
 }
 
 export function extractIdFromSlug(slug: string): string {

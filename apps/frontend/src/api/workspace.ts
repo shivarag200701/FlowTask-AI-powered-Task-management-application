@@ -58,3 +58,10 @@ export async function resetInviteCode({
 }) {
   await api.post(`/api/v2/workspaces/${workspaceId}/invite/code/reset`);
 }
+
+export async function checkWorkspaceSlug({ slug }: { slug: string }) {
+  const response = await api.get(
+    `/api/v2/workspaces/check-slug?slug=${encodeURIComponent(slug)}`
+  );
+  return response;
+}

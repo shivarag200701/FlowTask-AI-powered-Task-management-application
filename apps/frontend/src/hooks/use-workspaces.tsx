@@ -1,4 +1,5 @@
 import {
+  checkWorkspaceSlug,
   createWorkspace,
   getWorkspace,
   getWorkspaces,
@@ -9,7 +10,7 @@ import { workspaceKeys } from "@/query-keys";
 import type { InviteResult } from "@/types";
 import type { CreateWorkspace } from "@shiva200701/todotypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { isAxiosError } from "axios";
+import { AxiosError, isAxiosError, type AxiosResponse } from "axios";
 import { toast } from "sonner";
 
 export function useWorkspaces() {
@@ -76,5 +77,15 @@ export function useInviteCodeReset({ workspaceId }: { workspaceId: string }) {
       }
       toast.error("Something went wrong");
     },
+  });
+}
+
+export function useCheckWorkspaceSlug() {
+  return useMutation<
+    AxiosResponse,
+    AxiosError<{ msg: string }>,
+    { slug: string }
+  >({
+    mutationFn: ({ slug }: { slug: string }) => checkWorkspaceSlug({ slug }),
   });
 }

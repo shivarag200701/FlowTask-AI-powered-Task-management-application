@@ -24,7 +24,9 @@ workspaceRouter.post("/", requireLogin, async (req, res) => {
   }
 
   try {
-    const { name } = data;
+    const { name, slug } = data;
+    const finalSlug = createSlug(slug ?? name);
+
     //Create an invite code
     const workspace = await prisma.$transaction(async (tx) => {
       //check if the user already has a workspace, currently only one can create only one workspace
@@ -38,9 +40,18 @@ workspaceRouter.post("/", requireLogin, async (req, res) => {
         throw new Error("WORKSPACE_LIMIT");
       }
 
-      const newWorkspace = await tx.workspace.create({
+      const existingSlug = await tx.workspace.findUnique({
+        where: { slug: finalSlug },
+      });
+
+      if (existingSlug) {
+        throw new Error("SLUG_TAKEN");
+      }
+
+      return tx.workspace.create({
         data: {
           name,
+          slug: finalSlug,
           createdBy: userId,
           inviteCode: nanoid(24),
           members: {
@@ -49,15 +60,6 @@ workspaceRouter.post("/", requireLogin, async (req, res) => {
               role: "owner",
             },
           },
-        },
-      });
-
-      const slug = createSlug(name, newWorkspace.id);
-
-      return tx.workspace.update({
-        where: { id: newWorkspace.id },
-        data: {
-          slug,
         },
       });
     });
@@ -69,6 +71,11 @@ workspaceRouter.post("/", requireLogin, async (req, res) => {
     if (error instanceof Error && error.message === "WORKSPACE_LIMIT") {
       return res.status(409).json({
         msg: "You're not allowed to create more than one workspace",
+      });
+    }
+    if (error instanceof Error && error.message === "SLUG_TAKEN") {
+      return res.status(409).json({
+        msg: "This slug is already taken",
       });
     }
     console.error("error while creating workspace", error);
@@ -161,6 +168,40 @@ workspaceRouter.post("/invite/code/accept", requireLogin, async (req, res) => {
   });
 });
 
+workspaceRouter.get("/check-slug", requireLogin, async (req, res) => {
+  const userId = req.userId;
+
+  let slug = (req.query.slug as string) || "";
+
+  slug = createSlug(slug);
+  if (!slug) {
+    return res.status(400).json({
+      msg: "Slug not found in the query param",
+    });
+  }
+
+  try {
+    const existingSlug = await prisma.workspace.findUnique({
+      where: { slug },
+    });
+
+    if (existingSlug) {
+      return res.status(409).json({
+        msg: `The slug ${slug} is already in use`,
+      });
+    }
+
+    res.status(200).json({
+      msg: `Slug ${slug} available`,
+    });
+  } catch (error) {
+    console.error("unable to verify the slug", error);
+    return res.status(500).json({
+      msg: "Internal Server Error",
+    });
+  }
+});
+
 workspaceRouter.get("/:id", requireLogin, async (req, res) => {
   const userId = req.userId;
 
@@ -177,7 +218,7 @@ workspaceRouter.get("/:id", requireLogin, async (req, res) => {
   try {
     const workspace = await prisma.workspace.findFirst({
       where: {
-        id: workspaceId,
+        OR: [{ id: workspaceId }, { slug: workspaceId }],
         members: { some: { userId } },
       },
       include: {

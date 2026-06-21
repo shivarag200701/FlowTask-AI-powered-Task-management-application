@@ -1,6 +1,7 @@
 import z from "zod";
 export declare const CreateWorkspaceSchema: z.ZodObject<{
     name: z.ZodString;
+    slug: z.ZodString;
 }, z.core.$strip>;
 export declare const JoinWorkspaceSchema: z.ZodObject<{
     inviteCode: z.ZodString;
