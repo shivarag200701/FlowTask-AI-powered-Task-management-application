@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/collapsible";
 import { useWorkspaces } from "@/hooks/use-workspaces";
 import { useUserProfile } from "@/hooks/use-users";
+import { Avatar, AvatarImage } from "../ui/avatar";
 
 export function NavWorkspaces() {
   const navigate = useNavigate();
@@ -72,12 +73,26 @@ export function NavWorkspaces() {
                         navigate(`/app/workspaces/${workspace.slug}`)
                       }
                     >
-                      <span className="flex items-center gap-1.5">
-                        {workspace.name}
-                        {workspace.createdBy === userProfile?.id && (
-                          <Crown className="size-3 text-amber-500" />
-                        )}
-                      </span>
+                      <div className="flex gap-2">
+                        <Avatar className="h-6 w-6 rounded-full ring-2 ring-neutral-300">
+                          {
+                            <AvatarImage
+                              src={
+                                workspace.icon ||
+                                `https://avatar.vercel.sh/${workspace.id}`
+                              }
+                              alt={workspace?.name ?? "Workspace"}
+                              referrerPolicy="no-referrer"
+                            />
+                          }
+                        </Avatar>
+                        <span className="flex items-center gap-1.5">
+                          {workspace.name}
+                          {workspace.createdBy === userProfile?.id && (
+                            <Crown className="size-3 text-amber-500" />
+                          )}
+                        </span>
+                      </div>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))

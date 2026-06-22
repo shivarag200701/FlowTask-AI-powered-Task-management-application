@@ -8,7 +8,6 @@ import {
 } from "@/api/workspace";
 import { workspaceKeys } from "@/query-keys";
 import type { InviteResult } from "@/types";
-import type { CreateWorkspace } from "@shiva200701/todotypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError, isAxiosError, type AxiosResponse } from "axios";
 import { toast } from "sonner";
@@ -34,7 +33,7 @@ export function useWorkspace(id: string | null) {
 export function useCreateWorkspace() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateWorkspace) => createWorkspace(data),
+    mutationFn: (data: FormData) => createWorkspace(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
       toast.success("Workspace created successfully!");
@@ -60,13 +59,20 @@ export function useInviteWorkspaceCode() {
   });
 }
 
-export function useInviteCodeReset({ workspaceId }: { workspaceId: string }) {
+export function useInviteCodeReset({
+  workspaceId,
+  slug,
+}: {
+  workspaceId: string;
+  slug: string;
+}) {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: () => resetInviteCode({ workspaceId }),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: workspaceKeys.detail(workspaceId),
+        queryKey: workspaceKeys.detail(slug),
       });
     },
     onError: (error) => {

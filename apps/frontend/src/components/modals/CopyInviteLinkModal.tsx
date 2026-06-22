@@ -11,6 +11,8 @@ import { Link } from "lucide-react";
 import { CopyButton } from "../ui/copy-button";
 import { useInviteCodeReset } from "@/hooks/use-workspaces";
 import type { WorkspaceDetail } from "@/types";
+import { useUserProfile } from "@/hooks/use-users";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 export function CopyInviteLinkModal({
   show,
@@ -23,7 +25,18 @@ export function CopyInviteLinkModal({
 }) {
   const { mutate, isPending } = useInviteCodeReset({
     workspaceId: workspace?.id!,
+    slug: workspace?.slug!,
   });
+
+  const { data: userProfile } = useUserProfile();
+
+  const role = useMemo(() => {
+    const user = workspace?.members.find(
+      (member) => member.user.id === userProfile?.id
+    );
+    return user?.role;
+  }, [workspace, userProfile]);
+
   return (
     <Modal showModal={show} setShowModal={setShow}>
       <div className="flex flex-col items-center justify-center space-y-4 border-b border-border">
@@ -38,17 +51,32 @@ export function CopyInviteLinkModal({
         <CopyButton
           value={`${import.meta.env.VITE_APP_DOMAIN}/app/invites/${workspace?.inviteCode}`}
         />
-        <Button
-          Initial="Reset invite link"
-          variant="outline"
-          size="lg"
-          Loading="Reset invite link"
-          onClick={(e) => {
-            e.stopPropagation();
-            mutate();
-          }}
-          isSubmitting={isPending}
-        />
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              Initial="Reset invite link"
+              variant="outline"
+              size="lg"
+              Loading="Reset invite link"
+              onClick={(e) => {
+                e.stopPropagation();
+                mutate();
+              }}
+              disabled={role === "member"}
+              isSubmitting={isPending}
+            />
+          </TooltipTrigger>
+          <TooltipContent
+            side="bottom"
+            align="center"
+            sideOffset={5}
+            hidden={role === "owner"}
+          >
+            <span className="text-sm">
+              Only workspace owners can reset the invite link
+            </span>
+          </TooltipContent>
+        </Tooltip>
       </div>
     </Modal>
   );

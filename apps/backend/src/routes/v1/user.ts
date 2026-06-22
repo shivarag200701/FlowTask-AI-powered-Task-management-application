@@ -570,7 +570,6 @@ userRouter.post(
         imageURL = `${CDN_URL}${key}`;
       }
 
-      console.log("image URL", imageURL);
       // store the db first - think about whether we can use update here
       const user = await prisma.user.update({
         where: {

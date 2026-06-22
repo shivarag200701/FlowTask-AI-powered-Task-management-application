@@ -128,7 +128,7 @@ export type Workspace = {
   id: string;
   createdAt: string;
   createdBy: string;
-  icon: string | null;
+  icon?: string;
   inviteCode: string;
   name: string;
   slug: string;
@@ -142,7 +142,7 @@ export type Workspaces = Workspace[];
 
 export type WorkspaceMember = {
   id: string;
-  role: "owner" | "admin" | "member";
+  role: "owner" | "member";
   userId: string;
   workspaceId: string;
   user: {

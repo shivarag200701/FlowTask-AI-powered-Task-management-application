@@ -9,81 +9,121 @@ import {
 } from "@shiva200701/todotypes";
 import { nanoid } from "../../../utils/nanoid.js";
 import inviteRouter from "./invite/index.js";
+import multer from "multer";
+import { S3 } from "../../../services/s3/index.js";
 
 export const workspaceRouter = Router();
 
-workspaceRouter.post("/", requireLogin, async (req, res) => {
-  const userId = req.userId;
+const CDN_URL = process.env.CDN_URL;
+const upload = multer({
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter(_req, file, callback) {
+    const fileTypes = ["image/jpeg", "image/png"];
 
-  const { success, data, error } = CreateWorkspaceSchema.safeParse(req.body);
-  if (!success) {
-    return res.status(400).json({
-      msg: "Send proper data",
-      error,
-    });
-  }
+    callback(null, fileTypes.includes(file.mimetype));
+  },
+});
 
-  try {
-    const { name, slug } = data;
-    const finalSlug = createSlug(slug ?? name);
+workspaceRouter.post(
+  "/",
+  requireLogin,
+  upload.single("image"),
+  async (req, res) => {
+    const userId = req.userId;
 
-    //Create an invite code
-    const workspace = await prisma.$transaction(async (tx) => {
-      //check if the user already has a workspace, currently only one can create only one workspace
-      const count = await prisma.workspace.count({
-        where: {
-          createdBy: userId,
-        },
+    const { success, data, error } = CreateWorkspaceSchema.safeParse(req.body);
+    if (!success) {
+      return res.status(400).json({
+        msg: "Send proper data",
+        error,
       });
+    }
 
-      if (count >= 1) {
-        throw new Error("WORKSPACE_LIMIT");
-      }
+    try {
+      const { name, slug } = data;
+      const file = req.file;
 
-      const existingSlug = await tx.workspace.findUnique({
-        where: { slug: finalSlug },
-      });
+      let imageURL: string | undefined;
 
-      if (existingSlug) {
-        throw new Error("SLUG_TAKEN");
-      }
+      const finalSlug = createSlug(slug ?? name);
 
-      return tx.workspace.create({
-        data: {
-          name,
-          slug: finalSlug,
-          createdBy: userId,
-          inviteCode: nanoid(24),
-          members: {
-            create: {
-              userId,
-              role: "owner",
+      //Create an invite code
+      const workspace = await prisma.$transaction(async (tx) => {
+        //check if the user already has a workspace, currently only one can create only one workspace
+        const count = await prisma.workspace.count({
+          where: {
+            createdBy: userId,
+          },
+        });
+
+        if (count >= 1) {
+          throw new Error("WORKSPACE_LIMIT");
+        }
+
+        const existingSlug = await tx.workspace.findUnique({
+          where: { slug: finalSlug },
+        });
+
+        if (existingSlug) {
+          throw new Error("SLUG_TAKEN");
+        }
+
+        const newWorkspace = await tx.workspace.create({
+          data: {
+            name,
+            slug: finalSlug,
+            createdBy: userId,
+            inviteCode: nanoid(24),
+            members: {
+              create: {
+                userId,
+                role: "owner",
+              },
             },
           },
-        },
-      });
-    });
+        });
 
-    return res.status(201).json({
-      workspace,
-    });
-  } catch (error) {
-    if (error instanceof Error && error.message === "WORKSPACE_LIMIT") {
-      return res.status(409).json({
-        msg: "You're not allowed to create more than one workspace",
+        if (file) {
+          const key = `workspace/logos/${newWorkspace.id}_${nanoid(7)}`;
+
+          await S3.upload({
+            key: key,
+            body: file.buffer,
+            contentType: file.mimetype,
+          });
+
+          //todo add cdn url infront after setting up cloud front
+          imageURL = `${CDN_URL}${key}`;
+
+          return tx.workspace.update({
+            where: { id: newWorkspace.id },
+            data: { icon: imageURL },
+          });
+        }
+        return newWorkspace;
+      });
+
+      return res.status(201).json({
+        workspace,
+      });
+    } catch (error) {
+      if (error instanceof Error && error.message === "WORKSPACE_LIMIT") {
+        return res.status(409).json({
+          msg: "You're not allowed to create more than one workspace",
+        });
+      }
+      if (error instanceof Error && error.message === "SLUG_TAKEN") {
+        return res.status(409).json({
+          msg: "This slug is already taken",
+        });
+      }
+      console.error("error while creating workspace", error);
+      return res.status(500).json({
+        msg: "Internal Server Error",
       });
     }
-    if (error instanceof Error && error.message === "SLUG_TAKEN") {
-      return res.status(409).json({
-        msg: "This slug is already taken",
-      });
-    }
-    console.error("error while creating workspace", error);
-    return res.status(500).json({
-      msg: "Internal Server Error",
-    });
   }
-});
+);
 
 //get all workspaces that the user is a part of and also the owner, does not return the full result
 workspaceRouter.get("/", requireLogin, async (req, res) => {

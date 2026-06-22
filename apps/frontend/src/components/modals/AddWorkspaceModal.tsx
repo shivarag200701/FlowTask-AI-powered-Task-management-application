@@ -13,11 +13,14 @@ import { Input } from "@/components/ui/input";
 import {
   useCheckWorkspaceSlug,
   useCreateWorkspace,
+  useWorkspaces,
 } from "@/hooks/use-workspaces";
 import { AlertCircle, Plus } from "lucide-react";
 import ImageUpload from "@/features/auth/onboarding/ImageUpload";
 import { FileUploadTrigger } from "@/components/ui/file-upload";
 import { createSlug } from "@shiva200701/todotypes";
+import { useUserProfile } from "@/hooks/use-users";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 type FormValues = {
   name: string;
@@ -56,14 +59,17 @@ export function AddWorkspaceModal({
   } = useCheckWorkspaceSlug();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    await createWorkspace(
-      { name: data.name, slug: data.slug },
-      {
-        onSuccess: () => {
-          setShow(false);
-        },
-      }
-    );
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("slug", data.slug);
+    if (data.logo) {
+      formData.append("image", data.logo);
+    }
+    await createWorkspace(formData, {
+      onSuccess: () => {
+        setShow(false);
+      },
+    });
   };
   const workspaceName = watch("name");
   useEffect(() => {
@@ -189,16 +195,40 @@ function CreateWorkspaceButton({
 }: {
   setShow: Dispatch<SetStateAction<boolean>>;
 }) {
+  const { data: workspaces } = useWorkspaces();
+  const { data: user } = useUserProfile();
+
+  const workspacesCount =
+    workspaces?.filter((workspace) => workspace.createdBy === user?.id)
+      .length ?? 0;
+
+  const isAtLimit = workspacesCount >= 1;
+
   return (
-    <Button
-      className="w-fit gap-1.5"
-      onClick={() => {
-        setShow(true);
-      }}
-    >
-      <Plus className="size-4" />
-      Create Workspace
-    </Button>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          className="w-fit gap-1.5"
+          onClick={() => {
+            setShow(true);
+          }}
+          disabled={isAtLimit}
+        >
+          <Plus className="size-4" />
+          Create Workspace
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent
+        side="bottom"
+        align="center"
+        sideOffset={5}
+        hidden={!isAtLimit}
+      >
+        <span className="text-sm">
+          You've reached the maximum number of workspaces
+        </span>
+      </TooltipContent>
+    </Tooltip>
   );
 }
 

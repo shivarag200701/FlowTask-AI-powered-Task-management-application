@@ -1,6 +1,5 @@
 import type { Workspaces, WorkspaceDetail, InviteResult } from "@/types";
 import api from "@/utils/functions/api";
-import type { CreateWorkspace } from "@shiva200701/todotypes";
 import { isAxiosError } from "axios";
 
 export async function getWorkspaces() {
@@ -25,9 +24,11 @@ export async function getWorkspace(id: string): Promise<WorkspaceDetail> {
   }
 }
 
-export async function createWorkspace(data: CreateWorkspace) {
+export async function createWorkspace(formData: globalThis.FormData) {
   try {
-    await api.post("/api/v2/workspaces", data);
+    await api.post("/api/v2/workspaces", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
   } catch (error) {
     throw error;
   }
