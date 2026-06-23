@@ -30,7 +30,9 @@ function WorkspaceDetailView({ id }: { id: string }) {
   const { data: workspace, isLoading } = useWorkspace(id);
   const { data: userProfile } = useUserProfile();
   const navigate = useNavigate();
-  const { InviteMemberButton, InviteMemberModal } = useInviteMemberModal();
+  const { InviteMemberButton, InviteMemberModal } = useInviteMemberModal({
+    workspaceId: workspace?.id,
+  });
   const { CopyInviteLinkButton, CopyInviteLinkModal } = useCopyInviteLinkModal({
     workspace,
   });

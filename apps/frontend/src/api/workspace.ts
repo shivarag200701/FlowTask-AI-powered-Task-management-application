@@ -1,3 +1,4 @@
+import type { InviteForm } from "@/components/modals/InviteMemberModal";
 import type { Workspaces, WorkspaceDetail, InviteResult } from "@/types";
 import api from "@/utils/functions/api";
 import { isAxiosError } from "axios";
@@ -65,4 +66,25 @@ export async function checkWorkspaceSlug({ slug }: { slug: string }) {
     `/api/v2/workspaces/check-slug?slug=${encodeURIComponent(slug)}`
   );
   return response;
+}
+
+export async function sendEmailInvite({
+  data,
+  workspaceId,
+}: {
+  data: InviteForm;
+  workspaceId: string;
+}): Promise<{ invited: string[]; skipped: string[] }> {
+  try {
+    const response = (
+      await api.post(
+        `/api/v2/workspaces/${workspaceId}/invite/email/send`,
+        data
+      )
+    ).data;
+
+    return response;
+  } catch (error) {
+    throw error;
+  }
 }

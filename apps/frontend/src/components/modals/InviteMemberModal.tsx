@@ -25,17 +25,20 @@ import {
   useForm,
   type Control,
 } from "react-hook-form";
+import { useSendEmailInvite } from "@/hooks/use-workspaces";
 
-type InviteForm = {
+export type InviteForm = {
   invites: { email: string; role: string }[];
 };
 
 export function InviteMemberModal({
   show,
   setShow,
+  workspaceId,
 }: {
   show: boolean;
   setShow: Dispatch<SetStateAction<boolean>>;
+  workspaceId?: string;
 }) {
   //   const [inputCount, setInputCount] = useState(1);
   const { control, register, handleSubmit } = useForm<InviteForm>({
@@ -43,6 +46,8 @@ export function InviteMemberModal({
       invites: [{ email: "", role: "member" }],
     },
   });
+
+  const { mutate: sendEmailInvite, isPending } = useSendEmailInvite();
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -58,14 +63,14 @@ export function InviteMemberModal({
   }
 
   function onSubmit(data: InviteForm) {
-    console.log("data", data);
-
+    if (!workspaceId) return;
     const emails = data.invites.map((i) => i.email);
     const hasDuplicates = new Set(emails).size !== emails.length;
     if (hasDuplicates) {
       toast.error("Duplicate emails found");
       return;
     }
+    sendEmailInvite({ data, workspaceId });
   }
 
   return (
@@ -132,7 +137,12 @@ export function InviteMemberModal({
               Add email
             </Button>
           </div>
-          <Button size="lg" Initial="Send Invite" Loading="Send Invite" />
+          <Button
+            size="lg"
+            Initial="Send Invite"
+            Loading="Send Invite"
+            isSubmitting={isPending}
+          />
         </form>
       </div>
     </Modal>
@@ -159,7 +169,11 @@ function InviteMemberButton({
   );
 }
 
-export function useInviteMemberModal() {
+export function useInviteMemberModal({
+  workspaceId,
+}: {
+  workspaceId?: string;
+}) {
   const [show, setShow] = useState(false);
 
   const InviteMemberButtonCallback = useCallback(
@@ -168,8 +182,14 @@ export function useInviteMemberModal() {
   );
 
   const InviteMemberModalCallback = useCallback(() => {
-    return <InviteMemberModal show={show} setShow={setShow} />;
-  }, [show, setShow]);
+    return (
+      <InviteMemberModal
+        show={show}
+        setShow={setShow}
+        workspaceId={workspaceId}
+      />
+    );
+  }, [show, setShow, workspaceId]);
 
   return useMemo(
     () => ({
