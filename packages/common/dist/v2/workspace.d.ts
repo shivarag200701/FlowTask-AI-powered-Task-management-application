@@ -6,6 +6,19 @@ export declare const CreateWorkspaceSchema: z.ZodObject<{
 export declare const JoinWorkspaceSchema: z.ZodObject<{
     inviteCode: z.ZodString;
 }, z.core.$strip>;
+export declare const workspaceRoles: z.ZodEnum<{
+    owner: "owner";
+    member: "member";
+}>;
+export declare const EmailInvitesSchema: z.ZodObject<{
+    invites: z.ZodArray<z.ZodObject<{
+        email: z.ZodEmail;
+        role: z.ZodEnum<{
+            owner: "owner";
+            member: "member";
+        }>;
+    }, z.core.$strip>>;
+}, z.core.$strip>;
 export declare const INVITE_ERROR_CODES: {
     readonly INVALID_ERROR_CODE: "INVALID_ERROR_CODE";
     readonly USER_LIMIT_REACHED: "USER_LIMIT_REACHED";

@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { render, pretty } from "@react-email/render";
 import NotificationEmail from "./templates/NotificationEmail.js";
 import VerifyEmail from "./templates/VerifyEmail.js";
+import WorkspaceInviteEmail from "./templates/WorkspaceInviteEmail.js";
 
 dotenv.config();
 
@@ -28,7 +29,18 @@ interface OtpEmailProps extends BaseEmailProps {
   code: string;
 }
 
-type sendEmailProps = NotificationEmailProps | OtpEmailProps;
+interface WorkspaceInviteProps extends BaseEmailProps {
+  template: "workspace-invite";
+  workspaceName: string;
+  senderName: string;
+  senderEmail: string;
+  callbackURL: string;
+}
+
+type sendEmailProps =
+  | NotificationEmailProps
+  | OtpEmailProps
+  | WorkspaceInviteProps;
 
 export async function sendEmail(props: sendEmailProps) {
   if (!process.env.EMAIL) {
@@ -55,6 +67,21 @@ export async function sendEmail(props: sendEmailProps) {
       case "verify":
         html = await pretty(await render(<VerifyEmail code={props.code} />));
         subject = "FlowTask: OTP to verify your account";
+        break;
+
+      case "workspace-invite":
+        html = await pretty(
+          await render(
+            <WorkspaceInviteEmail
+              workspaceName={props.workspaceName}
+              senderName={props.senderName}
+              senderEmail={props.senderEmail}
+              callbackURL={props.callbackURL}
+              recipientEmail={props.email}
+            />
+          )
+        );
+        subject = `You've been invited to join ${props.workspaceName} on FlowTask`;
         break;
     }
 

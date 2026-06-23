@@ -91,7 +91,8 @@ app.use(
     store: redisStore,
     secret: secretString,
     resave: false,
-    saveUninitialized: false, // Change to true - this will create session even if not modified
+    rolling: true,
+    saveUninitialized: false,
     name: "connect.sid", // Explicitly set cookie name
     cookie: {
       secure: NODE_ENV === "production",

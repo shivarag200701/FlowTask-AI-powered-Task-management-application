@@ -6,6 +6,15 @@ export const CreateWorkspaceSchema = z.object({
 export const JoinWorkspaceSchema = z.object({
     inviteCode: z.string().length(24),
 });
+export const workspaceRoles = z.enum(["owner", "member"]);
+export const EmailInvitesSchema = z.object({
+    invites: z
+        .array(z.object({
+        email: z.email(),
+        role: workspaceRoles,
+    }))
+        .max(3),
+});
 export const INVITE_ERROR_CODES = {
     INVALID_ERROR_CODE: "INVALID_ERROR_CODE",
     USER_LIMIT_REACHED: "USER_LIMIT_REACHED",

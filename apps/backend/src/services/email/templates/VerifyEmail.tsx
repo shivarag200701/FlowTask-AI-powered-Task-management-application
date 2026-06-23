@@ -31,7 +31,7 @@ export default function VerifyEmail({ code = "123456" }: { code: string }) {
                     alt="FlowTask"
                     width={50}
                     height={50}
-                    src="https://flowtask-static.s3.us-east-2.amazonaws.com/flowtask-logo.png"
+                    src="https://flowtask-static.s3.us-east-2.amazonaws.com/logo.png"
                     className="w-full mx-auto"
                   />
                 </Column>

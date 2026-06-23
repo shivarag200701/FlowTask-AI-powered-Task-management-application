@@ -58,6 +58,8 @@ export function InviteMemberModal({
   }
 
   function onSubmit(data: InviteForm) {
+    console.log("data", data);
+
     const emails = data.invites.map((i) => i.email);
     const hasDuplicates = new Set(emails).size !== emails.length;
     if (hasDuplicates) {
