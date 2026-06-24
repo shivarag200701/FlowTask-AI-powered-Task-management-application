@@ -16,6 +16,8 @@ const ProtectedRoute = () => {
   const { isAuthenticated, isLoading } = Auth();
   const location = useLocation();
 
+  const callbackUrl = encodeURIComponent(location.pathname + location.search);
+
   //Todo replace with custom hook
   const { isLoading: userLoading, data: user } = useQuery({
     queryKey: authQueryKeys.users,
@@ -61,7 +63,13 @@ const ProtectedRoute = () => {
 
   if (!isAuthenticated) {
     // Redirect unauthenticated users to the login page
-    return <Navigate to="/signin" state={{ from: location }} replace />;
+    return (
+      <Navigate
+        to={`/signin?callbackUrl=${callbackUrl}`}
+        state={{ from: location }}
+        replace
+      />
+    );
   }
   // user is authenticated and redis entry is present and they havent completed the onboarding
   else if (

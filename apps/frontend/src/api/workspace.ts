@@ -1,5 +1,10 @@
 import type { InviteForm } from "@/components/modals/InviteMemberModal";
-import type { Workspaces, WorkspaceDetail, InviteResult } from "@/types";
+import type {
+  Workspaces,
+  WorkspaceDetail,
+  InviteResult,
+  InvitePreview,
+} from "@/types";
 import api from "@/utils/functions/api";
 import { isAxiosError } from "axios";
 
@@ -83,6 +88,25 @@ export async function sendEmailInvite({
       )
     ).data;
 
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getWorkspacePreview({
+  token,
+  email,
+}: {
+  token: string;
+  email: string;
+}) {
+  try {
+    const response = (
+      await api.get<InvitePreview>("/api/v2/workspaces/invite/email/preview", {
+        params: { token, email },
+      })
+    ).data;
     return response;
   } catch (error) {
     throw error;

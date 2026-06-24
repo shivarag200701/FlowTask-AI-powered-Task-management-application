@@ -62,7 +62,8 @@ const SignInForm = () => {
       await api.post("/api/v1/user/signin", data);
       setLastUsedAuthMethod("email");
       await refreshAuth();
-      navigate("/app/today");
+      const callbackUrl = searchParams.get("callbackUrl");
+      navigate(callbackUrl ?? "/app/today");
     } catch (error) {
       console.error(error);
       if (isAxiosError(error)) {

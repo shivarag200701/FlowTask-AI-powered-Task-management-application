@@ -1,0 +1,1 @@
+{"version":3,"file":"pluralize.js","sourceRoot":"","sources":["../../src/utils/pluralize.ts"],"names":[],"mappings":"AAAA,SAAS,SAAS,CAChB,IAAY,EACZ,KAAa,EACb,UAEI,EAAE;IAEN,IAAI,KAAK,KAAK,CAAC,EAAE,CAAC;QAChB,OAAO,IAAI,CAAC;IACd,CAAC;IAED,OAAO,OAAO,CAAC,MAAM,IAAI,GAAG,IAAI,GAAG,CAAC;AACtC,CAAC;AACD,eAAe,SAAS,CAAC"}

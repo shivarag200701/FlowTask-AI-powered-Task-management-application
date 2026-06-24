@@ -3,14 +3,19 @@ import api from "@/utils/functions/api";
 import { Auth } from "@/context/AuthContext";
 import { Google } from "@/components/ui/google";
 import { Button } from "@/components/ui/button";
+import { useSearchParams } from "react-router-dom";
 
 export function GoogleSignInButton() {
   const [loading, setLoading] = useState(false);
+  const [searchParams] = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
-      const response = await api.get("/api/v1/oauth/google/connect");
+      const response = await api.get("/api/v1/oauth/google/connect", {
+        params: { callbackUrl },
+      });
       // Redirect to Google OAuth
       window.location.href = response.data.authUrl;
     } catch (error) {

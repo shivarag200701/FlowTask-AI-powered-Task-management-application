@@ -188,3 +188,15 @@ export const INVITE_ERROR_MESSAGES = {
     icon: CircleAlert,
   },
 } as const;
+
+export type InvitePreview = {
+  success: boolean;
+  workspace: {
+    name: string;
+    icon: string | null;
+    memberCount: number;
+    slug: string;
+  };
+  role: string;
+  email: string;
+};

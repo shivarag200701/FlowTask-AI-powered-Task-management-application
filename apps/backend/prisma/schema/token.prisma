@@ -6,3 +6,15 @@ model EmailVerificationToken {
 
   @@unique([identifier,token])
 }
+
+//email invites
+model verificationToken {
+  identifier      String
+  token           String  @unique
+  expires         DateTime 
+
+  //when used for email invites for workspaces
+  workspaceId     String?
+
+  @@unique([identifier, token]) 
+}

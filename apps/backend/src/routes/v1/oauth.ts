@@ -28,9 +28,12 @@ oauthRouter.get("/google/connect", async (req, res) => {
     // const type: 'login' | 'connect' = userId ? 'connect' : 'login';
     const type = "login";
 
+    const callbackUrl = req.query.callbackUrl as string | undefined;
+
     const stateData: StateData = {
       type,
       ...(userId !== undefined && { userId }),
+      ...(callbackUrl !== undefined && { callbackUrl }),
       timestamp: Date.now(),
     };
 
@@ -134,7 +137,10 @@ oauthRouter.get("/google/callback", async (req, res) => {
             return res.status(500).json({ msg: "Session error" });
           }
 
-          return res.redirect(`${FRONTEND_URL}/onboarding/welcome`);
+          const redirectTo = stateData.callbackUrl
+            ? `${FRONTEND_URL}${stateData.callbackUrl}`
+            : `${FRONTEND_URL}/app/today`;
+          return res.redirect(redirectTo);
         });
       }
 
@@ -193,7 +199,10 @@ oauthRouter.get("/google/callback", async (req, res) => {
             return res.status(500).json({ msg: "Session error" });
           }
 
-          return res.redirect(`${FRONTEND_URL}/onboarding/welcome`);
+          const redirectTo = stateData.callbackUrl
+            ? `${FRONTEND_URL}${stateData.callbackUrl}`
+            : `${FRONTEND_URL}/onboarding/welcome`;
+          return res.redirect(redirectTo);
         });
       }
     } else if (stateData.type === "connect" && stateData.userId) {

@@ -4,6 +4,7 @@ import { redisClient } from "../../index.js";
 export interface StateData {
   type: "login" | "connect"; // later to support calender async
   userId?: string;
+  callbackUrl?: string;
   timestamp: number;
 }
 

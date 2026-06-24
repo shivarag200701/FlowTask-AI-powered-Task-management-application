@@ -2,6 +2,7 @@ import {
   checkWorkspaceSlug,
   createWorkspace,
   getWorkspace,
+  getWorkspacePreview,
   getWorkspaces,
   inviteWorkspaceCode,
   resetInviteCode,
@@ -10,7 +11,6 @@ import {
 import type { InviteForm } from "@/components/modals/InviteMemberModal";
 import { workspaceKeys } from "@/query-keys";
 import type { InviteResult } from "@/types";
-import pluralize from "@/utils/functions/pluralize";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError, isAxiosError, type AxiosResponse } from "axios";
 import { toast } from "sonner";
@@ -116,13 +116,35 @@ export function useSendEmailInvite() {
       data: InviteForm;
       workspaceId: string;
     }) => sendEmailInvite({ data, workspaceId }),
-    onSuccess: ({ skipped }) => {
+    onSuccess: ({ invited, skipped }) => {
+      if (invited.length > 0) {
+        toast.success(
+          invited.length === 1
+            ? `Invite sent to ${invited[0]}`
+            : `Invites sent to ${invited.length} people`
+        );
+      }
       if (skipped && skipped.length > 0) {
         skipped.forEach((email) => {
           toast.warning(`${email} was already invited`);
         });
       }
     },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        const errorMsg = error.response?.data.msg;
+        toast.error(errorMsg);
+        return;
+      }
+      toast.error("Something went wrong");
+    },
+  });
+}
+
+export function useInvitePreview() {
+  return useMutation({
+    mutationFn: ({ token, email }: { token: string; email: string }) =>
+      getWorkspacePreview({ token, email }),
     onError: (error) => {
       if (isAxiosError(error)) {
         const errorMsg = error.response?.data.msg;

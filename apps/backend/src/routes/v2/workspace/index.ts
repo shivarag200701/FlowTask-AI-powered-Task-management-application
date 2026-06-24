@@ -11,6 +11,7 @@ import { nanoid } from "../../../utils/nanoid.js";
 import inviteRouter from "./invite/index.js";
 import multer from "multer";
 import { S3 } from "../../../services/s3/index.js";
+import hashToken from "../../../utils/hash-token.js";
 
 export const workspaceRouter = Router();
 
@@ -206,6 +207,69 @@ workspaceRouter.post("/invite/code/accept", requireLogin, async (req, res) => {
     msg: "sucessfully joined the workspace",
     workspaceSlug: workspace.slug,
   });
+});
+
+workspaceRouter.get("/invite/email/preview", requireLogin, async (req, res) => {
+  const token = req.query.token as string;
+  const email = req.query.email as string;
+
+  if (!token || !email) {
+    return res.status(400).json({
+      msg: "Token and email are required",
+    });
+  }
+
+  try {
+    const verificationToken = await prisma.verificationToken.findUnique({
+      where: {
+        identifier_token: { token: hashToken(token), identifier: email },
+      },
+    });
+
+    if (!verificationToken || verificationToken.expires < new Date()) {
+      return res.status(400).json({
+        msg: "Invalid or expired token",
+      });
+    }
+
+    const invite = await prisma.workspaceInvite.findFirst({
+      where: { email, workspaceId: verificationToken.workspaceId! },
+      include: {
+        workspace: {
+          select: {
+            name: true,
+            icon: true,
+            slug: true,
+            _count: { select: { members: true } },
+          },
+        },
+      },
+    });
+
+    if (!invite || invite.expires < new Date()) {
+      return res.status(404).json({
+        msg: "Invite expired or Invalid token",
+        description:
+          "This invite link is no longer valid. Ask the workspace admin to send a new one.",
+      });
+    }
+
+    return res.json({
+      workspace: {
+        name: invite.workspace.name,
+        icon: invite.workspace.icon,
+        memberCount: invite.workspace._count.members,
+        slug: invite.workspace.slug,
+      },
+      role: invite.role,
+      email: invite.email,
+    });
+  } catch (error) {
+    console.error("Error while getting preview of invite", error);
+    return res.status(500).json({
+      msg: "Internal server error",
+    });
+  }
 });
 
 workspaceRouter.get("/check-slug", requireLogin, async (req, res) => {
