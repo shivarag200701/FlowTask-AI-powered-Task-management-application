@@ -177,3 +177,96 @@ inviteRouter.post("/email/send", requireLogin, async (req, res) => {
     return res.status(500).json({ msg: "Internal server error" });
   }
 });
+
+//introduce a cron job to delete verrification tokens, which are more than 1 day older
+inviteRouter.post("/email/accept", requireLogin, async (req, res) => {
+  const userId = req.userId;
+
+  const email = req.session.email;
+
+  const workspaceId = Array.isArray(req.params.id)
+    ? req.params.id[0]
+    : req.params.id;
+
+  if (!workspaceId) {
+    return res.status(400).json({
+      msg: "No workspace id found in path",
+    });
+  }
+
+  try {
+    const email = req.session?.email;
+
+    if (!email) {
+      return res
+        .status(400)
+        .json({ msg: "No email associated with your account" });
+    }
+
+    const invite = await prisma.workspaceInvite.findFirst({
+      where: {
+        email, // use session email, not query param
+        workspaceId,
+      },
+    });
+
+    if (!invite) {
+      return res.status(400).json({
+        msg: "This invite is not found",
+      });
+    }
+
+    if (invite.expires < new Date()) {
+      return res.status(400).json({
+        msg: "This invite has expired",
+      });
+    }
+
+    //do a transaction to check if the user is already a member, todo:- check if the number of users > limit later, add to workspace, delete the invite
+
+    await prisma.$transaction(async (tx) => {
+      const existingMember = await tx.workspaceMember.findFirst({
+        where: {
+          userId,
+          workspaceId,
+        },
+      });
+
+      if (existingMember) {
+        throw new Error("ALREADY_MEMBER");
+      }
+
+      await tx.workspaceMember.create({
+        data: {
+          role: invite.role,
+          userId,
+          workspaceId: invite.workspaceId,
+        },
+      });
+
+      //delete the invite link
+      await tx.workspaceInvite.delete({
+        where: {
+          email_workspaceId: {
+            email: invite.email,
+            workspaceId: invite.workspaceId,
+          },
+        },
+      });
+    });
+
+    return res.status(200).json({
+      msg: "Invite Accepted.",
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message === "ALREADY_MEMBER") {
+      return res
+        .status(409)
+        .json({ msg: "You are already a member of this workspace." });
+    }
+    console.error("Error while accepting email invite", error);
+    return res.status(500).json({
+      msg: "Internal Server error",
+    });
+  }
+});
