@@ -196,6 +196,7 @@ export type InvitePreview = {
     icon: string | null;
     memberCount: number;
     slug: string;
+    id: string;
   };
   role: string;
   email: string;

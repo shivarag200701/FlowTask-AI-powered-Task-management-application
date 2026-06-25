@@ -224,7 +224,7 @@ inviteRouter.post("/email/accept", requireLogin, async (req, res) => {
 
     //do a transaction to check if the user is already a member, todo:- check if the number of users > limit later, add to workspace, delete the invite
 
-    await prisma.$transaction(async (tx) => {
+    const workspace = await prisma.$transaction(async (tx) => {
       const existingMember = await tx.workspaceMember.findFirst({
         where: {
           userId,
@@ -253,9 +253,21 @@ inviteRouter.post("/email/accept", requireLogin, async (req, res) => {
           },
         },
       });
+
+      const slug = await tx.workspace.findFirst({
+        where: {
+          id: workspaceId,
+        },
+        select: {
+          slug: true,
+        },
+      });
+
+      return slug;
     });
 
     return res.status(200).json({
+      slug: workspace?.slug,
       msg: "Invite Accepted.",
     });
   } catch (error) {

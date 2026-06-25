@@ -6,7 +6,7 @@ import { CheckCircle2, Shield, Users, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import AuthLayout from "@/layouts/AuthLayout";
-import { useInvitePreview } from "@/hooks/use-workspaces";
+import { useAcceptEmailInvite, useInvitePreview } from "@/hooks/use-workspaces";
 import type { InvitePreview } from "@/types";
 
 type ViewState = "loading" | "preview" | "accepting" | "accepted" | "error";
@@ -17,6 +17,7 @@ function WorkspaceInviteAccept() {
   const email = searchParams.get("email");
   const token = searchParams.get("token");
   const { mutate } = useInvitePreview();
+  const { mutateAsync: acceptInvite } = useAcceptEmailInvite();
 
   const [view, setView] = useState<ViewState>("loading");
   const [data, setData] = useState<InvitePreview | null>(null);
@@ -59,11 +60,29 @@ function WorkspaceInviteAccept() {
   }, []);
 
   const handleAccept = async () => {
+    if (!data) return;
     setView("accepting");
-    // TODO: call accept endpoint
-    await new Promise((r) => setTimeout(r, 1500));
-    setView("accepted");
-    setTimeout(() => navigate(`/app/workspaces/${data?.workspace.slug}`), 2000);
+    try {
+      await acceptInvite({ workspaceId: data.workspace.id });
+      setView("accepted");
+      setTimeout(
+        () => navigate(`/app/workspaces/${data.workspace.slug}`),
+        2000
+      );
+    } catch (err) {
+      if (isAxiosError<{ msg: string }>(err)) {
+        setError({
+          title: err.response?.data.msg ?? "Failed to join",
+          description: null,
+        });
+      } else {
+        setError({
+          title: "Something went wrong",
+          description: "Unable to accept the invite. Please try again later.",
+        });
+      }
+      setView("error");
+    }
   };
 
   const handleDecline = () => {

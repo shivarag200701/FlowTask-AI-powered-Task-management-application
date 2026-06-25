@@ -1,4 +1,5 @@
 import {
+  acceptEmailInvite,
   checkWorkspaceSlug,
   createWorkspace,
   getWorkspace,
@@ -145,6 +146,21 @@ export function useInvitePreview() {
   return useMutation({
     mutationFn: ({ token, email }: { token: string; email: string }) =>
       getWorkspacePreview({ token, email }),
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        const errorMsg = error.response?.data.msg;
+        toast.error(errorMsg);
+        return;
+      }
+      toast.error("Something went wrong");
+    },
+  });
+}
+
+export function useAcceptEmailInvite() {
+  return useMutation({
+    mutationFn: ({ workspaceId }: { workspaceId: string }) =>
+      acceptEmailInvite({ workspaceId }),
     onError: (error) => {
       if (isAxiosError(error)) {
         const errorMsg = error.response?.data.msg;

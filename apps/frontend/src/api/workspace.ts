@@ -112,3 +112,20 @@ export async function getWorkspacePreview({
     throw error;
   }
 }
+
+export async function acceptEmailInvite({
+  workspaceId,
+}: {
+  workspaceId: string;
+}) {
+  try {
+    const response = (
+      await api.post<{ slug: string; msg: string }>(
+        `/api/v2/workspaces/${workspaceId}/invite/email/accept`
+      )
+    ).data;
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
