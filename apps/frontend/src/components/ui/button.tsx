@@ -12,7 +12,7 @@ const buttonVariants = cva("transition-all hover:cursor-pointer", {
       outline:
         "border border-neutral-200  text-secondary-foreground bg-background shadow-xs hover:bg-accent/60  hover:text-accent-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50 ",
       secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-      ghost: "hover:bg-neutral-300",
+      ghost: "hover:bg-neutral-200",
       link: "text-primary underline-offset-4 hover:underline",
       custom:
         "border border-transparent hover:bg-accent hover:border-border rounded-lg data-[state=open]:bg-accent data-[state=open]:border-neutral-500 transition-all duration-200 data-[state=open]:ring-neutral-200 data-[state=open]:ring-4 p-2! ",

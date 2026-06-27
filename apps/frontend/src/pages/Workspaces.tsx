@@ -23,7 +23,7 @@ function Workspaces() {
         }
         controls={<CreateWorkspaceButton />}
       />
-      <PageWidthWrapper className="pt-10 max-w-3xl">
+      <PageWidthWrapper className="pt-10 max-w-5xl">
         <div className="pt-6">
           {isLoading ? (
             <>

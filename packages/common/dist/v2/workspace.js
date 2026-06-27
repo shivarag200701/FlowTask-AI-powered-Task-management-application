@@ -15,6 +15,9 @@ export const EmailInvitesSchema = z.object({
     }))
         .max(3),
 });
+export const PatchWorkspaceMemberSchema = z.object({
+    role: workspaceRoles,
+});
 export const INVITE_ERROR_CODES = {
     INVALID_ERROR_CODE: "INVALID_ERROR_CODE",
     USER_LIMIT_REACHED: "USER_LIMIT_REACHED",

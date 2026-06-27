@@ -5,6 +5,7 @@ import {
   type InviteErrorCode,
   type RecurrenceRule,
   type ResourceColorsEnum,
+  type WorkspaceRoles,
 } from "@shiva200701/todotypes";
 import { CircleAlert, Unlink, UserRoundCheck, Users } from "lucide-react";
 import type { DateTime } from "luxon";
@@ -142,7 +143,7 @@ export type Workspaces = Workspace[];
 
 export type WorkspaceMember = {
   id: string;
-  role: "owner" | "member";
+  role: WorkspaceRoles;
   userId: string;
   workspaceId: string;
   user: {

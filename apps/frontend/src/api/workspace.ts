@@ -6,6 +6,7 @@ import type {
   InvitePreview,
 } from "@/types";
 import api from "@/utils/functions/api";
+import type { WorkspaceRoles } from "@shiva200701/todotypes";
 import { isAxiosError } from "axios";
 
 export async function getWorkspaces() {
@@ -128,4 +129,18 @@ export async function acceptEmailInvite({
   } catch (error) {
     throw error;
   }
+}
+
+export async function updateMember({
+  role,
+  workspaceId,
+  memberId,
+}: {
+  role: WorkspaceRoles;
+  workspaceId: string;
+  memberId: string;
+}) {
+  await api.patch(`/api/v2/workspaces/${workspaceId}/members/${memberId}`, {
+    role,
+  });
 }

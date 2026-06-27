@@ -19,7 +19,7 @@ body {
   --foreground: oklch(0.2795 0.0368 260.031);
   --card: oklch(0.9699 0.0013 106.4238);
   --card-foreground: oklch(0.2795 0.0368 260.031);
-  --popover: oklch(0.9699 0.0013 106.4238);
+  --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.2795 0.0368 260.031);
   --primary: oklch(0.4496 0.1501 263.9269);
   --primary-foreground: oklch(1 0 0);

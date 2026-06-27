@@ -13,6 +13,7 @@ import { useInviteCodeReset } from "@/hooks/use-workspaces";
 import type { WorkspaceDetail } from "@/types";
 import { useUserProfile } from "@/hooks/use-users";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 export function CopyInviteLinkModal({
   show,
@@ -87,13 +88,14 @@ function CopyInviteLinkButton({
 }: {
   setShow: Dispatch<SetStateAction<boolean>>;
 }) {
+  const { isMobile } = useMediaQuery();
   return (
     <Button
       onClick={() => {
         setShow(true);
       }}
       variant="outline"
-      size="sm"
+      size={isMobile ? "icon-sm" : "icon-lg"}
     >
       <Link className="size-4" />
     </Button>

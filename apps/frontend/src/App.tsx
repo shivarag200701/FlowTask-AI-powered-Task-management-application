@@ -30,10 +30,13 @@ import TaskDetail from "./pages/TaskDetail";
 import MyProjects from "./pages/MyProjects";
 import Workspaces from "./pages/Workspaces";
 import Projects from "./pages/Projects";
-import WorkspaceDetail from "./pages/WorkspaceDetail";
+import WorkspaceLayout from "./layouts/WorkspaceLayout";
 import Inbox from "./pages/Inbox";
 import Invite from "./pages/Invite";
 import WorkspaceInviteAccept from "./pages/WorkspaceInviteAccept";
+import { WorkspaceMembers } from "./features/workspace/components/WorkspaceMembers";
+import WorkspaceSettings from "./features/workspace/components/WorkspaceSettings";
+import WorkspaceOverview from "./features/workspace/components/WorkspaceOverview";
 
 const queryClient = new QueryClient();
 
@@ -100,7 +103,11 @@ function AppRoutes() {
             />
             <Route path="/app/projects" element={<MyProjects />} />
             <Route path="/app/workspaces" element={<Workspaces />} />
-            <Route path="/app/workspaces/*" element={<WorkspaceDetail />} />
+            <Route path="/app/workspaces/:slug" element={<WorkspaceLayout />}>
+              <Route index element={<WorkspaceOverview />} />
+              <Route path="members" element={<WorkspaceMembers />} />
+              <Route path="settings" element={<WorkspaceSettings />} />
+            </Route>
             <Route path="/app/search/*" element={<Search />} />
             <Route path="/app/task/:slug" element={<TaskDetail />} />
             <Route path="/app/projects/*" element={<Projects />} />

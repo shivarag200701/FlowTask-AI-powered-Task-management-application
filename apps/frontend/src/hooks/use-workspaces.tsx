@@ -8,12 +8,15 @@ import {
   inviteWorkspaceCode,
   resetInviteCode,
   sendEmailInvite,
+  updateMember,
 } from "@/api/workspace";
 import type { InviteForm } from "@/components/modals/InviteMemberModal";
 import { workspaceKeys } from "@/query-keys";
-import type { InviteResult } from "@/types";
+import type { InviteResult, WorkspaceDetail } from "@/types";
+import { type WorkspaceRoles } from "@shiva200701/todotypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError, isAxiosError, type AxiosResponse } from "axios";
+import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 export function useWorkspaces() {
@@ -167,6 +170,53 @@ export function useAcceptEmailInvite() {
         toast.error(errorMsg);
         return;
       }
+      toast.error("Something went wrong");
+    },
+  });
+}
+
+export function useUpdateMember() {
+  const queryClient = useQueryClient();
+  const { slug } = useParams<{ slug: string }>();
+  return useMutation({
+    mutationFn: ({
+      workspaceId,
+      memberId,
+      role,
+    }: {
+      workspaceId: string;
+      memberId: string;
+      role: WorkspaceRoles;
+    }) => updateMember({ workspaceId, memberId, role }),
+    onSuccess: () => {
+      toast.success("Member updated successfully");
+    },
+    onMutate: async ({ memberId, role }) => {
+      queryClient.cancelQueries({ queryKey: workspaceKeys.detail(slug!) });
+      const previous = queryClient.getQueryData(workspaceKeys.detail(slug!));
+      queryClient.setQueryData(
+        workspaceKeys.detail(slug!),
+        (old: WorkspaceDetail) => {
+          return {
+            ...old,
+            members: old.members.map((m) =>
+              m.id === memberId ? { ...m, role } : m
+            ),
+          };
+        }
+      );
+
+      return { previous };
+    },
+    onError: (error, _vars, context) => {
+      queryClient.setQueryData(workspaceKeys.detail(slug!), context?.previous);
+      if (isAxiosError(error)) {
+        const errorMsg = error.response?.data.msg;
+        toast.error(errorMsg);
+        return;
+      }
+      console.log(error);
+
       toast.error("Something went wrong");
     },
   });

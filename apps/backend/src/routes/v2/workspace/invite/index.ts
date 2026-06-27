@@ -202,6 +202,8 @@ inviteRouter.post("/email/accept", requireLogin, async (req, res) => {
         .status(400)
         .json({ msg: "No email associated with your account" });
     }
+    console.log("email", email);
+    console.log("workspaceId", workspaceId);
 
     const invite = await prisma.workspaceInvite.findFirst({
       where: {

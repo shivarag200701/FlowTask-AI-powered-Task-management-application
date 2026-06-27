@@ -9,23 +9,15 @@ import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { Kbd } from "../ui/kbd";
 import { Input } from "../ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
 import { CircleXIcon, Plus } from "lucide-react";
 import { toast } from "sonner";
-import {
-  Controller,
-  useFieldArray,
-  useForm,
-  type Control,
-} from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { useSendEmailInvite } from "@/hooks/use-workspaces";
+import { useUserProfile } from "@/hooks/use-users";
+import type { WorkspaceDetail } from "@/types";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { RoleSelector } from "@/features/workspace/components/RoleSelector";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 export type InviteForm = {
   invites: { email: string; role: string }[];
@@ -151,33 +143,60 @@ export function InviteMemberModal({
 
 function InviteMemberButton({
   setShow,
+  workspace,
 }: {
   setShow: Dispatch<SetStateAction<boolean>>;
+  workspace?: WorkspaceDetail;
 }) {
+  const { data: userProfile } = useUserProfile();
+  const role = useMemo(() => {
+    const user = workspace?.members.find(
+      (member) => member.userId === userProfile?.id
+    );
+    return user?.role;
+  }, [workspace, userProfile]);
+
+  const { isMobile } = useMediaQuery();
+
   return (
-    <Button
-      className="w-fit gap-1.5"
-      onClick={() => {
-        setShow(true);
-      }}
-      variant="outline"
-      size="sm"
-    >
-      <span className="hidden sm:inline">Invite Member</span>
-      <Kbd>M</Kbd>
-    </Button>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          className="w-fit gap-1.5"
+          onClick={() => {
+            setShow(true);
+          }}
+          variant="outline"
+          size={isMobile ? "sm" : "lg"}
+          disabled={role === "member"}
+        >
+          <span className="">Invite Member</span>
+          {!isMobile && <Kbd>M</Kbd>}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent
+        side="bottom"
+        align="center"
+        sideOffset={5}
+        hidden={role === "owner"}
+      >
+        <span className="text-sm">
+          Only workspace owners can Invite members
+        </span>
+      </TooltipContent>
+    </Tooltip>
   );
 }
 
 export function useInviteMemberModal({
-  workspaceId,
+  workspace,
 }: {
-  workspaceId?: string;
+  workspace?: WorkspaceDetail;
 }) {
   const [show, setShow] = useState(false);
 
   const InviteMemberButtonCallback = useCallback(
-    () => <InviteMemberButton setShow={setShow} />,
+    () => <InviteMemberButton setShow={setShow} workspace={workspace} />,
     [setShow]
   );
 
@@ -186,10 +205,10 @@ export function useInviteMemberModal({
       <InviteMemberModal
         show={show}
         setShow={setShow}
-        workspaceId={workspaceId}
+        workspaceId={workspace?.id}
       />
     );
-  }, [show, setShow, workspaceId]);
+  }, [show, setShow, workspace]);
 
   return useMemo(
     () => ({
@@ -197,37 +216,5 @@ export function useInviteMemberModal({
       InviteMemberModal: InviteMemberModalCallback,
     }),
     [setShow, InviteMemberButtonCallback, InviteMemberModalCallback]
-  );
-}
-
-function RoleSelector({
-  control,
-  name,
-}: {
-  control: Control<InviteForm>;
-  name: `invites.${number}.role`;
-}) {
-  return (
-    <Controller
-      name={name}
-      control={control}
-      render={({ field }) => (
-        <Select
-          defaultValue="member"
-          value={field.value}
-          onValueChange={field.onChange}
-        >
-          <SelectTrigger className="w-[180px] rounded-l-none">
-            <SelectValue placeholder="Role" />
-          </SelectTrigger>
-          <SelectContent position="popper" className="bg-white">
-            <SelectGroup>
-              <SelectItem value="member">Member</SelectItem>
-              <SelectItem value="owner">Owner</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      )}
-    />
   );
 }

@@ -11,31 +11,29 @@ import { Button } from "@/components/ui/button";
 import PageContentHeader from "@/layouts/PageContentHeader";
 import PageWidthWrapper from "@/layouts/PageWidthWrapper";
 import { useWorkspace } from "@/hooks/use-workspaces";
-import { useUserProfile } from "@/hooks/use-users";
-import { Crown } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useInviteMemberModal } from "@/components/modals/InviteMemberModal";
 import { useCopyInviteLinkModal } from "@/components/modals/CopyInviteLinkModal";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
-export default function WorkspaceDetailPage() {
-  const location = useLocation();
+export default function WorkspaceLayoutPage() {
+  const { slug } = useParams<{ slug: string }>();
 
-  const slug = location.pathname.split("/").at(-1) ?? "";
-
-  return <WorkspaceDetailView key={slug} id={slug} />;
+  return <WorkspaceLayout key={slug} id={slug!} />;
 }
 
-function WorkspaceDetailView({ id }: { id: string }) {
+export function WorkspaceLayout({ id }: { id: string }) {
   const { data: workspace, isLoading } = useWorkspace(id);
-  const { data: userProfile } = useUserProfile();
   const navigate = useNavigate();
   const { InviteMemberButton, InviteMemberModal } = useInviteMemberModal({
-    workspaceId: workspace?.id,
+    workspace,
   });
   const { CopyInviteLinkButton, CopyInviteLinkModal } = useCopyInviteLinkModal({
     workspace,
   });
+
+  const { isMobile } = useMediaQuery();
 
   if (isLoading) {
     return <WorkspaceDetailSkeleton />;
@@ -63,7 +61,7 @@ function WorkspaceDetailView({ id }: { id: string }) {
   return (
     <div className="h-full">
       <PageContentHeader
-        title={<BreadCrumb workspaceName={workspace.name} />}
+        title={!isMobile && <BreadCrumb workspaceName={workspace.name} />}
         controls={
           <div className="flex items-center gap-2">
             <InviteMemberButton />
@@ -71,52 +69,8 @@ function WorkspaceDetailView({ id }: { id: string }) {
           </div>
         }
       />
-      <PageWidthWrapper className="max-w-4xl py-8 space-y-8">
-        {/* Members */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-              Members
-            </h3>
-          </div>
-          <div className="rounded-lg border border-border divide-y divide-border">
-            {workspace.members.map((member) => (
-              <div
-                key={member.id}
-                className="flex items-center justify-between px-4 py-3"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-200 text-sm font-medium">
-                    {member.user.name?.charAt(0)?.toUpperCase() ?? "U"}
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">
-                      {member.user.name}
-                      {member.user.id === userProfile?.id && (
-                        <span className="text-muted-foreground ml-1">
-                          (you)
-                        </span>
-                      )}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {member.user.email}
-                    </p>
-                  </div>
-                </div>
-                <span
-                  className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                    member.role === "owner"
-                      ? "bg-amber-100 text-amber-700"
-                      : "bg-neutral-100 text-neutral-600"
-                  }`}
-                >
-                  {member.role === "owner" && <Crown className="size-3" />}
-                  {member.role}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
+      <PageWidthWrapper className="max-w-7xl py-8 space-y-8">
+        <Outlet context={{ workspace }} />
         <InviteMemberModal />
         <CopyInviteLinkModal />
       </PageWidthWrapper>

@@ -6,6 +6,7 @@ import {
   CreateWorkspaceSchema,
   INVITE_ERROR_CODES,
   JoinWorkspaceSchema,
+  PatchWorkspaceMemberSchema,
 } from "@shiva200701/todotypes";
 import { nanoid } from "../../../utils/nanoid.js";
 import inviteRouter from "./invite/index.js";
@@ -352,5 +353,94 @@ workspaceRouter.get("/:id", requireLogin, async (req, res) => {
     });
   }
 });
+
+workspaceRouter.patch(
+  "/:id/members/:memberId",
+  requireLogin,
+  async (req, res) => {
+    const userId = req.userId;
+
+    const workspaceId = Array.isArray(req.params.id)
+      ? req.params.id[0]
+      : req.params.id;
+
+    if (!workspaceId) {
+      return res.status(400).json({
+        msg: "No workspace id found in path",
+      });
+    }
+
+    const memberId = Array.isArray(req.params.memberId)
+      ? req.params.memberId[0]
+      : req.params.memberId;
+
+    if (!memberId) {
+      return res.status(400).json({
+        msg: "No member id  found in path",
+      });
+    }
+
+    const { success, data, error } = PatchWorkspaceMemberSchema.safeParse(
+      req.body
+    );
+
+    if (!success) {
+      return res.status(400).json({
+        msg: "Send proper data",
+        error,
+      });
+    }
+
+    //restrict to owner check
+    const requestingMember = await prisma.workspaceMember.findFirst({
+      where: {
+        userId,
+        workspaceId,
+      },
+    });
+
+    if (!requestingMember) {
+      return res.status(403).json({
+        msg: "You are not a part of this workspace",
+      });
+    }
+
+    // user cannot change their own role
+    if (memberId === requestingMember.id) {
+      return res.status(403).json({
+        msg: "You cannot change your own role",
+      });
+    }
+
+    if (requestingMember.role !== "owner") {
+      return res.status(403).json({
+        msg: "Only owners can change the roles of other members",
+      });
+    }
+
+    const { role } = data;
+
+    try {
+      await prisma.workspaceMember.update({
+        where: {
+          id: memberId,
+          workspaceId,
+        },
+        data: {
+          role,
+        },
+      });
+
+      return res.status(200).json({
+        msg: "Member updated Successfully",
+      });
+    } catch (error) {
+      console.error("Error while updating member", error);
+      return res.status(500).json({
+        msg: "Internal server Error",
+      });
+    }
+  }
+);
 
 workspaceRouter.use("/:id/invite", inviteRouter);
