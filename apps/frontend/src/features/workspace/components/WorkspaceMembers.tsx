@@ -1,3 +1,5 @@
+import { useRemoveTeammateModal } from "@/components/modals/RemoveTeammateModal";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Popover } from "@/components/ui/popover";
 import {
@@ -25,6 +27,15 @@ export function WorkspaceMembers() {
   const { workspace } = useOutletContext<{ workspace: WorkspaceDetail }>();
   const { data: userProfile } = useUserProfile();
 
+  const [selectedMemberRemove, setSelectedMemberRemove] =
+    useState<{ member: WorkspaceMember; isCurrentUser: boolean } | null>(null);
+
+  const { RemoveTeamamteModal, setShowRemoveTeammateModal } =
+    useRemoveTeammateModal({
+      member: selectedMemberRemove?.member,
+      isCurrentUser: selectedMemberRemove?.isCurrentUser ?? false,
+    });
+
   const isOwner = useMemo(() => {
     const user = workspace?.members.find(
       (member) => member.userId === userProfile?.id
@@ -48,10 +59,15 @@ export function WorkspaceMembers() {
               member={member}
               isCurrentUser={member.user.id === userProfile?.id}
               isOwner={isOwner}
+              onRemoveClick={(member, isCurrentUser) => {
+                setSelectedMemberRemove({ member, isCurrentUser });
+                setShowRemoveTeammateModal(true);
+              }}
             />
           ))}
         </div>
       </div>
+      <RemoveTeamamteModal />
     </PageWidthWrapper>
   );
 }
@@ -60,19 +76,25 @@ function MemberRow({
   member,
   isCurrentUser,
   isOwner,
+  onRemoveClick,
 }: {
   member: WorkspaceMember;
   isCurrentUser: boolean;
   isOwner: boolean;
+  onRemoveClick: (member: WorkspaceMember, isCurrentUser: boolean) => void;
 }) {
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
 
   return (
     <div className="flex items-center justify-between px-4 py-3 gap-3">
       <div className="flex items-center gap-3 min-w-0">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-200 text-sm font-medium">
-          {member.user.name?.charAt(0)?.toUpperCase() ?? "U"}
-        </div>
+        <Avatar>
+          <AvatarImage
+            src={member.user.image || `https://avatar.vercel.sh/${member.id}`}
+            alt={member.user.name ?? undefined}
+            referrerPolicy="no-referrer"
+          />
+        </Avatar>
         <div>
           <p className="text-sm font-medium">
             {member.user.name}
@@ -91,31 +113,57 @@ function MemberRow({
           isCurrentUser={isCurrentUser}
           isOwner={isOwner}
         />
-        <Popover
-          openPopover={isMoreOptionsOpen}
-          setOpenPopover={setIsMoreOptionsOpen}
-          content={<MoreOptionsDropDown />}
-          side="bottom"
-          align="end"
-        >
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            icon={<MoreHorizontal strokeWidth={1} className="h-5 w-5" />}
-          ></Button>
-        </Popover>
+        {isOwner || isCurrentUser ? (
+          <Popover
+            openPopover={isMoreOptionsOpen}
+            setOpenPopover={setIsMoreOptionsOpen}
+            content={
+              <MoreOptionsDropDown
+                isCurrentUser={isCurrentUser}
+                onClick={() => {
+                  setIsMoreOptionsOpen(false);
+                  onRemoveClick(member, isCurrentUser);
+                }}
+              />
+            }
+            side="bottom"
+            align="end"
+          >
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              icon={<MoreHorizontal strokeWidth={1} className="h-5 w-5" />}
+            />
+          </Popover>
+        ) : (
+          <div className="w-8" />
+        )}
       </div>
     </div>
   );
 }
 
-function MoreOptionsDropDown() {
+function MoreOptionsDropDown({
+  isCurrentUser,
+  onClick,
+}: {
+  isCurrentUser: boolean;
+  onClick: () => void;
+}) {
   return (
     <div className="p-1.5">
-      <div className="text-red-500 flex gap-2 text-sm rounded-md hover:bg-red-100 cursor-pointer transition-all duration-200 p-1.5">
+      <button
+        className="text-red-500 flex gap-2 text-sm rounded-md hover:bg-red-100 cursor-pointer transition-all duration-200 p-1.5"
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick();
+        }}
+      >
         <UserMinus className="w-5 h-5" />
-        <span>Leave Workspace</span>
-      </div>
+        <span>
+          {isCurrentUser ? "Leave workspace" : "Remove from workspace"}
+        </span>
+      </button>
     </div>
   );
 }
