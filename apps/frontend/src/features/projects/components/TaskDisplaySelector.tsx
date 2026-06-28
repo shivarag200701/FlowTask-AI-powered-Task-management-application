@@ -11,6 +11,11 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { outlinePopoverTriggerClasses } from "@/lib/constants";
 import type { ViewMode } from "@/types";
 import { AnimatePresence, motion } from "motion/react";
@@ -138,10 +143,26 @@ function DisplaySettingsDropdown({
                   <Columns3 />
                   Board
                 </TabsTrigger>
-                <TabsTrigger value="calendar" className="flex flex-col">
-                  <Calendar />
-                  Calendar
-                </TabsTrigger>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <TabsTrigger
+                      value="calendar"
+                      className="flex flex-col"
+                      disabled
+                    >
+                      <Calendar />
+                      Calendar
+                    </TabsTrigger>
+                    <TooltipContent
+                      side="top"
+                      align="center"
+                      sideOffset={5}
+                      className="text-sm"
+                    >
+                      Calendar view coming soon
+                    </TooltipContent>
+                  </TooltipTrigger>
+                </Tooltip>
               </TabsList>
             </Tabs>
           )}

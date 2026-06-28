@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { userPreferenceKeys } from "@/query-keys";
 import type { UserPreference } from "@/api/user";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 function TaskDisplaySelector({ className }: { className?: string }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -126,10 +127,26 @@ function DisplaySettingsDropdown() {
                   <Columns3 />
                   Board
                 </TabsTrigger>
-                <TabsTrigger value="calendar" className="flex flex-col">
-                  <Calendar />
-                  Calendar
-                </TabsTrigger>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <TabsTrigger
+                      value="calendar"
+                      className="flex flex-col"
+                      disabled
+                    >
+                      <Calendar />
+                      Calendar
+                    </TabsTrigger>
+                    <TooltipContent
+                      side="top"
+                      align="center"
+                      sideOffset={5}
+                      className="text-sm"
+                    >
+                      Calendar view coming soon
+                    </TooltipContent>
+                  </TooltipTrigger>
+                </Tooltip>
               </TabsList>
             </Tabs>
           )}
