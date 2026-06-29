@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { requireLogin } from "../../../middleware.js";
+import { requireLogin } from "../../../middleware/requireLogin.js";
 import { TodoBulkDeleteSchema, UpdateTodoSchema } from "@shiva200701/todotypes";
 import prisma from "../../../db/index.js";
 import constructPatchPayload from "../../../utils/construct-patch-payload.js";

@@ -49,4 +49,6 @@ export const projectKeys = {
 export const workspaceKeys = {
   all: ["workspaces"] as const,
   detail: (slug: string) => ["workspaces", slug] as const,
+  members: (slug: string, search: string) =>
+    ["workspaces", slug, search] as const,
 };

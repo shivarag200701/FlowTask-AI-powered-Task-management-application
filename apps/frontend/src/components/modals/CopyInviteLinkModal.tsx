@@ -11,7 +11,6 @@ import { Link } from "lucide-react";
 import { CopyButton } from "../ui/copy-button";
 import { useInviteCodeReset } from "@/hooks/use-workspaces";
 import type { WorkspaceDetail } from "@/types";
-import { useUserProfile } from "@/hooks/use-users";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
@@ -29,14 +28,7 @@ export function CopyInviteLinkModal({
     slug: workspace?.slug!,
   });
 
-  const { data: userProfile } = useUserProfile();
-
-  const role = useMemo(() => {
-    const user = workspace?.members.find(
-      (member) => member.user.id === userProfile?.id
-    );
-    return user?.role;
-  }, [workspace, userProfile]);
+  const role = workspace?.currentUserRole;
 
   return (
     <Modal showModal={show} setShowModal={setShow}>

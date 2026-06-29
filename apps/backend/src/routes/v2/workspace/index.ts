@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { requireLogin } from "../../../middleware.js";
+import { requireLogin } from "../../../middleware/requireLogin.js";
 import prisma from "../../../db/index.js";
 import {
   createSlug,
@@ -13,6 +13,10 @@ import inviteRouter from "./invite/index.js";
 import multer from "multer";
 import { S3 } from "../../../services/s3/index.js";
 import hashToken from "../../../utils/hash-token.js";
+import z from "zod";
+import { extractWorkspaceId } from "../../../middleware/extractWorkspaceId.js";
+import { requireWorkspaceMember } from "../../../middleware/requireWorkspaceMember.js";
+import { requireWorkspaceOwner } from "../../../middleware/requireWorkspaceOwner.js";
 
 export const workspaceRouter = Router();
 
@@ -169,45 +173,50 @@ workspaceRouter.post("/invite/code/accept", requireLogin, async (req, res) => {
 
   const { inviteCode } = data;
 
-  const workspace = await prisma.workspace.findUnique({
-    where: { inviteCode },
-    include: {
-      members: {
-        where: {
-          userId,
+  try {
+    const workspace = await prisma.workspace.findUnique({
+      where: { inviteCode },
+      include: {
+        members: {
+          where: {
+            userId,
+          },
         },
       },
-    },
-  });
-
-  if (!workspace) {
-    return res.status(404).json({
-      code: INVITE_ERROR_CODES.INVALID_ERROR_CODE,
-      msg: "The invite link you are trying to use is invalid. Please contact the workspace owner for more information.",
     });
-  }
 
-  if (workspace.members.length > 0) {
-    return res.status(409).json({
-      code: INVITE_ERROR_CODES.ALREADY_MEMBER,
-      msg: "You're already a member",
+    if (!workspace) {
+      return res.status(404).json({
+        code: INVITE_ERROR_CODES.INVALID_ERROR_CODE,
+        msg: "The invite link you are trying to use is invalid. Please contact the workspace owner for more information.",
+      });
+    }
+
+    if (workspace.members.length > 0) {
+      return res.status(409).json({
+        code: INVITE_ERROR_CODES.ALREADY_MEMBER,
+        msg: "You're already a member",
+        workspaceSlug: workspace.slug,
+      });
+    }
+
+    await prisma.workspaceMember.create({
+      data: {
+        userId,
+        workspaceId: workspace.id,
+      },
+    });
+
+    return res.status(200).json({
+      msg: "Successfully joined the workspace",
       workspaceSlug: workspace.slug,
     });
+  } catch (error) {
+    console.error("Error while accepting invite code", error);
+    return res.status(500).json({
+      msg: "Internal server error",
+    });
   }
-
-  //add a check in the future to check the limit of the number of users
-
-  await prisma.workspaceMember.create({
-    data: {
-      userId,
-      workspaceId: workspace.id,
-    },
-  });
-
-  return res.status(200).json({
-    msg: "sucessfully joined the workspace",
-    workspaceSlug: workspace.slug,
-  });
 });
 
 workspaceRouter.get("/invite/email/preview", requireLogin, async (req, res) => {
@@ -309,66 +318,120 @@ workspaceRouter.get("/check-slug", requireLogin, async (req, res) => {
   }
 });
 
-workspaceRouter.get("/:id", requireLogin, async (req, res) => {
-  const userId = req.userId;
+workspaceRouter.get(
+  "/:id",
+  requireLogin,
+  extractWorkspaceId,
+  requireWorkspaceMember,
+  async (req, res) => {
+    const workspaceId = req.workspaceId!;
+    const workspaceMember = req.workspaceMember;
 
-  const workspaceId = Array.isArray(req.params.id)
-    ? req.params.id[0]
-    : req.params.id;
+    try {
+      const workspace = await prisma.workspace.findFirst({
+        where: {
+          OR: [{ id: workspaceId }, { slug: workspaceId }],
+        },
+      });
 
-  if (!workspaceId) {
-    return res.status(400).json({
-      msg: "No workspace id found in path",
-    });
+      if (!workspace) {
+        return res.status(404).json({
+          msg: "Workspace not found",
+        });
+      }
+
+      return res.status(200).json({
+        workspace: {
+          ...workspace,
+          currentUserRole: workspaceMember?.role,
+        },
+      });
+    } catch (error) {
+      console.error("error while getting workspace information", error);
+      return res.status(500).json({
+        msg: "Internal server error",
+      });
+    }
   }
+);
 
-  try {
-    const workspace = await prisma.workspace.findFirst({
-      where: {
-        OR: [{ id: workspaceId }, { slug: workspaceId }],
-        members: { some: { userId } },
-      },
-      include: {
-        members: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                image: true,
-                email: true,
-                name: true,
-              },
+workspaceRouter.get(
+  "/:id/members",
+  requireLogin,
+  extractWorkspaceId,
+  requireWorkspaceMember,
+  async (req, res) => {
+    const workspaceId = req.workspaceId!;
+
+    const querySchema = z.object({
+      search: z.string(),
+    });
+
+    const { data, success, error } = querySchema.safeParse(req.query);
+
+    if (!success) {
+      return res.status(400).json({
+        msg: "Send proper data",
+        error,
+      });
+    }
+    const { search } = data;
+
+    try {
+      const workspace = await prisma.workspace.findFirst({
+        where: {
+          OR: [{ id: workspaceId }, { slug: workspaceId }],
+        },
+      });
+
+      if (!workspace) {
+        return res.status(404).json({
+          msg: "Workspace not found",
+        });
+      }
+
+      const members = await prisma.workspaceMember.findMany({
+        where: {
+          workspaceId: workspace.id,
+          user: {
+            OR: [
+              { name: { contains: search, mode: "insensitive" } },
+              { email: { contains: search, mode: "insensitive" } },
+            ],
+          },
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true,
             },
           },
         },
-      },
-    });
-    return res.status(200).json({
-      workspace,
-    });
-  } catch (error) {
-    console.error("error while getting workspace information", error);
-    return res.status(500).json({
-      msg: "Internal server error",
-    });
+      });
+
+      return res.status(200).json({
+        members,
+      });
+    } catch (error) {
+      console.error("Unable to fetch memebers of the workspace", error);
+      return res.status(500).json("Internal server error");
+    }
   }
-});
+);
 
 workspaceRouter.patch(
   "/:id/members/:memberId",
   requireLogin,
+  extractWorkspaceId,
+  requireWorkspaceMember,
+  requireWorkspaceOwner,
   async (req, res) => {
     const userId = req.userId;
-
-    const workspaceId = Array.isArray(req.params.id)
-      ? req.params.id[0]
-      : req.params.id;
-
-    if (!workspaceId) {
-      return res.status(400).json({
-        msg: "No workspace id found in path",
-      });
-    }
+    const workspaceId = req.workspaceId!;
+    const workspaceMember = req.workspaceMember!;
 
     const memberId = Array.isArray(req.params.memberId)
       ? req.params.memberId[0]
@@ -376,7 +439,7 @@ workspaceRouter.patch(
 
     if (!memberId) {
       return res.status(400).json({
-        msg: "No member id  found in path",
+        msg: "No member id found in path",
       });
     }
 
@@ -391,30 +454,10 @@ workspaceRouter.patch(
       });
     }
 
-    //restrict to owner check
-    const requestingMember = await prisma.workspaceMember.findFirst({
-      where: {
-        userId,
-        workspaceId,
-      },
-    });
-
-    if (!requestingMember) {
-      return res.status(403).json({
-        msg: "You are not a part of this workspace",
-      });
-    }
-
     // user cannot change their own role
-    if (memberId === requestingMember.id) {
+    if (memberId === workspaceMember.id) {
       return res.status(403).json({
         msg: "You cannot change your own role",
-      });
-    }
-
-    if (requestingMember.role !== "owner") {
-      return res.status(403).json({
-        msg: "Only owners can change the roles of other members",
       });
     }
 
@@ -442,5 +485,7 @@ workspaceRouter.patch(
     }
   }
 );
+
+// workspaceRouter.delete();
 
 workspaceRouter.use("/:id/invite", inviteRouter);

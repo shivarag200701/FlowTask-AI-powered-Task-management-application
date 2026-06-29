@@ -155,7 +155,7 @@ export type WorkspaceMember = {
 };
 
 export type WorkspaceDetail = Omit<Workspace, "_count"> & {
-  members: WorkspaceMember[];
+  currentUserRole: WorkspaceRoles;
 };
 
 export type InviteResult =

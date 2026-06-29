@@ -1,4 +1,5 @@
 import { useRemoveTeammateModal } from "@/components/modals/RemoveTeammateModal";
+import { SearchBoxPersisted } from "@/components/SearchBox";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Popover } from "@/components/ui/popover";
@@ -15,20 +16,32 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useUserProfile } from "@/hooks/use-users";
-import { useUpdateMember } from "@/hooks/use-workspaces";
+import { useUpdateMember, useWorkspaceMembers } from "@/hooks/use-workspaces";
 import PageWidthWrapper from "@/layouts/PageWidthWrapper";
 import type { WorkspaceDetail, WorkspaceMember } from "@/types";
 import type { WorkspaceRoles } from "@shiva200701/todotypes";
 import { Crown, MoreHorizontal, UserMinus } from "lucide-react";
-import { useMemo, useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useState } from "react";
+import { useOutletContext, useSearchParams } from "react-router-dom";
 
 export function WorkspaceMembers() {
   const { workspace } = useOutletContext<{ workspace: WorkspaceDetail }>();
   const { data: userProfile } = useUserProfile();
 
-  const [selectedMemberRemove, setSelectedMemberRemove] =
-    useState<{ member: WorkspaceMember; isCurrentUser: boolean } | null>(null);
+  const [searchParams] = useSearchParams();
+
+  const search = searchParams.get("search");
+
+  const { data: members } = useWorkspaceMembers({
+    id: workspace.id,
+    slug: workspace.slug,
+    search: search ?? "",
+  });
+
+  const [selectedMemberRemove, setSelectedMemberRemove] = useState<{
+    member: WorkspaceMember;
+    isCurrentUser: boolean;
+  } | null>(null);
 
   const { RemoveTeamamteModal, setShowRemoveTeammateModal } =
     useRemoveTeammateModal({
@@ -36,35 +49,37 @@ export function WorkspaceMembers() {
       isCurrentUser: selectedMemberRemove?.isCurrentUser ?? false,
     });
 
-  const isOwner = useMemo(() => {
-    const user = workspace?.members.find(
-      (member) => member.userId === userProfile?.id
-    );
-    return user?.role === "owner";
-  }, [workspace, userProfile]);
+  const isOwner = workspace.currentUserRole === "owner";
 
   return (
     <PageWidthWrapper className="max-w-7xl py-8 space-y-8 px-0 ">
       {/* Members */}
       <div>
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
             Members
           </h3>
+          <SearchBoxPersisted />
         </div>
-        <div className="rounded-lg border border-border divide-y divide-border">
-          {workspace.members.map((member) => (
-            <MemberRow
-              key={member.id}
-              member={member}
-              isCurrentUser={member.user.id === userProfile?.id}
-              isOwner={isOwner}
-              onRemoveClick={(member, isCurrentUser) => {
-                setSelectedMemberRemove({ member, isCurrentUser });
-                setShowRemoveTeammateModal(true);
-              }}
-            />
-          ))}
+        <div className="rounded-xl border border-border divide-y divide-border">
+          {members && members.length > 0 ? (
+            members.map((member) => (
+              <MemberRow
+                key={member.id}
+                member={member}
+                isCurrentUser={member.user.id === userProfile?.id}
+                isOwner={isOwner}
+                onRemoveClick={(member, isCurrentUser) => {
+                  setSelectedMemberRemove({ member, isCurrentUser });
+                  setShowRemoveTeammateModal(true);
+                }}
+              />
+            ))
+          ) : (
+            <div className="h-[400px] w-full flex items-center justify-center text-neutral-500 text-sm">
+              No members found.
+            </div>
+          )}
         </div>
       </div>
       <RemoveTeamamteModal />

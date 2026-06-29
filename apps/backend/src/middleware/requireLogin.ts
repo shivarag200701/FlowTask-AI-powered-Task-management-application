@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
-import { redisClient } from "./index.js";
-import { searchService } from "./services/search/index.js";
+import { redisClient } from "../index.js";
+import { searchService } from "../services/search/index.js";
 
 const REINDEX_EXPIRY = 60 * 60 * 24 * 30; // 30 days
 

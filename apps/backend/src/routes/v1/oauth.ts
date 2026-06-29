@@ -12,7 +12,7 @@ import {
 } from "../../services/oauth/stateStore.js";
 import prisma from "../../db/index.js";
 import crypto from "crypto";
-import { requireLogin } from "../../middleware.js";
+import { requireLogin } from "../../middleware/requireLogin.js";
 
 const oauthRouter = express.Router();
 

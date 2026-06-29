@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { requireLogin } from "../../../../middleware.js";
+import { requireLogin } from "../../../../middleware/requireLogin.js";
 import prisma from "../../../../db/index.js";
 import {
   CreateProjectSectionSchema,

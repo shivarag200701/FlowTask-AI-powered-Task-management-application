@@ -1,7 +1,7 @@
 //@ts-nocheck
 //depcreated
 import express from "express";
-import { requireLogin } from "../../middleware.js";
+import { requireLogin } from "../../middleware/requireLogin.js";
 import prisma from "../../db/index.js";
 import { todoSchema, convertCompleteAtToDate } from "@shiva200701/todotypes";
 import notificationService from "../../services/notification/NotificationService.js";

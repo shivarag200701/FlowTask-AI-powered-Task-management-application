@@ -16,7 +16,7 @@ import {
   hashPassword,
   verifyPassword,
 } from "../../utils/auth/passwordHasher.js";
-import { requireLogin } from "../../middleware.js";
+import { requireLogin } from "../../middleware/requireLogin.js";
 import generateOTP from "../../utils/auth/otpGenerator.js";
 import { EMAIL_OTP_EXPIRY_IN } from "../../utils/auth/constants.js";
 import { sendEmail } from "../../services/email/EmailService.js";

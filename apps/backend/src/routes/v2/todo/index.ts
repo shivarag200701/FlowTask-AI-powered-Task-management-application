@@ -5,7 +5,7 @@ import {
   UpdateTodoSchema,
   type RecurrenceRule,
 } from "@shiva200701/todotypes";
-import { requireLogin } from "../../../middleware.js";
+import { requireLogin } from "../../../middleware/requireLogin.js";
 import { generateSortKey } from "../../../utils/todo-ordering.js";
 import prisma from "../../../db/index.js";
 import constructPatchPayload from "../../../utils/construct-patch-payload.js";

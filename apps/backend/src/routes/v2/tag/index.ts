@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { requireLogin } from "../../../middleware.js";
+import { requireLogin } from "../../../middleware/requireLogin.js";
 import { createId } from "../../../utils/create-id.js";
 import {
   CreateTagSchema,

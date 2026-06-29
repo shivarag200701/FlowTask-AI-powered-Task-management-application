@@ -4,6 +4,7 @@ import type {
   WorkspaceDetail,
   InviteResult,
   InvitePreview,
+  WorkspaceMember,
 } from "@/types";
 import api from "@/utils/functions/api";
 import type { WorkspaceRoles } from "@shiva200701/todotypes";
@@ -29,6 +30,24 @@ export async function getWorkspace(id: string): Promise<WorkspaceDetail> {
   } catch (error) {
     throw error;
   }
+}
+
+export async function getWorkspaceMembers({
+  id,
+  query,
+}: {
+  id: string;
+  query: { search: string };
+}): Promise<WorkspaceMember[]> {
+  const searchParams = new URLSearchParams({ ...query } as Record<
+    string,
+    any
+  >).toString();
+
+  const { members } = (
+    await api.get(`/api/v2/workspaces/${id}/members?${searchParams}`)
+  ).data;
+  return members;
 }
 
 export async function createWorkspace(formData: globalThis.FormData) {

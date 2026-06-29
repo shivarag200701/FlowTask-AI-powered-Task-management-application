@@ -3,6 +3,7 @@ import {
   checkWorkspaceSlug,
   createWorkspace,
   getWorkspace,
+  getWorkspaceMembers,
   getWorkspacePreview,
   getWorkspaces,
   inviteWorkspaceCode,
@@ -12,7 +13,7 @@ import {
 } from "@/api/workspace";
 import type { InviteForm } from "@/components/modals/InviteMemberModal";
 import { workspaceKeys } from "@/query-keys";
-import type { InviteResult, WorkspaceDetail } from "@/types";
+import type { InviteResult, WorkspaceMember } from "@/types";
 import { type WorkspaceRoles } from "@shiva200701/todotypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError, isAxiosError, type AxiosResponse } from "axios";
@@ -33,6 +34,23 @@ export function useWorkspace(id: string | null) {
     queryKey: workspaceKeys.detail(id ?? ""),
     queryFn: () => getWorkspace(id!),
     enabled: !!id,
+    staleTime: 60000,
+  });
+}
+
+export function useWorkspaceMembers({
+  slug,
+  search,
+  id,
+}: {
+  search: string;
+  slug: string;
+  id: string;
+}) {
+  return useQuery({
+    queryKey: workspaceKeys.members(slug, search),
+    queryFn: () => getWorkspaceMembers({ id, query: { search } }),
+    enabled: true,
     staleTime: 60000,
   });
 }
@@ -192,24 +210,17 @@ export function useUpdateMember() {
       toast.success("Member updated successfully");
     },
     onMutate: async ({ memberId, role }) => {
-      queryClient.cancelQueries({ queryKey: workspaceKeys.detail(slug!) });
-      const previous = queryClient.getQueryData(workspaceKeys.detail(slug!));
-      queryClient.setQueryData(
-        workspaceKeys.detail(slug!),
-        (old: WorkspaceDetail) => {
-          return {
-            ...old,
-            members: old.members.map((m) =>
-              m.id === memberId ? { ...m, role } : m
-            ),
-          };
-        }
+      const membersKey = workspaceKeys.members(slug!, "");
+      await queryClient.cancelQueries({ queryKey: membersKey });
+      const previous = queryClient.getQueryData<WorkspaceMember[]>(membersKey);
+      queryClient.setQueryData<WorkspaceMember[]>(membersKey, (old) =>
+        old?.map((m) => (m.id === memberId ? { ...m, role } : m))
       );
 
       return { previous };
     },
     onError: (error, _vars, context) => {
-      queryClient.setQueryData(workspaceKeys.detail(slug!), context?.previous);
+      queryClient.setQueryData(workspaceKeys.members(slug!, ""), context?.previous);
       if (isAxiosError(error)) {
         const errorMsg = error.response?.data.msg;
         toast.error(errorMsg);

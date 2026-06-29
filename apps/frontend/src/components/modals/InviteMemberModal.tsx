@@ -13,7 +13,6 @@ import { CircleXIcon, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useSendEmailInvite } from "@/hooks/use-workspaces";
-import { useUserProfile } from "@/hooks/use-users";
 import type { WorkspaceDetail } from "@/types";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { RoleSelector } from "@/features/workspace/components/RoleSelector";
@@ -148,15 +147,11 @@ function InviteMemberButton({
   setShow: Dispatch<SetStateAction<boolean>>;
   workspace?: WorkspaceDetail;
 }) {
-  const { data: userProfile } = useUserProfile();
-  const role = useMemo(() => {
-    const user = workspace?.members.find(
-      (member) => member.userId === userProfile?.id
-    );
-    return user?.role;
-  }, [workspace, userProfile]);
+  const role = workspace?.currentUserRole;
 
   const { isMobile } = useMediaQuery();
+
+  console.log("users role", role);
 
   return (
     <Tooltip>
