@@ -45,7 +45,7 @@ function DraggableTask({
     todo,
   });
 
-  const { mutate: updateTodo } = useUpdateTodo();
+  const { mutate: updateTodo } = useUpdateTodo(todo.projectId);
   const { selectedTaskIds } = useTaskSelectionContext();
 
   const { data: project } = useProject(todo.projectId ?? "");

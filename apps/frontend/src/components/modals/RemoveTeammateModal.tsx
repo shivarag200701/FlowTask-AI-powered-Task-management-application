@@ -15,11 +15,15 @@ function RemoveTeamamteModal({
   show,
   setShow,
   isCurrentUser,
+  onConfirm,
+  isLoading,
 }: {
   member?: WorkspaceMember | null;
   show: boolean;
   setShow: Dispatch<SetStateAction<boolean>>;
   isCurrentUser: boolean;
+  onConfirm: () => void;
+  isLoading: boolean;
 }) {
   if (!member) return;
   return (
@@ -64,8 +68,17 @@ function RemoveTeamamteModal({
               </span>
             </div>
           </div>
-          <Button variant="destructive" size="lg">
-            {isCurrentUser ? "Leave Workspace" : "Remove"}
+          <Button
+            variant="destructive"
+            size="lg"
+            onClick={onConfirm}
+            disabled={isLoading}
+          >
+            {isLoading
+              ? "Processing..."
+              : isCurrentUser
+                ? "Leave Workspace"
+                : "Remove"}
           </Button>
         </div>
       </div>
@@ -76,9 +89,13 @@ function RemoveTeamamteModal({
 export function useRemoveTeammateModal({
   member,
   isCurrentUser,
+  onConfirm,
+  isLoading,
 }: {
   member?: WorkspaceMember | null;
   isCurrentUser: boolean;
+  onConfirm: () => void;
+  isLoading: boolean;
 }) {
   const [show, setShow] = useState(false);
   const RemoveTeammateModalCallback = useCallback(() => {
@@ -88,9 +105,11 @@ export function useRemoveTeammateModal({
         setShow={setShow}
         member={member}
         isCurrentUser={isCurrentUser}
+        onConfirm={onConfirm}
+        isLoading={isLoading}
       />
     );
-  }, [show, setShow, member, isCurrentUser]);
+  }, [show, setShow, member, isCurrentUser, onConfirm, isLoading]);
 
   return useMemo(
     () => ({

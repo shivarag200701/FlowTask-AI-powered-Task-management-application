@@ -55,10 +55,11 @@ workspaceRouter.post(
 
       //Create an invite code
       const workspace = await prisma.$transaction(async (tx) => {
-        //check if the user already has a workspace, currently only one can create only one workspace
-        const count = await prisma.workspace.count({
+        //check if the user already has a workspace, currently only one can create/be owner only one workspace
+        const count = await prisma.workspaceMember.count({
           where: {
-            createdBy: userId,
+            userId,
+            role: "owner",
           },
         });
 
@@ -486,6 +487,74 @@ workspaceRouter.patch(
   }
 );
 
-// workspaceRouter.delete();
+workspaceRouter.delete(
+  "/:id/members/:memberId",
+  requireLogin,
+  extractWorkspaceId,
+  requireWorkspaceMember,
+  async (req, res) => {
+    const userId = req.userId;
+    const workspaceId = req.workspaceId!;
+    const workspaceMember = req.workspaceMember!;
+
+    const memberId = Array.isArray(req.params.memberId)
+      ? req.params.memberId[0]
+      : req.params.memberId;
+
+    if (!memberId) {
+      return res.status(400).json({
+        msg: "No member id found in path",
+      });
+    }
+
+    //leaving the group, do not need to be an owner
+
+    try {
+      if (memberId === workspaceMember.id) {
+        //removing last owner
+        if (workspaceMember.role === "owner") {
+          const ownerCount = await prisma.workspaceMember.count({
+            where: { workspaceId: req.workspaceId!, role: "owner" },
+          });
+          if (ownerCount <= 1) {
+            return res.status(400).json({
+              msg: "You are the only owner. Transfer ownership before leaving.",
+            });
+          }
+        }
+        await prisma.workspaceMember.delete({
+          where: {
+            id: memberId,
+          },
+        });
+
+        return res.status(200).json({
+          msg: "You have successfully left the workspace",
+        });
+      }
+
+      if (workspaceMember.role !== "owner") {
+        return res.status(403).json({
+          msg: "Only owner can remove other members from the workspace",
+        });
+      }
+
+      await prisma.workspaceMember.delete({
+        where: {
+          id: memberId,
+        },
+      });
+
+      return res.status(200).json({
+        msg: "You have successfully removed the member from the workspace",
+      });
+    } catch (error) {
+      console.error("Error while removing member", error);
+      return res.status(500).json({
+        msg: "Internal server error",
+      });
+    }
+  }
+);
 
 workspaceRouter.use("/:id/invite", inviteRouter);

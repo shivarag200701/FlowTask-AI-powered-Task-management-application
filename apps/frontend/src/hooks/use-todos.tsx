@@ -222,8 +222,13 @@ export function useUpdateTodo(projectId?: string | null) {
     onSuccess: (_data, variables, context) => {
       queryClient.invalidateQueries({ queryKey: todosQueryKeys.all });
       if (projectId) {
+        console.log("called here in projectId");
+
         queryClient.invalidateQueries({
           queryKey: projectKeys.project(projectId),
+        });
+        queryClient.invalidateQueries({
+          queryKey: projectKeys.sections(projectId),
         });
       }
       if (variables.type) {

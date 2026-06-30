@@ -10,6 +10,7 @@ import {
   resetInviteCode,
   sendEmailInvite,
   updateMember,
+  removeMember,
 } from "@/api/workspace";
 import type { InviteForm } from "@/components/modals/InviteMemberModal";
 import { workspaceKeys } from "@/query-keys";
@@ -228,6 +229,46 @@ export function useUpdateMember() {
       }
       console.log(error);
 
+      toast.error("Something went wrong");
+    },
+  });
+}
+
+export function useRemoveMember() {
+  const queryClient = useQueryClient();
+  const { slug } = useParams<{ slug: string }>();
+
+  return useMutation({
+    mutationFn: ({
+      workspaceId,
+      memberId,
+    }: {
+      workspaceId: string;
+      memberId: string;
+    }) => removeMember({ workspaceId, memberId }),
+    onMutate: async ({ memberId }) => {
+      const membersKey = workspaceKeys.members(slug!, "");
+      await queryClient.cancelQueries({ queryKey: membersKey });
+      const previous = queryClient.getQueryData<WorkspaceMember[]>(membersKey);
+      queryClient.setQueryData<WorkspaceMember[]>(membersKey, (old) =>
+        old?.filter((m) => m.id !== memberId)
+      );
+      return { previous };
+    },
+    onSuccess: () => {
+      toast.success("Member removed successfully");
+      queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
+    },
+    onError: (error, _vars, context) => {
+      queryClient.setQueryData(
+        workspaceKeys.members(slug!, ""),
+        context?.previous
+      );
+      if (isAxiosError(error)) {
+        const errorMsg = error.response?.data.msg;
+        toast.error(errorMsg);
+        return;
+      }
       toast.error("Something went wrong");
     },
   });

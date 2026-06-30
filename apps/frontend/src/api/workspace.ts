@@ -163,3 +163,16 @@ export async function updateMember({
     role,
   });
 }
+
+export async function removeMember({
+  workspaceId,
+  memberId,
+}: {
+  workspaceId: string;
+  memberId: string;
+}) {
+  const response = await api.delete(
+    `/api/v2/workspaces/${workspaceId}/members/${memberId}`
+  );
+  return response.data;
+}

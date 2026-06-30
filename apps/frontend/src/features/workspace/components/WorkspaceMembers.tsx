@@ -16,7 +16,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useUserProfile } from "@/hooks/use-users";
-import { useUpdateMember, useWorkspaceMembers } from "@/hooks/use-workspaces";
+import {
+  useRemoveMember,
+  useUpdateMember,
+  useWorkspaceMembers,
+} from "@/hooks/use-workspaces";
 import PageWidthWrapper from "@/layouts/PageWidthWrapper";
 import type { WorkspaceDetail, WorkspaceMember } from "@/types";
 import type { WorkspaceRoles } from "@shiva200701/todotypes";
@@ -38,6 +42,8 @@ export function WorkspaceMembers() {
     search: search ?? "",
   });
 
+  const { mutate: removeMember, isPending: isRemoving } = useRemoveMember();
+
   const [selectedMemberRemove, setSelectedMemberRemove] = useState<{
     member: WorkspaceMember;
     isCurrentUser: boolean;
@@ -47,6 +53,22 @@ export function WorkspaceMembers() {
     useRemoveTeammateModal({
       member: selectedMemberRemove?.member,
       isCurrentUser: selectedMemberRemove?.isCurrentUser ?? false,
+      isLoading: isRemoving,
+      onConfirm: () => {
+        if (!selectedMemberRemove) return;
+        removeMember(
+          {
+            workspaceId: workspace.id,
+            memberId: selectedMemberRemove.member.id,
+          },
+          {
+            onSuccess: () => {
+              setShowRemoveTeammateModal(false);
+              setSelectedMemberRemove(null);
+            },
+          }
+        );
+      },
     });
 
   const isOwner = workspace.currentUserRole === "owner";
