@@ -165,6 +165,18 @@ export async function updateMember({
   });
 }
 
+export async function revokeInvite({
+  workspaceId,
+  email,
+}: {
+  workspaceId: string;
+  email: string;
+}) {
+  await api.delete(`/api/v2/workspaces/${workspaceId}/invite/email/revoke`, {
+    data: { email },
+  });
+}
+
 export async function removeMember({
   workspaceId,
   memberId,

@@ -11,6 +11,7 @@ import {
   sendEmailInvite,
   updateMember,
   removeMember,
+  revokeInvite,
 } from "@/api/workspace";
 import type { InviteForm } from "@/components/modals/InviteMemberModal";
 import { workspaceKeys } from "@/query-keys";
@@ -20,6 +21,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError, isAxiosError, type AxiosResponse } from "axios";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
+import { useUserProfile } from "./use-users";
 
 export function useWorkspaces() {
   return useQuery({
@@ -48,11 +50,22 @@ export function useWorkspaceMembers({
   slug: string;
   id: string;
 }) {
+  const { data: userProfile } = useUserProfile();
+  const currentUserId = userProfile?.id;
+
   return useQuery({
     queryKey: workspaceKeys.members(slug, search),
     queryFn: () => getWorkspaceMembers({ id, query: { search } }),
     enabled: true,
     staleTime: 60000,
+    select: (data) => ({
+      ...data,
+      members: [...data.members].sort((a, b) => {
+        if (a.userId === currentUserId) return -1;
+        if (b.userId === currentUserId) return 1;
+        return 0;
+      }),
+    }),
   });
 }
 
@@ -231,6 +244,55 @@ export function useUpdateMember() {
       });
 
       return { previous };
+    },
+    onError: (error, _vars, context) => {
+      queryClient.setQueryData(
+        workspaceKeys.members(slug!, ""),
+        context?.previous
+      );
+      if (isAxiosError(error)) {
+        const errorMsg = error.response?.data.msg;
+        toast.error(errorMsg);
+        return;
+      }
+      toast.error("Something went wrong");
+    },
+  });
+}
+
+export function useRevokeInvite() {
+  const queryClient = useQueryClient();
+  const { slug } = useParams<{ slug: string }>();
+
+  return useMutation({
+    mutationFn: ({
+      workspaceId,
+      email,
+    }: {
+      workspaceId: string;
+      email: string;
+    }) => revokeInvite({ workspaceId, email }),
+    onMutate: async ({ email }) => {
+      const membersKey = workspaceKeys.members(slug!, "");
+      await queryClient.cancelQueries({ queryKey: membersKey });
+      const previous = queryClient.getQueryData<{
+        members: WorkspaceMember[];
+        invited: Invited[];
+      }>(membersKey);
+      queryClient.setQueryData<{
+        members: WorkspaceMember[];
+        invited: Invited[];
+      }>(membersKey, (old) => {
+        if (!old) return;
+        return {
+          ...old,
+          invited: old.invited.filter((i) => i.email !== email),
+        };
+      });
+      return { previous };
+    },
+    onSuccess: () => {
+      toast.success("Invite revoked successfully");
     },
     onError: (error, _vars, context) => {
       queryClient.setQueryData(
