@@ -14,7 +14,7 @@ import {
 } from "@/api/workspace";
 import type { InviteForm } from "@/components/modals/InviteMemberModal";
 import { workspaceKeys } from "@/query-keys";
-import type { InviteResult, WorkspaceMember } from "@/types";
+import type { Invited, InviteResult, WorkspaceMember } from "@/types";
 import { type WorkspaceRoles } from "@shiva200701/todotypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError, isAxiosError, type AxiosResponse } from "axios";
@@ -213,22 +213,35 @@ export function useUpdateMember() {
     onMutate: async ({ memberId, role }) => {
       const membersKey = workspaceKeys.members(slug!, "");
       await queryClient.cancelQueries({ queryKey: membersKey });
-      const previous = queryClient.getQueryData<WorkspaceMember[]>(membersKey);
-      queryClient.setQueryData<WorkspaceMember[]>(membersKey, (old) =>
-        old?.map((m) => (m.id === memberId ? { ...m, role } : m))
-      );
+      const previous = queryClient.getQueryData<{
+        members: WorkspaceMember[];
+        invited: Invited[];
+      }>(membersKey);
+      queryClient.setQueryData<{
+        members: WorkspaceMember[];
+        invited: Invited[];
+      }>(membersKey, (old) => {
+        if (!old) return;
+        return {
+          ...old,
+          members: old.members.map((m) =>
+            m.id === memberId ? { ...m, role } : m
+          ),
+        };
+      });
 
       return { previous };
     },
     onError: (error, _vars, context) => {
-      queryClient.setQueryData(workspaceKeys.members(slug!, ""), context?.previous);
+      queryClient.setQueryData(
+        workspaceKeys.members(slug!, ""),
+        context?.previous
+      );
       if (isAxiosError(error)) {
         const errorMsg = error.response?.data.msg;
         toast.error(errorMsg);
         return;
       }
-      console.log(error);
-
       toast.error("Something went wrong");
     },
   });
@@ -249,10 +262,20 @@ export function useRemoveMember() {
     onMutate: async ({ memberId }) => {
       const membersKey = workspaceKeys.members(slug!, "");
       await queryClient.cancelQueries({ queryKey: membersKey });
-      const previous = queryClient.getQueryData<WorkspaceMember[]>(membersKey);
-      queryClient.setQueryData<WorkspaceMember[]>(membersKey, (old) =>
-        old?.filter((m) => m.id !== memberId)
-      );
+      const previous = queryClient.getQueryData<{
+        members: WorkspaceMember[];
+        invited: Invited[];
+      }>(membersKey);
+      queryClient.setQueryData<{
+        members: WorkspaceMember[];
+        invited: Invited[];
+      }>(membersKey, (old) => {
+        if (!old) return;
+        return {
+          ...old,
+          members: old.members.filter((m) => m.id !== memberId),
+        };
+      });
       return { previous };
     },
     onSuccess: () => {

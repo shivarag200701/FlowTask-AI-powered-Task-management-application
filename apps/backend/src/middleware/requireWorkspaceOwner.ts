@@ -5,6 +5,8 @@ export function requireWorkspaceOwner(
   res: Response,
   next: NextFunction
 ) {
+  console.log(req.workspaceMember);
+
   if (!req.workspaceMember || req.workspaceMember.role !== "owner") {
     return res.status(403).json({
       msg: "Only owners can perform this action",

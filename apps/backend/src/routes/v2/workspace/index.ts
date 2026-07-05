@@ -379,21 +379,9 @@ workspaceRouter.get(
     const { search } = data;
 
     try {
-      const workspace = await prisma.workspace.findFirst({
-        where: {
-          OR: [{ id: workspaceId }, { slug: workspaceId }],
-        },
-      });
-
-      if (!workspace) {
-        return res.status(404).json({
-          msg: "Workspace not found",
-        });
-      }
-
       const members = await prisma.workspaceMember.findMany({
         where: {
-          workspaceId: workspace.id,
+          workspaceId,
           user: {
             OR: [
               { name: { contains: search, mode: "insensitive" } },
@@ -413,8 +401,19 @@ workspaceRouter.get(
         },
       });
 
+      const invited = await prisma.workspaceInvite.findMany({
+        where: {
+          workspaceId,
+        },
+        select: {
+          email: true,
+          createdAt: true,
+        },
+      });
+
       return res.status(200).json({
         members,
+        invited,
       });
     } catch (error) {
       console.error("Unable to fetch memebers of the workspace", error);
@@ -557,4 +556,9 @@ workspaceRouter.delete(
   }
 );
 
-workspaceRouter.use("/:id/invite", inviteRouter);
+workspaceRouter.use(
+  "/:id/invite",
+  requireLogin,
+  extractWorkspaceId,
+  inviteRouter
+);

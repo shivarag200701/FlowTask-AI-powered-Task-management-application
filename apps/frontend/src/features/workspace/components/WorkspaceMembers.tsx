@@ -24,7 +24,15 @@ import {
 import PageWidthWrapper from "@/layouts/PageWidthWrapper";
 import type { WorkspaceDetail, WorkspaceMember } from "@/types";
 import type { WorkspaceRoles } from "@shiva200701/todotypes";
-import { Crown, MoreHorizontal, UserMinus } from "lucide-react";
+import {
+  Crown,
+  MailX,
+  MoreHorizontal,
+  SendHorizonal,
+  UserMinus,
+  type LucideIcon,
+} from "lucide-react";
+import { DateTime } from "luxon";
 import { useState } from "react";
 import { useOutletContext, useSearchParams } from "react-router-dom";
 
@@ -36,7 +44,7 @@ export function WorkspaceMembers() {
 
   const search = searchParams.get("search");
 
-  const { data: members } = useWorkspaceMembers({
+  const { data: WorkspaceMembers } = useWorkspaceMembers({
     id: workspace.id,
     slug: workspace.slug,
     search: search ?? "",
@@ -84,24 +92,32 @@ export function WorkspaceMembers() {
           <SearchBoxPersisted />
         </div>
         <div className="rounded-xl border border-border divide-y divide-border">
-          {members && members.length > 0 ? (
-            members.map((member) => (
-              <MemberRow
-                key={member.id}
-                member={member}
-                isCurrentUser={member.user.id === userProfile?.id}
-                isOwner={isOwner}
-                onRemoveClick={(member, isCurrentUser) => {
-                  setSelectedMemberRemove({ member, isCurrentUser });
-                  setShowRemoveTeammateModal(true);
-                }}
-              />
-            ))
-          ) : (
-            <div className="h-[400px] w-full flex items-center justify-center text-neutral-500 text-sm">
-              No members found.
-            </div>
-          )}
+          {WorkspaceMembers?.members?.map((member) => (
+            <MemberRow
+              key={member.id}
+              member={member}
+              isCurrentUser={member.user.id === userProfile?.id}
+              isOwner={isOwner}
+              onRemoveClick={(member, isCurrentUser) => {
+                setSelectedMemberRemove({ member, isCurrentUser });
+                setShowRemoveTeammateModal(true);
+              }}
+            />
+          ))}
+          {WorkspaceMembers?.invited?.map((invite) => (
+            <InvitedRow
+              key={invite.email}
+              email={invite.email}
+              createdAt={invite.createdAt}
+              isOwner={isOwner}
+            />
+          ))}
+          {!WorkspaceMembers?.members?.length &&
+            !WorkspaceMembers?.invited?.length && (
+              <div className="h-[400px] w-full flex items-center justify-center text-neutral-500 text-sm">
+                No members found.
+              </div>
+            )}
         </div>
       </div>
       <RemoveTeamamteModal />
@@ -156,11 +172,78 @@ function MemberRow({
             setOpenPopover={setIsMoreOptionsOpen}
             content={
               <MoreOptionsDropDown
-                isCurrentUser={isCurrentUser}
                 onClick={() => {
                   setIsMoreOptionsOpen(false);
                   onRemoveClick(member, isCurrentUser);
                 }}
+                text={
+                  isCurrentUser ? "Leave workspace" : "Remove from workspace"
+                }
+                icon={UserMinus}
+              />
+            }
+            side="bottom"
+            align="end"
+          >
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              icon={<MoreHorizontal strokeWidth={1} className="h-5 w-5" />}
+            />
+          </Popover>
+        ) : (
+          <div className="w-8" />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function InvitedRow({
+  email,
+  createdAt,
+  isOwner,
+}: {
+  email: string;
+  createdAt: string;
+  isOwner: boolean;
+}) {
+  const invitedAgo = DateTime.fromISO(createdAt).toRelative();
+  const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
+
+  return (
+    <div className="flex items-center justify-between px-4 py-3 gap-3">
+      <div className="flex items-center gap-3 min-w-0">
+        <Avatar>
+          <AvatarImage
+            src={`https://avatar.vercel.sh/${email}`}
+            alt={email}
+            referrerPolicy="no-referrer"
+          />
+        </Avatar>
+        <div>
+          <p className="text-sm font-medium text-muted-foreground">{email}</p>
+          <p className="text-xs text-muted-foreground truncate">
+            Invited {invitedAgo}
+          </p>
+        </div>
+      </div>
+      <div className="flex items-center gap-2 sm:gap-30 shrink-0">
+        <div className="w-fit sm:w-[120px] inline-flex gap-1 items-center justify-center text-xs sm:text-sm rounded-full sm:rounded-md border-0 sm:border px-2.5 py-0.5 sm:px-3 sm:py-2 bg-blue-50 text-blue-600 border-blue-200">
+          <SendHorizonal className="size-3" />
+          <span>Invited</span>
+        </div>
+        {isOwner ? (
+          <Popover
+            openPopover={isMoreOptionsOpen}
+            setOpenPopover={setIsMoreOptionsOpen}
+            content={
+              <MoreOptionsDropDown
+                onClick={() => {
+                  setIsMoreOptionsOpen(false);
+                }}
+                text="Revoke Invite"
+                icon={MailX}
               />
             }
             side="bottom"
@@ -181,11 +264,13 @@ function MemberRow({
 }
 
 function MoreOptionsDropDown({
-  isCurrentUser,
   onClick,
+  text,
+  icon: Icon,
 }: {
-  isCurrentUser: boolean;
   onClick: () => void;
+  text?: string;
+  icon: LucideIcon;
 }) {
   return (
     <div className="p-1.5">
@@ -196,10 +281,8 @@ function MoreOptionsDropDown({
           onClick();
         }}
       >
-        <UserMinus className="w-5 h-5" />
-        <span>
-          {isCurrentUser ? "Leave workspace" : "Remove from workspace"}
-        </span>
+        <Icon className="w-5 h-5" />
+        <span>{text}</span>
       </button>
     </div>
   );

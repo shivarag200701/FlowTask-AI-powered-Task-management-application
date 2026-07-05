@@ -190,6 +190,11 @@ export const INVITE_ERROR_MESSAGES = {
   },
 } as const;
 
+export type Invited = {
+  email: string;
+  createdAt: string;
+};
+
 export type InvitePreview = {
   success: boolean;
   workspace: {
