@@ -1,3 +1,4 @@
+import { useConfirmModal } from "@/components/modals/ConfirmModal";
 import { useRemoveTeammateModal } from "@/components/modals/RemoveTeammateModal";
 import { SearchBoxPersisted } from "@/components/SearchBox";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
@@ -18,6 +19,7 @@ import {
 import { useUserProfile } from "@/hooks/use-users";
 import {
   useRemoveMember,
+  useRevokeInvite,
   useUpdateMember,
   useWorkspaceMembers,
 } from "@/hooks/use-workspaces";
@@ -51,11 +53,35 @@ export function WorkspaceMembers() {
   });
 
   const { mutate: removeMember, isPending: isRemoving } = useRemoveMember();
+  const { mutate: revokeInviteMutation } = useRevokeInvite();
 
   const [selectedMemberRemove, setSelectedMemberRemove] = useState<{
     member: WorkspaceMember;
     isCurrentUser: boolean;
   } | null>(null);
+
+  const [revokeInvite, setRevokeInvite] = useState<{ email: string } | null>(
+    null
+  );
+
+  const { ConfirmModal, setShowConfirmModal } = useConfirmModal({
+    title: "Revoke invite?",
+    description: (
+      <div>
+        The invite sent to{" "}
+        <span className="font-bold">{revokeInvite?.email}</span> will be
+        revoked. You can always send a new invite later.
+      </div>
+    ),
+    onConfirm: () => {
+      if (!revokeInvite?.email) return;
+      revokeInviteMutation(
+        { workspaceId: workspace.id, email: revokeInvite.email },
+        { onSuccess: () => setShowConfirmModal(false) }
+      );
+    },
+    variant: "destructive",
+  });
 
   const { RemoveTeamamteModal, setShowRemoveTeammateModal } =
     useRemoveTeammateModal({
@@ -110,6 +136,10 @@ export function WorkspaceMembers() {
               email={invite.email}
               createdAt={invite.createdAt}
               isOwner={isOwner}
+              onRevokeClick={(email) => {
+                setShowConfirmModal(true);
+                setRevokeInvite({ email });
+              }}
             />
           ))}
           {!WorkspaceMembers?.members?.length &&
@@ -121,6 +151,7 @@ export function WorkspaceMembers() {
         </div>
       </div>
       <RemoveTeamamteModal />
+      {ConfirmModal}
     </PageWidthWrapper>
   );
 }
@@ -203,10 +234,12 @@ function InvitedRow({
   email,
   createdAt,
   isOwner,
+  onRevokeClick,
 }: {
   email: string;
   createdAt: string;
   isOwner: boolean;
+  onRevokeClick: (email: string) => void;
 }) {
   const invitedAgo = DateTime.fromISO(createdAt).toRelative();
   const [isMoreOptionsOpen, setIsMoreOptionsOpen] = useState(false);
@@ -241,6 +274,7 @@ function InvitedRow({
               <MoreOptionsDropDown
                 onClick={() => {
                   setIsMoreOptionsOpen(false);
+                  onRevokeClick(email);
                 }}
                 text="Revoke Invite"
                 icon={MailX}

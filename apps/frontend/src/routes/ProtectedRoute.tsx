@@ -29,6 +29,7 @@ const ProtectedRoute = () => {
     queryKey: userPreferenceKeys.preferences,
     queryFn: getUserPreference,
     staleTime: 60000,
+    enabled: isAuthenticated,
   });
 
   // const { isLoading: projectLoading } = useProjects();
@@ -80,7 +81,9 @@ const ProtectedRoute = () => {
     !location.pathname.startsWith("/onboarding")
   ) {
     if (!onboardingStep) {
-      return <Navigate to="/onboarding" state={{ from: location }} replace />;
+      return (
+        <Navigate to="/onboarding/welcome" state={{ from: location }} replace />
+      );
     }
 
     return (
