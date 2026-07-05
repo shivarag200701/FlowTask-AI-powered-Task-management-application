@@ -5,9 +5,8 @@ import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { Gradient } from "@/components/ui/gradient";
 import { Button } from "@/components/ui/button";
 import UseOnboardingProgess from "@/features/auth/onboarding/Use-onboarding-progess";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { saveUserProfile } from "@/api/user";
-import { authQueryKeys } from "@/query-keys";
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
 import AuthLayout from "@/layouts/AuthLayout";
@@ -26,12 +25,10 @@ const UserProfile = () => {
   } = useForm<UserProfileFormValues>();
 
   const { continueTo } = UseOnboardingProgess();
-  const queryClient = useQueryClient();
 
   const { mutate } = useMutation({
     mutationFn: (data: FormData) => saveUserProfile(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: authQueryKeys.users });
       continueTo("completed");
     },
     onError: (error) => {
@@ -60,7 +57,7 @@ const UserProfile = () => {
       showSignedInHint
     >
       <div className="relative z-10 max-w-sm sm:max-w-xl">
-        <Gradient className="opacity-30 size-[700px] mix-blend-overlay -translate-y-10" />
+        <Gradient className="opacity-30 size-[500px] mix-blend-overlay -translate-y-10" />
         <motion.div
           initial={{ y: 10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -69,7 +66,7 @@ const UserProfile = () => {
         >
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-y-6">
-              <h1 className="text-3xl font-bold text-center ">
+              <h1 className="text-3xl font-bold text-center text-neutral-800 ">
                 Create your profile
               </h1>
               <p className="p-2 text-gray-600 text-center">
@@ -109,6 +106,7 @@ const UserProfile = () => {
                 Loading="Creating Profile..."
                 className="rounded-md mt-5"
                 isSubmitting={isSubmitting}
+                size="lg"
               />
             </div>
           </form>

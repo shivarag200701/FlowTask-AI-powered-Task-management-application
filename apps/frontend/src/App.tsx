@@ -61,7 +61,7 @@ function AppRoutes() {
             path="/onboarding/completed"
             element={<OnboardingCompleted />}
           />
-          <Route path="app/invites/:inviteCode" element={<Invite />} />
+          <Route path="/app/invites/:inviteCode" element={<Invite />} />
           <Route
             path="/app/workspaces/:slug/invite"
             element={<WorkspaceInviteAccept />}

@@ -20,7 +20,8 @@ const SignIn = () => {
     if (success === "google_sign_in") {
       // User successfully signed in with Google
       refreshAuth().then(() => {
-        navigate("/app/today");
+        const callbackUrl = searchParams.get("callbackUrl");
+        navigate(callbackUrl ?? "/app/today", { replace: true });
       });
     }
   }, [searchParams, navigate, refreshAuth]);
