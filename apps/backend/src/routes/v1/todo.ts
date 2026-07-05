@@ -7,7 +7,7 @@ import { todoSchema, convertCompleteAtToDate } from "@shiva200701/todotypes";
 import notificationService from "../../services/notification/NotificationService.js";
 import { flags } from "../../flags.js";
 
-const todoRouter = express();
+const todoRouter = express.Router();
 
 todoRouter.post("/", requireLogin, async (req, res) => {
   const { data, success, error } = todoSchema.safeParse(req.body);

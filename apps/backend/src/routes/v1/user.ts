@@ -1,6 +1,6 @@
 import express from "express";
 import { z } from "zod";
-const userRouter = express();
+const userRouter = express.Router();
 import prisma from "../../db/index.js";
 import dotenv from "dotenv";
 import {

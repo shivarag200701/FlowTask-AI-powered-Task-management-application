@@ -91,7 +91,7 @@ app.use(
     store: redisStore,
     secret: secretString,
     resave: false,
-    // rolling: true,
+    rolling: true,
     saveUninitialized: false,
     name: "connect.sid", // Explicitly set cookie name
     cookie: {
