@@ -201,8 +201,14 @@ userRouter.post("/signup/verify", async (req, res) => {
       });
     }
 
-    return res.status(200).json({
-      msg: "accout created sucessfully",
+    req.session.save((err) => {
+      if (err) {
+        console.error("Session save error:", err);
+        return res.status(500).json({ msg: "Session error" });
+      }
+      return res.status(200).json({
+        msg: "accout created sucessfully",
+      });
     });
   } catch (error) {
     console.error("error while verifying code or creating user:", error);
@@ -261,8 +267,14 @@ userRouter.post("/signin", async (req, res) => {
     req.session.userId = user.id;
     req.session.email = user.email;
 
-    return res.status(200).json({
-      msg: "Logged in successfully",
+    req.session.save((err) => {
+      if (err) {
+        console.error("Session save error:", err);
+        return res.status(500).json({ msg: "Session error" });
+      }
+      return res.status(200).json({
+        msg: "Logged in successfully",
+      });
     });
   } catch (error) {
     console.error("error while signing in", error);
