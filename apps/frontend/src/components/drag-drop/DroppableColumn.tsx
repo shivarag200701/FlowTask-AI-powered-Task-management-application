@@ -29,8 +29,9 @@ function DroppableColumn({
   });
 
   const { setShowAddEditTodoModal, AddEditTodoModal } = useAddEditTodoModal({
-    date: DateTime.fromFormat(id, "LLL dd"),
+    date: DateTime.fromFormat(id, "MMM d"),
   });
+
   const { atBottom, atTop, handleScroll } = useScrollBoundary();
 
   if (id === "Overdue" && numberofTodos === 0) {
