@@ -20,6 +20,7 @@ export interface User {
   provider: string | null;
   isOAuthLinked: boolean;
   createdAt: string | null;
+  firstDashboardVisited: boolean;
 }
 
 export interface Todo {

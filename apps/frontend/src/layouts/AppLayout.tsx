@@ -5,8 +5,35 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { TaskDisplayProvider } from "@/context/TaskDisplayContext";
 import { cn } from "@/lib/utils";
 import { Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { authQueryKeys } from "@/query-keys";
+import { getCurrentUser } from "@/api";
+import api from "@/utils/functions/api";
+import { ConfettiSideCannons } from "@/components/ui/confetti-side-cannons";
 
 function AppLayout() {
+  const queryClient = useQueryClient();
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  const { data: user } = useQuery({
+    queryKey: authQueryKeys.users,
+    queryFn: getCurrentUser,
+  });
+
+  useEffect(() => {
+    if (user && !user.firstDashboardVisited) {
+      setShowConfetti(true);
+
+      api.post("/api/v1/user/first-dashboard-visited").then(() => {
+        queryClient.setQueryData(authQueryKeys.users, {
+          ...user,
+          firstDashboardVisited: true,
+        });
+      });
+    }
+  }, [user]);
+
   return (
     <TaskDisplayProvider>
       <ModalProvider>
@@ -26,6 +53,7 @@ function AppLayout() {
             </div>
           </div>
           <AiTaskFab />
+          {showConfetti && <ConfettiSideCannons />}
         </SidebarProvider>
       </ModalProvider>
     </TaskDisplayProvider>

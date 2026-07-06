@@ -623,6 +623,7 @@ userRouter.get("/profile", requireLogin, async (req, res) => {
         image: true,
         isPasswordSet: true,
         createdAt: true,
+        firstDashboardVisited: true,
         oauthAccounts: {
           where: { provider: "google" },
           select: {
@@ -650,12 +651,43 @@ userRouter.get("/profile", requireLogin, async (req, res) => {
         provider: user.oauthAccounts?.[0]?.provider || null,
         isOAuthLinked: user.oauthAccounts?.length > 0,
         createdAt: user.createdAt,
+        firstDashboardVisited: user.firstDashboardVisited,
       },
     });
   } catch (error) {
     console.error("Error fetching user profile", error);
     return res.status(500).json({
       msg: "Failed to fetch user profile",
+    });
+  }
+});
+
+userRouter.post("/first-dashboard-visited", requireLogin, async (req, res) => {
+  const userId = req.session.userId;
+
+  if (!userId) {
+    return res.status(401).json({
+      msg: "Not authorized",
+    });
+  }
+
+  try {
+    await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        firstDashboardVisited: true,
+      },
+    });
+
+    return res.status(200).json({
+      msg: "Successfully updated the first dashboard visited to true",
+    });
+  } catch (error) {
+    console.error("failed to update first dashboard visited field", error);
+    return res.status(500).json({
+      msg: "Internal server error",
     });
   }
 });
