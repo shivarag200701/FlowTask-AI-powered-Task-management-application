@@ -35,7 +35,7 @@ export function WorkspaceLayout({ id }: { id: string }) {
 
   const { isMobile } = useMediaQuery();
 
-  if (true) {
+  if (isLoading) {
     return <WorkspaceDetailSkeleton />;
   }
 
