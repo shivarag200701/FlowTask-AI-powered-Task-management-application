@@ -37,6 +37,7 @@ import {
 import { DateTime } from "luxon";
 import { useState } from "react";
 import { useOutletContext, useSearchParams } from "react-router-dom";
+import WorkspaceMembersSkeleton from "./WorkspaceMembersSkeleton";
 
 export function WorkspaceMembers() {
   const { workspace } = useOutletContext<{ workspace: WorkspaceDetail }>();
@@ -46,7 +47,7 @@ export function WorkspaceMembers() {
 
   const search = searchParams.get("search");
 
-  const { data: WorkspaceMembers } = useWorkspaceMembers({
+  const { data: WorkspaceMembers, isLoading } = useWorkspaceMembers({
     id: workspace.id,
     slug: workspace.slug,
     search: search ?? "",
@@ -106,6 +107,10 @@ export function WorkspaceMembers() {
     });
 
   const isOwner = workspace.currentUserRole === "owner";
+
+  if (isLoading) {
+    return <WorkspaceMembersSkeleton />;
+  }
 
   return (
     <PageWidthWrapper className="max-w-7xl py-8 space-y-8 px-0 ">
