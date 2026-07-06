@@ -15,7 +15,7 @@ const VerfiyForm = () => {
   const [isInvalidCode, setIsInvalidCode] = useState(false);
   const [pending, setPending] = useState(false);
   const { email, password, setPassword } = useSignupContext();
-  const { setIsAuthenticated, setEmail } = Auth();
+  const { login } = Auth();
   const { continueTo } = UseOnboardingProgess();
 
   const handleSubmit = async () => {
@@ -30,8 +30,7 @@ const VerfiyForm = () => {
         code,
       });
       setPending(false);
-      setIsAuthenticated(true);
-      setEmail(email);
+      login(email);
       continueTo("welcome");
       setPassword("");
     } catch (error) {

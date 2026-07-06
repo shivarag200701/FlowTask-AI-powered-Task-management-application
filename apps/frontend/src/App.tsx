@@ -1,10 +1,9 @@
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Link, Route, Routes, useLocation } from "react-router-dom";
 import "@/App.css";
 import SignIn from "@/pages/SignIn";
 import Signup from "@/pages/Signup";
 import { AuthProvider } from "@/context/AuthContext";
 import ProtectedRoute from "@/routes/ProtectedRoute";
-import { SignupProvider } from "@/context/SingupContext";
 import Landing from "@/pages/Landing";
 import { Toaster } from "./components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -113,6 +112,21 @@ function AppRoutes() {
             <Route path="/app/projects/*" element={<Projects />} />
           </Route>
         </Route>
+        <Route
+          path="*"
+          element={
+            <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+              <img src="/logo.png" alt="Logo" width={100} height={100} />
+              <h1 className="text-2xl font-semibold">Page not found</h1>
+              <p className="text-muted-foreground">
+                The page you're looking for doesn't exist.
+              </p>
+              <Link to="/" className="text-primary underline">
+                Go home
+              </Link>
+            </div>
+          }
+        />
       </Routes>
 
       {/* Modal overlay on top of the background page when navigated from within the app */}
@@ -176,9 +190,7 @@ function App() {
           <TooltipProvider>
             <BrowserRouter>
               <AuthProvider>
-                <SignupProvider>
-                  <AppRoutes />
-                </SignupProvider>
+                <AppRoutes />
               </AuthProvider>
               <Toaster
                 closeButton

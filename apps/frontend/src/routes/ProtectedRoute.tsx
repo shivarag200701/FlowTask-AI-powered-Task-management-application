@@ -1,6 +1,5 @@
 import { useLocation, Navigate, Outlet } from "react-router-dom";
 import { Auth } from "@/context/AuthContext";
-import { SpinnerCustom } from "@/components/ui/spinner";
 import { useQuery } from "@tanstack/react-query";
 import { ONBOARDING_WINDOW_SECONDS } from "@shiva200701/todotypes";
 import { getCurrentUser, fetchTodos, getOnboardingProgress } from "@/api";
@@ -11,6 +10,54 @@ import {
   userPreferenceKeys,
 } from "@/query-keys";
 import { getUserPreference } from "@/api/user";
+import { AppLoadingScreen } from "@/components/AppLoadingScreen";
+
+type RouteState =
+  | "unauthenticated"
+  | "needs-onboarding"
+  | "onboarding-expired"
+  | "ready";
+
+function deriveRouteState(
+  isAuthenticated: boolean,
+  user: { createdAt?: string | null } | undefined,
+  onboardingStep: string | undefined,
+  pathname: string
+): RouteState {
+  if (!isAuthenticated) return "unauthenticated";
+
+  const onOnboardingPage = pathname.startsWith("/onboarding");
+  const isWithinWindow =
+    !!user?.createdAt &&
+    Date.now() - new Date(user.createdAt).getTime() <
+      ONBOARDING_WINDOW_SECONDS * 1000;
+
+  // onboarding redis entry exisits and oboarding is not yet completed
+  if (
+    isWithinWindow &&
+    onboardingStep !== undefined &&
+    onboardingStep !== "completed" &&
+    !onOnboardingPage
+  ) {
+    return "needs-onboarding";
+  }
+
+  // Kick user off onboarding pages only if window expired or no entry exists.
+  // If step is "completed", let them through to /onboarding/completed.
+  if (onOnboardingPage && !isWithinWindow) {
+    return "onboarding-expired";
+  }
+
+  if (
+    onOnboardingPage &&
+    onboardingStep === undefined &&
+    pathname !== "/onboarding/completed"
+  ) {
+    return "onboarding-expired";
+  }
+
+  return "ready";
+}
 
 const ProtectedRoute = () => {
   const { isAuthenticated, isLoading } = Auth();
@@ -18,11 +65,10 @@ const ProtectedRoute = () => {
 
   const callbackUrl = encodeURIComponent(location.pathname + location.search);
 
-  //Todo replace with custom hook
   const { isLoading: userLoading, data: user } = useQuery({
     queryKey: authQueryKeys.users,
     queryFn: getCurrentUser,
-    enabled: isAuthenticated, // Only fetch if authenticated
+    enabled: isAuthenticated,
   });
 
   const { isLoading: preferenceLoading } = useQuery({
@@ -32,89 +78,60 @@ const ProtectedRoute = () => {
     enabled: isAuthenticated,
   });
 
-  // const { isLoading: projectLoading } = useProjects();
-
-  // Fetch todos - this ensures todos are loaded before showing dashboard
   const { isLoading: todosLoading } = useQuery({
     queryKey: todosQueryKeys.all,
     queryFn: () => fetchTodos(),
-    enabled: isAuthenticated, // Only fetch if authenticated
+    enabled: isAuthenticated,
     staleTime: 60000,
   });
 
-  //get onboarding progress
-  const { data: onboardingStep } = useQuery({
+  const { data: onboardingStep, isLoading: onboardingLoading } = useQuery({
     queryKey: onboardingQueryKeys.progress,
     queryFn: getOnboardingProgress,
     retry: 1,
+    enabled: isAuthenticated,
   });
 
-  // Show loading until auth check, user query, AND todos query are complete
   if (
     isLoading ||
-    (isAuthenticated && (userLoading || todosLoading || preferenceLoading))
+    (isAuthenticated &&
+      (userLoading || todosLoading || preferenceLoading || onboardingLoading))
   ) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <img src="/logo.png" alt="Logo" width={100} height={100} />
-        <SpinnerCustom />
-      </div>
-    );
+    return <AppLoadingScreen />;
   }
 
-  if (!isAuthenticated) {
-    // Redirect unauthenticated users to the login page
-    return (
-      <Navigate
-        to={`/signin?callbackUrl=${callbackUrl}`}
-        state={{ from: location }}
-        replace
-      />
-    );
-  }
-  // user is authenticated and redis entry is present and they havent completed the onboarding
-  else if (
-    isAuthenticated &&
-    new Date(user?.createdAt ?? "").getTime() >
-      Date.now() - ONBOARDING_WINDOW_SECONDS * 1000 &&
-    onboardingStep !== "completed" &&
-    !location.pathname.startsWith("/onboarding")
-  ) {
-    if (!onboardingStep) {
+  const routeState = deriveRouteState(
+    isAuthenticated,
+    user,
+    onboardingStep,
+    location.pathname
+  );
+
+  switch (routeState) {
+    case "unauthenticated":
       return (
-        <Navigate to="/onboarding/welcome" state={{ from: location }} replace />
+        <Navigate
+          to={`/signin?callbackUrl=${callbackUrl}`}
+          state={{ from: location }}
+          replace
+        />
       );
-    }
 
-    return (
-      <Navigate
-        to={`/onboarding/${onboardingStep}`}
-        state={{ from: location }}
-        replace
-      />
-    );
+    case "needs-onboarding":
+      return (
+        <Navigate
+          to={`/onboarding/${onboardingStep || "welcome"}`}
+          state={{ from: location }}
+          replace
+        />
+      );
+
+    case "onboarding-expired":
+      return <Navigate to="/app/today" state={{ from: location }} replace />;
+
+    case "ready":
+      return <Outlet />;
   }
-  //user authenticated and they have completed the onboarding
-  else if (
-    isAuthenticated &&
-    onboardingStep === "completed" &&
-    location.pathname.startsWith("/onboarding") &&
-    location.pathname !== "/onboarding/completed"
-  ) {
-    return <Navigate to="/app/today" state={{ from: location }} replace />;
-  }
-  // user is authenticated and they try to go to onboarding given that either the onboarding is completed or the key is expried, then redirect to dashboard
-  else if (
-    isAuthenticated &&
-    location.pathname.startsWith("/onboarding") &&
-    (onboardingStep === "completed" ||
-      new Date(user?.createdAt ?? "").getTime() <=
-        Date.now() - ONBOARDING_WINDOW_SECONDS * 1000) &&
-    location.pathname !== "/onboarding/completed"
-  ) {
-    return <Navigate to="/app/today" state={{ from: location }} replace />;
-  }
-  return <Outlet />;
 };
 
 export default ProtectedRoute;

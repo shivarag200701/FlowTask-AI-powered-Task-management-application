@@ -10,6 +10,8 @@ import { saveUserProfile } from "@/api/user";
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
 import AuthLayout from "@/layouts/AuthLayout";
+import { useState } from "react";
+import Creating from "./Creating";
 
 export type UserProfileFormValues = {
   name: string;
@@ -25,10 +27,13 @@ const UserProfile = () => {
   } = useForm<UserProfileFormValues>();
 
   const { continueTo } = UseOnboardingProgess();
+  const [isCreating, setIsCreating] = useState(false);
 
   const { mutate } = useMutation({
     mutationFn: (data: FormData) => saveUserProfile(data),
-    onSuccess: () => {
+    onSuccess: async () => {
+      setIsCreating(true);
+      await new Promise((r) => setTimeout(r, 5000));
       continueTo("completed");
     },
     onError: (error) => {
@@ -49,6 +54,10 @@ const UserProfile = () => {
     mutate(formData);
   };
 
+  if (isCreating) {
+    return <Creating />;
+  }
+
   return (
     <AuthLayout
       logo="none"
@@ -57,37 +66,98 @@ const UserProfile = () => {
       showSignedInHint
     >
       <div className="relative z-10 max-w-sm sm:max-w-xl">
-        <Gradient className="opacity-30 size-[500px] mix-blend-overlay -translate-y-10" />
         <motion.div
-          initial={{ y: 10, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8 }}
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
+        >
+          <Gradient className="opacity-30 size-[500px] mix-blend-overlay -translate-y-10" />
+        </motion.div>
+        <motion.div
+          initial={{ y: 20, opacity: 0, filter: "blur(4px)" }}
+          animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+          transition={{ type: "spring", stiffness: 80, damping: 20 }}
           className="relative rounded-[28px] border border-border bg-white/90 backdrop-blur-2xl p-8 sm:p-10 shadow-xl grow flex flex-col item-center justify-center z-20"
         >
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-y-6">
-              <h1 className="text-3xl font-bold text-center text-neutral-800 ">
+            <motion.div
+              className="flex flex-col gap-y-6"
+              initial="hidden"
+              animate="show"
+              variants={{
+                hidden: { opacity: 0 },
+                show: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.15, delayChildren: 0.2 },
+                },
+              }}
+            >
+              <motion.h1
+                className="text-3xl font-bold text-center text-neutral-800"
+                variants={{
+                  hidden: { opacity: 0, y: 20, filter: "blur(4px)" },
+                  show: {
+                    opacity: 1,
+                    y: 0,
+                    filter: "blur(0px)",
+                    transition: { type: "spring", stiffness: 80, damping: 20 },
+                  },
+                }}
+              >
                 Create your profile
-              </h1>
-              <p className="p-2 text-gray-600 text-center">
+              </motion.h1>
+              <motion.p
+                className="p-2 text-gray-600 text-center"
+                variants={{
+                  hidden: { opacity: 0, y: 20, filter: "blur(4px)" },
+                  show: {
+                    opacity: 1,
+                    y: 0,
+                    filter: "blur(0px)",
+                    transition: { type: "spring", stiffness: 80, damping: 20 },
+                  },
+                }}
+              >
                 Add your name and avatar to get started with FlowTask.
-              </p>
-              <Controller
-                control={control}
-                name="photo"
-                render={({ field }) => (
-                  <ImageUpload onChange={field.onChange} />
-                )}
-              />
-              <div className="pt-3 text-center">
-                <span className="text-primary uppercase font-semibold tracking-widest">
-                  Change Photo
-                </span>
-                <p className="p-2 text-gray-400 text-center text-xs">
-                  Maximum file size: 5MB
-                </p>
-              </div>
-              <label>
+              </motion.p>
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: 20, filter: "blur(4px)" },
+                  show: {
+                    opacity: 1,
+                    y: 0,
+                    filter: "blur(0px)",
+                    transition: { type: "spring", stiffness: 80, damping: 20 },
+                  },
+                }}
+              >
+                <Controller
+                  control={control}
+                  name="photo"
+                  render={({ field }) => (
+                    <ImageUpload onChange={field.onChange} />
+                  )}
+                />
+                <div className="pt-3 text-center">
+                  <span className="text-primary uppercase font-semibold tracking-widest">
+                    Change Photo
+                  </span>
+                  <p className="p-2 text-gray-400 text-center text-xs">
+                    Maximum file size: 5MB
+                  </p>
+                </div>
+              </motion.div>
+              <motion.label
+                variants={{
+                  hidden: { opacity: 0, y: 20, filter: "blur(4px)" },
+                  show: {
+                    opacity: 1,
+                    y: 0,
+                    filter: "blur(0px)",
+                    transition: { type: "spring", stiffness: 80, damping: 20 },
+                  },
+                }}
+              >
                 <span className="text-black mb-2 block text-sm font-medium leading-nones">
                   Full Name
                 </span>
@@ -100,18 +170,36 @@ const UserProfile = () => {
                     required: "name is required",
                   })}
                 />
-              </label>
-              <Button
-                Initial="Create Profile"
-                Loading="Creating Profile..."
-                className="rounded-md mt-5"
-                isSubmitting={isSubmitting}
-                size="lg"
-              />
-            </div>
+              </motion.label>
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: 20, filter: "blur(4px)" },
+                  show: {
+                    opacity: 1,
+                    y: 0,
+                    filter: "blur(0px)",
+                    transition: { type: "spring", stiffness: 80, damping: 20 },
+                  },
+                }}
+              >
+                <Button
+                  Initial="Create Profile"
+                  Loading="Creating Profile..."
+                  className="rounded-md mt-5"
+                  isSubmitting={isSubmitting}
+                  size="lg"
+                />
+              </motion.div>
+            </motion.div>
           </form>
         </motion.div>
-        <Gradient className="opacity-10 mix-blend-hard-light" />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
+        >
+          <Gradient className="opacity-10 mix-blend-hard-light" />
+        </motion.div>
       </div>
     </AuthLayout>
   );

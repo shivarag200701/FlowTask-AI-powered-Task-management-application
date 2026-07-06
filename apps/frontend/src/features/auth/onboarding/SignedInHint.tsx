@@ -7,15 +7,15 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const SignedInHint = () => {
-  const { email, setIsAuthenticated } = Auth();
+  const { email, logout: clearAuth } = Auth();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const { mutate } = useMutation({
-    mutationFn: () => logout(),
+    mutationFn: () => logoutApi(),
     onSuccess: () => {
       setLoading(false);
-      setIsAuthenticated(false);
+      clearAuth();
       navigate("/signin");
     },
     onError: (error) => {
@@ -24,7 +24,7 @@ const SignedInHint = () => {
     },
   });
 
-  const logout = async () => {
+  const logoutApi = async () => {
     setLoading(true);
     await api.post("/api/v1/user/logout");
   };

@@ -32,7 +32,7 @@ const SideBar = ({
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const navigate = useNavigate();
-  const { setIsAuthenticated } = Auth();
+  const { logout: clearAuth } = Auth();
 
   //Change it so that we get the whole user data from the session isntead of making db calls
   const { data: user } = useQuery<User>({
@@ -47,7 +47,7 @@ const SideBar = ({
     try {
       setIsLoggingOut(true);
       await api.post("/v1/user/logout");
-      setIsAuthenticated(false);
+      clearAuth();
       setIsLoggingOut(false);
       navigate("/");
     } catch (error) {

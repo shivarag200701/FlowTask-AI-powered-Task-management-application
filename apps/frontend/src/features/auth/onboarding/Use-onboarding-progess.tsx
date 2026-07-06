@@ -1,15 +1,17 @@
 import { type OnboardingStep } from "@shiva200701/todotypes";
 import { useNavigate } from "react-router-dom";
 import api from "@/utils/functions/api";
+import { useQueryClient } from "@tanstack/react-query";
+import { onboardingQueryKeys } from "@/query-keys";
 
 const UseOnboardingProgess = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
-  function continueTo(step: OnboardingStep) {
-    console.log("called here", step);
-
+  async function continueTo(step: OnboardingStep) {
+    await api.post("/api/v1/user/onboarding/progess", { step });
+    queryClient.setQueryData(onboardingQueryKeys.progress, step);
     navigate(`/onboarding/${step}`);
-    api.post("/api/v1/user/onboarding/progess", { step });
   }
 
   return {

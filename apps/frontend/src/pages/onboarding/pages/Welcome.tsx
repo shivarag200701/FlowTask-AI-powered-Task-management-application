@@ -9,16 +9,49 @@ export const container = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.6,
-      type: "spring" as const,
-      stiffness: 25,
+      staggerChildren: 0.35,
+      delayChildren: 0.2,
     },
   },
 };
 
 export const item = {
-  hidden: { opacity: 0, y: 10 },
-  show: { opacity: 1, y: 0 },
+  hidden: { opacity: 0, y: 20, filter: "blur(4px)" },
+  show: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: {
+      type: "spring" as const,
+      stiffness: 80,
+      damping: 20,
+    },
+  },
+};
+
+const wordmarkItem = {
+  hidden: { opacity: 0, scale: 0.8, filter: "blur(8px)" },
+  show: {
+    opacity: 1,
+    scale: 1,
+    filter: "blur(0px)",
+    transition: {
+      type: "spring" as const,
+      stiffness: 60,
+      damping: 16,
+    },
+  },
+};
+
+const gradientItem = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      duration: 1.2,
+      ease: "easeOut" as const,
+    },
+  },
 };
 
 const Welcome = () => {
@@ -28,11 +61,20 @@ const Welcome = () => {
       showLogoHalo={false}
       showSignedInHint
       logoSlot={
-        <div className="relative w-auto flex items-center justify-center">
-          <Gradient className="opacity-25 size-[250px]" />
-          <Wordmark className="relative z-20" variants={item} />
-          <Gradient className="opacity-10  mix-blend-hard-light size-[250px]" />
-        </div>
+        <motion.div
+          className="relative w-auto flex items-center justify-center"
+          variants={container}
+          initial="hidden"
+          animate="show"
+        >
+          <motion.div variants={gradientItem}>
+            <Gradient className="opacity-25 size-[250px]" />
+          </motion.div>
+          <Wordmark className="relative z-20" variants={wordmarkItem} />
+          <motion.div variants={gradientItem}>
+            <Gradient className="opacity-10 mix-blend-hard-light size-[250px]" />
+          </motion.div>
+        </motion.div>
       }
     >
       <motion.div

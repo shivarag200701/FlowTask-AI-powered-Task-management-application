@@ -1,17 +1,12 @@
 import { Auth } from "@/context/AuthContext";
 import { Outlet, Navigate } from "react-router-dom";
-import { SpinnerCustom } from "@/components/ui/spinner";
+import { AppLoadingScreen } from "@/components/AppLoadingScreen";
 
 const PublicRoute = () => {
   const { isAuthenticated, isLoading } = Auth();
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <img src="/logo.png" alt="Logo" width={100} height={100} />
-        <SpinnerCustom />
-      </div>
-    );
+    return <AppLoadingScreen />;
   }
 
   if (isAuthenticated) {

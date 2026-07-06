@@ -10,7 +10,7 @@ import { Popover } from "../ui/popover";
 import { useState } from "react";
 
 export function NavUser() {
-  const { setIsAuthenticated, email } = Auth();
+  const { logout: clearAuth, email } = Auth();
   const navigate = useNavigate();
 
   const { data: userProfile } = useUserProfile();
@@ -19,7 +19,7 @@ export function NavUser() {
 
   const handleLogout = async () => {
     await logout();
-    setIsAuthenticated(false);
+    clearAuth();
     navigate("/");
   };
   return (

@@ -24,6 +24,7 @@ const NextButton = ({
         if (!isSubmitting) continueTo(step);
       }}
       isSubmitting={isSubmitting}
+      size="lg"
     />
   );
 };

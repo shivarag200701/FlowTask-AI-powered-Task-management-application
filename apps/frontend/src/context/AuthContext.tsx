@@ -13,13 +13,15 @@ import { toast } from "sonner";
 
 export const authMethods = ["google", "email"] as const;
 
+type AuthStatus = "unknown" | "authenticated" | "unauthenticated";
+
 export type AuthMethod = (typeof authMethods)[number];
 
 interface ContextProps {
   isAuthenticated: boolean;
-  setIsAuthenticated: (isAuthenticated: boolean) => void;
-  setEmail: (email: string) => void;
   isLoading: boolean;
+  login: (email: string) => void;
+  logout: () => void;
   refreshAuth: () => Promise<void>;
   setLastUsedAuthMethod: (value: AuthMethod | undefined) => void;
   lastUsedAuthMethod: AuthMethod | undefined;
@@ -27,8 +29,8 @@ interface ContextProps {
 }
 const authContext = createContext<ContextProps>({
   isAuthenticated: false,
-  setIsAuthenticated: () => {},
-  setEmail: () => {},
+  login: () => {},
+  logout: () => {},
   isLoading: true,
   refreshAuth: async () => {},
   setLastUsedAuthMethod: () => {},
@@ -37,9 +39,11 @@ const authContext = createContext<ContextProps>({
 });
 
 export function AuthProvider({ children }: PropsWithChildren) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authStatus, setAuthStatus] = useState<AuthStatus>("unknown");
+
   const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const isAuthenticated = authStatus === "authenticated";
+  const isLoading = authStatus === "unknown";
   const [lastUsedAuthMethodLive, setLastUsedAuthMethod] = useLocalStorage<
     AuthMethod | undefined
   >("last-used-auth-method", undefined);
@@ -48,20 +52,28 @@ export function AuthProvider({ children }: PropsWithChildren) {
     lastUsedAuthMethodLive
   );
 
-  async function fetchUserSession() {
-    //check session in backend everytime
-    setIsLoading(true);
+  const login = useCallback((email: string) => {
+    setAuthStatus("authenticated");
+    setEmail(email);
+  }, []);
+
+  const logout = useCallback(() => {
+    setAuthStatus("unauthenticated");
+    setEmail("");
+  }, []);
+
+  async function fetchUserSession(silent = false) {
+    if (!silent) setAuthStatus("unknown");
     try {
       const { data } = await api.get("/api/v1/auth-check");
-      setIsAuthenticated(data.isAuthenticated);
       if (data.isAuthenticated) {
+        setAuthStatus("authenticated");
         setEmail(data.email);
+      } else {
+        setAuthStatus("unauthenticated");
       }
-    } catch (error) {
-      console.error("error while gettting session from backend", error);
-      setIsAuthenticated(false);
-    } finally {
-      setIsLoading(false);
+    } catch {
+      setAuthStatus("unauthenticated");
     }
   }
   useEffect(() => {
@@ -77,7 +89,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
           error.response?.status === 401 &&
           !error.config?.url?.includes("auth-check")
         ) {
-          setIsAuthenticated(false);
+          setAuthStatus("unauthenticated");
           toast.error("Your session has expired", {
             id: "session-expired",
             duration: Infinity,
@@ -90,7 +102,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
           });
         }
         return Promise.reject(error);
-      },
+      }
     );
 
     return () => {
@@ -99,18 +111,18 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }, []);
 
   const refreshAuth = useCallback(async () => {
-    await fetchUserSession();
+    await fetchUserSession(true);
   }, []);
 
   const value = {
     isAuthenticated,
-    setIsAuthenticated,
     isLoading,
+    login,
+    logout,
     refreshAuth,
     setLastUsedAuthMethod,
     lastUsedAuthMethod,
     email,
-    setEmail,
   };
 
   return <authContext.Provider value={value}>{children}</authContext.Provider>;
