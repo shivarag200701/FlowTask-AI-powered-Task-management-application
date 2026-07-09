@@ -1,0 +1,71 @@
+model AccountabilitySession {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type          String   // "DAILY_STANDUP" | "FREEFORM"
+  status        String   @default("ACTIVE") // "ACTIVE" | "COMPLETED" | "EXPIRED"
+  taskSnapshot  Json?    // snapshot of task state at session start
+  startedAt     DateTime @default(now())
+  completedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  messages      AccountabilityMessage[]
+
+  @@index([userId, status])
+  @@index([userId, type])
+}
+
+model AccountabilityMessage {
+  id        String   @id @default(cuid())
+  sessionId String
+  session   AccountabilitySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role      String   // "user" | "assistant" | "system"
+  content   String   @db.Text
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([sessionId])
+}
+
+model AccountabilitySnapshot {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  snapshotDate      String   // YYYY-MM-DD
+  totalTasksDue     Int      @default(0)
+  tasksCompleted    Int      @default(0)
+  tasksCompletedLate Int     @default(0)
+  tasksNotCompleted Int      @default(0)
+  tasksCarriedOver  Int      @default(0)
+  tagBreakdown      Json?
+  projectBreakdown  Json?
+  dayOfWeek         Int      // 0=Sun, 1=Mon, ...6=Sat
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([userId, snapshotDate])
+  @@index([userId])
+}
+
+model WeeklyInsight {
+  id                   String   @id @default(cuid())
+  userId               String
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  weekStartDate        String
+  weekEndDate          String
+  overallCompletionRate Float   @default(0)
+  previousWeekRate     Float?
+  trend                String   @default("STABLE") // "IMPROVING" | "DECLINING" | "STABLE"
+  mostProductiveDay    String?
+  leastProductiveDay   String?
+  problematicTags      Json?
+  problematicProjects  Json?
+  summary              String   @db.Text
+  readAt               DateTime?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([userId])
+  @@index([userId, weekStartDate])
+}

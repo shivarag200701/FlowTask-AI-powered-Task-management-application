@@ -46,6 +46,63 @@ class OpenRouterService {
 
     return JSON.parse(result?.choices[0]?.message.content as string);
   }
+  async chatAccountability({
+    systemPrompt,
+    messages,
+    maxTokens = 1024,
+  }: {
+    systemPrompt: string;
+    messages: Array<{ role: "user" | "assistant"; content: string }>;
+    maxTokens?: number;
+  }): Promise<string> {
+    const result = await this.client.chat.send({
+      chatRequest: {
+        model: "google/gemini-2.5-flash",
+        messages: [
+          { role: "system", content: systemPrompt },
+          ...messages.map((m) => ({
+            role: m.role as "user" | "assistant",
+            content: m.content,
+          })),
+        ],
+        maxTokens,
+      },
+    });
+
+    return (result?.choices[0]?.message.content as string) || "";
+  }
+
+  async *streamAccountability({
+    systemPrompt,
+    messages,
+    maxTokens = 1024,
+  }: {
+    systemPrompt: string;
+    messages: Array<{ role: "user" | "assistant"; content: string }>;
+    maxTokens?: number;
+  }): AsyncGenerator<string, void, unknown> {
+    const stream = await this.client.chat.send({
+      chatRequest: {
+        stream: true,
+        model: "google/gemini-2.5-flash",
+        messages: [
+          { role: "system", content: systemPrompt },
+          ...messages.map((m) => ({
+            role: m.role as "user" | "assistant",
+            content: m.content,
+          })),
+        ],
+        maxTokens,
+      },
+    });
+
+    for await (const chunk of stream) {
+      const content = chunk.choices?.[0]?.delta?.content;
+      if (content) {
+        yield content;
+      }
+    }
+  }
 }
 
 const openRouter = new OpenRouterService();

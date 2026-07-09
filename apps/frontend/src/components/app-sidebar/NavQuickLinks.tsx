@@ -1,5 +1,5 @@
 import { useContext, useMemo } from "react";
-import { CalendarDays, CircleCheckBig, Search, Tag, Inbox } from "lucide-react";
+import { CalendarDays, CircleCheckBig, Search, Tag, Inbox, Brain } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   SidebarGroup,
@@ -18,6 +18,7 @@ const quickLinks = [
   { label: "Today", path: "/app/today" },
   { label: "Upcoming", icon: CalendarDays, path: "/app/upcoming" },
   { label: "Completed", icon: CircleCheckBig, path: "/app/completed" },
+  { label: "Accountability", icon: Brain, path: "/app/accountability" },
 ] as const;
 
 export function NavQuickLinks() {

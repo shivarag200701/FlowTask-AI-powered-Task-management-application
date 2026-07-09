@@ -1,5 +1,6 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import AiTaskFab from "@/features/ai-task-creator/AiTaskFab";
+import AccountabilityChatWidget from "@/features/accountability/components/AccountabilityChatWidget";
 import { ModalProvider } from "@/components/modals/ModalProvider";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { TaskDisplayProvider } from "@/context/TaskDisplayContext";
@@ -53,6 +54,7 @@ function AppLayout() {
             </div>
           </div>
           <AiTaskFab />
+          <AccountabilityChatWidget />
           {showConfetti && <ConfettiSideCannons />}
         </SidebarProvider>
       </ModalProvider>

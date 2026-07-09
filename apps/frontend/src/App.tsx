@@ -28,6 +28,7 @@ import Search from "./pages/Search";
 import TaskDetail from "./pages/TaskDetail";
 import MyProjects from "./pages/MyProjects";
 import Workspaces from "./pages/Workspaces";
+import Accountability from "./pages/Accountability";
 import Projects from "./pages/Projects";
 import WorkspaceLayout from "./layouts/WorkspaceLayout";
 import Inbox from "./pages/Inbox";
@@ -37,7 +38,14 @@ import { WorkspaceMembers } from "./features/workspace/components/WorkspaceMembe
 import WorkspaceSettings from "./features/workspace/components/WorkspaceSettings";
 import WorkspaceOverview from "./features/workspace/components/WorkspaceOverview";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60_000,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function AppRoutes() {
   const location = useLocation();
@@ -107,6 +115,7 @@ function AppRoutes() {
               <Route path="members" element={<WorkspaceMembers />} />
               <Route path="settings" element={<WorkspaceSettings />} />
             </Route>
+            <Route path="/app/accountability" element={<Accountability />} />
             <Route path="/app/search/*" element={<Search />} />
             <Route path="/app/task/:slug" element={<TaskDetail />} />
             <Route path="/app/projects/*" element={<Projects />} />
