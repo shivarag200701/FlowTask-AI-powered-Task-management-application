@@ -89,7 +89,7 @@ export async function sendMessageStream(
   onEvent: (event: SSEEvent) => void,
   signal?: AbortSignal
 ) {
-  const baseURL = import.meta.env.VITE_API_URL || "";
+  const baseURL = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
   const response = await fetch(
     `${baseURL}/api/v2/ai/accountability/sessions/${sessionId}/messages`,
     {
