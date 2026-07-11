@@ -2,13 +2,9 @@ import { useState } from "react";
 import { Bot, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AccountabilityChat from "./AccountabilityChat";
-import { useAccountabilityStats } from "../hooks/use-accountability";
 
 function AccountabilityChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
-  const { data: stats } = useAccountabilityStats();
-
-  const hasUnread = (stats?.unreadInsights ?? 0) > 0;
 
   return (
     <>
@@ -27,9 +23,6 @@ function AccountabilityChatWidget() {
           )}
         >
           <Bot className="size-5" />
-          {hasUnread && (
-            <span className="absolute -top-1 -right-1 size-3 rounded-full bg-primary border-2 border-background" />
-          )}
         </button>
       )}
 
@@ -54,7 +47,7 @@ function AccountabilityChatWidget() {
             <div className="flex items-center justify-between border-b px-4 py-3">
               <div className="flex items-center gap-2">
                 <Bot className="size-4 text-primary" />
-                <h2 className="text-sm font-semibold">Accountability Partner</h2>
+                <h2 className="text-sm font-semibold">AI Assistant</h2>
               </div>
               <button
                 onClick={() => setIsOpen(false)}

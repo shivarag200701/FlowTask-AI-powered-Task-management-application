@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Loader2, MessageSquare, Brain } from "lucide-react";
+import { Loader2, MessageSquare, Brain, Wrench } from "lucide-react";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,7 @@ import type { AccountabilityMessageResponse } from "@shiva200701/todotypes";
 import { ShimmeringText } from "@/components/animate-ui/primitives/texts/shimmering";
 
 const STAGE_CONFIG: Record<
-  Exclude<StreamStage, "idle" | "streaming" | "complete">,
+  Exclude<StreamStage, "idle" | "streaming" | "complete" | "tool_calling">,
   { labels: string[]; icon: typeof Loader2 }
 > = {
   received: {
@@ -24,12 +24,19 @@ const STAGE_CONFIG: Record<
   },
   thinking: {
     labels: [
-      "Reviewing your tasks...",
-      "Analyzing your progress...",
+      "Thinking...",
+      "Looking things up...",
       "Preparing response...",
     ],
     icon: Brain,
   },
+};
+
+const TOOL_LABELS: Record<string, string> = {
+  complete_task: "Marking task as complete...",
+  reschedule_task: "Rescheduling task...",
+  create_task: "Creating a new task...",
+  get_tasks_for_date: "Looking up your tasks...",
 };
 
 interface AccountabilityChatProps {
@@ -58,7 +65,7 @@ function AccountabilityChat({ className }: AccountabilityChatProps) {
     []
   );
 
-  const { send, abort, isStreaming, streamingContent, streamStage } =
+  const { send, abort, isStreaming, streamingContent, streamStage, activeToolCall } =
     useStreamMessage(activeSessionId || "", handleStreamComplete);
 
   // Set active session from existing sessions
@@ -114,35 +121,26 @@ function AccountabilityChat({ className }: AccountabilityChatProps) {
     await send(content);
   };
 
-  // No active session — show start options
+  // No active session — show start option
   if (!activeSessionId) {
     return (
       <div
         className={`flex flex-col items-center justify-center gap-6 p-8 ${className || ""}`}
       >
         <div className="text-center space-y-2">
-          <h3 className="text-lg font-semibold">Start a Check-in</h3>
+          <h3 className="text-lg font-semibold">Start a Conversation</h3>
           <p className="text-sm text-muted-foreground max-w-sm">
-            Review your tasks with your AI accountability partner. Get insights
-            on your progress and plan your day.
+            Chat with your AI assistant to manage tasks, plan your day, and stay
+            on top of your goals.
           </p>
         </div>
-        <div className="flex gap-3">
-          <Button
-            variant="default"
-            onClick={() => handleStartSession("DAILY_STANDUP")}
-            isSubmitting={startSession.isPending}
-            Initial="Daily Standup"
-            Loading="Starting..."
-          />
-          <Button
-            variant="outline"
-            onClick={() => handleStartSession("FREEFORM")}
-            isSubmitting={startSession.isPending}
-            Initial="Free Chat"
-            Loading="Starting..."
-          />
-        </div>
+        <Button
+          variant="default"
+          onClick={() => handleStartSession("FREEFORM")}
+          isSubmitting={startSession.isPending}
+          Initial="New Chat"
+          Loading="Starting..."
+        />
       </div>
     );
   }
@@ -153,15 +151,16 @@ function AccountabilityChat({ className }: AccountabilityChatProps) {
       <div className="flex items-center justify-between border-b px-4 py-3">
         <div className="flex items-center gap-2">
           <div className="size-2 rounded-full bg-green-500" />
-          <span className="text-sm font-medium">Accountability Partner</span>
+          <span className="text-sm font-medium">AI Assistant</span>
         </div>
         <Button
-          variant="ghost"
+          variant="outline"
           size="sm"
           onClick={handleEndSession}
           isSubmitting={completeSession.isPending}
           Initial="End Session"
           Loading="Ending..."
+          className="w-[200px]"
         />
       </div>
 
@@ -183,6 +182,22 @@ function AccountabilityChat({ className }: AccountabilityChatProps) {
             <StreamingStageIndicator stage={streamStage} />
           )}
 
+        {/* Tool call indicator */}
+        {isStreaming && streamStage === "tool_calling" && activeToolCall && (
+          <div className="flex gap-3">
+            <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+              <Wrench className="size-3.5 animate-pulse" />
+            </div>
+            <ShimmeringText
+              text={TOOL_LABELS[activeToolCall] || "Running action..."}
+              duration={0.3}
+              className="text-sm font-bold"
+              color="var(--color-neutral-500)"
+              shimmeringColor="var(--color-neutral-300)"
+            />
+          </div>
+        )}
+
         {/* Streaming bubble */}
         {isStreaming && streamingContent && (
           <ChatMessage role="assistant" content={streamingContent} />
@@ -195,7 +210,7 @@ function AccountabilityChat({ className }: AccountabilityChatProps) {
       <ChatInput
         onSend={handleSend}
         isLoading={isStreaming}
-        placeholder="Ask about your tasks, progress, or goals..."
+        placeholder="Ask me anything about your tasks..."
       />
     </div>
   );

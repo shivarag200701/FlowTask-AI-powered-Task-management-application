@@ -18,7 +18,7 @@ const quickLinks = [
   { label: "Today", path: "/app/today" },
   { label: "Upcoming", icon: CalendarDays, path: "/app/upcoming" },
   { label: "Completed", icon: CircleCheckBig, path: "/app/completed" },
-  { label: "Accountability", icon: Brain, path: "/app/accountability" },
+  { label: "AI Assistant", icon: Brain, path: "/app/accountability" },
 ] as const;
 
 export function NavQuickLinks() {

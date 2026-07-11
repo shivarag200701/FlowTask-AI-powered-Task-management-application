@@ -49,8 +49,6 @@ export const projectKeys = {
 export const accountabilityKeys = {
   sessions: ["accountability", "sessions"] as const,
   session: (id: string) => ["accountability", "sessions", id] as const,
-  insights: ["accountability", "insights"] as const,
-  stats: ["accountability", "stats"] as const,
 };
 
 export const workspaceKeys = {

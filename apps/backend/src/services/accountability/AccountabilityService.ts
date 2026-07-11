@@ -138,12 +138,14 @@ class AccountabilityService {
     return Math.round((totalCompleted / totalDue) * 100);
   }
 
-  formatTasksForPrompt(tasks: Array<{ title: string; tags?: string[]; project?: string | null; priority?: string | null; dueDate?: string }>): string {
+  formatTasksForPrompt(tasks: Array<{ id?: string; title: string; tags?: string[]; project?: string | null; priority?: string | null; dueDate?: string }>): string {
     if (tasks.length === 0) return "None";
 
     return tasks
       .map((t) => {
-        const parts = [`- ${t.title}`];
+        const parts = [`-`];
+        if (t.id) parts.push(`[id:${t.id}]`);
+        parts.push(t.title);
         if (t.priority) parts.push(`[${t.priority}]`);
         if (t.tags && t.tags.length > 0) parts.push(`(${t.tags.map((tag) => `#${tag}`).join(" ")})`);
         if (t.project) parts.push(`in "${t.project}"`);

@@ -5,9 +5,6 @@ import {
   sendMessage,
   sendMessageStream,
   completeSession,
-  getInsights,
-  markInsightRead,
-  getStats,
   type SSEEvent,
 } from "@/api/accountability";
 import type { AccountabilityMessageResponse } from "@shiva200701/todotypes";
@@ -16,14 +13,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
-
-export function useAccountabilityStats() {
-  return useQuery({
-    queryKey: accountabilityKeys.stats,
-    queryFn: getStats,
-    staleTime: 60000,
-  });
-}
 
 export function useAccountabilitySessions(params?: { type?: string; status?: string }) {
   return useQuery({
@@ -39,14 +28,6 @@ export function useAccountabilitySession(id: string | null) {
     queryFn: () => getSession(id!),
     enabled: !!id,
     staleTime: 10000,
-  });
-}
-
-export function useInsights() {
-  return useQuery({
-    queryKey: accountabilityKeys.insights,
-    queryFn: () => getInsights(),
-    staleTime: 60000,
   });
 }
 
@@ -93,7 +74,6 @@ export function useCompleteSession() {
     mutationFn: completeSession,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: accountabilityKeys.sessions });
-      queryClient.invalidateQueries({ queryKey: accountabilityKeys.stats });
       toast.success("Session completed");
     },
     onError: () => {
@@ -102,7 +82,13 @@ export function useCompleteSession() {
   });
 }
 
-export type StreamStage = "idle" | "received" | "thinking" | "streaming" | "complete";
+export type StreamStage =
+  | "idle"
+  | "received"
+  | "thinking"
+  | "streaming"
+  | "tool_calling"
+  | "complete";
 
 export function useStreamMessage(
   sessionId: string,
@@ -112,6 +98,7 @@ export function useStreamMessage(
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingContent, setStreamingContent] = useState("");
   const [streamStage, setStreamStage] = useState<StreamStage>("idle");
+  const [activeToolCall, setActiveToolCall] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
   const abort = useCallback(() => {
@@ -129,6 +116,7 @@ export function useStreamMessage(
       setIsStreaming(true);
       setStreamingContent("");
       setStreamStage("idle");
+      setActiveToolCall(null);
 
       try {
         await sendMessageStream(
@@ -144,7 +132,15 @@ export function useStreamMessage(
                 break;
               case "streaming":
                 setStreamStage("streaming");
+                setActiveToolCall(null);
                 setStreamingContent((prev) => prev + event.token);
+                break;
+              case "tool_call":
+                setStreamStage("tool_calling");
+                setActiveToolCall(event.tool);
+                break;
+              case "tool_result":
+                // Stay in tool_calling stage; thinking event follows
                 break;
               case "complete":
                 setStreamStage("complete");
@@ -177,17 +173,6 @@ export function useStreamMessage(
     [sessionId, queryClient, onComplete],
   );
 
-  return { send, abort, isStreaming, streamingContent, streamStage };
+  return { send, abort, isStreaming, streamingContent, streamStage, activeToolCall };
 }
 
-export function useMarkInsightRead() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: markInsightRead,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: accountabilityKeys.insights });
-      queryClient.invalidateQueries({ queryKey: accountabilityKeys.stats });
-    },
-  });
-}

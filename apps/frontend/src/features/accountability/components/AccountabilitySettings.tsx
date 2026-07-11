@@ -38,14 +38,12 @@ function AccountabilitySettings() {
   const [tone, setTone] = useState("supportive");
   const [enabled, setEnabled] = useState(true);
   const [standupTime, setStandupTime] = useState("");
-  const [insightDay, setInsightDay] = useState(1);
 
   useEffect(() => {
     if (preferences) {
       setTone((preferences as any).accountabilityTone || "supportive");
       setEnabled((preferences as any).accountabilityEnabled ?? true);
       setStandupTime((preferences as any).dailyStandupTime || "");
-      setInsightDay((preferences as any).weeklyInsightDay ?? 1);
     }
   }, [preferences]);
 
@@ -55,7 +53,6 @@ function AccountabilitySettings() {
         accountabilityTone: tone,
         accountabilityEnabled: enabled,
         dailyStandupTime: standupTime || null,
-        weeklyInsightDay: insightDay,
       });
     },
     onSuccess: () => {
@@ -67,22 +64,20 @@ function AccountabilitySettings() {
     },
   });
 
-  const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-sm font-semibold mb-1">Accountability Partner</h3>
+        <h3 className="text-sm font-semibold mb-1">AI Assistant</h3>
         <p className="text-xs text-muted-foreground">
-          Configure your AI accountability partner preferences.
+          Configure your AI assistant preferences.
         </p>
       </div>
 
       {/* Enable/Disable */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium">Enable Accountability</p>
-          <p className="text-xs text-muted-foreground">Daily snapshots and weekly insights</p>
+          <p className="text-sm font-medium">Enable AI Assistant</p>
+          <p className="text-xs text-muted-foreground">Task assistance and check-ins</p>
         </div>
         <button
           onClick={() => setEnabled(!enabled)}
@@ -145,20 +140,6 @@ function AccountabilitySettings() {
             />
           </div>
 
-          {/* Weekly insight day */}
-          <div className="space-y-2">
-            <p className="text-sm font-medium">Weekly Insight Day</p>
-            <p className="text-xs text-muted-foreground">When to receive your weekly summary</p>
-            <select
-              value={insightDay}
-              onChange={(e) => setInsightDay(Number(e.target.value))}
-              className="rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
-            >
-              {dayNames.map((name, i) => (
-                <option key={i} value={i}>{name}</option>
-              ))}
-            </select>
-          </div>
         </>
       )}
 

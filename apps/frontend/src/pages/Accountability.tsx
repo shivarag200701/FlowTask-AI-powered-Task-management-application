@@ -1,14 +1,9 @@
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import AccountabilityChat from "@/features/accountability/components/AccountabilityChat";
-import StatsOverview from "@/features/accountability/components/StatsOverview";
-import InsightsCard from "@/features/accountability/components/InsightsCard";
 import AccountabilitySettings from "@/features/accountability/components/AccountabilitySettings";
-import { useInsights } from "@/features/accountability/hooks/use-accountability";
 import { Bot, Settings } from "lucide-react";
 import { useState } from "react";
 
 function Accountability() {
-  const { data: insights, isLoading: insightsLoading } = useInsights();
   const [showSettings, setShowSettings] = useState(false);
 
   return (
@@ -20,9 +15,9 @@ function Accountability() {
             <Bot className="size-5 text-primary" />
           </div>
           <div>
-            <h1 className="text-lg font-semibold">Accountability Partner</h1>
+            <h1 className="text-lg font-semibold">AI Assistant</h1>
             <p className="text-xs text-muted-foreground">
-              AI-powered check-ins, insights, and progress tracking
+              Chat with your AI assistant to manage tasks and stay productive
             </p>
           </div>
         </div>
@@ -39,44 +34,7 @@ function Accountability() {
           <AccountabilitySettings />
         </div>
       ) : (
-        <Tabs defaultValue="chat" className="flex-1 flex flex-col min-h-0">
-          <div className="px-6 pt-4">
-            <TabsList>
-              <TabsTrigger value="chat">Chat</TabsTrigger>
-              <TabsTrigger value="insights">Insights</TabsTrigger>
-              <TabsTrigger value="stats">Stats</TabsTrigger>
-            </TabsList>
-          </div>
-
-          <TabsContent value="chat" className="flex-1 min-h-0">
-            <AccountabilityChat className="h-full" />
-          </TabsContent>
-
-          <TabsContent value="insights" className="flex-1 overflow-y-auto p-6">
-            <div className="space-y-4 max-w-2xl">
-              {insightsLoading ? (
-                Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="h-48 rounded-xl bg-muted animate-pulse" />
-                ))
-              ) : insights && insights.length > 0 ? (
-                insights.map((insight) => (
-                  <InsightsCard key={insight.id} insight={insight} />
-                ))
-              ) : (
-                <div className="text-center py-12 text-sm text-muted-foreground">
-                  <p className="font-medium mb-1">No insights yet</p>
-                  <p>Weekly insights will appear here after your first week of using FlowTask.</p>
-                </div>
-              )}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="stats" className="flex-1 overflow-y-auto p-6">
-            <div className="max-w-2xl">
-              <StatsOverview />
-            </div>
-          </TabsContent>
-        </Tabs>
+        <AccountabilityChat className="flex-1 min-h-0" />
       )}
     </div>
   );

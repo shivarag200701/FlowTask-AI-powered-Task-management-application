@@ -8,6 +8,7 @@ import {
   buildDailyStandupPrompt,
   buildFreeformChatPrompt,
 } from "../../../services/ai/prompts/accountability.js";
+import { TASK_TOOLS } from "../../../services/ai/tools/tasks/definitions.js";
 
 const accountabilityRouter = Router();
 
@@ -64,10 +65,20 @@ accountabilityRouter.post("/sessions", requireLogin, async (req, res) => {
       accountabilityService.computeCompletionRate(userId, 30),
     ]);
 
+    // Build date/time context from user's timezone
+    const now = new Date();
+    const dateTimeCtx = {
+      today: now.toLocaleDateString("en-CA", { timeZone: data.timezone }),
+      currentTime: now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", timeZone: data.timezone }),
+      dayOfWeek: now.toLocaleDateString("en-US", { weekday: "long", timeZone: data.timezone }),
+      timezone: data.timezone,
+    };
+
     // Build system prompt based on session type
     let systemPrompt: string;
     if (data.type === "DAILY_STANDUP") {
       systemPrompt = buildDailyStandupPrompt({
+        ...dateTimeCtx,
         tone,
         userName: user?.name || "",
         yesterdayCompleted: accountabilityService.formatTasksForPrompt(
@@ -87,6 +98,7 @@ accountabilityRouter.post("/sessions", requireLogin, async (req, res) => {
       });
     } else {
       systemPrompt = buildFreeformChatPrompt({
+        ...dateTimeCtx,
         tone,
         userName: user?.name || "",
         todayTasks: accountabilityService.formatTasksForPrompt(
@@ -258,13 +270,22 @@ accountabilityRouter.post(
 
       // Non-streaming path (existing behavior)
       if (!useSSE) {
-        const aiResponse = await openRouter.chatAccountability({
+        const { content, toolCallsMade } = await openRouter.chatWithTools({
           systemPrompt: systemMessage?.content || "",
           messages: conversationMessages,
+          tools: TASK_TOOLS,
+          userId,
+          timezone: data.timezone,
         });
 
+        // Store assistant message with metadata about what tools were called
         const assistantMessage = await prisma.accountabilityMessage.create({
-          data: { sessionId, role: "assistant", content: aiResponse },
+          data: {
+            sessionId,
+            role: "assistant",
+            content,
+            metadata: { toolCalls: toolCallsMade },
+          },
         });
 
         return res.status(200).json({ userMessage, assistantMessage });
@@ -285,24 +306,45 @@ accountabilityRouter.post(
       sendEvent({ stage: "received", userMessage });
       sendEvent({ stage: "thinking" });
 
-      await new Promise((r) => setTimeout(r, 5000));
-
       let fullContent = "";
+      let toolCallsMade: any[] = [];
       let clientDisconnected = false;
       req.on("close", () => {
         clientDisconnected = true;
       });
 
       try {
-        const stream = openRouter.streamAccountability({
+        const stream = openRouter.streamWithTools({
           systemPrompt: systemMessage?.content || "",
           messages: conversationMessages,
+          tools: TASK_TOOLS,
+          userId,
+          timezone: data.timezone,
         });
 
-        for await (const token of stream) {
+        for await (const event of stream) {
           if (clientDisconnected) break;
-          fullContent += token;
-          sendEvent({ stage: "streaming", token });
+
+          switch (event.type) {
+            case "token":
+              fullContent += event.content;
+              sendEvent({ stage: "streaming", token: event.content });
+              break;
+            case "tool_call":
+              sendEvent({ stage: "tool_call", tool: event.tool, args: event.args });
+              break;
+            case "tool_result":
+              sendEvent({ stage: "tool_result", tool: event.tool, result: event.result });
+              break;
+            case "thinking":
+              // Reset content for the next AI turn (final text response)
+              fullContent = "";
+              sendEvent({ stage: "thinking" });
+              break;
+            case "done":
+              toolCallsMade = event.toolCallsMade;
+              break;
+          }
         }
       } catch (streamError) {
         console.error("Error during AI streaming", streamError);
@@ -313,7 +355,12 @@ accountabilityRouter.post(
 
       // Store completed assistant message
       const assistantMessage = await prisma.accountabilityMessage.create({
-        data: { sessionId, role: "assistant", content: fullContent },
+        data: {
+          sessionId,
+          role: "assistant",
+          content: fullContent,
+          ...(toolCallsMade.length > 0 && { metadata: { toolCalls: toolCallsMade } }),
+        },
       });
 
       sendEvent({ stage: "complete", message: assistantMessage });
@@ -367,95 +414,6 @@ accountabilityRouter.patch("/sessions/:id", requireLogin, async (req, res) => {
     return res.status(200).json({ session: updated });
   } catch (error) {
     console.error("Error updating session", error);
-    return res.status(500).json({ msg: "Internal server error" });
-  }
-});
-
-// List weekly insights
-accountabilityRouter.get("/insights", requireLogin, async (req, res) => {
-  const userId = req.userId;
-  const limit = Number(req.query.limit) || 10;
-  const offset = Number(req.query.offset) || 0;
-
-  try {
-    const insights = await prisma.weeklyInsight.findMany({
-      where: { userId },
-      orderBy: { weekStartDate: "desc" },
-      take: limit,
-      skip: offset,
-    });
-
-    return res.status(200).json({ insights });
-  } catch (error) {
-    console.error("Error listing insights", error);
-    return res.status(500).json({ msg: "Internal server error" });
-  }
-});
-
-// Mark insight as read
-accountabilityRouter.patch(
-  "/insights/:id/read",
-  requireLogin,
-  async (req, res) => {
-    const userId = req.userId;
-    const id = req.params.id as string;
-
-    try {
-      const insight = await prisma.weeklyInsight.findFirst({
-        where: { id, userId },
-      });
-
-      if (!insight) {
-        return res.status(404).json({ msg: "Insight not found" });
-      }
-
-      const updated = await prisma.weeklyInsight.update({
-        where: { id },
-        data: { readAt: new Date() },
-      });
-
-      return res.status(200).json({ insight: updated });
-    } catch (error) {
-      console.error("Error marking insight as read", error);
-      return res.status(500).json({ msg: "Internal server error" });
-    }
-  }
-);
-
-// Dashboard stats
-accountabilityRouter.get("/stats", requireLogin, async (req, res) => {
-  const userId = req.userId;
-
-  try {
-    const [rate7d, rate30d, streak, unreadInsights, sessionsThisWeek] =
-      await Promise.all([
-        accountabilityService.computeCompletionRate(userId, 7),
-        accountabilityService.computeCompletionRate(userId, 30),
-        accountabilityService.computeStreak(userId),
-        prisma.weeklyInsight.count({ where: { userId, readAt: null } }),
-        prisma.accountabilitySession.count({
-          where: {
-            userId,
-            startedAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
-          },
-        }),
-      ]);
-
-    // Determine trend
-    let trend: "IMPROVING" | "DECLINING" | "STABLE" = "STABLE";
-    if (rate7d > rate30d + 5) trend = "IMPROVING";
-    else if (rate7d < rate30d - 5) trend = "DECLINING";
-
-    return res.status(200).json({
-      streak,
-      completionRate7d: rate7d,
-      completionRate30d: rate30d,
-      trend,
-      totalSessionsThisWeek: sessionsThisWeek,
-      unreadInsights,
-    });
-  } catch (error) {
-    console.error("Error getting stats", error);
     return res.status(500).json({ msg: "Internal server error" });
   }
 });
