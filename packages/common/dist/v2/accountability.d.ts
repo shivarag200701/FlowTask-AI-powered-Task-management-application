@@ -8,6 +8,7 @@ export declare const StartSessionSchema: z.ZodObject<{
 }, z.core.$strip>;
 export declare const SendMessageSchema: z.ZodObject<{
     content: z.ZodString;
+    timezone: z.ZodString;
 }, z.core.$strip>;
 export interface AccountabilityMessageResponse {
     id: string;
@@ -26,30 +27,6 @@ export interface AccountabilitySessionResponse {
     startedAt: string;
     completedAt: string | null;
     messages: AccountabilityMessageResponse[];
-}
-export interface WeeklyInsightResponse {
-    id: string;
-    userId: string;
-    weekStartDate: string;
-    weekEndDate: string;
-    overallCompletionRate: number;
-    previousWeekRate: number | null;
-    trend: "IMPROVING" | "DECLINING" | "STABLE";
-    mostProductiveDay: string | null;
-    leastProductiveDay: string | null;
-    problematicTags: Record<string, any> | null;
-    problematicProjects: Record<string, any> | null;
-    summary: string;
-    readAt: string | null;
-    createdAt: string;
-}
-export interface AccountabilityStatsResponse {
-    streak: number;
-    completionRate7d: number;
-    completionRate30d: number;
-    trend: "IMPROVING" | "DECLINING" | "STABLE";
-    totalSessionsThisWeek: number;
-    unreadInsights: number;
 }
 export type StartSession = z.infer<typeof StartSessionSchema>;
 export type SendMessage = z.infer<typeof SendMessageSchema>;

@@ -8,6 +8,7 @@ export const StartSessionSchema = z.object({
 
 export const SendMessageSchema = z.object({
   content: z.string().min(1).max(5000),
+  timezone: z.string(),
 });
 
 // Response types
@@ -29,32 +30,6 @@ export interface AccountabilitySessionResponse {
   startedAt: string;
   completedAt: string | null;
   messages: AccountabilityMessageResponse[];
-}
-
-export interface WeeklyInsightResponse {
-  id: string;
-  userId: string;
-  weekStartDate: string;
-  weekEndDate: string;
-  overallCompletionRate: number;
-  previousWeekRate: number | null;
-  trend: "IMPROVING" | "DECLINING" | "STABLE";
-  mostProductiveDay: string | null;
-  leastProductiveDay: string | null;
-  problematicTags: Record<string, any> | null;
-  problematicProjects: Record<string, any> | null;
-  summary: string;
-  readAt: string | null;
-  createdAt: string;
-}
-
-export interface AccountabilityStatsResponse {
-  streak: number;
-  completionRate7d: number;
-  completionRate30d: number;
-  trend: "IMPROVING" | "DECLINING" | "STABLE";
-  totalSessionsThisWeek: number;
-  unreadInsights: number;
 }
 
 export type StartSession = z.infer<typeof StartSessionSchema>;

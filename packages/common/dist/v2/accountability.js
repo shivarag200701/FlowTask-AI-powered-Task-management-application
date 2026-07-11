@@ -6,5 +6,6 @@ export const StartSessionSchema = z.object({
 });
 export const SendMessageSchema = z.object({
     content: z.string().min(1).max(5000),
+    timezone: z.string(),
 });
 //# sourceMappingURL=accountability.js.map
