@@ -39,7 +39,7 @@ model User {
 
   firstDashboardVisited Boolean   @default(false)
 
-  accountabilitySessions   AccountabilitySession[]
+  aiConversations          AiConversation[]
   accountabilitySnapshots  AccountabilitySnapshot[]
   weeklyInsights           WeeklyInsight[]
 }
@@ -75,11 +75,11 @@ model UserPrefrence {
   phoneNumber     String?
   pushToken       String?  // FCM token for mobile
 
-  // Accountability preferences
-  accountabilityEnabled     Boolean @default(true)
+  // AI Assistant preferences
+  aiAssistantEnabled        Boolean @default(true)
   dailyStandupTime          String? // "09:00" format
   weeklyInsightDay          Int     @default(1) // 0=Sun, 1=Mon
-  accountabilityTone        String  @default("supportive") // "supportive" | "direct" | "tough"
+  aiAssistantTone           String  @default("supportive") // "supportive" | "direct" | "tough"
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

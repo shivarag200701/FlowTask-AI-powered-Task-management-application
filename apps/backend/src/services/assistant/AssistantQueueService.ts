@@ -5,10 +5,11 @@ const connectionOptions = {
   maxRetriesPerRequest: null,
 };
 
-class AccountabilityQueueService {
+class AssistantQueueService {
   private queue: Queue;
 
   constructor() {
+    // Keep Redis queue name as "accountability" to avoid orphaning existing jobs
     this.queue = new Queue("accountability", {
       connection: connectionOptions,
     });
@@ -46,7 +47,7 @@ class AccountabilityQueueService {
       }
     );
 
-    console.log("Accountability repeatable jobs registered");
+    console.log("Assistant repeatable jobs registered");
   }
 
   getQueue() {
@@ -54,4 +55,4 @@ class AccountabilityQueueService {
   }
 }
 
-export default AccountabilityQueueService;
+export default AssistantQueueService;

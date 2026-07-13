@@ -20,6 +20,7 @@ export type PopoverProps = PropsWithChildren<{
   mobileOnly?: boolean;
   collisionPadding?: number;
   onWheel?: (e: React.WheelEvent) => void;
+  animate?: boolean;
 }>;
 
 export const Popover = ({
@@ -36,6 +37,7 @@ export const Popover = ({
   mobileOnly,
   collisionPadding = 8,
   onWheel,
+  animate: shouldAnimate = true,
 }: PopoverProps) => {
   const { isMobile } = useMediaQuery();
 
@@ -93,10 +95,11 @@ export const Popover = ({
           )}
         >
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ duration: 0.1, ease: "easeOut" }}
+            initial={shouldAnimate ? { opacity: 0, scale: 0.7 } : false}
+            animate={shouldAnimate ? { opacity: 1, scale: 1 } : false}
+            exit={shouldAnimate ? { opacity: 0, scale: 0.7 } : undefined}
+            transition={shouldAnimate ? { type: "spring", duration: 0.25, bounce: 0.2 } : undefined}
+            style={{ transformOrigin: "var(--radix-popover-content-transform-origin)" }}
             onWheel={onWheel}
           >
             {content}

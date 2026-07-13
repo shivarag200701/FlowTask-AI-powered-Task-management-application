@@ -1,4 +1,10 @@
-import { BrowserRouter, Link, Route, Routes, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Link,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
 import "@/App.css";
 import SignIn from "@/pages/SignIn";
 import Signup from "@/pages/Signup";
@@ -9,7 +15,6 @@ import { Toaster } from "./components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { useEffect } from "react";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import Welcome from "@/pages/onboarding/pages/Welcome";
 import UserProfile from "@/pages/onboarding/pages/UserProfile";
@@ -28,7 +33,7 @@ import Search from "./pages/Search";
 import TaskDetail from "./pages/TaskDetail";
 import MyProjects from "./pages/MyProjects";
 import Workspaces from "./pages/Workspaces";
-import Accountability from "./pages/Accountability";
+import Assistant from "./pages/Assistant";
 import Projects from "./pages/Projects";
 import WorkspaceLayout from "./layouts/WorkspaceLayout";
 import Inbox from "./pages/Inbox";
@@ -115,7 +120,7 @@ function AppRoutes() {
               <Route path="members" element={<WorkspaceMembers />} />
               <Route path="settings" element={<WorkspaceSettings />} />
             </Route>
-            <Route path="/app/accountability" element={<Accountability />} />
+            <Route path="/app/assistant" element={<Assistant />} />
             <Route path="/app/search/*" element={<Search />} />
             <Route path="/app/task/:slug" element={<TaskDetail />} />
             <Route path="/app/projects/*" element={<Projects />} />
@@ -190,7 +195,6 @@ function App() {
   return (
     <div>
       <QueryClientProvider client={queryClient}>
-        <ReactQueryDevtools initialIsOpen={false} position="bottom" />
         <ThemeProvider
           attribute="data-theme"
           defaultTheme="dark"

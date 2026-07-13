@@ -103,6 +103,70 @@ export async function executeToolCall(
           })),
         });
       }
+      case "search_tasks": {
+        const where: any = { userId };
+        if (args.query) {
+          where.title = { contains: args.query, mode: "insensitive" };
+        }
+        if (args.priority) {
+          where.priority = args.priority;
+        }
+        if (args.completed !== undefined) {
+          where.completed = args.completed;
+        }
+        if (args.tag) {
+          where.tags = { some: { tag: { name: { equals: args.tag, mode: "insensitive" } } } };
+        }
+        if (args.project) {
+          where.project = { name: { equals: args.project, mode: "insensitive" } };
+        }
+
+        const tasks = await prisma.todo.findMany({
+          where,
+          include: {
+            tags: { select: { tag: { select: { name: true } } } },
+            project: { select: { name: true } },
+          },
+          orderBy: { createdAt: "desc" },
+          take: 20,
+        });
+        return JSON.stringify({
+          success: true,
+          tasks: tasks.map((t) => ({
+            id: t.id,
+            title: t.title,
+            completed: t.completed,
+            priority: t.priority,
+            dueDate: t.dueDate,
+            tags: t.tags.map((tt: any) => tt.tag.name),
+            project: t.project?.name || null,
+          })),
+        });
+      }
+      case "update_task_priority": {
+        const task = await prisma.todo.findFirst({
+          where: { id: args.task_id, userId },
+        });
+        if (!task) {
+          return JSON.stringify({ success: false, error: `Task not found with id: ${args.task_id}` });
+        }
+        await prisma.todo.update({
+          where: { id: args.task_id },
+          data: { priority: args.priority },
+        });
+        return JSON.stringify({
+          success: true,
+          task: { id: task.id, title: task.title, priority: args.priority },
+        });
+      }
+      case "list_projects": {
+        const projects = await prisma.project.findMany({
+          where: { userId },
+          select: { id: true, name: true, slug: true },
+          orderBy: { name: "asc" },
+        });
+        return JSON.stringify({ success: true, projects });
+      }
       default:
         return JSON.stringify({ error: `Unknown tool: ${toolName}` });
     }

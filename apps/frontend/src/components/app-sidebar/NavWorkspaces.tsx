@@ -67,7 +67,7 @@ export function NavWorkspaces() {
                 workspaces.map((workspace) => (
                   <SidebarMenuItem key={workspace.id}>
                     <SidebarMenuButton
-                      className="hover:bg-neutral-200"
+                      className="hover:bg-neutral-200 cursor-pointer"
                       isActive={location.pathname.includes(workspace.slug)}
                       onClick={() =>
                         navigate(`/app/workspaces/${workspace.slug}`)

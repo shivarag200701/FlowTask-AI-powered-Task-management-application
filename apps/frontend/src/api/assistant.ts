@@ -1,36 +1,36 @@
 import api from "@/utils/functions/api";
-import type { AccountabilitySessionResponse } from "@shiva200701/todotypes";
+import type { AiConversationResponse } from "@shiva200701/todotypes";
 
-export async function startSession(params: {
-  type: "DAILY_STANDUP" | "FREEFORM";
-}) {
-  const { data } = await api.post("/api/v2/ai/accountability/sessions", {
-    type: params.type,
+export async function startConversation() {
+  const { data } = await api.post("/api/v2/ai/assistant/conversations", {
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
   });
-  return data.session as AccountabilitySessionResponse;
+  return data.conversation as AiConversationResponse;
 }
 
-export async function getSessions(params?: {
-  type?: string;
-  status?: string;
+export async function getConversations(params?: {
   limit?: number;
   offset?: number;
 }) {
-  const { data } = await api.get("/api/v2/ai/accountability/sessions", {
+  const { data } = await api.get("/api/v2/ai/assistant/conversations", {
     params,
   });
-  return data.sessions as AccountabilitySessionResponse[];
+  return data.conversations as AiConversationResponse[];
 }
 
-export async function getSession(id: string) {
-  const { data } = await api.get(`/api/v2/ai/accountability/sessions/${id}`);
-  return data.session as AccountabilitySessionResponse;
+export async function getConversation(id: string) {
+  const { data } = await api.get(`/api/v2/ai/assistant/conversations/${id}`);
+  return data.conversation as AiConversationResponse;
 }
 
-export async function sendMessage(sessionId: string, content: string) {
+export async function deleteConversation(id: string) {
+  const { data } = await api.delete(`/api/v2/ai/assistant/conversations/${id}`);
+  return data;
+}
+
+export async function sendMessage(conversationId: string, content: string) {
   const { data } = await api.post(
-    `/api/v2/ai/accountability/sessions/${sessionId}/messages`,
+    `/api/v2/ai/assistant/conversations/${conversationId}/messages`,
     {
       content,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -50,16 +50,6 @@ export async function sendMessage(sessionId: string, content: string) {
       createdAt: string;
     };
   };
-}
-
-export async function completeSession(sessionId: string) {
-  const { data } = await api.patch(
-    `/api/v2/ai/accountability/sessions/${sessionId}`,
-    {
-      status: "COMPLETED",
-    }
-  );
-  return data.session;
 }
 
 // SSE streaming types
@@ -84,14 +74,14 @@ export type SSEEvent =
   | { stage: "error"; error?: string };
 
 export async function sendMessageStream(
-  sessionId: string,
+  conversationId: string,
   content: string,
   onEvent: (event: SSEEvent) => void,
   signal?: AbortSignal
 ) {
   const baseURL = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
   const response = await fetch(
-    `${baseURL}/api/v2/ai/accountability/sessions/${sessionId}/messages`,
+    `${baseURL}/api/v2/ai/assistant/conversations/${conversationId}/messages`,
     {
       method: "POST",
       credentials: "include",
@@ -121,7 +111,6 @@ export async function sendMessageStream(
 
     buffer += decoder.decode(value, { stream: true });
     const lines = buffer.split("\n");
-    // Keep the last potentially incomplete line in the buffer
     buffer = lines.pop() || "";
 
     for (const line of lines) {

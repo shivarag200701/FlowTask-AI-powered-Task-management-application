@@ -9,7 +9,7 @@ interface TaskSnapshot {
   recentCompletions: Array<{ id: string; title: string; completedAt: string | null }>;
 }
 
-class AccountabilityService {
+class AssistantService {
   async buildTaskSnapshot(userId: string, timezone: string): Promise<TaskSnapshot> {
     const now = DateTime.now().setZone(timezone);
     const todayStr = now.toFormat("yyyy-MM-dd");
@@ -202,7 +202,7 @@ class AccountabilityService {
       }
     }
 
-    // Tag analysis - aggregate from snapshots
+    // Tag analysis
     const tagStats: Record<string, { due: number; completed: number }> = {};
     for (const s of snapshots) {
       const breakdown = s.tagBreakdown as Record<string, { due: number; completed: number }> | null;
@@ -216,7 +216,7 @@ class AccountabilityService {
     }
 
     const problematicTags = Object.entries(tagStats)
-      .filter(([_, stats]) => stats.due >= 3) // Only consider tags with enough data
+      .filter(([_, stats]) => stats.due >= 3)
       .map(([tag, stats]) => ({ tag, rate: Math.round((stats.completed / stats.due) * 100) }))
       .sort((a, b) => a.rate - b.rate)
       .slice(0, 3);
@@ -263,5 +263,5 @@ class AccountabilityService {
   }
 }
 
-const accountabilityService = new AccountabilityService();
-export default accountabilityService;
+const assistantService = new AssistantService();
+export default assistantService;

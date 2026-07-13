@@ -1,9 +1,9 @@
 import { Worker, Job } from "bullmq";
 import prisma from "../../db/index.js";
 import { DateTime } from "luxon";
-import accountabilityService from "./AccountabilityService.js";
+import assistantService from "./AssistantService.js";
 import openRouter from "../ai/OpenRouterService.js";
-import { buildWeeklyInsightPrompt } from "../ai/prompts/accountability.js";
+import { buildWeeklyInsightPrompt } from "../ai/prompts/assistant.js";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import path from "path";
@@ -17,10 +17,10 @@ const connectionOptions = {
 };
 
 async function processDailySnapshot() {
-  console.log("[Accountability] Running daily snapshot job");
+  console.log("[Assistant] Running daily snapshot job");
 
   const users = await prisma.userPrefrence.findMany({
-    where: { accountabilityEnabled: true },
+    where: { aiAssistantEnabled: true },
     select: { userId: true },
   });
 
@@ -47,14 +47,13 @@ async function processDailySnapshot() {
       const tasksCompleted = tasks.filter((t) => t.completed).length;
       const tasksNotCompleted = tasks.filter((t) => !t.completed).length;
 
-      // Late = completed after end of due day (simplified: completed after dueDate)
+      // Late = completed after end of due day
       const tasksCompletedLate = tasks.filter((t) => {
         if (!t.completed || !t.completedAt) return false;
         const completedDate = DateTime.fromJSDate(t.completedAt).toFormat("yyyy-MM-dd");
         return completedDate > yesterdayStr;
       }).length;
 
-      // Tasks carried over = incomplete tasks from yesterday that still exist
       const tasksCarriedOver = tasksNotCompleted;
 
       // Tag breakdown
@@ -105,21 +104,21 @@ async function processDailySnapshot() {
         },
       });
     } catch (err) {
-      console.error(`[Accountability] Snapshot failed for user ${userId}:`, err);
+      console.error(`[Assistant] Snapshot failed for user ${userId}:`, err);
     }
   }
 
-  console.log(`[Accountability] Daily snapshot completed for ${users.length} users`);
+  console.log(`[Assistant] Daily snapshot completed for ${users.length} users`);
 }
 
 async function processWeeklyInsights() {
-  console.log("[Accountability] Running weekly insights job");
+  console.log("[Assistant] Running weekly insights job");
 
   const users = await prisma.userPrefrence.findMany({
-    where: { accountabilityEnabled: true },
+    where: { aiAssistantEnabled: true },
     select: {
       userId: true,
-      accountabilityTone: true,
+      aiAssistantTone: true,
       user: { select: { name: true } },
     },
   });
@@ -131,7 +130,7 @@ async function processWeeklyInsights() {
 
   const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-  for (const { userId, accountabilityTone, user } of users) {
+  for (const { userId, aiAssistantTone, user } of users) {
     try {
       const snapshots = await prisma.accountabilitySnapshot.findMany({
         where: {
@@ -167,7 +166,7 @@ async function processWeeklyInsights() {
         .join("\n");
 
       // Tag & project breakdown
-      const patterns = await accountabilityService.identifyPatterns(userId);
+      const patterns = await assistantService.identifyPatterns(userId);
 
       const tagBreakdown = patterns.problematicTags
         .map((t) => `${t.tag}: ${t.rate}% completion`)
@@ -177,9 +176,9 @@ async function processWeeklyInsights() {
         .map((p) => `${p.project}: ${p.rate}% completion`)
         .join("\n") || "No significant project patterns";
 
-      const tone = (accountabilityTone as "supportive" | "direct" | "tough") || "supportive";
+      const tone = (aiAssistantTone as "supportive" | "direct" | "tough") || "supportive";
 
-      const summary = await openRouter.chatAccountability({
+      const summary = await openRouter.chatAssistant({
         systemPrompt: buildWeeklyInsightPrompt({
           tone,
           userName: user?.name || "",
@@ -210,20 +209,19 @@ async function processWeeklyInsights() {
         },
       });
     } catch (err) {
-      console.error(`[Accountability] Weekly insight failed for user ${userId}:`, err);
+      console.error(`[Assistant] Weekly insight failed for user ${userId}:`, err);
     }
   }
 
-  console.log(`[Accountability] Weekly insights completed for ${users.length} users`);
+  console.log(`[Assistant] Weekly insights completed for ${users.length} users`);
 }
 
 async function processDailyStandupTrigger() {
-  // This job would send notifications to users whose standup time matches
-  // For now, it's a placeholder — the frontend polls/checks for standup availability
-  console.log("[Accountability] Daily standup trigger check");
+  console.log("[Assistant] Daily standup trigger check");
 }
 
-const accountabilityWorker = new Worker(
+// Keep worker queue name as "accountability" to match existing queue
+const assistantWorker = new Worker(
   "accountability",
   async (job: Job) => {
     switch (job.name) {
@@ -237,20 +235,20 @@ const accountabilityWorker = new Worker(
         await processDailyStandupTrigger();
         break;
       default:
-        console.log(`[Accountability] Unknown job: ${job.name}`);
+        console.log(`[Assistant] Unknown job: ${job.name}`);
     }
   },
   { connection: connectionOptions }
 );
 
-accountabilityWorker.on("error", (err) => {
-  console.error("[Accountability] Worker error:", err);
+assistantWorker.on("error", (err) => {
+  console.error("[Assistant] Worker error:", err);
 });
 
-accountabilityWorker.on("completed", (job) => {
-  console.log(`[Accountability] Job ${job.name} completed`);
+assistantWorker.on("completed", (job) => {
+  console.log(`[Assistant] Job ${job.name} completed`);
 });
 
-console.log("Accountability worker has started");
+console.log("Assistant worker has started");
 
-export default accountabilityWorker;
+export default assistantWorker;

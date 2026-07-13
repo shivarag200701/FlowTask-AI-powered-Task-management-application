@@ -11,6 +11,8 @@ import { NavQuickLinks } from "./NavQuickLinks";
 import { NavMyProjects } from "./NavMyProjects";
 import { NavWorkspaces } from "./NavWorkspaces";
 import { NavWorkspaceContext } from "./NavWorkspaceContext";
+import { NavAssistantQuickLinks } from "./NavAssistantQuickLinks";
+import ConversationList from "@/features/assistant/components/ConversationList";
 import { useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
 
@@ -30,7 +32,31 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     setShowSearchModal(true);
   });
 
+  const location = useLocation();
   const workspaceSlug = useWorkspaceSlug();
+  const isAssistantPage = location.pathname.startsWith("/app/assistant");
+
+  if (isAssistantPage) {
+    return (
+      <Sidebar
+        collapsible="offcanvas"
+        {...props}
+        className="p-2 bg-neutral-200"
+      >
+        <div className="flex h-full rounded-xl overflow-hidden">
+          {/* Icon rail */}
+          <div className="w-12 shrink-0 bg-neutral-100 border-r border-neutral-200">
+            <NavAssistantQuickLinks />
+          </div>
+
+          {/* Conversation list */}
+          <div className="flex-1 min-w-0 bg-neutral-100 flex flex-col">
+            <ConversationList />
+          </div>
+        </div>
+      </Sidebar>
+    );
+  }
 
   return (
     <Sidebar collapsible="offcanvas" {...props} className="p-2 bg-neutral-200">

@@ -70,7 +70,7 @@ class OpenRouterService {
 
     return JSON.parse(result?.choices[0]?.message.content as string);
   }
-  async chatAccountability({
+  async chatAssistant({
     systemPrompt,
     messages,
     maxTokens = 1024,
@@ -96,7 +96,7 @@ class OpenRouterService {
     return (result?.choices[0]?.message.content as string) || "";
   }
 
-  async *streamAccountability({
+  async *streamAssistant({
     systemPrompt,
     messages,
     maxTokens = 1024,

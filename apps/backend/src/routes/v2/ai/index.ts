@@ -7,11 +7,11 @@ import {
   type ParsedTask,
 } from "@shiva200701/todotypes";
 import prisma from "../../../db/index.js";
-import accountabilityRouter from "./accountability.js";
+import assistantRouter from "./assistant.js";
 
 const aiRouter = Router();
 
-aiRouter.use("/accountability", accountabilityRouter);
+aiRouter.use("/assistant", assistantRouter);
 
 aiRouter.post("/parse-task", requireLogin, async (req, res) => {
   const userId = req.userId;

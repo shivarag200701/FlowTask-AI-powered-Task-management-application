@@ -1,5 +1,6 @@
 import { useContext, useMemo } from "react";
-import { CalendarDays, CircleCheckBig, Search, Tag, Inbox, Brain } from "lucide-react";
+import { CalendarDays, CircleCheckBig, Search, Tag, Inbox } from "lucide-react";
+import { AILogo } from "@/components/ui/ai-logo";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   SidebarGroup,
@@ -18,7 +19,7 @@ const quickLinks = [
   { label: "Today", path: "/app/today" },
   { label: "Upcoming", icon: CalendarDays, path: "/app/upcoming" },
   { label: "Completed", icon: CircleCheckBig, path: "/app/completed" },
-  { label: "AI Assistant", icon: Brain, path: "/app/accountability" },
+  { label: "AI Assistant", path: "/app/assistant" },
 ] as const;
 
 export function NavQuickLinks() {
@@ -55,7 +56,7 @@ export function NavQuickLinks() {
         {quickLinks.map((link) => (
           <SidebarMenuItem key={link.label}>
             <SidebarMenuButton
-              className="hover:bg-neutral-200"
+              className="hover:bg-neutral-200 cursor-pointer"
               isActive={location.pathname.includes(link.path)}
               onClick={() => navigate(link.path)}
             >
@@ -63,6 +64,11 @@ export function NavQuickLinks() {
                 <div className="flex items-center">
                   {link.label === "Today" ? (
                     <TodayCalendarIcon className="h-4 w-4" />
+                  ) : link.label === "AI Assistant" ? (
+                    <AILogo
+                      active={location.pathname.includes(link.path)}
+                      className="size-5"
+                    />
                   ) : (
                     link.icon && <link.icon strokeWidth={1.5} size={16} />
                   )}

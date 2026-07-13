@@ -1,33 +1,3 @@
-model AccountabilitySession {
-  id            String   @id @default(cuid())
-  userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type          String   // "DAILY_STANDUP" | "FREEFORM"
-  status        String   @default("ACTIVE") // "ACTIVE" | "COMPLETED" | "EXPIRED"
-  taskSnapshot  Json?    // snapshot of task state at session start
-  startedAt     DateTime @default(now())
-  completedAt   DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  messages      AccountabilityMessage[]
-
-  @@index([userId, status])
-  @@index([userId, type])
-}
-
-model AccountabilityMessage {
-  id        String   @id @default(cuid())
-  sessionId String
-  session   AccountabilitySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  role      String   // "user" | "assistant" | "system"
-  content   String   @db.Text
-  metadata  Json?
-  createdAt DateTime @default(now())
-
-  @@index([sessionId])
-}
-
 model AccountabilitySnapshot {
   id                String   @id @default(cuid())
   userId            String

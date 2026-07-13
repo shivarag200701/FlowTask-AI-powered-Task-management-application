@@ -28,7 +28,7 @@ const toneOptions = [
   },
 ] as const;
 
-function AccountabilitySettings() {
+function AssistantSettings() {
   const queryClient = useQueryClient();
   const { data: preferences } = useQuery({
     queryKey: userPreferenceKeys.preferences,
@@ -41,8 +41,8 @@ function AccountabilitySettings() {
 
   useEffect(() => {
     if (preferences) {
-      setTone((preferences as any).accountabilityTone || "supportive");
-      setEnabled((preferences as any).accountabilityEnabled ?? true);
+      setTone((preferences as any).aiAssistantTone || "supportive");
+      setEnabled((preferences as any).aiAssistantEnabled ?? true);
       setStandupTime((preferences as any).dailyStandupTime || "");
     }
   }, [preferences]);
@@ -50,14 +50,14 @@ function AccountabilitySettings() {
   const saveMutation = useMutation({
     mutationFn: async () => {
       await api.patch("/api/v1/user/user-preferences", {
-        accountabilityTone: tone,
-        accountabilityEnabled: enabled,
+        aiAssistantTone: tone,
+        aiAssistantEnabled: enabled,
         dailyStandupTime: standupTime || null,
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userPreferenceKeys.preferences });
-      toast.success("Accountability settings saved");
+      toast.success("Settings saved");
     },
     onError: () => {
       toast.error("Failed to save settings");
@@ -155,4 +155,4 @@ function AccountabilitySettings() {
   );
 }
 
-export default AccountabilitySettings;
+export default AssistantSettings;

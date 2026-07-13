@@ -77,7 +77,7 @@ export function NavMyProjects() {
                 projects?.map((project: Project) => (
                   <SidebarMenuItem key={project.id}>
                     <SidebarMenuButton
-                      className="hover:bg-neutral-200"
+                      className="hover:bg-neutral-200 cursor-pointer"
                       isActive={
                         location.pathname === `/app/projects/${project.slug}`
                       }

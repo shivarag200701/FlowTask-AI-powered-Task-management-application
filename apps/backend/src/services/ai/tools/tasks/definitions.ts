@@ -64,4 +64,47 @@ export const TASK_TOOLS = [
       },
     },
   },
+  {
+    type: "function",
+    function: {
+      name: "search_tasks",
+      description: "Search tasks by keyword, tag, project, or priority",
+      parameters: {
+        type: "object",
+        properties: {
+          query: { type: "string", description: "Search keyword for task title" },
+          tag: { type: "string", description: "Filter by tag name" },
+          project: { type: "string", description: "Filter by project name" },
+          priority: { type: "string", enum: ["high", "medium", "low"], description: "Filter by priority" },
+          completed: { type: "boolean", description: "Filter by completion status" },
+        },
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "update_task_priority",
+      description: "Change a task's priority level",
+      parameters: {
+        type: "object",
+        properties: {
+          task_id: { type: "string", description: "The ID of the task" },
+          priority: { type: "string", enum: ["high", "medium", "low"], description: "New priority level" },
+        },
+        required: ["task_id", "priority"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "list_projects",
+      description: "List the user's projects",
+      parameters: {
+        type: "object",
+        properties: {},
+      },
+    },
+  },
 ];

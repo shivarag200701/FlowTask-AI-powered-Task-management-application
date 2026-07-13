@@ -76,7 +76,7 @@ export function NavWorkspaceContext({ slug }: { slug: string }) {
             return (
               <SidebarMenuItem key={link.label}>
                 <SidebarMenuButton
-                  className="hover:bg-neutral-200"
+                  className="hover:bg-neutral-200 cursor-pointer"
                   isActive={isActive}
                   onClick={() => navigate(fullPath)}
                 >

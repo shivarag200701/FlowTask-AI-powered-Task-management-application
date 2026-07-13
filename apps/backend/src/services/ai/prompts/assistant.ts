@@ -25,7 +25,7 @@ interface DailyStandupContext extends DateTimeContext {
 }
 
 export function buildDailyStandupPrompt(ctx: DailyStandupContext): string {
-  return `You are an AI accountability partner embedded in a task management app called FlowTask. You have access to the user's real task data — do NOT ask the user what they completed, you already know.
+  return `You are an AI assistant embedded in a task management app called FlowTask. You have access to the user's real task data — do NOT ask the user what they completed, you already know.
 
 ${toneInstructions[ctx.tone]}
 
@@ -76,7 +76,7 @@ interface WeeklyInsightContext {
 }
 
 export function buildWeeklyInsightPrompt(ctx: WeeklyInsightContext): string {
-  return `You are an AI accountability partner analyzing a user's weekly task performance. Generate a thoughtful, personalized weekly insight summary.
+  return `You are an AI assistant analyzing a user's weekly task performance. Generate a thoughtful, personalized weekly insight summary.
 
 ${toneInstructions[ctx.tone]}
 
@@ -108,45 +108,35 @@ Write a 3-5 paragraph weekly summary:
 Keep it under 300 words. Write in second person ("you"). Be specific — reference actual days, tags, or projects from the data.`;
 }
 
-interface FreeformChatContext extends DateTimeContext {
-  tone: Tone;
+interface AssistantChatContext {
+  today: string;
+  dayOfWeek: string;
+  timezone: string;
   userName: string;
-  todayTasks: string;
-  overdueTasks: string;
-  recentCompletions: string;
-  completionRate7d: number;
 }
 
-export function buildFreeformChatPrompt(ctx: FreeformChatContext): string {
-  return `You are an AI accountability partner embedded in FlowTask, a task management app. You're having a freeform conversation with the user about their tasks and productivity.
-
-${toneInstructions[ctx.tone]}
+export function buildAssistantChatPrompt(ctx: AssistantChatContext): string {
+  return `You are an AI assistant embedded in FlowTask, a task management app.
 
 User's name: ${ctx.userName || "there"}
 
 ## Current Date & Time
 Today is ${ctx.dayOfWeek}, ${ctx.today}
-Current time: ${ctx.currentTime}
 User's timezone: ${ctx.timezone}
 When the user says "today", use ${ctx.today}. When they say "tomorrow", use the next calendar date.
 
-## Current Task Context
-Today's tasks:
-${ctx.todayTasks || "No tasks scheduled for today"}
-
-Overdue tasks:
-${ctx.overdueTasks || "None"}
-
-Recently completed:
-${ctx.recentCompletions || "None recently"}
-
-7-day completion rate: ${ctx.completionRate7d}%
+## Available Tools
+You have tools to manage the user's tasks:
+- get_tasks_for_date: Fetch tasks for a specific date
+- search_tasks: Search tasks by keyword, tag, project, or priority
+- complete_task: Mark a task as completed
+- reschedule_task: Move a task to a new date
+- create_task: Create a new task
+- update_task_priority: Change a task's priority
+- list_projects: List the user's projects
 
 ## Instructions
-- Be conversational and helpful
-- You can discuss task priorities, help with planning, offer motivation, or just chat about productivity
-- Reference the user's actual task data when relevant
-- If the user asks about something outside of task management, gently redirect to productivity topics
-- Keep responses concise (under 100 words) unless the user asks for detail
-- Do NOT make up tasks or data — only reference what's in the context above`;
+- Use tools to look up task data when the user asks — do NOT guess or make up tasks
+- Keep responses concise unless the user asks for detail
+- Be helpful and direct`;
 }
