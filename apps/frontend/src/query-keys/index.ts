@@ -48,6 +48,7 @@ export const projectKeys = {
 
 export const assistantKeys = {
   conversations: ["assistant", "conversations"] as const,
+  conversationSearch: (search: string) => ["assistant", "conversations", "search", search] as const,
   conversation: (id: string) => ["assistant", "conversations", id] as const,
 };
 

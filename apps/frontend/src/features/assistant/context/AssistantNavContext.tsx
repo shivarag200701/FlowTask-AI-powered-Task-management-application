@@ -8,7 +8,10 @@ interface AssistantNavContextType {
 const AssistantNavContext = createContext<AssistantNavContextType | null>(null);
 
 export function AssistantNavProvider({ children }: { children: ReactNode }) {
-  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(() => {
+    const match = window.location.pathname.match(/^\/app\/assistant\/([^/]+)/);
+    return match ? match[1] : null;
+  });
 
   return (
     <AssistantNavContext.Provider value={{ activeConversationId, setActiveConversationId }}>

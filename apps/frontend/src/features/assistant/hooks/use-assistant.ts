@@ -22,6 +22,16 @@ export function useAssistantConversations() {
   });
 }
 
+export function useSearchConversations(search: string) {
+  return useQuery({
+    queryKey: assistantKeys.conversationSearch(search),
+    queryFn: () => getConversations({ search, limit: 20 }),
+    enabled: search.trim().length > 0,
+    staleTime: 10000,
+    placeholderData: (prev) => prev,
+  });
+}
+
 export function useAssistantConversation(id: string | null) {
   return useQuery({
     queryKey: assistantKeys.conversation(id || ""),

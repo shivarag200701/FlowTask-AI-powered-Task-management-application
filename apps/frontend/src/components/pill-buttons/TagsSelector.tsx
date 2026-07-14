@@ -74,6 +74,7 @@ function TagsSelector({
       shouldFilter
       multiple
       inputBoxText="search or add tags..."
+      icon={<Tag />}
       trigger
       // multiple
       setSelectedOptions={(option) => {

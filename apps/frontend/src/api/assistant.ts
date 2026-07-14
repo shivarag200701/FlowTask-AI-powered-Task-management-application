@@ -11,6 +11,7 @@ export async function startConversation() {
 export async function getConversations(params?: {
   limit?: number;
   offset?: number;
+  search?: string;
 }) {
   const { data } = await api.get("/api/v2/ai/assistant/conversations", {
     params,

@@ -7,6 +7,7 @@ import {
   Sparkles,
   ListChecks,
   CalendarCheck,
+  ChevronDown,
 } from "lucide-react";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
@@ -16,7 +17,10 @@ import {
   useStreamMessage,
   type StreamStage,
 } from "../hooks/use-assistant";
-import type { AiMessageResponse } from "@shiva200701/todotypes";
+import type {
+  AiConversationResponse,
+  AiMessageResponse,
+} from "@shiva200701/todotypes";
 import { ShimmeringText } from "@/components/animate-ui/primitives/texts/shimmering";
 import { motion, AnimatePresence } from "motion/react";
 import { AuroraText } from "@/components/ui/aurora-text";
@@ -27,6 +31,18 @@ import {
   RotatingTextContainer,
 } from "@/components/animate-ui/primitives/texts/rotating";
 import PageWidthWrapper from "@/layouts/PageWidthWrapper";
+import {
+  useAssistantConversations,
+  useSearchConversations,
+} from "../hooks/use-assistant";
+import { useAssistantNav } from "../context/AssistantNavContext";
+import { MessageSquareText } from "lucide-react";
+import ComboBox, {
+  type ComboBoxGroup,
+  type ComboBoxOptions,
+} from "@/components/ComboBox";
+import { useMemo } from "react";
+import { DateTime } from "luxon";
 
 const STAGE_CONFIG: Record<
   Exclude<StreamStage, "idle" | "streaming" | "complete" | "tool_calling">,
@@ -154,12 +170,16 @@ function AssistantChat({
 
   const hasMessages = activeConversationId && localMessages.length > 0;
 
-  console.log("has messages", hasMessages);
-
   return (
     <div className={`flex flex-col h-full ${className || ""}`}>
+      {hasMessages && (
+        <div className="shrink-0 px-6 py-2">
+          <ConversationsDropDown conversation={conversationData} />
+        </div>
+      )}
+
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto relative">
+      <div className="flex-1 overflow-y-auto relative custom-scrollbar">
         <AnimatePresence mode="wait">
           {!hasMessages ? (
             /* Empty state */
@@ -213,12 +233,12 @@ function AssistantChat({
             </motion.div>
           ) : (
             /* Messages */
-            <PageWidthWrapper className="max-w-5xl">
+            <PageWidthWrapper className="max-w-3xl">
               <motion.div
                 key="messages"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="p-4 space-y-5"
+                className="p-4 space-y-5 "
               >
                 {localMessages.map((msg) => (
                   <ChatMessage
@@ -268,7 +288,7 @@ function AssistantChat({
       </div>
 
       {/* Input */}
-      <PageWidthWrapper className="max-w-5xl">
+      <PageWidthWrapper className="max-w-3xl">
         <ChatInput
           onSend={handleSend}
           isLoading={isStreaming}
@@ -297,6 +317,93 @@ function AssistantChat({
         />
       </PageWidthWrapper>
     </div>
+  );
+}
+
+function ConversationsDropDown({
+  conversation,
+}: {
+  conversation?: AiConversationResponse;
+}) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const { setActiveConversationId } = useAssistantNav();
+  const { data: conversations } = useAssistantConversations();
+  const { data: searchResults, isFetching: isSearching } =
+    useSearchConversations(search);
+
+  const isSearchMode = search.trim().length > 0;
+  const displayList = isSearchMode ? searchResults : conversations;
+
+  const groups = useMemo((): ComboBoxGroup[] => {
+    if (!displayList?.length) return [];
+    const now = DateTime.now();
+
+    const result: ComboBoxGroup[] = [];
+    const map = new Map<string, ComboBoxOptions[]>();
+
+    for (const conv of displayList) {
+      const dt = DateTime.fromISO(conv.updatedAt);
+      let label: string;
+      if (dt.hasSame(now, "day")) label = "Today";
+      else if (dt.hasSame(now.minus({ days: 1 }), "day")) label = "Yesterday";
+      else label = dt.toFormat("MMM d");
+
+      const time = dt.toFormat("h:mm a");
+
+      const option: ComboBoxOptions = {
+        value: conv.id,
+        label: conv.title || "New conversation",
+        icon: <MessageSquareText className="size-4" strokeWidth={1.5} />,
+        detail: time,
+      };
+
+      if (!map.has(label)) {
+        const items: ComboBoxOptions[] = [];
+        map.set(label, items);
+        result.push({ label, items });
+      }
+      map.get(label)!.push(option);
+    }
+    return result;
+  }, [displayList]);
+
+  const selectedOption: ComboBoxOptions | null = conversation
+    ? {
+        value: conversation.id,
+        label: conversation.title || "New conversation",
+        icon: <MessageSquareText className="size-4" />,
+      }
+    : null;
+
+  return (
+    <ComboBox
+      open={open}
+      onOpenChange={(v) => {
+        setOpen(v);
+        if (!v) setSearch("");
+      }}
+      groups={groups}
+      selectedOption={selectedOption}
+      onSelect={(option) => {
+        setActiveConversationId(option.value);
+        setOpen(false);
+        setSearch("");
+      }}
+      searchValue={search}
+      setSearchValue={setSearch}
+      shouldFilter={!isSearchMode}
+      loading={isSearchMode && isSearching}
+      trigger
+      triggerClassName="w-fit py-1.5"
+      inputBoxText="Search conversations..."
+      icon={null}
+      popoverAlign="start"
+      contentClassName="w-[320px]"
+    >
+      {conversation?.title || "New conversation"}
+      <ChevronDown strokeWidth={1} />
+    </ComboBox>
   );
 }
 

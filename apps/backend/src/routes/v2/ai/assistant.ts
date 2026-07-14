@@ -64,10 +64,16 @@ assistantRouter.get("/conversations", requireLogin, async (req, res) => {
   const userId = req.userId;
   const limit = Number(req.query.limit) || 20;
   const offset = Number(req.query.offset) || 0;
+  const search = typeof req.query.search === "string" ? req.query.search.trim() : "";
 
   try {
     const conversations = await prisma.aiConversation.findMany({
-      where: { userId },
+      where: {
+        userId,
+        ...(search && {
+          title: { contains: search, mode: "insensitive" },
+        }),
+      },
       include: {
         messages: {
           where: { role: { not: "system" } },

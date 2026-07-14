@@ -2,7 +2,7 @@ import { Command } from "cmdk";
 import { Kbd } from "./ui/kbd";
 import { Popover } from "./ui/popover";
 import { Button } from "./ui/button";
-import { Plus, Tag, type LucideIcon } from "lucide-react";
+import { Plus, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { outlinePopoverTriggerClasses } from "@/lib/constants";
 import { isValidElement, useState, type ReactNode } from "react";
@@ -27,6 +27,12 @@ export type ComboBoxOptions<TMeta = any> = {
   meta?: TMeta;
   icon: LucideIcon | ReactNode;
   subOptions?: SubOption[];
+  detail?: string;
+};
+
+export type ComboBoxGroup<TMeta = any> = {
+  label: string;
+  items: ComboBoxOptions<TMeta>[];
 };
 
 export type ComboBoxProps<TMeta extends any> = {
@@ -35,6 +41,7 @@ export type ComboBoxProps<TMeta extends any> = {
   placeholder?: string;
   children?: ReactNode;
   options?: ComboBoxOptions<TMeta>[];
+  groups?: ComboBoxGroup<TMeta>[];
   //multiple
   selectedOptions?: ComboBoxOptions<TMeta>[];
   setSelectedOptions?: (value: ComboBoxOptions<any>) => void;
@@ -55,6 +62,7 @@ export type ComboBoxProps<TMeta extends any> = {
   trigger?: boolean;
   inputBoxText?: string;
   icon?: ReactNode;
+  popoverAlign?: "center" | "end" | "start";
 };
 
 function ComboBox({
@@ -63,6 +71,7 @@ function ComboBox({
   placeholder = "search...",
   children,
   options,
+  groups,
   selectedOptions,
   onSelect,
   setSelectedOptions,
@@ -79,6 +88,7 @@ function ComboBox({
   trigger = false,
   inputBoxText,
   icon,
+  popoverAlign,
 }: ComboBoxProps<any>) {
   const handleSelect = (option: ComboBoxOptions<any>) => {
     if (!multiple) {
@@ -147,26 +157,55 @@ function ComboBox({
                         onCreate={onCreate}
                       />
                     )}
-                    {options?.map((option) => {
-                      const isSelected = !multiple
-                        ? option.value === selectedOption?.value
-                        : (selectedOptions?.some(
-                            ({ value }) => option.value === value
-                          ) ?? false);
-                      return (
-                        <Option
-                          selected={isSelected}
-                          option={option}
-                          onSelect={({ option, subOption }) => {
-                            if (option) handleSelect(option);
-                            if (subOption) handleSelect(subOption);
-                          }}
-                          key={option.value}
-                          multiple={multiple}
-                          selectedOption={selectedOption}
-                        />
-                      );
-                    })}
+                    {groups
+                      ? groups.map((group) => (
+                          <Command.Group
+                            key={group.label}
+                            heading={group.label}
+                            className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground"
+                          >
+                            {group.items.map((option) => {
+                              const isSelected = !multiple
+                                ? option.value === selectedOption?.value
+                                : (selectedOptions?.some(
+                                    ({ value }) => option.value === value
+                                  ) ?? false);
+                              return (
+                                <Option
+                                  selected={isSelected}
+                                  option={option}
+                                  onSelect={({ option, subOption }) => {
+                                    if (option) handleSelect(option);
+                                    if (subOption) handleSelect(subOption);
+                                  }}
+                                  key={option.value}
+                                  multiple={multiple}
+                                  selectedOption={selectedOption}
+                                />
+                              );
+                            })}
+                          </Command.Group>
+                        ))
+                      : options?.map((option) => {
+                          const isSelected = !multiple
+                            ? option.value === selectedOption?.value
+                            : (selectedOptions?.some(
+                                ({ value }) => option.value === value
+                              ) ?? false);
+                          return (
+                            <Option
+                              selected={isSelected}
+                              option={option}
+                              onSelect={({ option, subOption }) => {
+                                if (option) handleSelect(option);
+                                if (subOption) handleSelect(subOption);
+                              }}
+                              key={option.value}
+                              multiple={multiple}
+                              selectedOption={selectedOption}
+                            />
+                          );
+                        })}
                   </>
                 )}
               </Command.List>
@@ -182,6 +221,7 @@ function ComboBox({
       onWheel={(e) => {
         e.stopPropagation();
       }}
+      align={popoverAlign}
     >
       {trigger ? (
         <Button
@@ -191,7 +231,7 @@ function ComboBox({
             outlinePopoverTriggerClasses,
             triggerClassName
           )}
-          icon={icon ? icon : <Tag />}
+          icon={icon}
           type="button"
         >
           {children ? children : placeholder}
@@ -304,6 +344,11 @@ function Option({
           )}
         </div>
         <span className="flex-1">{option.label}</span>
+        {option.detail && (
+          <span className="text-xs text-muted-foreground shrink-0">
+            {option.detail}
+          </span>
+        )}
         <span className="text-neutral-500">{option.meta?.count?.todos}</span>
       </div>
       {option.subOptions && option.subOptions.length > 0 && (

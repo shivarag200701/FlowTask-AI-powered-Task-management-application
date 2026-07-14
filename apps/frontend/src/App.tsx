@@ -121,6 +121,7 @@ function AppRoutes() {
               <Route path="settings" element={<WorkspaceSettings />} />
             </Route>
             <Route path="/app/assistant" element={<Assistant />} />
+            <Route path="/app/assistant/:conversationId" element={<Assistant />} />
             <Route path="/app/search/*" element={<Search />} />
             <Route path="/app/task/:slug" element={<TaskDetail />} />
             <Route path="/app/projects/*" element={<Projects />} />
