@@ -13,6 +13,7 @@ import {
 import prisma from "../../db/index.js";
 import crypto from "crypto";
 import { requireLogin } from "../../middleware/requireLogin.js";
+import { setOnboardingProgress } from "../../utils/onboarding-step-cache.js";
 
 const oauthRouter = express.Router();
 
@@ -187,8 +188,21 @@ oauthRouter.get("/google/callback", async (req, res) => {
               pictureUrl: userInfo.pictureUrl,
             },
           });
+
+          //create Inbox project whenever a user signs in
+          const existingInbox = await tx.project.findFirst({
+            where: { userId: created.id, isDefault: true },
+          });
+
+          if (!existingInbox) {
+            await tx.project.create({
+              data: { name: "Inbox", userId: created.id, isDefault: true },
+            });
+          }
           return created;
         });
+
+        await setOnboardingProgress(newUser.id, "welcome");
 
         req.session.userId = newUser.id;
         req.session.email = newUser.email;
@@ -199,9 +213,7 @@ oauthRouter.get("/google/callback", async (req, res) => {
             return res.status(500).json({ msg: "Session error" });
           }
 
-          const redirectTo = stateData.callbackUrl
-            ? `${FRONTEND_URL}${stateData.callbackUrl}`
-            : `${FRONTEND_URL}/onboarding/welcome`;
+          const redirectTo = `${FRONTEND_URL}/onboarding/welcome`;
           return res.redirect(redirectTo);
         });
       }

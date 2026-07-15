@@ -186,6 +186,8 @@ userRouter.post("/signup/verify", async (req, res) => {
       },
     });
 
+    await setOnboardingProgress(user.id, "welcome");
+
     // Normal flow - just set userId and save
     req.session.userId = user.id;
     req.session.email = user.email;
