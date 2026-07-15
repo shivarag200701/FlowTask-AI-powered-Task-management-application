@@ -69,7 +69,6 @@ const ProtectedRoute = () => {
     queryKey: authQueryKeys.users,
     queryFn: getCurrentUser,
     enabled: isAuthenticated,
-
   });
 
   const { isLoading: preferenceLoading } = useQuery({
@@ -83,20 +82,19 @@ const ProtectedRoute = () => {
     queryKey: todosQueryKeys.all,
     queryFn: () => fetchTodos(),
     enabled: isAuthenticated,
-
   });
 
-  const { data: onboardingStep } = useQuery({
+  const { isLoading: onboardingLoading, data: onboardingStep } = useQuery({
     queryKey: onboardingQueryKeys.progress,
     queryFn: getOnboardingProgress,
     retry: 1,
     enabled: isAuthenticated,
-
   });
 
   if (
     isLoading ||
-    (isAuthenticated && (userLoading || todosLoading || preferenceLoading))
+    (isAuthenticated &&
+      (userLoading || todosLoading || preferenceLoading || onboardingLoading))
   ) {
     return <AppLoadingScreen />;
   }

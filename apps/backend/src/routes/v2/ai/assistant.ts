@@ -1,6 +1,9 @@
 import { Router } from "express";
 import { requireLogin } from "../../../middleware/requireLogin.js";
-import { StartConversationSchema, SendMessageSchema } from "@shiva200701/todotypes";
+import {
+  StartConversationSchema,
+  SendMessageSchema,
+} from "@shiva200701/todotypes";
 import prisma from "../../../db/index.js";
 import openRouter from "../../../services/ai/OpenRouterService.js";
 import { buildAssistantChatPrompt } from "../../../services/ai/prompts/assistant.js";
@@ -26,7 +29,10 @@ assistantRouter.post("/conversations", requireLogin, async (req, res) => {
     const now = new Date();
     const systemPrompt = buildAssistantChatPrompt({
       today: now.toLocaleDateString("en-CA", { timeZone: data.timezone }),
-      dayOfWeek: now.toLocaleDateString("en-US", { weekday: "long", timeZone: data.timezone }),
+      dayOfWeek: now.toLocaleDateString("en-US", {
+        weekday: "long",
+        timeZone: data.timezone,
+      }),
       timezone: data.timezone,
       userName: user?.name || "",
     });
@@ -64,7 +70,8 @@ assistantRouter.get("/conversations", requireLogin, async (req, res) => {
   const userId = req.userId;
   const limit = Number(req.query.limit) || 20;
   const offset = Number(req.query.offset) || 0;
-  const search = typeof req.query.search === "string" ? req.query.search.trim() : "";
+  const search =
+    typeof req.query.search === "string" ? req.query.search.trim() : "";
 
   try {
     const conversations = await prisma.aiConversation.findMany({
@@ -180,23 +187,34 @@ assistantRouter.post(
 
       // Auto-generate title from first user message (non-blocking)
       if (!conversation.title) {
-        openRouter.chatAssistant({
-          systemPrompt: "Generate a short title (3-6 words, no quotes) that summarizes this message. Return ONLY the title, nothing else.",
-          messages: [{ role: "user", content: data.content }],
-          maxTokens: 30,
-        }).then((title) => {
-          const cleanTitle = title.trim().replace(/^["']|["']$/g, "").slice(0, 80);
-          prisma.aiConversation.update({
-            where: { id: conversationId },
-            data: { title: cleanTitle },
-          }).catch(() => {});
-        }).catch(() => {
-          // Fallback to truncated message
-          prisma.aiConversation.update({
-            where: { id: conversationId },
-            data: { title: data.content.slice(0, 60) },
-          }).catch(() => {});
-        });
+        openRouter
+          .chatAssistant({
+            systemPrompt:
+              "Generate a short title (3-6 words, no quotes) that summarizes this message. Return ONLY the title, nothing else.",
+            messages: [{ role: "user", content: data.content }],
+            maxTokens: 30,
+          })
+          .then((title) => {
+            const cleanTitle = title
+              .trim()
+              .replace(/^["']|["']$/g, "")
+              .slice(0, 80);
+            prisma.aiConversation
+              .update({
+                where: { id: conversationId },
+                data: { title: cleanTitle },
+              })
+              .catch(() => {});
+          })
+          .catch(() => {
+            // Fallback to truncated message
+            prisma.aiConversation
+              .update({
+                where: { id: conversationId },
+                data: { title: data.content.slice(0, 60) },
+              })
+              .catch(() => {});
+          });
       }
 
       // Update conversation's updatedAt
@@ -284,10 +302,18 @@ assistantRouter.post(
               sendEvent({ stage: "streaming", token: event.content });
               break;
             case "tool_call":
-              sendEvent({ stage: "tool_call", tool: event.tool, args: event.args });
+              sendEvent({
+                stage: "tool_call",
+                tool: event.tool,
+                args: event.args,
+              });
               break;
             case "tool_result":
-              sendEvent({ stage: "tool_result", tool: event.tool, result: event.result });
+              sendEvent({
+                stage: "tool_result",
+                tool: event.tool,
+                result: event.result,
+              });
               break;
             case "thinking":
               fullContent = "";
@@ -311,7 +337,9 @@ assistantRouter.post(
           conversationId,
           role: "assistant",
           content: fullContent,
-          ...(toolCallsMade.length > 0 && { metadata: { toolCalls: toolCallsMade } }),
+          ...(toolCallsMade.length > 0 && {
+            metadata: { toolCalls: toolCallsMade },
+          }),
         },
       });
 

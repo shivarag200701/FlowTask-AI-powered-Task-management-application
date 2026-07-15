@@ -51,7 +51,9 @@ export function useStartConversation() {
     },
     onError: (error) => {
       if (isAxiosError(error)) {
-        toast.error(error.response?.data?.msg || "Failed to start conversation");
+        toast.error(
+          error.response?.data?.msg || "Failed to start conversation"
+        );
         return;
       }
       toast.error("Something went wrong");
@@ -79,7 +81,9 @@ export function useSendMessage(conversationId: string) {
   return useMutation({
     mutationFn: (content: string) => sendMessage(conversationId, content),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: assistantKeys.conversation(conversationId) });
+      queryClient.invalidateQueries({
+        queryKey: assistantKeys.conversation(conversationId),
+      });
     },
     onError: (error) => {
       if (isAxiosError(error)) {
@@ -101,7 +105,7 @@ export type StreamStage =
 
 export function useStreamMessage(
   conversationId: string,
-  onComplete?: (message: AiMessageResponse) => void,
+  onComplete?: (message: AiMessageResponse) => void
 ) {
   const queryClient = useQueryClient();
   const [isStreaming, setIsStreaming] = useState(false);
@@ -160,6 +164,8 @@ export function useStreamMessage(
                 queryClient.invalidateQueries({
                   queryKey: assistantKeys.conversation(id),
                 });
+                console.log("message complete", event.message);
+
                 onComplete?.(event.message as AiMessageResponse);
                 break;
               case "error":
@@ -170,7 +176,7 @@ export function useStreamMessage(
                 break;
             }
           },
-          controller.signal,
+          controller.signal
         );
       } catch (err) {
         if ((err as Error).name !== "AbortError") {
@@ -181,8 +187,15 @@ export function useStreamMessage(
         setIsStreaming(false);
       }
     },
-    [conversationId, queryClient, onComplete],
+    [conversationId, queryClient, onComplete]
   );
 
-  return { send, abort, isStreaming, streamingContent, streamStage, activeToolCall };
+  return {
+    send,
+    abort,
+    isStreaming,
+    streamingContent,
+    streamStage,
+    activeToolCall,
+  };
 }

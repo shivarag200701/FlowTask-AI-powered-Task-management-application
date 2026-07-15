@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { AILogo } from "@/components/ui/ai-logo";
 import { motion } from "motion/react";
+import Markdown from "react-markdown";
 
 interface ChatMessageProps {
   role: "user" | "assistant";
@@ -16,18 +17,13 @@ function ChatMessage({ role, content, createdAt }: ChatMessageProps) {
       initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      className={cn(
-        "flex flex-col",
-        isUser ? "items-end" : "items-start"
-      )}
+      className={cn("flex flex-col", isUser ? "items-end" : "items-start")}
     >
       {/* Assistant label */}
       {!isUser && (
         <div className="flex items-center gap-1.5 mb-1.5">
           <AILogo active className="size-4" />
-          <span className="text-xs font-semibold text-foreground">
-            Flow AI
-          </span>
+          <span className="text-xs font-semibold text-foreground">Flow AI</span>
         </div>
       )}
 
@@ -40,7 +36,7 @@ function ChatMessage({ role, content, createdAt }: ChatMessageProps) {
             : "max-w-[90%] pl-[26px] text-foreground/90"
         )}
       >
-        <p className="whitespace-pre-wrap wrap-break-word">{content}</p>
+        <Markdown>{content}</Markdown>
       </div>
 
       {/* Timestamp */}

@@ -138,5 +138,7 @@ You have tools to manage the user's tasks:
 ## Instructions
 - Use tools to look up task data when the user asks — do NOT guess or make up tasks
 - Keep responses concise unless the user asks for detail
-- Be helpful and direct`;
+- Be helpful and direct
+- If responding with Lists, use Numbered lists to address each section of the response
+`;
 }
