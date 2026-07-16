@@ -5,7 +5,6 @@ import {
   deleteConversation,
   sendMessage,
   sendMessageStream,
-  type SSEEvent,
 } from "@/api/assistant";
 import type { AiMessageResponse } from "@shiva200701/todotypes";
 import { assistantKeys } from "@/query-keys";
@@ -13,6 +12,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
+import type { SSEEvent } from "@/types";
 
 export function useAssistantConversations() {
   return useQuery({
@@ -164,8 +164,6 @@ export function useStreamMessage(
                 queryClient.invalidateQueries({
                   queryKey: assistantKeys.conversation(id),
                 });
-                console.log("message complete", event.message);
-
                 onComplete?.(event.message as AiMessageResponse);
                 break;
               case "error":

@@ -1,3 +1,4 @@
+import type { SSEEvent } from "@/types";
 import api from "@/utils/functions/api";
 import type { AiConversationResponse } from "@shiva200701/todotypes";
 
@@ -52,27 +53,6 @@ export async function sendMessage(conversationId: string, content: string) {
     };
   };
 }
-
-// SSE streaming types
-export type SSEEvent =
-  | {
-      stage: "received";
-      userMessage: {
-        id: string;
-        role: string;
-        content: string;
-        createdAt: string;
-      };
-    }
-  | { stage: "thinking" }
-  | { stage: "streaming"; token: string }
-  | { stage: "tool_call"; tool: string; args: Record<string, any> }
-  | { stage: "tool_result"; tool: string; result: any }
-  | {
-      stage: "complete";
-      message: { id: string; role: string; content: string; createdAt: string };
-    }
-  | { stage: "error"; error?: string };
 
 export async function sendMessageStream(
   conversationId: string,

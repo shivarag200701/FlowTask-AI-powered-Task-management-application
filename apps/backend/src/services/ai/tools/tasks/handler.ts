@@ -14,7 +14,10 @@ export async function executeToolCall(
           where: { id: args.task_id, userId },
         });
         if (!task) {
-          return JSON.stringify({ success: false, error: `Task not found with id: ${args.task_id}` });
+          return JSON.stringify({
+            success: false,
+            error: `Task not found with id: ${args.task_id}`,
+          });
         }
         await prisma.todo.update({
           where: { id: args.task_id },
@@ -30,10 +33,16 @@ export async function executeToolCall(
           where: { id: args.task_id, userId },
         });
         if (!task) {
-          return JSON.stringify({ success: false, error: `Task not found with id: ${args.task_id}` });
+          return JSON.stringify({
+            success: false,
+            error: `Task not found with id: ${args.task_id}`,
+          });
         }
         if (!/^\d{4}-\d{2}-\d{2}$/.test(args.new_date)) {
-          return JSON.stringify({ success: false, error: `Invalid date format: ${args.new_date}. Use YYYY-MM-DD.` });
+          return JSON.stringify({
+            success: false,
+            error: `Invalid date format: ${args.new_date}. Use YYYY-MM-DD.`,
+          });
         }
         await prisma.todo.update({
           where: { id: args.task_id },
@@ -49,7 +58,10 @@ export async function executeToolCall(
           where: { id: args.task_id, userId },
         });
         if (!task) {
-          return JSON.stringify({ success: false, error: `Task not found with id: ${args.task_id}` });
+          return JSON.stringify({
+            success: false,
+            error: `Task not found with id: ${args.task_id}`,
+          });
         }
         await prisma.todo.delete({ where: { id: args.task_id } });
         return JSON.stringify({
@@ -59,7 +71,10 @@ export async function executeToolCall(
       }
       case "create_task": {
         if (args.due_date && !/^\d{4}-\d{2}-\d{2}$/.test(args.due_date)) {
-          return JSON.stringify({ success: false, error: `Invalid date format: ${args.due_date}. Use YYYY-MM-DD.` });
+          return JSON.stringify({
+            success: false,
+            error: `Invalid date format: ${args.due_date}. Use YYYY-MM-DD.`,
+          });
         }
         const last = await prisma.todo.findFirst({
           where: { userId, dueDate: args.due_date },
@@ -68,6 +83,11 @@ export async function executeToolCall(
         });
 
         const sortKey = generateSortKey(last ? last.sortKey : null, null);
+
+        const inbox = await prisma.project.findFirst({
+          where: { userId, isDefault: true },
+          select: { id: true },
+        });
         const task = await prisma.todo.create({
           data: {
             userId,
@@ -75,6 +95,7 @@ export async function executeToolCall(
             dueDate: args.due_date || null,
             priority: args.priority || null,
             sortKey,
+            projectId: inbox?.id ?? null,
           },
         });
         return JSON.stringify({
@@ -115,10 +136,14 @@ export async function executeToolCall(
           where.completed = args.completed;
         }
         if (args.tag) {
-          where.tags = { some: { tag: { name: { equals: args.tag, mode: "insensitive" } } } };
+          where.tags = {
+            some: { tag: { name: { equals: args.tag, mode: "insensitive" } } },
+          };
         }
         if (args.project) {
-          where.project = { name: { equals: args.project, mode: "insensitive" } };
+          where.project = {
+            name: { equals: args.project, mode: "insensitive" },
+          };
         }
 
         const tasks = await prisma.todo.findMany({
@@ -148,7 +173,10 @@ export async function executeToolCall(
           where: { id: args.task_id, userId },
         });
         if (!task) {
-          return JSON.stringify({ success: false, error: `Task not found with id: ${args.task_id}` });
+          return JSON.stringify({
+            success: false,
+            error: `Task not found with id: ${args.task_id}`,
+          });
         }
         await prisma.todo.update({
           where: { id: args.task_id },
@@ -172,6 +200,9 @@ export async function executeToolCall(
     }
   } catch (err) {
     console.error(`Tool call error (${toolName}):`, err);
-    return JSON.stringify({ success: false, error: `Failed to execute ${toolName}` });
+    return JSON.stringify({
+      success: false,
+      error: `Failed to execute ${toolName}`,
+    });
   }
 }

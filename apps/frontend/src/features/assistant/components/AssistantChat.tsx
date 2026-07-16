@@ -246,6 +246,7 @@ function AssistantChat({
                     role={msg.role as "user" | "assistant"}
                     content={msg.content}
                     createdAt={msg.createdAt}
+                    toolResults={msg.metadata?.toolCalls}
                   />
                 ))}
 

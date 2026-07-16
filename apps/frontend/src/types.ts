@@ -208,3 +208,26 @@ export type InvitePreview = {
   role: string;
   email: string;
 };
+
+// SSE streaming types
+export type SSEEvent =
+  | {
+      stage: "received";
+      userMessage: {
+        id: string;
+        role: string;
+        content: string;
+        createdAt: string;
+      };
+    }
+  | { stage: "thinking" }
+  | { stage: "streaming"; token: string }
+  | { stage: "tool_call"; tool: string; args: Record<string, any> }
+  | { stage: "tool_result"; tool: string; result: any }
+  | {
+      stage: "complete";
+      message: { id: string; role: string; content: string; createdAt: string };
+    }
+  | { stage: "error"; error?: string };
+
+export type ToolCallResult = { tool: string; result: any };

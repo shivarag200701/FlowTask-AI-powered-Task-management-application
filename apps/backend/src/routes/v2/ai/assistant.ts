@@ -229,10 +229,16 @@ assistantRouter.post(
       );
       const conversationMessages = conversation.messages
         .filter((m: { role: string }) => m.role !== "system")
-        .map((m: { role: string; content: string }) => ({
-          role: m.role as "user" | "assistant",
-          content: m.content,
-        }));
+        .map((m: { role: string; content: string; metadata: any }) => {
+          const hadToolCalls =
+            m.role === "assistant" && m.metadata?.toolCalls?.length > 0;
+          return {
+            role: m.role as "user" | "assistant",
+            content: hadToolCalls
+              ? "[Used tools to answer — call tools again for fresh data]"
+              : m.content,
+          };
+        });
 
       // Add the new user message
       conversationMessages.push({
@@ -332,6 +338,7 @@ assistantRouter.post(
       }
 
       // Store completed assistant message
+      console.log("toolCallsMade before save:", JSON.stringify(toolCallsMade));
       const assistantMessage = await prisma.aiMessage.create({
         data: {
           conversationId,
